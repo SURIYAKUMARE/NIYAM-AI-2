@@ -1,0 +1,21 @@
+{
+  "name": "aicte-smart-approval-compliance-system",
+  "version": "1.0.0",
+  "description": "AICTE Smart Approval & Compliance Management System - Problem Statement ID: 26262",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js",
+    "seed": "node src/database/seed.js",
+    "test": "node --test tests/*.test.js"
+  },
+  "keywords": [
+    "aicte",
+    "regulatory-compliance",
+    "workflow-automation",
+    "digital-governance",
+    "approval-management"
+  ],
+  "author": "AICTE Regulation Bureau Technical Architecture Team",
+  "license": "Proprietary"
+}

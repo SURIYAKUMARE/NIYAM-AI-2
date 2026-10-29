@@ -2,6 +2,11 @@
   "version": 2,
   "outputDirectory": "public",
   "cleanUrls": true,
+  "functions": {
+    "api/index.js": {
+      "includeFiles": "{src/**,data/**}"
+    }
+  },
   "rewrites": [
     {
       "source": "/api/(.*)",

@@ -2,7 +2,22 @@ const { DatabaseSync } = require('node:sqlite');
 const fs = require('node:fs');
 const path = require('node:path');
 
-const DB_PATH = path.join(__dirname, 'aicte_approval.db');
+const ORIG_DB_PATH = path.join(__dirname, 'aicte_approval.db');
+let DB_PATH = ORIG_DB_PATH;
+
+if (process.env.VERCEL) {
+    try {
+        const tmpDb = path.join('/tmp', 'aicte_approval.db');
+        if (!fs.existsSync(tmpDb) && fs.existsSync(ORIG_DB_PATH)) {
+            fs.copyFileSync(ORIG_DB_PATH, tmpDb);
+        }
+        if (fs.existsSync(tmpDb)) {
+            DB_PATH = tmpDb;
+        }
+    } catch (e) {
+        console.warn('[DB] Failed to use /tmp DB, using original path:', e.message);
+    }
+}
 
 class DatabaseConnection {
     constructor() {

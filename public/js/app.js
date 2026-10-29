@@ -151,18 +151,38 @@
                 if (res.ok) {
                     const data = await res.json();
                     this.colleges = data.colleges || [];
+                } else {
+                    throw new Error('API returned ' + res.status);
                 }
             } catch (e) {
-                console.warn('[App] Could not load colleges via API:', e);
+                console.warn('[App] Could not load colleges via API, trying static fallback:', e);
+                try {
+                    const staticRes = await fetch('/data/seed/institutions.json');
+                    if (staticRes.ok) {
+                        this.colleges = await staticRes.json();
+                    }
+                } catch (err) {
+                    console.error('[App] Failed static fallback:', err);
+                }
             }
 
             try {
                 const gtRes = await fetch('/api/verify/ground-truth');
                 if (gtRes.ok) {
                     this.groundTruth = await gtRes.json();
+                } else {
+                    throw new Error('API returned ' + gtRes.status);
                 }
             } catch (e) {
-                console.warn('[App] Could not load ground truth:', e);
+                console.warn('[App] Could not load ground truth via API, trying static fallback:', e);
+                try {
+                    const staticGt = await fetch('/data/seed/ground_truth.json');
+                    if (staticGt.ok) {
+                        this.groundTruth = await staticGt.json();
+                    }
+                } catch (err) {
+                    console.error('[App] Failed static GT fallback:', err);
+                }
             }
         }
 

@@ -16,6 +16,8 @@ const auditController = require('../controllers/auditController');
 const aiAdvisoryController = require('../controllers/aiAdvisoryController');
 const reportController = require('../controllers/reportController');
 const scenarioController = require('../controllers/scenarioController');
+const collegeController = require('../controllers/collegeController');
+const verifyController = require('../controllers/verifyController');
 
 // Lightweight high-performance router compatible with Node.js http
 class SimpleRouter {
@@ -177,6 +179,12 @@ router.post('/api/ai/draft-deficiency', aiAdvisoryController.draftDeficiency.bin
 router.get('/api/reports', reportController.listReports.bind(reportController));
 router.get('/api/reports/:reportId', reportController.generate.bind(reportController));
 router.get('/api/reports/:reportId/export-csv', reportController.exportCSV.bind(reportController));
+
+// Synthetic Colleges Directory & AI Verification Studio
+router.get('/api/colleges', collegeController.list.bind(collegeController));
+router.get('/api/colleges/:id', collegeController.getById.bind(collegeController));
+router.get('/api/verify/ground-truth', verifyController.getGroundTruth.bind(verifyController));
+router.post('/api/verify/document', verifyController.verifyDocument.bind(verifyController));
 
 // Demonstrations & Test Scenarios 1-10
 router.get('/api/scenarios', scenarioController.listScenarios.bind(scenarioController));

@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "outputDirectory": "public",
+  "cleanUrls": true,
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/index.js"
+    },
+    {
+      "source": "/((?!api/|styles/|js/|images/|seed/|data/|favicon.ico).*)",
+      "destination": "/index.html"
+    }
+  ]
+}

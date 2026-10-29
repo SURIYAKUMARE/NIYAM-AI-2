@@ -4,157 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NIYAM AI — Integrated AICTE Approval Workflow & Compliance Monitoring System</title>
+    <link rel="icon" type="image/png" href="/images/aicte-logo.png">
+    
+    <!-- Theme Early Evaluator to eliminate visual flicker -->
+    <script>
+        (function() {
+            try {
+                const savedTheme = localStorage.getItem('niyam-theme');
+                const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+            } catch (e) {}
+        })();
+    </script>
+    
     <link rel="stylesheet" href="/styles/theme.css">
 </head>
 <body>
-    <!-- Indian National Tricolor Top Bar -->
-    <div class="gov-tricolor-bar"></div>
-
     <div id="app-root">
-        <!-- Sidebar Navigation (Section 5) -->
-        <aside class="sidebar" id="app-sidebar">
-            <div class="sidebar-header">
-                <div class="sidebar-crest">
-                    <!-- Authentic AICTE Emblem Representation -->
-                    <svg viewBox="0 0 100 100" width="32" height="32" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="50" cy="50" r="46" fill="#12304A" stroke="#1D4F7A" stroke-width="4"/>
-                        <circle cx="50" cy="50" r="36" fill="none" stroke="#B7791F" stroke-width="2" stroke-dasharray="3,3"/>
-                        <path d="M50 20 L58 36 L76 38 L62 50 L66 68 L50 58 L34 68 L38 50 L24 38 L42 36 Z" fill="#B7791F"/>
-                        <circle cx="50" cy="50" r="10" fill="#12304A"/>
-                        <circle cx="50" cy="50" r="4" fill="#FFFFFF"/>
-                    </svg>
-                </div>
-                <div class="sidebar-brand-text">
-                    <div class="hindi-sub">अ.भा.त.शि.प. • AICTE</div>
-                    <h1>NIYAM AI</h1>
-                    <div class="product-sub">Regulation Bureau</div>
-                </div>
-            </div>
-
-            <nav class="sidebar-nav">
-                <div class="nav-section-title">Core Operations</div>
-                <a class="nav-item active" data-view="dashboard">
-                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
-                    <span>Dashboard</span>
-                </a>
-                <a class="nav-item" data-view="applications">
-                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                    <span>Applications</span>
-                </a>
-                <a class="nav-item" data-view="scrutiny">
-                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
-                    <span>Scrutiny & Re-Scrutiny</span>
-                </a>
-                <a class="nav-item" data-view="evc">
-                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
-                    <span>EVC Management</span>
-                </a>
-                <a class="nav-item" data-view="sac_shc">
-                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"/></svg>
-                    <span>SAC/SHC Appeals</span>
-                </a>
-                <a class="nav-item" data-view="pendency">
-                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                    <span>Pendency & SLA</span>
-                </a>
-
-                <div class="nav-section-title">Compliance & Validity</div>
-                <a class="nav-item" data-view="compliance">
-                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-                    <span>Undertakings Register</span>
-                </a>
-                <a class="nav-item" data-view="documents">
-                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"/></svg>
-                    <span>Lease Validity (90d)</span>
-                </a>
-                <a class="nav-item" data-view="alerts">
-                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
-                    <span>Alerts & Escalations</span>
-                </a>
-
-                <div class="nav-section-title">Governance & Oversight</div>
-                <a class="nav-item" data-view="rules">
-                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
-                    <span>Regulatory Rules (APH)</span>
-                </a>
-                <a class="nav-item" data-view="reports">
-                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-                    <span>14 Standard Reports</span>
-                </a>
-                <a class="nav-item" data-view="audit">
-                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-                    <span>Cryptographic Audit</span>
-                </a>
-
-                <div class="nav-section-title">Demonstration Engine</div>
-                <a class="nav-item" data-view="scenarios" style="color:#F59E0B; font-weight:700;">
-                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                    <span>Demo Lab (16 Stages)</span>
-                </a>
-            </nav>
-
-            <div class="sidebar-footer">
-                <div>AICTE Approval Engine v2.4</div>
-                <div style="font-size:10px; color:#64748B; margin-top:2px;">Statutory Human Authority Reserved</div>
-            </div>
-        </aside>
-
-        <!-- Main Wrapper -->
-        <div class="main-wrapper">
-            <!-- Demonstration Prototype Unobtrusive Notice -->
-            <div class="demo-banner">
-                <span class="demo-banner-pill">Prototype Demonstration</span>
-                <span>NIYAM AI • Integrated Approval & Compliance Automation • Problem Statement ID: 26262</span>
-            </div>
-
-            <!-- Topbar Header (Section 2 & 5) -->
-            <header class="topbar" id="app-topbar">
-                <div class="topbar-left">
-                    <div>
-                        <div class="breadcrumbs">
-                            <a href="#" onclick="app.navigate('dashboard'); return false;">NIYAM AI</a>
-                            <span>/</span>
-                            <span id="breadcrumb-current">Dashboard</span>
-                        </div>
-                        <h2 class="page-title" id="page-title">Executive Overview & Real-Time KPIs</h2>
-                    </div>
-                </div>
-
-                <div class="topbar-right">
-                    <!-- Enterprise Role Switcher Simulator -->
-                    <div class="role-badge-selector">
-                        <span style="color:var(--secondary-text); font-weight:600;">Active Role:</span>
-                        <select id="user-switcher-select" title="Simulate different enterprise roles instantly"></select>
-                    </div>
-
-                    <!-- Notification Inbox Bell -->
-                    <button class="btn-icon" onclick="app.navigate('alerts')" title="Notification Center">
-                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
-                        <span class="badge-dot"></span>
-                    </button>
-
-                    <!-- Officer Profile Card & Logout -->
-                    <div class="officer-profile-card">
-                        <div class="officer-avatar" id="topbar-user-avatar">AD</div>
-                        <div class="officer-meta">
-                            <div class="officer-name" id="topbar-user-name">Dr. R. K. Shrivastava</div>
-                            <div class="officer-title" id="topbar-user-role">Super Administrator</div>
-                        </div>
-                        <button class="btn btn-outline" style="height:28px; padding:0 8px; font-size:11px; margin-left:6px;" onclick="app.logout()" title="Sign Out">
-                            Sign Out
-                        </button>
-                    </div>
-                </div>
-            </header>
-
-            <!-- Dynamic Content Area -->
-            <main class="content-container" id="content-area">
-                <!-- Content injected by app.js -->
-            </main>
-        </div>
+        <!-- Rendered by /js/app.js -->
     </div>
 
-    <!-- Application Client Scripts -->
+    <!-- Application Engine Scripts -->
     <script src="/js/api.js"></script>
     <script src="/js/app.js"></script>
 </body>

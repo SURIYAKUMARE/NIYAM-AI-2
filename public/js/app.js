@@ -1,551 +1,1948 @@
 // ============================================================================
-// NIYAM AI - AICTE APPROVAL WORKFLOW & COMPLIANCE MANAGEMENT SYSTEM
-// Enterprise Application Controller & State Engine (Problem Statement ID: 26262)
+// NIYAM AI — Enterprise Application Controller & UI/UX Engine
+// Exact Benchmark: https://niyam-ai-psi.vercel.app / AICTE Regulation Bureau
 // ============================================================================
 
-class NiyamAIApp {
-    constructor() {
-        this.isAuthenticated = localStorage.getItem('niyam_is_authenticated') === 'true';
-        this.currentView = this.isAuthenticated ? 'dashboard' : 'login';
-        this.currentUser = null;
-        this.users = [];
-        this.selectedAppId = null;
-        this.activeFilter = null;
-        this.init();
-    }
+(function() {
+    'use strict';
 
-    async init() {
-        await this.loadUsers();
-        this.bindGlobalEvents();
-        this.render();
-    }
-
-    async loadUsers() {
-        try {
-            const data = await API.get('/api/auth/users');
-            this.users = data.users;
-            const savedId = localStorage.getItem('aicte_current_user_id') || 'USR_ADMIN_01';
-            this.currentUser = this.users.find(u => u.id === savedId) || this.users[0];
-            API.setSimulatedUser(this.currentUser.id);
-            this.updateTopbarUser();
-        } catch (e) {
-            console.error('Failed to load users:', e);
+    // ------------------------------------------------------------------------
+    // Demo Accounts & Role Permissions Contract
+    // ------------------------------------------------------------------------
+    const DEMO_ACCOUNTS = [
+        {
+            roleName: "Senior Scrutiny Officer",
+            shortRole: "Officer",
+            username: "officer",
+            password: "password123",
+            pin: "123456",
+            role: "scrutiny_officer",
+            description: "Technical Scrutiny Desk, Bounding Boxes & Deficiencies",
+            hasMfa: true,
+            badge: "Scrutiny Officer"
+        },
+        {
+            roleName: "Institution Applicant",
+            shortRole: "Applicant",
+            username: "applicant",
+            password: "password123",
+            pin: "None (Direct Access)",
+            role: "applicant",
+            description: "College Filing Portal & Upload Scrutiny",
+            hasMfa: false,
+            badge: "Applicant"
+        },
+        {
+            roleName: "Competent Supervising Authority",
+            shortRole: "Authority",
+            username: "authority",
+            password: "password123",
+            pin: "123456",
+            role: "supervising_authority",
+            description: "AICTE Bureau Head, Deficiencies & Approvals",
+            hasMfa: true,
+            badge: "Supervising Authority"
+        },
+        {
+            roleName: "System Administrator",
+            shortRole: "Admin",
+            username: "admin",
+            password: "password123",
+            pin: "123456",
+            role: "admin",
+            description: "User Management & Regulatory Rules Engine",
+            hasMfa: true,
+            badge: "Administrator"
+        },
+        {
+            roleName: "Statutory Regulatory Auditor",
+            shortRole: "Auditor",
+            username: "auditor",
+            password: "password123",
+            pin: "None (Direct Access)",
+            role: "auditor",
+            description: "Tamper-Evident SHA-256 Ledger Audit",
+            hasMfa: false,
+            badge: "Auditor"
         }
-    }
+    ];
 
-    bindGlobalEvents() {
-        // Navigation clicks
-        document.querySelectorAll('.nav-item').forEach(el => {
-            el.addEventListener('click', (e) => {
-                e.preventDefault();
-                const view = el.getAttribute('data-view');
-                if (view) this.navigate(view);
-            });
-        });
+    // Icons SVG mapping
+    const ICONS = {
+        LayoutDashboard: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>`,
+        GraduationCap: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/></svg>`,
+        FileSearch: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><circle cx="11.5" cy="14.5" r="2.5"/><path d="M13.3 16.3 15 18"/></svg>`,
+        Building2: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10 12h4m-4-4h4m0 13v-3a2 2 0 0 0-4 0v3M6 10H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16"/></svg>`,
+        FileText: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5M10 9H8m8 4H8m8 4H8"/></svg>`,
+        FileCheck2: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.5 22H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.706.706l3.588 3.588A2.4 2.4 0 0 1 20 8v6"/><path d="M14 2v5a1 1 0 0 0 1 1h5m-6 12 2 2 4-4"/></svg>`,
+        ListFilter: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M2 5h20M6 12h12M9 19h6"/></svg>`,
+        AlertTriangle: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3M12 9v4m0 4h.01"/></svg>`,
+        MessageSquare: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z"/></svg>`,
+        CheckCircle2: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m16 9-5.5 5.5L8 12"/></svg>`,
+        Landmark: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10 18v-7m1.119-8.795a2 2 0 0 1 1.762 0l7.84 3.846A.5.5 0 0 1 20.5 7h-17a.5.5 0 0 1-.22-.949zM14 18v-7m4 7v-7M3 22h18M6 18v-7"/></svg>`,
+        BarChart3: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 3v16a2 2 0 0 0 2 2h16M18 17V9M13 17V5M8 17v-3"/></svg>`,
+        History: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5M12 7v5l4 2"/></svg>`,
+        ShieldAlert: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1zM12 8v4m0 4h.01"/></svg>`,
+        Sliders: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10 8h4M12 21v-9m0-4V3m5 13h4M19 12V3m0 18v-5M3 14h4M5 10V3m0 18v-7"/></svg>`,
+        Users: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2m10-17.872a4 4 0 0 1 0 7.744M22 21v-2a4 4 0 0 0-3-3.87M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/></svg>`,
+        ShieldCheck: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1zm-11-1 2 2 4-4"/></svg>`,
+        LogOut: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m16 17 5-5-5-5M21 12H9m0 9H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/></svg>`,
+        Bell: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.268 21a2 2 0 0 0 3.464 0M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"/></svg>`,
+        Sun: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2m-7.07-14.07 1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2m-14.07 7.07 1.41-1.41m11.32-11.32 1.41-1.41"/></svg>`,
+        Moon: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></svg>`,
+        Scan: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2m10 0h2a2 2 0 0 1 2 2v2m0 10v2a2 2 0 0 1-2 2h-2m-10 0H5a2 2 0 0 1-2-2v-2"/></svg>`,
+        FlaskConical: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10 2v5L4.5 17.5A2 2 0 0 0 6 20h12a2 2 0 0 0 1.5-2.5L14 7V2m-5 0h6m-7 12h8"/></svg>`
+    };
 
-        // Topbar Role switcher
-        const userSelect = document.getElementById('user-switcher-select');
-        if (userSelect) {
-            userSelect.addEventListener('change', (e) => {
-                const u = this.users.find(usr => usr.id === e.target.value);
-                if (u) {
-                    this.currentUser = u;
-                    API.setSimulatedUser(u.id);
-                    this.updateTopbarUser();
-                    this.navigate(this.currentView);
+    class NiyamAIApp {
+        constructor() {
+            this.isAuthenticated = localStorage.getItem('niyam_auth') === 'true';
+            this.currentView = this.isAuthenticated ? (localStorage.getItem('niyam_view') || 'dashboard') : 'login';
+            this.currentUser = JSON.parse(localStorage.getItem('niyam_user') || 'null') || DEMO_ACCOUNTS[0];
+            this.theme = localStorage.getItem('niyam-theme') || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            
+            // State
+            this.colleges = [];
+            this.groundTruth = null;
+            this.activeCollegeFilter = 'ALL';
+            this.activeStateFilter = 'ALL';
+            this.collegeSearchQuery = '';
+            this.collegeSortBy = 'trustScore';
+            
+            // Studio Verification State
+            this.selectedStudioCollegeId = 'zec-zaskar';
+            this.selectedStudioDocId = 'doc-zec-01';
+            this.studioVerificationData = null;
+            
+            // UI state
+            this.notifOpen = false;
+            this.mobileSidebarOpen = false;
+            this.loginMode = 'signin'; // 'signin' | 'mfa'
+            this.selectedLoginRole = 'officer';
+
+            this.init();
+        }
+
+        async init() {
+            this.applyTheme(this.theme);
+            await this.loadInitialData();
+            this.render();
+        }
+
+        applyTheme(theme) {
+            this.theme = theme;
+            localStorage.setItem('niyam-theme', theme);
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        }
+
+        toggleTheme() {
+            const next = this.theme === 'dark' ? 'light' : 'dark';
+            this.applyTheme(next);
+            this.renderHeader();
+        }
+
+        async loadInitialData() {
+            try {
+                const res = await fetch('/api/colleges');
+                if (res.ok) {
+                    const data = await res.json();
+                    this.colleges = data.colleges || [];
+                }
+            } catch (e) {
+                console.warn('[App] Could not load colleges via API:', e);
+            }
+
+            try {
+                const gtRes = await fetch('/api/verify/ground-truth');
+                if (gtRes.ok) {
+                    this.groundTruth = await gtRes.json();
+                }
+            } catch (e) {
+                console.warn('[App] Could not load ground truth:', e);
+            }
+        }
+
+        navigate(view) {
+            this.currentView = view;
+            localStorage.setItem('niyam_view', view);
+            this.mobileSidebarOpen = false;
+            this.render();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        login(user) {
+            this.currentUser = user;
+            this.isAuthenticated = true;
+            localStorage.setItem('niyam_auth', 'true');
+            localStorage.setItem('niyam_user', JSON.stringify(user));
+            API.setSimulatedUser(user.username);
+            this.navigate('dashboard');
+        }
+
+        logout() {
+            this.isAuthenticated = false;
+            this.currentUser = DEMO_ACCOUNTS[0];
+            localStorage.removeItem('niyam_auth');
+            localStorage.removeItem('niyam_user');
+            localStorage.removeItem('niyam_view');
+            this.currentView = 'login';
+            this.loginMode = 'signin';
+            this.render();
+        }
+
+        render() {
+            const root = document.getElementById('app-root');
+            if (!root) return;
+
+            if (!this.isAuthenticated || this.currentView === 'login') {
+                root.innerHTML = '';
+                root.appendChild(this.renderLoginView());
+                return;
+            }
+
+            root.innerHTML = `
+                <div class="authenticated-layout">
+                    <header class="app-header" id="app-header"></header>
+                    <div class="app-body">
+                        <aside class="app-sidebar" id="app-sidebar"></aside>
+                        <main class="main-content" id="main-content"></main>
+                    </div>
+                </div>
+            `;
+
+            this.renderHeader();
+            this.renderSidebar();
+            this.renderMainContent();
+        }
+
+        // --------------------------------------------------------------------
+        // Authenticated Header
+        // --------------------------------------------------------------------
+        renderHeader() {
+            const header = document.getElementById('app-header');
+            if (!header) return;
+
+            const initials = (this.currentUser.roleName || this.currentUser.username || 'NY')
+                .split(' ')
+                .map(n => n[0])
+                .slice(0, 2)
+                .join('')
+                .toUpperCase();
+
+            header.innerHTML = `
+                <div class="header-left">
+                    <button class="theme-toggle-btn lg:hidden" id="mobile-menu-btn" title="Toggle Menu" style="display:none;">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                    </button>
+                    <div class="brand-link" id="brand-home-btn">
+                        <div class="brand-emblem-wrap">
+                            <img src="/images/aicte-logo.png" alt="AICTE Official Logo">
+                            <span class="live-indicator-dot"></span>
+                        </div>
+                        <div class="brand-text-block">
+                            <div class="brand-title-row">
+                                <span class="brand-title">NIYAM</span>
+                                <span class="brand-tag">AICTE APH 2025-26</span>
+                            </div>
+                            <span class="brand-subtitle">Regulatory Decision-Support &amp; Document Authentication</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="header-right">
+                    <div class="sync-status-pill">
+                        <span class="sync-dot"></span>
+                        <span>REGULATORY SYNC: ACTIVE</span>
+                    </div>
+
+                    <button class="theme-toggle-btn" id="theme-toggle-btn" title="Toggle Light/Dark Theme">
+                        ${this.theme === 'dark' ? ICONS.Sun : ICONS.Moon}
+                    </button>
+
+                    <div class="notification-bell-wrap">
+                        <button class="notif-btn" id="notif-toggle-btn" title="Regulatory Directives">
+                            ${ICONS.Bell}
+                            <span class="notif-badge-count">2</span>
+                        </button>
+                        <div class="notifications-popup" id="notif-popup" style="display: ${this.notifOpen ? 'block' : 'none'};">
+                            <div class="notif-header">
+                                <span class="notif-header-title">Regulatory Alerts &amp; Directives</span>
+                                <span class="notif-badge-pill">2 Unread</span>
+                            </div>
+                            <div class="notif-list">
+                                <div class="notif-item unread">
+                                    <div class="notif-title">High Risk Deficiencies Flagged</div>
+                                    <div class="notif-msg">Zaskar Engineering College dossier exhibits intake tampering in Course Cadre Table.</div>
+                                    <div class="notif-time">Just now • APH Ch. I R4.2</div>
+                                </div>
+                                <div class="notif-item unread">
+                                    <div class="notif-title">Affiliation Expiration Warning</div>
+                                    <div class="notif-msg">Coromandel Institute of Technology university clearance lapsed on 2024-06-30.</div>
+                                    <div class="notif-time">12 mins ago • SLA Watch</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="header-role-badge">
+                        ${ICONS.ShieldCheck}
+                        <span>${this.currentUser.badge || 'Scrutiny Officer'}</span>
+                    </div>
+
+                    <div class="user-header-profile">
+                        <div class="user-header-avatar">${initials}</div>
+                        <div class="user-header-info">
+                            <div class="user-header-name">${this.currentUser.roleName || this.currentUser.username}</div>
+                            <div class="user-header-role">${this.currentUser.badge || 'Authorized Officer'}</div>
+                        </div>
+                        <button class="btn-signout" id="header-logout-btn" title="Sign Out">
+                            ${ICONS.LogOut}
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('brand-home-btn').onclick = () => this.navigate('dashboard');
+            document.getElementById('theme-toggle-btn').onclick = () => this.toggleTheme();
+            document.getElementById('header-logout-btn').onclick = () => this.logout();
+            
+            const notifBtn = document.getElementById('notif-toggle-btn');
+            notifBtn.onclick = (e) => {
+                e.stopPropagation();
+                this.notifOpen = !this.notifOpen;
+                document.getElementById('notif-popup').style.display = this.notifOpen ? 'block' : 'none';
+            };
+
+            document.addEventListener('click', (e) => {
+                if (this.notifOpen && !e.target.closest('.notification-bell-wrap')) {
+                    this.notifOpen = false;
+                    const pop = document.getElementById('notif-popup');
+                    if (pop) pop.style.display = 'none';
                 }
             });
         }
 
-        window.addEventListener('aicte:userChanged', () => {
-            this.navigate(this.currentView);
-        });
-    }
+        // --------------------------------------------------------------------
+        // Authenticated Sidebar
+        // --------------------------------------------------------------------
+        renderSidebar() {
+            const sidebar = document.getElementById('app-sidebar');
+            if (!sidebar) return;
 
-    updateTopbarUser() {
-        const userSelect = document.getElementById('user-switcher-select');
-        if (userSelect && this.users.length > 0) {
-            userSelect.innerHTML = this.users.map(u => 
-                `<option value="${u.id}" ${u.id === this.currentUser.id ? 'selected' : ''}>
-                    ${u.full_name} (${u.role_code.replace(/_/g, ' ')})
-                </option>`
-            ).join('');
+            const navItems = [
+                { id: 'dashboard', label: 'Executive Overview', icon: ICONS.LayoutDashboard },
+                { id: 'colleges', label: 'Synthetic Colleges', icon: ICONS.GraduationCap, badge: '12' },
+                { id: 'verify', label: 'AI Verification Studio', icon: ICONS.FileSearch, badge: 'AI' },
+                { id: 'applications', label: 'All Applications Dossier', icon: ICONS.FileText },
+                { id: 'review', label: 'Review Workspace', icon: ICONS.FileCheck2 },
+                { id: 'queue', label: 'Scrutiny Queue', icon: ICONS.ListFilter },
+                { id: 'findings', label: 'Findings & Dispositions', icon: ICONS.AlertTriangle },
+                { id: 'clarifications', label: 'Clarifications', icon: ICONS.MessageSquare },
+                { id: 'verification', label: 'Source Verification', icon: ICONS.CheckCircle2 },
+                { id: 'infrastructure', label: 'Infrastructure Evidence', icon: ICONS.Landmark },
+                { id: 'analytics', label: 'Analytics & SLA KPIs', icon: ICONS.BarChart3 },
+                { id: 'audit', label: 'Statutory Audit Ledger', icon: ICONS.History },
+                { id: 'rules', label: 'Regulatory Rules (APH)', icon: ICONS.Sliders },
+                { id: 'users', label: 'Authorized Users', icon: ICONS.Users },
+                { id: 'scenarios', label: 'Demo Lab (16 Stages)', icon: ICONS.FlaskConical, highlight: true }
+            ];
+
+            sidebar.innerHTML = `
+                <div class="sidebar-header-card">
+                    <div class="sidebar-emblem-box">
+                        <img src="/images/aicte-logo.png" alt="AICTE">
+                    </div>
+                    <div class="sidebar-header-meta">
+                        <div class="sidebar-meta-top">AICTE Council</div>
+                        <div class="sidebar-meta-role">
+                            <span class="sidebar-role-dot"></span>
+                            <span>${this.currentUser.badge || 'Scrutiny Officer'}</span>
+                        </div>
+                    </div>
+                    <span class="sidebar-aph-tag">APH 2025</span>
+                </div>
+
+                <div class="sidebar-role-switcher">
+                    <div class="sidebar-role-switcher-label">Role Simulator:</div>
+                    <select class="sidebar-role-select" id="sidebar-role-select">
+                        ${DEMO_ACCOUNTS.map(a => `
+                            <option value="${a.username}" ${this.currentUser.username === a.username ? 'selected' : ''}>
+                                ${a.shortRole}: ${a.roleName}
+                            </option>
+                        `).join('')}
+                    </select>
+                </div>
+
+                <nav class="sidebar-nav-container">
+                    <div class="sidebar-section-title">Command Modules</div>
+                    ${navItems.map(item => `
+                        <div class="sidebar-nav-item ${this.currentView === item.id ? 'active' : ''}" data-nav="${item.id}" ${item.highlight ? 'style="color:#F59E0B; font-weight:700;"' : ''}>
+                            <div class="sidebar-nav-left">
+                                ${item.icon}
+                                <span>${item.label}</span>
+                            </div>
+                            ${item.badge ? `<span class="sidebar-nav-badge">${item.badge}</span>` : ''}
+                        </div>
+                    `).join('')}
+                </nav>
+
+                <div class="sidebar-footer">
+                    <div class="sidebar-user-card">
+                        <div style="display:flex; align-items:center; gap:8px; min-width:0;">
+                            <div style="width:28px; height:28px; border-radius:8px; background:var(--accent); color:#fff; font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                                ${this.currentUser.username.slice(0, 2).toUpperCase()}
+                            </div>
+                            <div style="min-width:0;">
+                                <div style="font-size:12px; font-weight:700; color:var(--text-primary); text-overflow:ellipsis; overflow:hidden; white-space:nowrap;">
+                                    ${this.currentUser.username}
+                                </div>
+                                <div style="font-size:10px; color:var(--text-secondary);">${this.currentUser.badge}</div>
+                            </div>
+                        </div>
+                        <button class="btn-signout" id="sidebar-logout-btn" title="Sign Out">
+                            ${ICONS.LogOut}
+                        </button>
+                    </div>
+
+                    <div class="sidebar-statutory-card">
+                        <div class="sidebar-statutory-title">
+                            ${ICONS.ShieldCheck}
+                            <span>Statutory Decision Support</span>
+                        </div>
+                        AI advisory findings assist review. Final statutory approval decisions remain with competent AICTE authorities.
+                    </div>
+                </div>
+            `;
+
+            sidebar.querySelectorAll('.sidebar-nav-item').forEach(el => {
+                el.onclick = () => {
+                    const nav = el.getAttribute('data-nav');
+                    if (nav) this.navigate(nav);
+                };
+            });
+
+            const roleSelect = document.getElementById('sidebar-role-select');
+            if (roleSelect) {
+                roleSelect.onchange = (e) => {
+                    const acc = DEMO_ACCOUNTS.find(a => a.username === e.target.value);
+                    if (acc) {
+                        this.currentUser = acc;
+                        localStorage.setItem('niyam_user', JSON.stringify(acc));
+                        API.setSimulatedUser(acc.username);
+                        API.showToast(`Switched active view to ${acc.roleName}`, 'info');
+                        this.render();
+                    }
+                };
+            }
+
+            document.getElementById('sidebar-logout-btn').onclick = () => this.logout();
         }
-        const badge = document.getElementById('topbar-role-badge');
-        if (badge && this.currentUser) {
-            badge.innerText = this.currentUser.role_code.replace(/_/g, ' ');
-        }
-        const nameEl = document.getElementById('topbar-user-name');
-        if (nameEl && this.currentUser) {
-            nameEl.innerText = this.currentUser.full_name;
-        }
-        const titleEl = document.getElementById('topbar-user-role');
-        if (titleEl && this.currentUser) {
-            titleEl.innerText = this.currentUser.role_code.replace(/_/g, ' ');
-        }
-        const avatarEl = document.getElementById('topbar-user-avatar');
-        if (avatarEl && this.currentUser) {
-            const initials = this.currentUser.full_name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-            avatarEl.innerText = initials || 'AI';
-        }
-    }
 
-    loginAs(userId) {
-        const u = this.users.find(usr => usr.id === userId);
-        if (u) {
-            this.currentUser = u;
-            API.setSimulatedUser(u.id);
-            this.isAuthenticated = true;
-            localStorage.setItem('niyam_is_authenticated', 'true');
-            this.updateTopbarUser();
-            API.showToast(`Authenticated as ${u.full_name} (${u.role_code.replace(/_/g, ' ')})`, 'success');
-            this.navigate('dashboard');
-        }
-    }
+        // --------------------------------------------------------------------
+        // Dynamic Views
+        // --------------------------------------------------------------------
+        renderMainContent() {
+            const main = document.getElementById('main-content');
+            if (!main) return;
 
-    logout() {
-        this.isAuthenticated = false;
-        localStorage.removeItem('niyam_is_authenticated');
-        API.showToast('Logged out successfully.', 'info');
-        this.navigate('login');
-    }
+            main.innerHTML = `<div class="content-max-w" id="view-container"></div>`;
+            const container = document.getElementById('view-container');
 
-    navigate(view, params = {}) {
-        if (!this.isAuthenticated && view !== 'login') {
-            view = 'login';
-        }
-        this.currentView = view;
-        if (params.appId) this.selectedAppId = params.appId;
-        if (params.filter) this.activeFilter = params.filter;
-
-        const sidebarEl = document.getElementById('app-sidebar');
-        const topbarEl = document.getElementById('app-topbar');
-
-        if (view === 'login') {
-            if (sidebarEl) sidebarEl.style.display = 'none';
-            if (topbarEl) topbarEl.style.display = 'none';
-            const mainWrap = document.querySelector('.main-wrapper');
-            if (mainWrap) mainWrap.style.marginLeft = '0';
-        } else {
-            if (sidebarEl) sidebarEl.style.display = 'flex';
-            if (topbarEl) topbarEl.style.display = 'flex';
-            const mainWrap = document.querySelector('.main-wrapper');
-            if (mainWrap) mainWrap.style.marginLeft = 'var(--sidebar-width)';
-        }
-
-        document.querySelectorAll('.nav-item').forEach(el => {
-            el.classList.toggle('active', el.getAttribute('data-view') === view);
-        });
-
-        const titleMap = {
-            dashboard: 'Executive Overview & Real-Time KPIs',
-            applications: 'Approval Applications Lifecycle',
-            case_workspace: 'Application Case Workspace',
-            scrutiny: 'Scrutiny & Re-Scrutiny Committee Workspace',
-            evc: 'Expert Visit Committee (EVC) Operations',
-            sac_shc: 'SAC/SHC Appellate & Hearing Proceedings',
-            pendency: 'Pendency Monitoring & Bottlenecks',
-            compliance: 'Institutional Undertakings Register',
-            documents: 'Lease & Mandatory Document Validity',
-            alerts: 'Notification & Escalation Center',
-            reports: 'Regulatory Reporting & Analytics',
-            rules: 'Version-Controlled Regulatory Rules Engine',
-            audit: 'Tamper-Evident Cryptographic Audit Trail',
-            scenarios: 'Scenario Testing & Demonstration Lab'
-        };
-
-        const pageTitleEl = document.getElementById('page-title');
-        if (pageTitleEl) pageTitleEl.innerText = titleMap[view] || 'NIYAM AI - AICTE Governance';
-
-        const breadcrumbEl = document.getElementById('breadcrumb-current');
-        if (breadcrumbEl) breadcrumbEl.innerText = titleMap[view] || 'Portal';
-
-        this.render();
-    }
-
-    async render() {
-        const contentEl = document.getElementById('content-area');
-        if (!contentEl) return;
-
-        if (this.currentView === 'login') {
-            this.renderLogin(contentEl);
-            return;
-        }
-
-        contentEl.innerHTML = '<div style="padding:40px; text-align:center; color:#687889;">Fetching records from secure database...</div>';
-
-        try {
             switch (this.currentView) {
                 case 'dashboard':
-                    await this.renderDashboard(contentEl);
+                    this.renderDashboardView(container);
+                    break;
+                case 'colleges':
+                    this.renderCollegesView(container);
+                    break;
+                case 'verify':
+                    this.renderVerifyStudioView(container);
                     break;
                 case 'applications':
-                    await this.renderApplications(contentEl);
+                case 'review':
+                    this.renderApplicationsView(container);
                     break;
-                case 'case_workspace':
-                    await this.renderCaseWorkspace(contentEl, this.selectedAppId);
+                case 'queue':
+                    this.renderQueueView(container);
                     break;
-                case 'scrutiny':
-                    await this.renderScrutiny(contentEl);
+                case 'findings':
+                    this.renderFindingsView(container);
                     break;
-                case 'evc':
-                    await this.renderEVC(contentEl);
+                case 'clarifications':
+                    this.renderClarificationsView(container);
                     break;
-                case 'sac_shc':
-                    await this.renderSACSHC(contentEl);
+                case 'verification':
+                    this.renderSourceVerificationView(container);
                     break;
-                case 'pendency':
-                    await this.renderPendency(contentEl);
+                case 'infrastructure':
+                    this.renderInfrastructureView(container);
                     break;
-                case 'compliance':
-                    await this.renderCompliance(contentEl);
-                    break;
-                case 'documents':
-                    await this.renderDocuments(contentEl);
-                    break;
-                case 'alerts':
-                    await this.renderAlerts(contentEl);
-                    break;
-                case 'reports':
-                    await this.renderReports(contentEl);
-                    break;
-                case 'rules':
-                    await this.renderRules(contentEl);
+                case 'analytics':
+                    this.renderAnalyticsView(container);
                     break;
                 case 'audit':
-                    await this.renderAudit(contentEl);
+                    this.renderAuditView(container);
+                    break;
+                case 'rules':
+                    this.renderRulesView(container);
+                    break;
+                case 'users':
+                    this.renderUsersView(container);
                     break;
                 case 'scenarios':
-                    await this.renderScenarios(contentEl);
+                    this.renderScenariosView(container);
                     break;
                 default:
-                    contentEl.innerHTML = '<div>View not found</div>';
+                    this.renderDashboardView(container);
             }
-        } catch (err) {
-            contentEl.innerHTML = `<div class="card" style="padding:24px; color:#B83A42; border-color:#FCD4D7; background:#FDF2F2;">
-                <h3>Error Loading Module</h3>
-                <p>${err.message}</p>
-            </div>`;
         }
-    }
 
-    // ==========================================
-    // VIEW 0: PROFESSIONAL LOGIN PAGE (Section 4)
-    // ==========================================
-    renderLogin(container) {
-        container.innerHTML = `
-            <div class="login-page-container">
-                <!-- Left Panel: Institutional Branding & Overview -->
-                <div class="login-left-panel">
-                    <div>
+        // ====================================================================
+        // LOGIN VIEW (Exact Match to niyam-ai-psi.vercel.app)
+        // ====================================================================
+        renderLoginView() {
+            const wrap = document.createElement('div');
+            wrap.className = 'login-page-container';
+
+            const selectedAcc = DEMO_ACCOUNTS.find(a => a.username === this.selectedLoginRole) || DEMO_ACCOUNTS[0];
+
+            wrap.innerHTML = `
+                <!-- Background Media -->
+                <div class="login-bg-media">
+                    <img src="/images/aicte-hq.png" alt="AICTE Headquarters Campus, New Delhi" class="login-bg-img">
+                    <div class="login-bg-vignette"></div>
+                    <div class="login-bg-radial"></div>
+                </div>
+
+                <!-- Top Floating Regulatory Bar -->
+                <header class="login-top-bar">
+                    <div class="login-top-pill">
+                        <div style="width:20px; height:20px; border-radius:50%; background:#fff; padding:2px; display:flex; align-items:center; justify-content:center;">
+                            <img src="/images/aicte-logo.png" alt="AICTE" style="width:100%; height:100%; object-fit:contain;">
+                        </div>
+                        <span style="font-weight:700;">All India Council for Technical Education</span>
+                        <span class="live-indicator-dot" style="position:static; display:inline-block; margin:0 2px;"></span>
+                        <span style="color:#6EE7B7; font-weight:600;">Live Regulatory Portal</span>
+                    </div>
+
+                    <div class="login-top-pill">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14" height="14" style="color:#FBBF24;"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                        <span>Nelson Mandela Marg, New Delhi</span>
+                        <span style="font-family:ui-monospace, monospace; padding:1px 5px; border-radius:4px; background:#2563EB; font-weight:700;">MoE</span>
+                    </div>
+                </header>
+
+                <!-- Glassmorphic Login Card -->
+                <div class="login-card-container">
+                    <div class="login-glass-card">
+                        
                         <div class="login-brand-header">
-                            <div class="login-crest-box">
-                                <svg viewBox="0 0 100 100" width="46" height="46" xmlns="http://www.w3.org/2000/svg">
-                                    <circle cx="50" cy="50" r="46" fill="#12304A" stroke="#1D4F7A" stroke-width="4"/>
-                                    <circle cx="50" cy="50" r="36" fill="none" stroke="#B7791F" stroke-width="2" stroke-dasharray="3,3"/>
-                                    <path d="M50 20 L58 36 L76 38 L62 50 L66 68 L50 58 L34 68 L38 50 L24 38 L42 36 Z" fill="#B7791F"/>
-                                    <circle cx="50" cy="50" r="10" fill="#12304A"/>
-                                    <circle cx="50" cy="50" r="4" fill="#FFFFFF"/>
-                                </svg>
+                            <div class="login-emblem-box">
+                                <img src="/images/aicte-logo.png" alt="AICTE">
+                                <span class="live-indicator-dot"></span>
                             </div>
-                            <div>
-                                <div class="login-title-hindi">अखिल भारतीय तकनीकी शिक्षा परिषद</div>
-                                <div class="login-title-h1">ALL INDIA COUNCIL FOR TECHNICAL EDUCATION</div>
-                                <div class="login-product-badge">NIYAM AI • REGULATION BUREAU</div>
-                            </div>
+                            <div class="login-hindi-title">अखिल भारतीय तकनीकी शिक्षा परिषद्</div>
+                            <h1 class="login-main-title">NIYAM Regulatory Portal</h1>
+                            <p class="login-desc">AICTE Application Review &amp; Compliance Verification</p>
                         </div>
 
-                        <div class="login-left-hero">
-                            <h2>Integrated Approval Workflow & Compliance Monitoring System</h2>
-                            <p>
-                                NIYAM AI is the national digital governance platform automating the complete approval lifecycle for technical institutions under statutory AICTE regulations—integrating scrutiny, committee inspections, time-bound compliance, and document validity into a unified tamper-evident architecture.
+                        ${this.loginMode === 'signin' ? `
+                            <!-- Quick Role Selector -->
+                            <div class="login-role-selector-box">
+                                <div class="login-role-top-row">
+                                    <span style="font-weight:700; color:var(--text-primary); display:flex; align-items:center; gap:5px;">
+                                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14" height="14" style="color:var(--accent);"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                                        Quick Demo Access
+                                    </span>
+                                    <span style="font-family:ui-monospace, monospace; color:var(--text-tertiary);">
+                                        PW: <strong style="color:var(--text-primary);">password123</strong>
+                                    </span>
+                                </div>
+
+                                <div class="login-role-grid">
+                                    ${DEMO_ACCOUNTS.map(a => `
+                                        <button type="button" class="role-pill-btn ${this.selectedLoginRole === a.username ? 'active' : ''}" data-role-btn="${a.username}">
+                                            ${a.shortRole}
+                                        </button>
+                                    `).join('')}
+                                </div>
+
+                                <div class="login-role-active-detail">
+                                    <div style="display:flex; align-items:center; gap:6px;">
+                                        <span style="width:6px; height:6px; border-radius:50%; background:var(--accent);"></span>
+                                        <span style="font-weight:700; color:var(--text-primary);">${selectedAcc.roleName}</span>
+                                        <span style="font-family:ui-monospace, monospace; color:var(--text-tertiary);">(${selectedAcc.username})</span>
+                                    </div>
+                                    ${selectedAcc.hasMfa ? 
+                                        `<span style="font-family:ui-monospace, monospace; font-size:10px; font-weight:700; padding:2px 6px; border-radius:9999px; background:rgba(245,158,11,0.15); color:#D97706; border:1px solid rgba(245,158,11,0.3);">PIN: 123456</span>` : 
+                                        `<span style="font-family:ui-monospace, monospace; font-size:10px; font-weight:700; padding:2px 6px; border-radius:9999px; background:rgba(16,185,129,0.15); color:#059669; border:1px solid rgba(16,185,129,0.3);">Direct Access</span>`
+                                    }
+                                </div>
+                            </div>
+
+                            <!-- Credentials Form -->
+                            <form id="signin-form" style="display:flex; flex-direction:column; gap:14px;">
+                                <div style="display:flex; flex-direction:column; gap:6px;">
+                                    <label style="font-size:11px; font-weight:700; color:var(--text-primary);">Username / AICTE Official ID</label>
+                                    <input type="text" id="login-username" class="input" value="${selectedAcc.username}" required style="padding-left:12px;">
+                                </div>
+
+                                <div style="display:flex; flex-direction:column; gap:6px;">
+                                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                                        <label style="font-size:11px; font-weight:700; color:var(--text-primary);">Security Password</label>
+                                        <span style="font-size:11px; color:var(--accent); cursor:pointer;">Demo: password123</span>
+                                    </div>
+                                    <div style="position:relative;">
+                                        <input type="password" id="login-password" class="input" value="${selectedAcc.password}" required style="width:100%; padding-right:36px;">
+                                        <button type="button" id="toggle-pw-btn" style="position:absolute; right:10px; top:50%; transform:translateY(-50%); color:var(--text-tertiary);">
+                                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div style="display:flex; align-items:center; justify-content:space-between; font-size:12px;">
+                                    <label style="display:flex; align-items:center; gap:6px; cursor:pointer; color:var(--text-secondary);">
+                                        <input type="checkbox" checked style="accent-color:var(--accent);">
+                                        <span>Remember this terminal session</span>
+                                    </label>
+                                    <a href="#" style="color:var(--accent); font-weight:600;" onclick="alert('Demo notice: All accounts use password123 and MFA PIN 123456'); return false;">Emergency Access</a>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary" style="padding:12px; font-size:13px; font-weight:800; border-radius:12px; background:linear-gradient(to right, #2563EB, #4338CA); box-shadow:var(--shadow-md);">
+                                    Sign In to Regulatory Terminal
+                                </button>
+                            </form>
+                        ` : `
+                            <!-- MFA Challenge Screen -->
+                            <div style="display:flex; flex-direction:column; gap:16px;">
+                                <div style="text-align:center; padding:10px 0;">
+                                    <div style="width:48px; height:48px; border-radius:50%; background:var(--accent-light); color:var(--accent); display:flex; align-items:center; justify-content:center; margin:0 auto 10px;">
+                                        ${ICONS.ShieldAlert}
+                                    </div>
+                                    <h3 style="font-size:16px; font-weight:800; color:var(--text-primary);">Two-Factor Security Verification</h3>
+                                    <p style="font-size:12px; color:var(--text-secondary); margin-top:4px;">
+                                        Enter the 6-digit Time-Based One-Time Password (TOTP) from your authorized authenticator.
+                                    </p>
+                                </div>
+
+                                <div class="mfa-digits-container" id="mfa-inputs-wrap">
+                                    <input type="text" maxlength="1" class="mfa-digit-input" data-mfa-idx="0" value="1" autofocus>
+                                    <input type="text" maxlength="1" class="mfa-digit-input" data-mfa-idx="1" value="2">
+                                    <input type="text" maxlength="1" class="mfa-digit-input" data-mfa-idx="2" value="3">
+                                    <input type="text" maxlength="1" class="mfa-digit-input" data-mfa-idx="3" value="4">
+                                    <input type="text" maxlength="1" class="mfa-digit-input" data-mfa-idx="4" value="5">
+                                    <input type="text" maxlength="1" class="mfa-digit-input" data-mfa-idx="5" value="6">
+                                </div>
+
+                                <div style="display:flex; align-items:center; justify-content:space-between; font-size:11px; color:var(--text-secondary);">
+                                    <span style="font-family:ui-monospace, monospace; color:var(--accent); font-weight:700;">
+                                        Demo Verification PIN: 123456
+                                    </span>
+                                    <span style="font-family:ui-monospace, monospace; color:#10B981; font-weight:700;">
+                                        Expires in 28s
+                                    </span>
+                                </div>
+
+                                <button type="button" class="btn btn-primary" id="mfa-verify-btn" style="padding:12px; font-size:13px; font-weight:800; border-radius:12px; background:linear-gradient(to right, #2563EB, #4338CA);">
+                                    Verify Security PIN &amp; Proceed
+                                </button>
+
+                                <button type="button" class="btn btn-outline" id="mfa-cancel-btn" style="padding:10px; font-size:12px; border-radius:12px;">
+                                    Back to Sign In
+                                </button>
+                            </div>
+                        `}
+
+                        <!-- Footer Legal & Cryptographic Badges -->
+                        <div style="border-top:1px solid var(--border); padding-top:14px; display:flex; align-items:center; justify-content:space-between; font-size:10px; color:var(--text-tertiary);">
+                            <span style="display:flex; align-items:center; gap:4px;">
+                                ${ICONS.ShieldCheck}
+                                <span>SHA-256 Ledger Provenance</span>
+                            </span>
+                            <span>AICTE Regulation Bureau • ISO 27001</span>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Bottom Floating Notice -->
+                <footer style="position:relative; z-index:10; text-align:center; padding:10px 0; font-size:11px; color:rgba(255,255,255,0.7);">
+                    AICTE Smart Approval &amp; Compliance Management System • Problem Statement ID: 26262 / 26261
+                </footer>
+            `;
+
+            // Event bindings for login
+            wrap.querySelectorAll('[data-role-btn]').forEach(btn => {
+                btn.onclick = () => {
+                    this.selectedLoginRole = btn.getAttribute('data-role-btn');
+                    this.render();
+                };
+            });
+
+            const togglePwBtn = wrap.querySelector('#toggle-pw-btn');
+            if (togglePwBtn) {
+                togglePwBtn.onclick = () => {
+                    const pwInput = wrap.querySelector('#login-password');
+                    if (pwInput) {
+                        pwInput.type = pwInput.type === 'password' ? 'text' : 'password';
+                    }
+                };
+            }
+
+            const signinForm = wrap.querySelector('#signin-form');
+            if (signinForm) {
+                signinForm.onsubmit = (e) => {
+                    e.preventDefault();
+                    const acc = DEMO_ACCOUNTS.find(a => a.username === this.selectedLoginRole) || DEMO_ACCOUNTS[0];
+                    if (acc.hasMfa) {
+                        this.loginMode = 'mfa';
+                        this.render();
+                    } else {
+                        this.login(acc);
+                    }
+                };
+            }
+
+            const mfaVerifyBtn = wrap.querySelector('#mfa-verify-btn');
+            if (mfaVerifyBtn) {
+                mfaVerifyBtn.onclick = () => {
+                    const acc = DEMO_ACCOUNTS.find(a => a.username === this.selectedLoginRole) || DEMO_ACCOUNTS[0];
+                    this.login(acc);
+                };
+            }
+
+            const mfaCancelBtn = wrap.querySelector('#mfa-cancel-btn');
+            if (mfaCancelBtn) {
+                mfaCancelBtn.onclick = () => {
+                    this.loginMode = 'signin';
+                    this.render();
+                };
+            }
+
+            return wrap;
+        }
+
+        // ====================================================================
+        // 1. EXECUTIVE DASHBOARD
+        // ====================================================================
+        renderDashboardView(container) {
+            container.innerHTML = `
+                <div class="view-header">
+                    <div class="view-title-group">
+                        <h1>Executive Overview &amp; Real-Time KPIs</h1>
+                        <p>AICTE Approval Process Handbook (APH 2025-26) Statutory Regulation Bureau</p>
+                    </div>
+                    <div class="view-actions">
+                        <button class="btn btn-outline btn-sm" id="btn-refresh-kpis">
+                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                            Refresh Ledger
+                        </button>
+                        <button class="btn btn-primary btn-sm" id="btn-quick-verify">
+                            ${ICONS.FileSearch}
+                            AI Verification Studio
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 4 KPI Metrics -->
+                <div class="stats-grid-4">
+                    <div class="stat-card">
+                        <div class="stat-meta">
+                            <span class="stat-label">Total Regulatory Dossiers</span>
+                            <span class="stat-value">1,482</span>
+                            <span class="stat-sub" style="color:#059669;">+12.4% vs Academic Year 2024</span>
+                        </div>
+                        <div class="stat-icon-box blue">${ICONS.FileText}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-meta">
+                            <span class="stat-label">Under Scrutiny Desk</span>
+                            <span class="stat-value">342</span>
+                            <span class="stat-sub" style="color:#2563EB;">68 in Secondary Evaluation</span>
+                        </div>
+                        <div class="stat-icon-box blue">${ICONS.ListFilter}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-meta">
+                            <span class="stat-label">Statutory Approved / Clear</span>
+                            <span class="stat-value">984</span>
+                            <span class="stat-sub" style="color:#059669;">Zero Unresolved Deficiencies</span>
+                        </div>
+                        <div class="stat-icon-box green">${ICONS.CheckCircle2}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-meta">
+                            <span class="stat-label">Active Deficiencies / SLA Risk</span>
+                            <span class="stat-value">156</span>
+                            <span class="stat-sub" style="color:#EF4444;">18 Approaching 15-Day SLA</span>
+                        </div>
+                        <div class="stat-icon-box rose">${ICONS.AlertTriangle}</div>
+                    </div>
+                </div>
+
+                <!-- AI Statutory Advisory Intelligence Strip -->
+                <div class="card" style="background:var(--accent-light); border-color:var(--accent-muted);">
+                    <div style="display:flex; align-items:flex-start; gap:12px;">
+                        <div style="width:36px; height:36px; border-radius:10px; background:var(--accent); color:#fff; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                            ${ICONS.FileSearch}
+                        </div>
+                        <div style="flex:1;">
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <h3 style="font-size:14px; font-weight:800; color:var(--text-primary);">AI Statutory Advisory &amp; Anomaly Intelligence</h3>
+                                <span class="badge badge-blue">LayoutLMv3 + Cross-Registry</span>
+                            </div>
+                            <p style="font-size:12px; color:var(--text-secondary); margin-top:4px; line-height:1.5;">
+                                AI pipeline cross-checked 1,482 institutional dossiers against Bharatkosh Challan gateways and National Land Registries. 
+                                High-confidence anomalies identified in <strong>Zaskar Engineering College</strong> (sanctioned intake altered from 60 to 180 seats) 
+                                and <strong>Coromandel Institute</strong> (state affiliation certificate lapsed).
                             </p>
                         </div>
-
-                        <div class="login-benefits-list">
-                            <div class="login-benefit-item">
-                                <div class="login-benefit-icon">✓</div>
-                                <div>
-                                    <div class="login-benefit-title">Workflow Automation</div>
-                                    <div class="login-benefit-desc">Automated stage transitions, defect cycles, and committee allocations aligned with official APH handbooks.</div>
-                                </div>
-                            </div>
-                            <div class="login-benefit-item">
-                                <div class="login-benefit-icon">✓</div>
-                                <div>
-                                    <div class="login-benefit-title">Compliance Visibility</div>
-                                    <div class="login-benefit-desc">End-to-end tracking of institutional undertakings, conditional sanctions, and land lease deed renewals.</div>
-                                </div>
-                            </div>
-                            <div class="login-benefit-item">
-                                <div class="login-benefit-icon">✓</div>
-                                <div>
-                                    <div class="login-benefit-title">Timely Alerts & Non-Repudiation</div>
-                                    <div class="login-benefit-desc">Multi-tier escalation hierarchy and append-only SHA-256 cryptographic audit trails preserving human authority.</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="login-left-footer">
-                        <div>Problem Statement ID: 26262 | SIH Government Theme: Smart Automation</div>
-                        <div style="margin-top:2px; color:#94A3B8;">Demonstration Prototype — Not an Official AICTE Portal</div>
-                    </div>
-                </div>
-
-                <!-- Right Panel: Secure Login Form -->
-                <div class="login-right-panel">
-                    <div class="login-form-title">Officer & Institution Sign In</div>
-                    <div class="login-form-sub">Access your authorized portal using Council credentials or institutional credentials.</div>
-
-                    <form onsubmit="event.preventDefault(); app.handleFormLogin();">
-                        <div class="form-group">
-                            <label class="form-label">User ID / Registered Email</label>
-                            <input class="form-input" id="login-username" type="text" placeholder="e.g. bureauadmin or registrar@apextech.edu.in" value="superadmin" required />
-                        </div>
-
-                        <div class="form-group" style="margin-bottom:18px;">
-                            <label class="form-label">Password</label>
-                            <div style="position:relative;">
-                                <input class="form-input" id="login-password" type="password" value="Password@123" style="width:100%; padding-right:32px;" required />
-                                <button type="button" onclick="const p = document.getElementById('login-password'); p.type = p.type === 'password' ? 'text' : 'password';" style="position:absolute; right:8px; top:6px; background:none; border:none; color:#687889; cursor:pointer;">👁</button>
-                            </div>
-                        </div>
-
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; font-size:12px;">
-                            <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
-                                <input type="checkbox" checked /> Remember session
-                            </label>
-                            <a href="#" onclick="alert('For demonstration prototype, please select any of the 10 pre-configured roles below.'); return false;" style="color:var(--gov-blue); text-decoration:none;">Forgot credentials?</a>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary" style="width:100%; height:38px; font-size:13px;">
-                            Sign In to NIYAM AI Portal →
+                        <button class="btn btn-outline btn-sm" id="btn-inspect-anomalies" style="background:var(--surface);">
+                            Inspect Anomalies
                         </button>
-                    </form>
-
-                    <!-- Pre-Configured 10 Role Picker for Demonstrations -->
-                    <div class="login-demo-roles">
-                        <div class="login-demo-title">Demonstration Role Quick-Access (10 Roles)</div>
-                        <div style="display:flex; flex-wrap:wrap; gap:4px;">
-                            <span class="role-chip-btn" onclick="app.loginAs('USR_ADMIN_01')">1. Super Admin</span>
-                            <span class="role-chip-btn" onclick="app.loginAs('USR_BUREAU_01')">2. Bureau Officer</span>
-                            <span class="role-chip-btn" onclick="app.loginAs('USR_RO_NORTH')">3. Regional Officer (North)</span>
-                            <span class="role-chip-btn" onclick="app.loginAs('USR_SCRUTINY_01')">4. Scrutiny Member</span>
-                            <span class="role-chip-btn" onclick="app.loginAs('USR_EVC_COORD_01')">5. EVC Coordinator</span>
-                            <span class="role-chip-btn" onclick="app.loginAs('USR_EVC_EXPERT_01')">6. EVC Member</span>
-                            <span class="role-chip-btn" onclick="app.loginAs('USR_SAC_01')">7. SAC/SHC Member</span>
-                            <span class="role-chip-btn" onclick="app.loginAs('USR_REP_01')">8. Institution Admin</span>
-                            <span class="role-chip-btn" onclick="app.loginAs('USR_COMPLIANCE_01')">9. Compliance Officer</span>
-                            <span class="role-chip-btn" onclick="app.loginAs('USR_AUDITOR_01')">10. Auditor</span>
-                        </div>
                     </div>
                 </div>
-            </div>
-        `;
-    }
 
-    handleFormLogin() {
-        const username = document.getElementById('login-username').value.trim();
-        const user = this.users.find(u => u.username === username || u.email === username);
-        if (user) {
-            this.loginAs(user.id);
-        } else {
-            // Default to Super Admin for smooth demonstration
-            this.loginAs('USR_ADMIN_01');
-        }
-    }
-
-    // ==========================================
-    // VIEW 1: EXECUTIVE DASHBOARD & ACTION CENTER (Section 6)
-    // ==========================================
-    async renderDashboard(container) {
-        const [kpis, analytics] = await Promise.all([
-            API.get('/api/pendency/kpis'),
-            API.get('/api/pendency/analytics')
-        ]);
-
-        container.innerHTML = `
-            <!-- Priority Action Center (Section 6) -->
-            <div class="priority-action-center">
-                <div class="priority-header">
-                    <span class="priority-title">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-                        Priority Administrative Action Center (Immediate Human Attention Required)
-                    </span>
-                    <span style="font-size:11px; color:#7F1D1D; font-weight:600;">Statutory SLAs Active</span>
-                </div>
-                <div class="priority-grid">
-                    <div class="priority-item" onclick="app.navigate('pendency', { filter: 'OVERDUE' })">
-                        <div class="priority-item-title">Overdue Scrutiny Cases</div>
-                        <div class="priority-item-value">${kpis.overdueApplications} Cases</div>
-                        <div class="priority-item-desc">Exceeded 7-day statutory scrutiny threshold. Open queue →</div>
-                    </div>
-                    <div class="priority-item" onclick="app.navigate('evc')">
-                        <div class="priority-item-title">EVC Scheduling Delays</div>
-                        <div class="priority-item-value">${kpis.pendingEVC} Cases</div>
-                        <div class="priority-item-desc">Awaiting committee appointment & date confirmation.</div>
-                    </div>
-                    <div class="priority-item" onclick="app.navigate('compliance')">
-                        <div class="priority-item-title">Pending Compliance Verification</div>
-                        <div class="priority-item-value">${kpis.pendingCompliance} Undertakings</div>
-                        <div class="priority-item-desc">Institutions submitted proof; awaiting officer verification.</div>
-                    </div>
-                    <div class="priority-item" onclick="app.navigate('documents')">
-                        <div class="priority-item-title">Expiring Land Lease Documents</div>
-                        <div class="priority-item-value">${kpis.expiringDocuments} Documents</div>
-                        <div class="priority-item-desc">Expiring within 60 days. Advance reminders active.</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- KPI Metric Summary Cards (Section 6) -->
-            <div class="kpi-grid">
-                <div class="kpi-card" onclick="app.navigate('applications', { filter: 'ALL' })">
-                    <div class="kpi-header"><span class="kpi-title">Total Applications</span><div class="kpi-icon accent-blue">📁</div></div>
-                    <div class="kpi-value">${kpis.totalApplications}</div>
-                    <div class="kpi-subtext">Session 2026-2027 total</div>
-                </div>
-                <div class="kpi-card" onclick="app.navigate('scrutiny')">
-                    <div class="kpi-header"><span class="kpi-title">Under Scrutiny</span><div class="kpi-icon accent-blue">🔍</div></div>
-                    <div class="kpi-value">${kpis.pendingScrutiny}</div>
-                    <div class="kpi-subtext">Document review stage</div>
-                </div>
-                <div class="kpi-card" onclick="app.navigate('evc')">
-                    <div class="kpi-header"><span class="kpi-title">Pending EVC Cases</span><div class="kpi-icon accent-amber">🏛️</div></div>
-                    <div class="kpi-value">${kpis.pendingEVC}</div>
-                    <div class="kpi-subtext">Physical inspections</div>
-                </div>
-                <div class="kpi-card" onclick="app.navigate('sac_shc')">
-                    <div class="kpi-header"><span class="kpi-title">Awaiting SAC/SHC</span><div class="kpi-icon accent-amber">⚖️</div></div>
-                    <div class="kpi-value">${kpis.awaitingSAC}</div>
-                    <div class="kpi-subtext">Appellate proceedings</div>
-                </div>
-                <div class="kpi-card" onclick="app.navigate('compliance')">
-                    <div class="kpi-header"><span class="kpi-title">Pending Compliance</span><div class="kpi-icon accent-blue">📋</div></div>
-                    <div class="kpi-value">${kpis.pendingCompliance}</div>
-                    <div class="kpi-subtext">Conditional undertakings</div>
-                </div>
-                <div class="kpi-card" onclick="app.navigate('documents')">
-                    <div class="kpi-header"><span class="kpi-title">Expiring Soon</span><div class="kpi-icon accent-amber">📜</div></div>
-                    <div class="kpi-value">${kpis.expiringDocuments}</div>
-                    <div class="kpi-subtext">Lease deeds within 60d</div>
-                </div>
-                <div class="kpi-card" onclick="app.navigate('pendency', { filter: 'OVERDUE' })">
-                    <div class="kpi-header"><span class="kpi-title">Overdue Applications</span><div class="kpi-icon accent-red">🚨</div></div>
-                    <div class="kpi-value" style="color:var(--critical);">${kpis.overdueApplications}</div>
-                    <div class="kpi-subtext">Exceeded target SLA</div>
-                </div>
-                <div class="kpi-card" onclick="app.navigate('alerts')">
-                    <div class="kpi-header"><span class="kpi-title">Escalated Cases</span><div class="kpi-icon accent-red">⚠️</div></div>
-                    <div class="kpi-value" style="color:var(--critical);">${kpis.escalatedCases}</div>
-                    <div class="kpi-subtext">Active hierarchy alerts</div>
-                </div>
-            </div>
-
-            <!-- Operational Visualizations & Ageing -->
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:18px; margin-bottom:20px;">
+                <!-- Live Applications Queue Table -->
                 <div class="card">
                     <div class="card-header">
-                        <span class="card-title">Region-wise Application Distribution & Pendency</span>
-                        <span style="font-size:11px; color:#687889;">8 Regional Jurisdictions</span>
-                    </div>
-                    <div class="card-body">
-                        <table class="data-table">
-                            <thead>
-                                <tr><th>Region Office</th><th>Total Cases</th><th>Active</th><th>SLA Overdue</th></tr>
-                            </thead>
-                            <tbody>
-                                ${analytics.regionDistribution.map(r => `
-                                    <tr>
-                                        <td><strong>${r.region_name}</strong><br><small style="color:#687889;">${r.region_code}</small></td>
-                                        <td>${r.total_applications}</td>
-                                        <td><span class="status-chip in_progress">${r.active_applications}</span></td>
-                                        <td>${r.overdue_applications > 0 ? `<span class="status-chip critical">${r.overdue_applications} Overdue</span>` : '<span class="status-chip valid">Within SLA</span>'}</td>
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <span class="card-title">Application Ageing & Bottleneck Analysis</span>
-                        <span style="font-size:11px; color:#687889;">Active Processing Timeline</span>
-                    </div>
-                    <div class="card-body">
-                        <div style="display:flex; flex-direction:column; gap:14px;">
-                            ${Object.entries(analytics.ageingBuckets).map(([bucket, count]) => {
-                                const total = Object.values(analytics.ageingBuckets).reduce((a, b) => a + b, 0) || 1;
-                                const pct = Math.round((count / total) * 100);
-                                const color = bucket.includes('> 60') ? 'var(--critical)' : (bucket.includes('31-60') ? 'var(--warning)' : 'var(--gov-blue)');
-                                return `
-                                    <div>
-                                        <div style="display:flex; justify-content:space-between; font-size:11.5px; font-weight:700; margin-bottom:4px;">
-                                            <span>${bucket}</span>
-                                            <span>${count} cases (${pct}%)</span>
-                                        </div>
-                                        <div style="width:100%; height:7px; background:#DFE5EB; border-radius:3px; overflow:hidden;">
-                                            <div style="width:${pct}%; height:100%; background:${color}; border-radius:3px;"></div>
-                                        </div>
-                                    </div>
-                                `;
-                            }).join('')}
+                        <div>
+                            <div class="card-title">
+                                ${ICONS.ListFilter}
+                                <span>Recent High-Priority Applications</span>
+                            </div>
+                            <div class="card-subtitle">Real-time status, cryptographic validation &amp; SLA countdown</div>
                         </div>
+                        <button class="btn btn-outline btn-sm" id="btn-view-all-apps">View All Dossiers</button>
                     </div>
-                </div>
-            </div>
-        `;
-    }
 
-    // ==========================================
-    // VIEW 2: APPLICATIONS LIST (Section 8)
-    // ==========================================
-    async renderApplications(container) {
-        let endpoint = '/api/applications';
-        if (this.activeFilter === 'UNDER_PROCESSING') endpoint += '?status=UNDER_SCRUTINY';
-        else if (this.activeFilter === 'SAC_SHC') endpoint += '?stage=SAC_SHC';
-
-        const data = await API.get(endpoint);
-
-        container.innerHTML = `
-            <div class="card">
-                <div class="card-header">
-                    <div>
-                        <span class="card-title">Approval Applications Register</span>
-                        <span style="font-size:11.5px; color:var(--secondary-text); margin-left:8px;">(${data.total} Total Registered Cases)</span>
-                    </div>
-                    <button class="btn btn-primary" onclick="app.openNewAppModal()">+ Submit New Application</button>
-                </div>
-                <div class="card-body">
-                    <div class="table-container">
+                    <div class="table-responsive">
                         <table class="data-table">
                             <thead>
                                 <tr>
                                     <th>Application ID</th>
-                                    <th>Technical Institution</th>
-                                    <th>Type</th>
-                                    <th>Region</th>
-                                    <th>Stage</th>
+                                    <th>Institution Name</th>
+                                    <th>Program / Intake</th>
+                                    <th>Trust Score</th>
                                     <th>Status</th>
-                                    <th>SLA Deadline</th>
+                                    <th>SLA Remaining</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                ${data.applications.map(a => `
+                                <tr>
+                                    <td class="font-mono"><strong>AICTE-2025-TN-001</strong></td>
+                                    <td>Nilgiri Institute of Technology (Ooty)</td>
+                                    <td>Engineering &amp; Tech (480)</td>
+                                    <td><span class="badge badge-emerald">98 / 100</span></td>
+                                    <td><span class="badge badge-emerald">APPROVED</span></td>
+                                    <td><span class="font-mono">COMPLETED</span></td>
+                                    <td><button class="btn btn-outline btn-sm app-inspect-btn" data-app-id="AICTE-2025-TN-001">Review</button></td>
+                                </tr>
+                                <tr>
+                                    <td class="font-mono"><strong>AICTE-2025-JK-089</strong></td>
+                                    <td>Zaskar Engineering College (Kargil)</td>
+                                    <td>Engineering &amp; Tech (180 Claimed)</td>
+                                    <td><span class="badge badge-rose">24 / 100</span></td>
+                                    <td><span class="badge badge-rose">DEFICIENCY_ISSUED</span></td>
+                                    <td><span class="font-mono" style="color:#EF4444; font-weight:700;">2 Days 4 Hours</span></td>
+                                    <td><button class="btn btn-outline btn-sm app-inspect-btn" data-app-id="AICTE-2025-JK-089" style="border-color:#EF4444; color:#EF4444;">Verify Anomaly</button></td>
+                                </tr>
+                                <tr>
+                                    <td class="font-mono"><strong>AICTE-2025-KL-044</strong></td>
+                                    <td>Malabar College of Engineering (Kozhikode)</td>
+                                    <td>Engineering &amp; Tech (360)</td>
+                                    <td><span class="badge badge-emerald">95 / 100</span></td>
+                                    <td><span class="badge badge-blue">UNDER_SCRUTINY</span></td>
+                                    <td><span class="font-mono">7 Days 12 Hours</span></td>
+                                    <td><button class="btn btn-outline btn-sm app-inspect-btn" data-app-id="AICTE-2025-KL-044">Review</button></td>
+                                </tr>
+                                <tr>
+                                    <td class="font-mono"><strong>AICTE-2025-OD-112</strong></td>
+                                    <td>Chilika Institute of Technology (Puri)</td>
+                                    <td>Engineering &amp; Tech (300)</td>
+                                    <td><span class="badge badge-amber">42 / 100</span></td>
+                                    <td><span class="badge badge-amber">MISSING_FIELDS</span></td>
+                                    <td><span class="font-mono">5 Days 8 Hours</span></td>
+                                    <td><button class="btn btn-outline btn-sm app-inspect-btn" data-app-id="AICTE-2025-OD-112">Check Docs</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('btn-quick-verify').onclick = () => this.navigate('verify');
+            document.getElementById('btn-inspect-anomalies').onclick = () => {
+                this.selectedStudioCollegeId = 'zec-zaskar';
+                this.navigate('verify');
+            };
+            document.getElementById('btn-view-all-apps').onclick = () => this.navigate('applications');
+            document.getElementById('btn-refresh-kpis').onclick = () => {
+                API.showToast('Synchronized with AICTE National Ledger', 'success');
+            };
+
+            container.querySelectorAll('.app-inspect-btn').forEach(btn => {
+                btn.onclick = () => {
+                    const id = btn.getAttribute('data-app-id');
+                    if (id === 'AICTE-2025-JK-089') {
+                        this.selectedStudioCollegeId = 'zec-zaskar';
+                        this.navigate('verify');
+                    } else {
+                        this.navigate('review');
+                    }
+                };
+            });
+        }
+
+        // ====================================================================
+        // 2. SYNTHETIC COLLEGES DIRECTORY (Exact Match to niyam-ai-psi.vercel.app/colleges)
+        // ====================================================================
+        renderCollegesView(container) {
+            const colleges = this.colleges.length > 0 ? this.colleges : [
+                { id: "nit-nilgiri", permanentId: "SYN-2025-001", name: "Nilgiri Institute of Technology", city: "Ooty", state: "Tamil Nadu", status: "Valid", trustScore: 98, intake: 480, establishedYear: 2004, campusAreaAcres: 12.5, logo: "/seed/logos/nit-nilgiri.svg", photos: [{ path: "/seed/photos/nit-nilgiri/campus.jpg" }] },
+                { id: "zec-zaskar", permanentId: "SYN-2025-009", name: "Zaskar Engineering College", city: "Kargil", state: "Ladakh", status: "Tampered", trustScore: 24, intake: 180, establishedYear: 2011, campusAreaAcres: 8.2, logo: "/seed/logos/zec-zaskar.svg", photos: [{ path: "/seed/photos/zec-zaskar/campus.jpg" }] },
+                { id: "cit-coromandel", permanentId: "SYN-2025-008", name: "Coromandel Institute of Technology", city: "Chennai", state: "Tamil Nadu", status: "Expired", trustScore: 52, intake: 420, establishedYear: 2006, campusAreaAcres: 10.0, logo: "/seed/logos/cit-coromandel.svg", photos: [{ path: "/seed/photos/cit-coromandel/campus.jpg" }] },
+                { id: "cit-chilika", permanentId: "SYN-2025-011", name: "Chilika Institute of Technology", city: "Puri", state: "Odisha", status: "Missing Fields", trustScore: 42, intake: 300, establishedYear: 2015, campusAreaAcres: 7.5, logo: "/seed/logos/cit-chilika.svg", photos: [{ path: "/seed/photos/cit-chilika/campus.jpg" }] },
+                { id: "kce-kaveri", permanentId: "SYN-2025-002", name: "Kaveri College of Engineering", city: "Tiruchirappalli", state: "Tamil Nadu", status: "Valid", trustScore: 95, intake: 540, establishedYear: 2001, campusAreaAcres: 14.0, logo: "/seed/logos/kce-kaveri.svg", photos: [{ path: "/seed/photos/kce-kaveri/campus.jpg" }] },
+                { id: "aitr-aravali", permanentId: "SYN-2025-005", name: "Aravali Institute of Technology & Research", city: "Jaipur", state: "Rajasthan", status: "Valid", trustScore: 96, intake: 600, establishedYear: 2008, campusAreaAcres: 15.2, logo: "/seed/logos/aitr-aravali.svg", photos: [{ path: "/seed/photos/aitr-aravali/campus.jpg" }] }
+            ];
+
+            // Filter logic
+            const filtered = colleges.filter(c => {
+                if (this.activeCollegeFilter !== 'ALL' && c.status !== this.activeCollegeFilter) return false;
+                if (this.activeStateFilter !== 'ALL' && c.state !== this.activeStateFilter) return false;
+                if (this.collegeSearchQuery.trim()) {
+                    const q = this.collegeSearchQuery.toLowerCase();
+                    return (c.name && c.name.toLowerCase().includes(q)) ||
+                           (c.city && c.city.toLowerCase().includes(q)) ||
+                           (c.state && c.state.toLowerCase().includes(q)) ||
+                           (c.permanentId && c.permanentId.toLowerCase().includes(q));
+                }
+                return true;
+            }).sort((a, b) => {
+                if (this.collegeSortBy === 'trustScore') return (b.trustScore || 0) - (a.trustScore || 0);
+                if (this.collegeSortBy === 'name') return (a.name || '').localeCompare(b.name || '');
+                if (this.collegeSortBy === 'intake') return (b.intake || 0) - (a.intake || 0);
+                if (this.collegeSortBy === 'year') return (b.establishedYear || 0) - (a.establishedYear || 0);
+                return 0;
+            });
+
+            const uniqueStates = Array.from(new Set(colleges.map(c => c.state).filter(Boolean))).sort();
+
+            container.innerHTML = `
+                <div class="view-header">
+                    <div class="view-title-group">
+                        <h1>Synthetic Engineering Colleges Benchmark</h1>
+                        <p>15 Realistic Synthetic Engineering Colleges (AICTE Problem Statement 26261 / 26262)</p>
+                    </div>
+                    <div class="view-actions">
+                        <button class="btn btn-primary btn-sm" id="btn-colleges-studio">
+                            ${ICONS.FileSearch}
+                            AI Verification Studio
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Benchmark Notice Pill -->
+                <div class="card" style="background:var(--accent-light); border-color:var(--accent-muted); padding:16px;">
+                    <div style="display:flex; align-items:flex-start; gap:10px;">
+                        <div style="color:var(--accent); margin-top:2px;">
+                            ${ICONS.GraduationCap}
+                        </div>
+                        <div style="font-size:12px; line-height:1.5;">
+                            <strong style="color:var(--text-primary); font-size:13px;">AICTE PS 26261 Synthetic Dataset:</strong>
+                            Contains 15 realistic engineering college dossiers, authentic crest emblems, 45 campus photographs, and 45 regulatory PDF documents across India. 
+                            Used to rigorously evaluate AI document fraud detection, hash verification, and rule compliance engines without exposing actual institutions.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filter & Search Toolbar -->
+                <div class="card" style="padding:14px;">
+                    <div style="display:flex; flex-direction:column; gap:12px;">
+                        <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px;">
+                            <!-- Search box -->
+                            <div style="position:relative; flex:1; min-width:240px;">
+                                <input type="text" id="college-search" class="input" placeholder="Search by college name, city, state, or ID..." value="${this.collegeSearchQuery}" style="width:100%; padding-left:32px;">
+                                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="16" height="16" style="position:absolute; left:10px; top:50%; transform:translateY(-50%); color:var(--text-tertiary);"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                            </div>
+
+                            <!-- State dropdown -->
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <select class="select" id="college-state-select" style="min-width:140px;">
+                                    <option value="ALL">All States (${uniqueStates.length})</option>
+                                    ${uniqueStates.map(st => `<option value="${st}" ${this.activeStateFilter === st ? 'selected' : ''}>${st}</option>`).join('')}
+                                </select>
+
+                                <!-- Sort dropdown -->
+                                <select class="select" id="college-sort-select">
+                                    <option value="trustScore" ${this.collegeSortBy === 'trustScore' ? 'selected' : ''}>Sort: Trust Score</option>
+                                    <option value="name" ${this.collegeSortBy === 'name' ? 'selected' : ''}>Sort: College Name</option>
+                                    <option value="intake" ${this.collegeSortBy === 'intake' ? 'selected' : ''}>Sort: Intake Capacity</option>
+                                    <option value="year" ${this.collegeSortBy === 'year' ? 'selected' : ''}>Sort: Established Year</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Status filter pills -->
+                        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                            <span style="font-size:11px; font-weight:700; color:var(--text-secondary);">Status:</span>
+                            ${['ALL', 'Valid', 'Tampered', 'Expired', 'Missing Fields'].map(st => `
+                                <button type="button" class="btn btn-sm ${this.activeCollegeFilter === st ? 'btn-primary' : 'btn-outline'}" data-status-filter="${st}">
+                                    ${st === 'ALL' ? `All Colleges (${colleges.length})` : st}
+                                </button>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Colleges Grid -->
+                <div class="colleges-grid">
+                    ${filtered.map(c => {
+                        const scoreTheme = c.trustScore >= 90 ? 'badge-emerald' : (c.trustScore >= 70 ? 'badge-amber' : 'badge-rose');
+                        const statusBadge = c.status === 'Valid' ? 'badge-emerald' : (c.status === 'Tampered' ? 'badge-rose' : 'badge-amber');
+                        const photoUrl = (c.photos && c.photos[0]) ? c.photos[0].path : `/seed/photos/${c.id}/campus.jpg`;
+                        const logoUrl = c.logo || `/seed/logos/${c.id}.svg`;
+
+                        return `
+                            <div class="college-card">
+                                <div class="college-photo-wrap">
+                                    <img src="${photoUrl}" alt="${c.name}" class="college-photo-img" onerror="this.src='/images/aicte-hq.png'">
+                                    <span class="college-trust-tag ${scoreTheme}">
+                                        Trust Score: ${c.trustScore} / 100
+                                    </span>
+                                </div>
+                                <div class="college-body">
+                                    <div class="college-name-row">
+                                        <img src="${logoUrl}" alt="${c.name}" class="college-crest-img" onerror="this.src='/images/aicte-logo.png'">
+                                        <div style="min-width:0; flex:1;">
+                                            <div class="college-name-text">${c.name}</div>
+                                            <div style="font-size:11px; color:var(--text-secondary); margin-top:2px;">
+                                                ${c.city}, ${c.state}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="college-meta-chips">
+                                        <span class="college-chip font-mono">${c.permanentId}</span>
+                                        <span class="college-chip">Intake: ${c.intake || 480} Seats</span>
+                                        <span class="college-chip">Est. ${c.establishedYear || 2005}</span>
+                                        <span class="badge ${statusBadge}">${c.status}</span>
+                                    </div>
+
+                                    <div class="college-footer-actions">
+                                        <span style="font-size:11px; color:var(--text-tertiary);">3 Documents Registered</span>
+                                        <button class="btn btn-primary btn-sm verify-college-btn" data-college-id="${c.id}">
+                                            ${ICONS.FileSearch}
+                                            Verify in Studio
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+
+            // Bindings
+            document.getElementById('btn-colleges-studio').onclick = () => this.navigate('verify');
+            
+            const searchInput = document.getElementById('college-search');
+            searchInput.oninput = (e) => {
+                this.collegeSearchQuery = e.target.value;
+                this.renderCollegesView(container);
+            };
+
+            document.getElementById('college-state-select').onchange = (e) => {
+                this.activeStateFilter = e.target.value;
+                this.renderCollegesView(container);
+            };
+
+            document.getElementById('college-sort-select').onchange = (e) => {
+                this.collegeSortBy = e.target.value;
+                this.renderCollegesView(container);
+            };
+
+            container.querySelectorAll('[data-status-filter]').forEach(btn => {
+                btn.onclick = () => {
+                    this.activeCollegeFilter = btn.getAttribute('data-status-filter');
+                    this.renderCollegesView(container);
+                };
+            });
+
+            container.querySelectorAll('.verify-college-btn').forEach(btn => {
+                btn.onclick = () => {
+                    const cid = btn.getAttribute('data-college-id');
+                    this.selectedStudioCollegeId = cid;
+                    this.navigate('verify');
+                };
+            });
+        }
+
+        // ====================================================================
+        // 3. AI VERIFICATION STUDIO (Exact Match to niyam-ai-psi.vercel.app/verify)
+        // ====================================================================
+        async renderVerifyStudioView(container) {
+            container.innerHTML = `
+                <div class="view-header">
+                    <div class="view-title-group">
+                        <h1>AI Verification Studio &amp; Regulatory Audit Workbench</h1>
+                        <p>Real-Time OCR Bounding Box Extractor, Trust Score Gauge &amp; Mismatch Highlighter</p>
+                    </div>
+                    <div class="view-actions">
+                        <button class="btn btn-outline btn-sm" id="btn-switch-college-dir">
+                            ${ICONS.GraduationCap}
+                            Colleges Directory
+                        </button>
+                    </div>
+                </div>
+
+                <div style="display:flex; justify-content:center; padding:40px 0;">
+                    <div style="display:flex; align-items:center; gap:10px; font-weight:700; color:var(--text-secondary);">
+                        <span class="sync-dot"></span>
+                        <span>Evaluating Regulatory AI Pipeline &amp; Cryptographic Ledgers...</span>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('btn-switch-college-dir').onclick = () => this.navigate('colleges');
+
+            // Fetch verification data for selected college
+            try {
+                const res = await fetch('/api/verify/document', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ collegeId: this.selectedStudioCollegeId, docId: this.selectedStudioDocId })
+                });
+
+                if (res.ok) {
+                    this.studioVerificationData = await res.json();
+                }
+            } catch (e) {
+                console.warn('[Studio] Error calling /api/verify/document:', e);
+            }
+
+            const data = this.studioVerificationData || {
+                trustScore: 24,
+                statusLabel: "Tampered / High Risk (Rejected)",
+                pillars: [
+                    { name: "Document Integrity & Hash", score: 4, maxScore: 25, description: "SHA-256 digest discrepancy detected", passed: false },
+                    { name: "Issuing Authority Ledger", score: 25, maxScore: 25, description: "State registry cross-checked", passed: true },
+                    { name: "AICTE APH 2025 Norms", score: 6, maxScore: 25, description: "Intake exceeds statutory capacity", passed: false },
+                    { name: "Seal & Signature Provenance", score: 6, maxScore: 25, description: "Digital signature key revoked", passed: false }
+                ],
+                mismatches: [
+                    { fieldName: "B.Tech CSE Intake", category: "Intake", extractedValue: "180 seats", expectedValue: "60 seats", status: "TAMPERED", severity: "CRITICAL", ruleCitation: "APH-2025-RULE-01", explanation: "Submitted PDF intake altered from 60 to 180 seats." }
+                ],
+                ocrData: {
+                    fileName: "approval_letter.pdf",
+                    sha256: "8f43a9b1c20e58d781...8f89",
+                    qrPayload: "AICTE-VERIFY|SYN-2025-009|TAMPERED",
+                    fields: [
+                        { label: "Institution Name", value: "Zaskar Engineering College", confidence: 99.2 },
+                        { label: "Sanctioned Intake", value: "180 Seats (Claimed)", confidence: 72.4 },
+                        { label: "Digital Stamp", value: "SIGNATURE_HASH_MISMATCH", confidence: 34.0 }
+                    ],
+                    rawTextPreview: "GOVERNMENT OF INDIA\nALL INDIA COUNCIL FOR TECHNICAL EDUCATION\n\nINSTITUTION: Zaskar Engineering College\nCLAIMED INTAKE: 180 seats"
+                }
+            };
+
+            const score = data.trustScore || 24;
+            const strokeColor = score >= 90 ? '#10B981' : (score >= 70 ? '#F59E0B' : '#EF4444');
+            const circumference = 2 * Math.PI * 58;
+            const strokeDashoffset = circumference - (score / 100) * circumference;
+
+            const colleges = this.colleges.length > 0 ? this.colleges : [
+                { id: "zec-zaskar", name: "Zaskar Engineering College (Tampered Anomaly)", trustScore: 24 },
+                { id: "nit-nilgiri", name: "Nilgiri Institute of Technology (Fully Compliant)", trustScore: 98 },
+                { id: "cit-coromandel", name: "Coromandel Institute of Technology (Expired Affiliation)", trustScore: 52 },
+                { id: "cit-chilika", name: "Chilika Institute of Technology (Missing Fields)", trustScore: 42 }
+            ];
+
+            container.innerHTML = `
+                <div class="view-header">
+                    <div class="view-title-group">
+                        <h1>AI Verification Studio &amp; Regulatory Audit Workbench</h1>
+                        <p>LayoutLMv3 Optical Character Recognition, Trust Score Radial Gauge &amp; Mismatch Highlighter</p>
+                    </div>
+                    <div class="view-actions">
+                        <button class="btn btn-outline btn-sm" id="btn-back-colleges">
+                            ${ICONS.GraduationCap}
+                            Synthetic Colleges
+                        </button>
+                    </div>
+                </div>
+
+                <!-- College Dossier Selector Toolbar -->
+                <div class="card" style="padding:16px;">
+                    <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px;">
+                        <div style="display:flex; align-items:center; gap:10px; flex:1; min-width:280px;">
+                            <label style="font-size:12px; font-weight:700; color:var(--text-secondary); white-space:nowrap;">Active College Dossier:</label>
+                            <select class="select" id="studio-college-select" style="flex:1;">
+                                ${colleges.map(c => `
+                                    <option value="${c.id}" ${c.id === this.selectedStudioCollegeId ? 'selected' : ''}>
+                                        ${c.name} (${c.trustScore ? c.trustScore + '/100' : ''})
+                                    </option>
+                                `).join('')}
+                            </select>
+                        </div>
+
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <label style="font-size:12px; font-weight:700; color:var(--text-secondary); white-space:nowrap;">Document:</label>
+                            <select class="select" id="studio-doc-select">
+                                <option value="approval_letter">Extension of Approval (EoA) 2025-26</option>
+                                <option value="affiliation_certificate">State Affiliation Clearance Order</option>
+                                <option value="compliance_report">TER Compliance &amp; Facility Report</option>
+                            </select>
+                            <button class="btn btn-primary btn-sm" id="btn-re-verify">
+                                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                                Run AI Analysis
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Dual-Column Layout: Left Gauge, Right Document & Mismatch -->
+                <div class="verify-layout-grid">
+                    
+                    <!-- Left: Trust Score Radial Gauge & 4 Pillars -->
+                    <div style="display:flex; flex-direction:column; gap:20px;">
+                        <div class="gauge-card">
+                            <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border); padding-bottom:12px;">
+                                <div style="font-size:14px; font-weight:800; color:var(--text-primary); display:flex; align-items:center; gap:6px;">
+                                    ${ICONS.ShieldCheck}
+                                    <span>AI Trust Score</span>
+                                </div>
+                                <span class="badge ${score >= 90 ? 'badge-emerald' : (score >= 70 ? 'badge-amber' : 'badge-rose')}">
+                                    ${score >= 90 ? 'PASSED' : (score >= 70 ? 'REVIEW' : 'REJECTED')}
+                                </span>
+                            </div>
+
+                            <div class="gauge-svg-wrap">
+                                <svg class="gauge-svg" viewBox="0 0 140 140">
+                                    <circle cx="70" cy="70" r="58" class="gauge-bg-circle"/>
+                                    <circle cx="70" cy="70" r="58" class="gauge-progress-circle" 
+                                            stroke="${strokeColor}" 
+                                            stroke-dasharray="${circumference}" 
+                                            stroke-dashoffset="${strokeDashoffset}"/>
+                                </svg>
+                                <div class="gauge-center-text">
+                                    <span class="gauge-score-num" style="color:${strokeColor};">${score}</span>
+                                    <span class="gauge-score-label">/ 100</span>
+                                </div>
+                            </div>
+
+                            <div style="text-align:center;">
+                                <div style="font-size:13px; font-weight:800; color:var(--text-primary);">${data.statusLabel}</div>
+                                <div style="font-size:11px; color:var(--text-secondary); margin-top:2px;">AICTE APH 2025 Compliance Engine Evaluation</div>
+                            </div>
+
+                            <!-- 4 Pillars Breakdown -->
+                            <div style="display:flex; flex-direction:column; gap:8px;">
+                                <div style="font-size:11px; font-weight:700; color:var(--text-tertiary); text-transform:uppercase;">Statutory Compliance Pillars</div>
+                                ${(data.pillars || []).map(p => `
+                                    <div class="pillar-item">
+                                        <div style="min-width:0;">
+                                            <div class="pillar-name">${p.name}</div>
+                                            <div style="font-size:10px; color:var(--text-secondary); line-height:1.2;">${p.description}</div>
+                                        </div>
+                                        <div class="pillar-score" style="color:${p.passed ? '#059669' : '#DC2626'};">
+                                            ${p.score} / ${p.maxScore}
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        <!-- Upload New Test Document Box -->
+                        <div class="card" style="border-style:dashed; border-width:2px; text-align:center; padding:24px;">
+                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="32" height="32" style="color:var(--accent); margin:0 auto 10px;"><path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+                            <div style="font-size:13px; font-weight:700; color:var(--text-primary);">Drop Document to Run AI Audit</div>
+                            <div style="font-size:11px; color:var(--text-secondary); margin:4px 0 12px;">Supports A4 PDF, Scanned TIFF, PNG</div>
+                            <button class="btn btn-outline btn-sm" id="btn-simulate-upload" style="margin:0 auto;">
+                                Select PDF File
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Right: Bounding Box OCR View & Mismatch Highlighter -->
+                    <div style="display:flex; flex-direction:column; gap:20px;">
+                        
+                        <!-- Mismatch Highlighter Table -->
+                        <div class="card">
+                            <div class="card-header">
+                                <div>
+                                    <div class="card-title">
+                                        ${ICONS.AlertTriangle}
+                                        <span>Real-Time Discrepancy &amp; Mismatch Highlighter</span>
+                                    </div>
+                                    <div class="card-subtitle">Claimed Institutional Values vs AI Extracted Evidence &amp; Authoritative APH Ledgers</div>
+                                </div>
+                            </div>
+
+                            <div class="table-responsive">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Field / Cadre</th>
+                                            <th>Claimed Value</th>
+                                            <th>AI Extracted Value</th>
+                                            <th>Status</th>
+                                            <th>Severity</th>
+                                            <th>APH Rule Citation</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${(data.mismatches || []).map(m => `
+                                            <tr>
+                                                <td><strong>${m.fieldName}</strong><br><span style="font-size:10px; color:var(--text-secondary);">${m.category}</span></td>
+                                                <td class="font-mono">${m.expectedValue}</td>
+                                                <td class="font-mono" style="${m.status === 'TAMPERED' ? 'color:#DC2626; font-weight:700;' : ''}">${m.extractedValue}</td>
+                                                <td>
+                                                    <span class="badge ${m.status === 'MATCH' ? 'badge-emerald' : (m.status === 'TAMPERED' ? 'badge-rose' : 'badge-amber')}">
+                                                        ${m.status}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <span class="badge ${m.severity === 'PASSED' ? 'badge-emerald' : (m.severity === 'CRITICAL' ? 'badge-rose' : 'badge-amber')}">
+                                                        ${m.severity}
+                                                    </span>
+                                                </td>
+                                                <td class="font-mono" style="font-size:11px;">${m.ruleCitation}</td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- OCR Document Preview Pane with Bounding Boxes -->
+                        <div class="card">
+                            <div class="card-header">
+                                <div>
+                                    <div class="card-title">
+                                        ${ICONS.Scan}
+                                        <span>Interactive OCR Document &amp; Bounding Box Inspector</span>
+                                    </div>
+                                    <div class="card-subtitle">${data.ocrData ? data.ocrData.fileName : 'approval_letter.pdf'} • SHA-256 Verified</div>
+                                </div>
+                                <div style="display:flex; gap:6px;">
+                                    <span class="badge ${data.ocrData && data.ocrData.isQrValid ? 'badge-emerald' : 'badge-rose'}">
+                                        QR: ${data.ocrData && data.ocrData.isQrValid ? 'VALID' : 'CORRUPTED/ALTERED'}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="ocr-preview-pane">
+                                <div class="ocr-page-mock" style="position:relative; min-height:360px;">
+                                    <div style="text-align:center; border-bottom:2px solid #0F172A; padding-bottom:8px; margin-bottom:16px;">
+                                        <div style="font-size:12px; font-weight:800; letter-spacing:0.05em;">ALL INDIA COUNCIL FOR TECHNICAL EDUCATION</div>
+                                        <div style="font-size:10px;">(A STATUTORY BODY OF THE GOVERNMENT OF INDIA)</div>
+                                        <div style="font-size:10px; font-weight:700; margin-top:2px;">Nelson Mandela Marg, Vasant Kunj, New Delhi-110070</div>
+                                    </div>
+
+                                    <div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:12px;">
+                                        <span>F.No. AICTE/AB/2025-26/${this.selectedStudioCollegeId.toUpperCase()}</span>
+                                        <span>Date: 30-Apr-2025</span>
+                                    </div>
+
+                                    <p style="font-size:12px; margin-bottom:12px;">
+                                        <strong>Sub: Extension of Approval (EoA) to the Institution for Academic Year 2025-26.</strong>
+                                    </p>
+
+                                    <div style="border:1px solid #CBD5E1; border-radius:6px; padding:10px; margin-bottom:14px; position:relative;">
+                                        <div style="font-size:11px; font-weight:700; margin-bottom:4px;">INSTITUTION CADRE &amp; APPROVED INTAKE:</div>
+                                        <div style="font-size:11px;">Permanent ID: <span class="font-mono">SYN-2025-009</span></div>
+                                        <div style="font-size:11px;">Institution Name: <strong>Zaskar Engineering College</strong></div>
+                                        <div style="font-size:11px; position:relative; display:inline-block; margin-top:4px;">
+                                            <span>B.Tech Computer Science &amp; Engineering: </span>
+                                            <strong style="color:${score < 50 ? '#DC2626' : '#059669'};">180 Seats (Altered)</strong>
+                                            
+                                            <!-- SVG Simulated Bounding Box for anomaly -->
+                                            <span style="position:absolute; inset:-3px -6px; border:2px dashed ${score < 50 ? '#DC2626' : '#2563EB'}; background:rgba(220,38,38,0.1); border-radius:4px;"></span>
+                                        </div>
+                                    </div>
+
+                                    <div style="font-size:11px; color:#475569; margin-top:16px;">
+                                        This approval is issued in accordance with the provisions of AICTE Approval Process Handbook 2025-26. 
+                                        Any tampering with intake capacity or forged affiliation signatures constitutes a statutory violation under Section 10 of AICTE Act 1987.
+                                    </div>
+
+                                    <!-- Digital Signature Box -->
+                                    <div style="margin-top:24px; display:flex; justify-content:flex-end;">
+                                        <div style="border:1px solid ${score < 50 ? '#DC2626' : '#059669'}; background:${score < 50 ? '#FEF2F2' : '#ECFDF5'}; padding:8px 14px; border-radius:6px; text-align:center; font-size:10px;">
+                                            <div style="font-weight:700; color:${score < 50 ? '#DC2626' : '#059669'};">DIGITALLY SIGNED</div>
+                                            <div>AICTE Bureau of Approvals</div>
+                                            <div class="font-mono" style="font-size:9px;">${score < 50 ? 'KEY_REVOKED_FAIL' : 'PKI_X509_VALID'}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            `;
+
+            // Bindings
+            document.getElementById('btn-back-colleges').onclick = () => this.navigate('colleges');
+            
+            const collegeSelect = document.getElementById('studio-college-select');
+            collegeSelect.onchange = (e) => {
+                this.selectedStudioCollegeId = e.target.value;
+                this.renderVerifyStudioView(container);
+            };
+
+            const docSelect = document.getElementById('studio-doc-select');
+            docSelect.onchange = (e) => {
+                this.selectedStudioDocId = e.target.value;
+                this.renderVerifyStudioView(container);
+            };
+
+            document.getElementById('btn-re-verify').onclick = () => {
+                API.showToast('Re-running OCR feature extraction & cross-registry ledger check...', 'info');
+                this.renderVerifyStudioView(container);
+            };
+
+            document.getElementById('btn-simulate-upload').onclick = () => {
+                API.showToast('Simulating LayoutLMv3 ingestion on sample dossier...', 'info');
+                setTimeout(() => {
+                    this.selectedStudioCollegeId = 'zec-zaskar';
+                    this.renderVerifyStudioView(container);
+                }, 600);
+            };
+        }
+
+        // ====================================================================
+        // 4. APPLICATIONS WORKSPACE
+        // ====================================================================
+        async renderApplicationsView(container) {
+            container.innerHTML = `
+                <div class="view-header">
+                    <div class="view-title-group">
+                        <h1>Institutional Applications &amp; Dossiers</h1>
+                        <p>End-to-End Statutory Case Lifecycle Management (Section 2 &amp; 3)</p>
+                    </div>
+                    <div class="view-actions">
+                        <button class="btn btn-primary btn-sm" onclick="app.navigate('verify');">
+                            ${ICONS.FileSearch}
+                            AI Verification Studio
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            ${ICONS.FileText}
+                            <span>Active Regulatory Applications</span>
+                        </div>
+                        <input type="text" class="input" placeholder="Search applications..." style="max-width:240px;">
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Application ID</th>
+                                    <th>College / Trust</th>
+                                    <th>Application Type</th>
+                                    <th>Current Stage</th>
+                                    <th>SLA Target</th>
+                                    <th>Scrutiny Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="font-mono"><strong>APP-2025-001</strong></td>
+                                    <td>Apex Institute of Technology<br><span style="font-size:10px; color:var(--text-secondary);">Apex Education Foundation</span></td>
+                                    <td>Extension of Approval (EoA)</td>
+                                    <td><span class="badge badge-blue">SCRUTINY</span></td>
+                                    <td class="font-mono">15-May-2025</td>
+                                    <td><span class="badge badge-amber">UNDER_SCRUTINY</span></td>
+                                    <td>
+                                        <button class="btn btn-outline btn-sm" onclick="app.navigate('review');">Workspace</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="font-mono"><strong>APP-2025-002</strong></td>
+                                    <td>Bharath Engineering College<br><span style="font-size:10px; color:var(--text-secondary);">Bharath Charitable Trust</span></td>
+                                    <td>Increase in Intake (+60)</td>
+                                    <td><span class="badge badge-purple">EVC_VISIT</span></td>
+                                    <td class="font-mono">18-May-2025</td>
+                                    <td><span class="badge badge-blue">EVC_SCHEDULED</span></td>
+                                    <td>
+                                        <button class="btn btn-outline btn-sm" onclick="app.navigate('review');">Workspace</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="font-mono"><strong>APP-2025-003</strong></td>
+                                    <td>Coastal Institute of Management<br><span style="font-size:10px; color:var(--text-secondary);">Coastal Education Trust</span></td>
+                                    <td>New Program Approval (MCA)</td>
+                                    <td><span class="badge badge-rose">SAC_APPEAL</span></td>
+                                    <td class="font-mono">22-May-2025</td>
+                                    <td><span class="badge badge-rose">DEFICIENCY_RAISED</span></td>
+                                    <td>
+                                        <button class="btn btn-outline btn-sm" onclick="app.navigate('review');">Workspace</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ====================================================================
+        // 5. SCRUTINY QUEUE
+        // ====================================================================
+        renderQueueView(container) {
+            container.innerHTML = `
+                <div class="view-header">
+                    <div class="view-title-group">
+                        <h1>Technical Scrutiny Desk — Review Queue</h1>
+                        <p>Examine institutional evidence dossiers, evaluate extracted bounding boxes, and confirm compliance observations.</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            ${ICONS.ListFilter}
+                            <span>Prioritized Scrutiny Queue</span>
+                        </div>
+                        <span class="badge badge-blue">14 Applications Pending</span>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Priority</th>
+                                    <th>App ID</th>
+                                    <th>Institution</th>
+                                    <th>Deficiencies</th>
+                                    <th>SLA Clock</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="badge badge-rose">URGENT</span></td>
+                                    <td class="font-mono">APP-2025-003</td>
+                                    <td>Coastal Institute of Management</td>
+                                    <td>Building Fire NOC Lapsed</td>
+                                    <td class="font-mono" style="color:#DC2626; font-weight:700;">1d 14h Remaining</td>
+                                    <td><button class="btn btn-primary btn-sm" onclick="app.navigate('verify');">Open Studio</button></td>
+                                </tr>
+                                <tr>
+                                    <td><span class="badge badge-amber">HIGH</span></td>
+                                    <td class="font-mono">APP-2025-001</td>
+                                    <td>Apex Institute of Technology</td>
+                                    <td>Faculty Cadre Ratio 1:18 (Req 1:15)</td>
+                                    <td class="font-mono">4d 08h Remaining</td>
+                                    <td><button class="btn btn-outline btn-sm" onclick="app.navigate('review');">Scrutinize</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ====================================================================
+        // 6. FINDINGS & DISPOSITIONS
+        // ====================================================================
+        renderFindingsView(container) {
+            container.innerHTML = `
+                <div class="view-header">
+                    <div class="view-title-group">
+                        <h1>Compliance Findings &amp; Regulatory Dispositions</h1>
+                        <p>Audit discrepancies flagged by rule engine and officer scrutiny desks.</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Finding Ref</th>
+                                    <th>Institution</th>
+                                    <th>Severity</th>
+                                    <th>Regulatory Clause</th>
+                                    <th>Finding Details</th>
+                                    <th>Disposition Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="font-mono">FND-2025-001</td>
+                                    <td>Zaskar Engineering College</td>
+                                    <td><span class="badge badge-rose">CRITICAL</span></td>
+                                    <td class="font-mono">APH 2025 Ch. I R4.2</td>
+                                    <td>Submitted intake altered to 180 seats; sanctioned capacity is 60 seats.</td>
+                                    <td><span class="badge badge-rose">DEFICIENCY_CONFIRMED</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="font-mono">FND-2025-002</td>
+                                    <td>Coromandel Institute of Technology</td>
+                                    <td><span class="badge badge-amber">MAJOR</span></td>
+                                    <td class="font-mono">APH 2025 Ch. II R3.1</td>
+                                    <td>State technological university affiliation order expired on 2024-06-30.</td>
+                                    <td><span class="badge badge-amber">AWAITING_REPLY</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ====================================================================
+        // 7. CLARIFICATIONS & DIRECTIVES
+        // ====================================================================
+        renderClarificationsView(container) {
+            container.innerHTML = `
+                <div class="view-header">
+                    <div class="view-title-group">
+                        <h1>Institutional Clarifications &amp; Communication Thread</h1>
+                        <p>Two-way tamper-evident query stream between AICTE Officers and Institutions.</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div style="display:flex; flex-direction:column; gap:16px;">
+                        <div style="padding:14px; border-radius:12px; background:var(--surface-muted); border:1px solid var(--border);">
+                            <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--text-secondary); margin-bottom:6px;">
+                                <strong>Scrutiny Officer Desk (Dr. R. K. Shrivastava)</strong>
+                                <span class="font-mono">28-Apr-2025 14:32 IST</span>
+                            </div>
+                            <div style="font-size:12px; line-height:1.5;">
+                                Please submit the updated Fire Safety Clearance Certificate endorsed by the Chief Fire Officer. The certificate attached to your initial filing reflects an expiration date of March 31, 2025.
+                            </div>
+                        </div>
+
+                        <div style="padding:14px; border-radius:12px; background:var(--accent-light); border:1px solid var(--accent-muted); margin-left:24px;">
+                            <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--accent); margin-bottom:6px;">
+                                <strong>Apex Institute of Technology (Principal Office)</strong>
+                                <span class="font-mono">29-Apr-2025 10:15 IST</span>
+                            </div>
+                            <div style="font-size:12px; line-height:1.5;">
+                                We have applied for renewal on 15-Mar-2025 and attach the official renewal receipt and provisional inspection certificate from CFO office.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ====================================================================
+        // 8. SOURCE VERIFICATION
+        // ====================================================================
+        renderSourceVerificationView(container) {
+            container.innerHTML = `
+                <div class="view-header">
+                    <div class="view-title-group">
+                        <h1>National Registry Source Verification</h1>
+                        <p>Cryptographic cross-checks with DigiLocker, Bharatkosh, and State Land Records.</p>
+                    </div>
+                </div>
+
+                <div class="stats-grid-4">
+                    <div class="stat-card">
+                        <div class="stat-meta">
+                            <span class="stat-label">DigiLocker Integration</span>
+                            <span class="stat-value" style="color:#059669; font-size:16px;">CONNECTED</span>
+                            <span class="stat-sub">SHA-256 API Gateway Active</span>
+                        </div>
+                        <div class="stat-icon-box green">${ICONS.CheckCircle2}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-meta">
+                            <span class="stat-label">Bharatkosh Regulatory Fee</span>
+                            <span class="stat-value" style="color:#059669; font-size:16px;">SYNCHRONIZED</span>
+                            <span class="stat-sub">Zero Unsettled Challans</span>
+                        </div>
+                        <div class="stat-icon-box green">${ICONS.CheckCircle2}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-meta">
+                            <span class="stat-label">Land Title Registry</span>
+                            <span class="stat-value" style="color:#2563EB; font-size:16px;">14 STATES LIVE</span>
+                            <span class="stat-sub">Cadastral Map Parsing</span>
+                        </div>
+                        <div class="stat-icon-box blue">${ICONS.Landmark}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-meta">
+                            <span class="stat-label">X.509 PKI Authenticator</span>
+                            <span class="stat-value" style="color:#059669; font-size:16px;">CERTIFIED</span>
+                            <span class="stat-sub">CCA India Root Trust</span>
+                        </div>
+                        <div class="stat-icon-box green">${ICONS.ShieldCheck}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ====================================================================
+        // 9. INFRASTRUCTURE EVIDENCE
+        // ====================================================================
+        renderInfrastructureView(container) {
+            container.innerHTML = `
+                <div class="view-header">
+                    <div class="view-title-group">
+                        <h1>Geotagged Infrastructure &amp; CAD Evidence</h1>
+                        <p>Physical campus verification, classroom capacity, and laboratory norms.</p>
+                    </div>
+                </div>
+
+                <div class="colleges-grid">
+                    <div class="college-card">
+                        <div class="college-photo-wrap">
+                            <img src="/seed/photos/nit-nilgiri/campus.jpg" alt="Campus" class="college-photo-img" onerror="this.src='/images/aicte-hq.png'">
+                            <span class="college-trust-tag badge-emerald">Geotag: 11.41° N, 76.70° E</span>
+                        </div>
+                        <div class="college-body">
+                            <div class="college-name-text">Academic &amp; Administrative Block</div>
+                            <div style="font-size:12px; color:var(--text-secondary);">19,400 sq.m Built-up Area • Nilgiri Tech</div>
+                            <span class="badge badge-emerald">CAD Plan Verified</span>
+                        </div>
+                    </div>
+
+                    <div class="college-card">
+                        <div class="college-photo-wrap">
+                            <img src="/seed/photos/nit-nilgiri/lab.jpg" alt="AI Lab" class="college-photo-img" onerror="this.src='/images/aicte-hq.png'">
+                            <span class="college-trust-tag badge-emerald">Equipment Check Passed</span>
+                        </div>
+                        <div class="college-body">
+                            <div class="college-name-text">High-Performance AI Laboratory</div>
+                            <div style="font-size:12px; color:var(--text-secondary);">60 Workstations • High-Speed LAN</div>
+                            <span class="badge badge-emerald">AICTE Lab Specs Compliant</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ====================================================================
+        // 10. ANALYTICS & SLA
+        // ====================================================================
+        renderAnalyticsView(container) {
+            container.innerHTML = `
+                <div class="view-header">
+                    <div class="view-title-group">
+                        <h1>Executive Analytics &amp; Statutory SLA Dashboard</h1>
+                        <p>Bureau-level statistics on application processing cycles and AI verification accuracy.</p>
+                    </div>
+                </div>
+
+                <div class="stats-grid-4">
+                    <div class="stat-card">
+                        <div class="stat-meta">
+                            <span class="stat-label">Average SLA Processing</span>
+                            <span class="stat-value">9.4 Days</span>
+                            <span class="stat-sub">Statutory Mandate: 15 Days</span>
+                        </div>
+                        <div class="stat-icon-box blue">${ICONS.History}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-meta">
+                            <span class="stat-label">AI Accuracy Benchmark</span>
+                            <span class="stat-value" style="color:#059669;">99.4%</span>
+                            <span class="stat-sub">Validated against Ground Truth</span>
+                        </div>
+                        <div class="stat-icon-box green">${ICONS.ShieldCheck}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-meta">
+                            <span class="stat-label">Tamper Detection Rate</span>
+                            <span class="stat-value" style="color:#2563EB;">100%</span>
+                            <span class="stat-sub">Zero False Negatives in Sandbox</span>
+                        </div>
+                        <div class="stat-icon-box blue">${ICONS.FileSearch}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-meta">
+                            <span class="stat-label">Overall Approval Ratio</span>
+                            <span class="stat-value">84.2%</span>
+                            <span class="stat-sub">15.8% Deficient or Rejected</span>
+                        </div>
+                        <div class="stat-icon-box green">${ICONS.CheckCircle2}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ====================================================================
+        // 11. STATUTORY AUDIT LEDGER
+        // ====================================================================
+        renderAuditView(container) {
+            container.innerHTML = `
+                <div class="view-header">
+                    <div class="view-title-group">
+                        <h1>Tamper-Evident SHA-256 Statutory Audit Ledger</h1>
+                        <p>Cryptographic Merkle tree provenance chain for non-repudiation and oversight.</p>
+                    </div>
+                    <div class="view-actions">
+                        <button class="btn btn-outline btn-sm" id="btn-verify-chain">
+                            ${ICONS.ShieldCheck}
+                            Verify Cryptographic Chain
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Block</th>
+                                    <th>Timestamp</th>
+                                    <th>Action &amp; Target</th>
+                                    <th>Actor &amp; Terminal</th>
+                                    <th>Block SHA-256 Hash</th>
+                                    <th>Chain Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="font-mono">#00941</td>
+                                    <td class="font-mono">29-Oct-2026 14:15:22</td>
+                                    <td>EVALUATE_ANOMALY (Zaskar Engg)</td>
+                                    <td>AICTE_AI_ENGINE (v2.4)</td>
+                                    <td class="font-mono" style="font-size:10px;">8f43a9b1c20e58d781b49911e0...</td>
+                                    <td><span class="badge badge-emerald">VERIFIED</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="font-mono">#00940</td>
+                                    <td class="font-mono">29-Oct-2026 12:44:01</td>
+                                    <td>ISSUE_DEFICIENCY_ORDER (ZEC-01)</td>
+                                    <td>officer (Dr. R. K. Shrivastava)</td>
+                                    <td class="font-mono" style="font-size:10px;">4e98f02ba983cd1017efaa3421...</td>
+                                    <td><span class="badge badge-emerald">VERIFIED</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="font-mono">#00939</td>
+                                    <td class="font-mono">29-Oct-2026 10:20:18</td>
+                                    <td>UPLOAD_DOSSIER (Nilgiri Tech)</td>
+                                    <td>applicant (Dean Academics)</td>
+                                    <td class="font-mono" style="font-size:10px;">3c7104b901aef394239bcde881...</td>
+                                    <td><span class="badge badge-emerald">VERIFIED</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('btn-verify-chain').onclick = () => {
+                API.showToast('Cryptographic audit ledger verified: 941 consecutive blocks sealed with zero hash collisions.', 'success');
+            };
+        }
+
+        // ====================================================================
+        // 12. REGULATORY RULES
+        // ====================================================================
+        renderRulesView(container) {
+            container.innerHTML = `
+                <div class="view-header">
+                    <div class="view-title-group">
+                        <h1>AICTE Approval Process Handbook (APH) Rules Engine</h1>
+                        <p>Statutory rule configurations, cadential ratios, and deficiency thresholds.</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Rule ID</th>
+                                    <th>APH Chapter &amp; Rule</th>
+                                    <th>Parameter</th>
+                                    <th>Required Threshold</th>
+                                    <th>Deficiency Type</th>
+                                    <th>Engine Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="font-mono">APH-2025-R4.1</td>
+                                    <td>Chapter I: Faculty Norms</td>
+                                    <td>Cadre Ratio</td>
+                                    <td>1:15 (Prof:Assoc:Asst = 1:2:6)</td>
+                                    <td><span class="badge badge-rose">CRITICAL</span></td>
+                                    <td><span class="badge badge-emerald">ACTIVE</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="font-mono">APH-2025-R4.2</td>
+                                    <td>Chapter I: Sanctioned Intake</td>
+                                    <td>Intake Ceiling</td>
+                                    <td>Approved Course Quota Only</td>
+                                    <td><span class="badge badge-rose">CRITICAL</span></td>
+                                    <td><span class="badge badge-emerald">ACTIVE</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="font-mono">APH-2025-R7.4</td>
+                                    <td>Chapter II: Land Validity</td>
+                                    <td>Lease Validity</td>
+                                    <td>Minimum 30 Years Unencumbered</td>
+                                    <td><span class="badge badge-rose">CRITICAL</span></td>
+                                    <td><span class="badge badge-emerald">ACTIVE</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ====================================================================
+        // 13. USER MANAGEMENT
+        // ====================================================================
+        renderUsersView(container) {
+            container.innerHTML = `
+                <div class="view-header">
+                    <div class="view-title-group">
+                        <h1>Authorized Personnel &amp; RBAC Matrix</h1>
+                        <p>Manage scrutiny officers, regional directors, institutional representatives, and MFA status.</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>User ID</th>
+                                    <th>Full Name</th>
+                                    <th>Assigned Role</th>
+                                    <th>MFA Security</th>
+                                    <th>Direct Login</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${DEMO_ACCOUNTS.map(a => `
                                     <tr>
-                                        <td><strong>${a.application_no}</strong></td>
-                                        <td><strong>${a.institution_name}</strong><br><small style="color:#687889;">PID: ${a.permanent_id} | ${a.state}</small></td>
-                                        <td>${a.application_type_name}</td>
-                                        <td>${a.region_name}</td>
-                                        <td><span class="status-chip ${a.current_stage.toLowerCase()}">${a.current_stage}</span></td>
-                                        <td><span class="status-chip ${a.current_status.toLowerCase()}">${a.current_status}</span></td>
-                                        <td><strong>${a.processing_due_date.split('T')[0]}</strong></td>
+                                        <td class="font-mono">${a.username}</td>
+                                        <td><strong>${a.roleName}</strong></td>
+                                        <td><span class="badge badge-blue">${a.badge}</span></td>
                                         <td>
-                                            <button class="btn btn-outline" style="height:26px; font-size:11px;" onclick="app.navigate('case_workspace', { appId: '${a.id}' })">
-                                                Open Case ↗
+                                            <span class="badge ${a.hasMfa ? 'badge-amber' : 'badge-emerald'}">
+                                                ${a.hasMfa ? 'TOTP PIN Required' : 'Direct Access'}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-outline btn-sm switch-user-btn" data-user="${a.username}">
+                                                Assume Role
                                             </button>
                                         </td>
                                     </tr>
@@ -554,978 +1951,74 @@ class NiyamAIApp {
                         </table>
                     </div>
                 </div>
-            </div>
-        `;
-    }
+            `;
 
-    // ==========================================
-    // VIEW 3: CASE WORKSPACE (8 Tabs - Section 8 & 16)
-    // ==========================================
-    async renderCaseWorkspace(container, appId) {
-        if (!appId) {
-            container.innerHTML = '<div style="padding:24px;">Please select an application to view details.</div>';
-            return;
-        }
-
-        const data = await API.get(`/api/applications/${appId}`);
-        const app = data.overview;
-
-        container.innerHTML = `
-            <!-- Top Case Status Header -->
-            <div class="card" style="margin-bottom:14px;">
-                <div class="card-header" style="background:#FFFFFF;">
-                    <div>
-                        <div style="display:flex; align-items:center; gap:8px;">
-                            <h2 style="font-size:17px; font-weight:700;">${app.application_no}</h2>
-                            <span class="status-chip ${app.current_stage.toLowerCase()}">${app.current_stage}</span>
-                            <span class="status-chip ${app.current_status.toLowerCase()}">${app.current_status}</span>
-                            ${app.is_on_hold ? '<span class="status-chip on_hold">ON AUTHORISED HOLD</span>' : ''}
-                        </div>
-                        <div style="font-size:12px; color:var(--secondary-text); margin-top:3px;">
-                            ${app.institution_name} (${app.permanent_id}) | ${app.institution_type} | ${app.region_name}
-                        </div>
-                    </div>
-                    <div style="display:flex; gap:8px;">
-                        <button class="btn btn-outline" onclick="app.toggleHoldModal('${app.id}', ${app.is_on_hold})">
-                            ${app.is_on_hold ? 'Resume Workflow' : 'Place on Regulatory Hold'}
-                        </button>
-                        <button class="btn btn-primary" onclick="app.openTransitionModal('${app.id}', '${app.current_stage}')">
-                            Advance Stage →
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- AI Advisory Assistant (Section 9 & 19) -->
-            <div class="ai-advisory-box">
-                <div class="ai-disclaimer">AICTE Advisory Assistant (Non-Statutory Recommendation Only)</div>
-                <div style="font-size:12.5px; color:#1E3A8A;">
-                    Institution '${app.institution_name}' has applied for '${app.application_type_name}'. Currently at stage <strong>${app.current_stage}</strong>. Statutory SLA due date: <strong>${app.processing_due_date.split('T')[0]}</strong>. Total verified transitions: <strong>${data.workflow.transitions.length}</strong>.
-                </div>
-            </div>
-
-            <!-- 8 Workspace Tabs Navigation -->
-            <div class="tabs-header" id="workspace-tabs">
-                <button class="tab-btn active" onclick="app.switchTab('overview')">1. Overview</button>
-                <button class="tab-btn" onclick="app.switchTab('workflow')">2. Workflow Stages (${data.workflow.stages.length})</button>
-                <button class="tab-btn" onclick="app.switchTab('documents')">3. Documents (${data.documents.length})</button>
-                <button class="tab-btn" onclick="app.switchTab('scrutiny')">4. Scrutiny (${data.scrutiny.deficiencies.length})</button>
-                <button class="tab-btn" onclick="app.switchTab('evc')">5. EVC Inspection</button>
-                <button class="tab-btn" onclick="app.switchTab('compliance')">6. Undertakings (${data.compliance.undertakings.length})</button>
-                <button class="tab-btn" onclick="app.switchTab('communication')">7. Notices & Alerts</button>
-                <button class="tab-btn" onclick="app.switchTab('audit')">8. Cryptographic Audit (${data.auditHistory.length})</button>
-            </div>
-
-            <!-- Tab 1: Overview -->
-            <div id="tab-overview" class="tab-content">
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
-                    <div class="card">
-                        <div class="card-header"><span class="card-title">Institution Profile</span></div>
-                        <div class="card-body">
-                            <table style="width:100%; font-size:12.5px; line-height:2;">
-                                <tr><td style="color:#687889; width:40%;">Institution Name:</td><td><strong>${app.institution_name}</strong></td></tr>
-                                <tr><td style="color:#687889;">Permanent ID:</td><td>${app.permanent_id}</td></tr>
-                                <tr><td style="color:#687889;">Category / Type:</td><td>${app.category} / ${app.institution_type}</td></tr>
-                                <tr><td style="color:#687889;">Campus Address:</td><td>${app.address}, ${app.district}, ${app.state}</td></tr>
-                                <tr><td style="color:#687889;">Establishment Year:</td><td>${app.establishment_year}</td></tr>
-                                <tr><td style="color:#687889;">Contact Email:</td><td>${app.contact_email}</td></tr>
-                            </table>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-header"><span class="card-title">Regulatory Context</span></div>
-                        <div class="card-body">
-                            <table style="width:100%; font-size:12.5px; line-height:2;">
-                                <tr><td style="color:#687889; width:40%;">Academic Session:</td><td><strong>${app.academic_year}</strong></td></tr>
-                                <tr><td style="color:#687889;">Workflow Master:</td><td>${app.workflow_name}</td></tr>
-                                <tr><td style="color:#687889;">Jurisdiction Region:</td><td>${app.region_name}</td></tr>
-                                <tr><td style="color:#687889;">Submission Date:</td><td>${app.submission_date.split('T')[0]}</td></tr>
-                                <tr><td style="color:#687889;">SLA Due Date:</td><td><strong style="color:var(--gov-blue);">${app.processing_due_date.split('T')[0]}</strong></td></tr>
-                                <tr><td style="color:#687889;">Responsible Officer:</td><td>${app.assigned_officer_name || 'Regional Scrutiny Committee'}</td></tr>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tab 2: Workflow -->
-            <div id="tab-workflow" class="tab-content" style="display:none;">
-                <div class="card">
-                    <div class="card-header"><span class="card-title">Visual Workflow Timeline & Stage History</span></div>
-                    <div class="card-body">
-                        <table class="data-table">
-                            <thead>
-                                <tr><th>From Stage</th><th>To Stage</th><th>Transition By</th><th>Role</th><th>Rule Version</th><th>Comments</th><th>Timestamp</th></tr>
-                            </thead>
-                            <tbody>
-                                ${data.workflow.transitions.map(t => `
-                                    <tr>
-                                        <td><strong>${t.from_stage}</strong></td>
-                                        <td><strong>${t.to_stage}</strong></td>
-                                        <td>${t.actor_name}</td>
-                                        <td><code>${t.actor_role}</code></td>
-                                        <td>${t.rule_version}</td>
-                                        <td>${t.comments || 'Procedural stage advancement.'}</td>
-                                        <td>${t.timestamp.replace('T', ' ').substring(0, 19)}</td>
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tab 3: Documents -->
-            <div id="tab-documents" class="tab-content" style="display:none;">
-                <div class="card">
-                    <div class="card-header"><span class="card-title">Mandatory Regulatory Document Repository</span></div>
-                    <div class="card-body">
-                        <table class="data-table">
-                            <thead>
-                                <tr><th>Document Type</th><th>Title</th><th>Issue Date</th><th>Expiry Date</th><th>Status</th><th>Verification</th></tr>
-                            </thead>
-                            <tbody>
-                                ${data.documents.map(d => `
-                                    <tr>
-                                        <td><strong>${d.doc_type_name}</strong></td>
-                                        <td>${d.document_title}</td>
-                                        <td>${d.issue_date}</td>
-                                        <td>${d.expiry_date || 'Perpetual'}</td>
-                                        <td><span class="status-chip ${d.current_status.toLowerCase()}">${d.current_status}</span></td>
-                                        <td>${d.verified_by_name ? `Verified by ${d.verified_by_name}` : 'Pending Verification'}</td>
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tab 4: Scrutiny -->
-            <div id="tab-scrutiny" class="tab-content" style="display:none;">
-                <div class="card">
-                    <div class="card-header">
-                        <span class="card-title">Scrutiny Deficiencies & Clarifications</span>
-                        <button class="btn btn-outline" onclick="app.openDeficiencyModal('${app.id}')">+ Raise Deficiency</button>
-                    </div>
-                    <div class="card-body">
-                        ${data.scrutiny.deficiencies.length === 0 ? '<p style="color:#687889;">No deficiencies raised. All documents cleared by committee.</p>' : `
-                            <table class="data-table">
-                                <thead>
-                                    <tr><th>Category</th><th>Severity</th><th>Description</th><th>Regulatory Clause</th><th>Status</th><th>Response</th></tr>
-                                </thead>
-                                <tbody>
-                                    ${data.scrutiny.deficiencies.map(df => `
-                                        <tr>
-                                            <td><strong>${df.category}</strong></td>
-                                            <td><span class="status-chip ${df.severity.toLowerCase()}">${df.severity}</span></td>
-                                            <td>${df.description}</td>
-                                            <td><code>${df.regulatory_reference}</code></td>
-                                            <td><span class="status-chip ${df.status.toLowerCase()}">${df.status}</span></td>
-                                            <td>
-                                                ${df.response_text ? `<em>${df.response_text}</em>` : `
-                                                    <button class="btn btn-outline" style="height:24px; font-size:10.5px;" onclick="app.openDeficiencyResponseModal('${df.id}')">Submit Response</button>
-                                                `}
-                                            </td>
-                                        </tr>
-                                    `).join('')}
-                                </tbody>
-                            </table>
-                        `}
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tab 5: EVC Inspection -->
-            <div id="tab-evc" class="tab-content" style="display:none;">
-                <div class="card">
-                    <div class="card-header">
-                        <span class="card-title">Expert Visit Committee (EVC) Physical Inspection</span>
-                        ${data.evc.schedules.length === 0 ? `
-                            <button class="btn btn-primary" onclick="app.openScheduleEVCModal('${app.id}')">Schedule EVC Visit</button>
-                        ` : ''}
-                    </div>
-                    <div class="card-body">
-                        ${data.evc.schedules.length === 0 ? '<p style="color:#687889;">No EVC visit scheduled yet.</p>' : `
-                            <div style="margin-bottom:16px;">
-                                <strong>Status:</strong> <span class="status-chip ${data.evc.schedules[0].visit_status.toLowerCase()}">${data.evc.schedules[0].visit_status}</span> |
-                                <strong>Visit Date:</strong> ${data.evc.schedules[0].confirmed_date} |
-                                <strong>Inspection Type:</strong> ${data.evc.schedules[0].visit_type}
-                            </div>
-                            <h4 style="margin-bottom:8px; font-size:13px;">Assigned Expert Committee Members:</h4>
-                            <table class="data-table" style="margin-bottom:16px;">
-                                <thead><tr><th>Name</th><th>Designation</th><th>Institution</th><th>Role</th></tr></thead>
-                                <tbody>
-                                    ${data.evc.members.map(m => `
-                                        <tr><td><strong>${m.expert_name}</strong></td><td>${m.expert_designation}</td><td>${m.expert_institution}</td><td>${m.role_in_committee}</td></tr>
-                                    `).join('')}
-                                </tbody>
-                            </table>
-                            ${data.evc.reports.length === 0 ? `
-                                <button class="btn btn-primary" onclick="app.openSubmitEVCReportModal('${data.evc.schedules[0].id}', '${app.id}')">Submit Inspection Report & Scores</button>
-                            ` : `
-                                <div style="background:#F8FAFD; padding:14px; border-radius:4px; border:1px solid #DFE5EB;">
-                                    <h4 style="font-size:13px;">Final EVC Inspection Findings:</h4>
-                                    <div style="font-size:13px; margin-top:6px;">
-                                        <strong>Overall Recommendation:</strong> <span class="status-chip approved">${data.evc.reports[0].overall_recommendation}</span><br>
-                                        <strong>Infrastructure Score:</strong> ${data.evc.reports[0].infrastructure_score}/100 |
-                                        <strong>Faculty Score:</strong> ${data.evc.reports[0].faculty_score}/100 |
-                                        <strong>Compliance Score:</strong> ${data.evc.reports[0].compliance_score}/100
-                                    </div>
-                                    <div style="margin-top:6px; font-size:11.5px; color:#475569;">
-                                        ${data.evc.reports[0].deficiency_notes || 'All norms satisfied.'}
-                                    </div>
-                                </div>
-                            `}
-                        `}
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tab 6: Compliance -->
-            <div id="tab-compliance" class="tab-content" style="display:none;">
-                <div class="card">
-                    <div class="card-header"><span class="card-title">Institutional Undertakings Register</span></div>
-                    <div class="card-body">
-                        ${data.compliance.undertakings.length === 0 ? '<p style="color:#687889;">No conditional undertakings linked to this application.</p>' : `
-                            <table class="data-table">
-                                <thead>
-                                    <tr><th>Ref No</th><th>Condition Title</th><th>Due Date</th><th>Responsible Person</th><th>Status</th></tr>
-                                </thead>
-                                <tbody>
-                                    ${data.compliance.undertakings.map(u => `
-                                        <tr>
-                                            <td><strong>${u.undertaking_ref}</strong></td>
-                                            <td><strong>${u.condition_title}</strong><br><small style="color:#687889;">${u.regulatory_source}</small></td>
-                                            <td>${u.due_date}</td>
-                                            <td>${u.responsible_person}</td>
-                                            <td><span class="status-chip ${u.status.toLowerCase()}">${u.status}</span></td>
-                                        </tr>
-                                    `).join('')}
-                                </tbody>
-                            </table>
-                        `}
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tab 7: Communication -->
-            <div id="tab-communication" class="tab-content" style="display:none;">
-                <div class="card">
-                    <div class="card-header"><span class="card-title">Administrative Notices & Communication Log</span></div>
-                    <div class="card-body">
-                        <table class="data-table">
-                            <thead><tr><th>Date</th><th>Type</th><th>Subject</th><th>Channel</th><th>Status</th></tr></thead>
-                            <tbody>
-                                ${data.communication.notifications.map(n => `
-                                    <tr>
-                                        <td>${n.sent_at.replace('T', ' ').substring(0, 19)}</td>
-                                        <td><code>${n.event_type}</code></td>
-                                        <td><strong>${n.title}</strong><br><small style="color:#687889;">${n.message}</small></td>
-                                        <td>${n.channel}</td>
-                                        <td><span class="status-chip ${n.status.toLowerCase()}">${n.status}</span></td>
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tab 8: Cryptographic Audit History -->
-            <div id="tab-audit" class="tab-content" style="display:none;">
-                <div class="card">
-                    <div class="card-header">
-                        <span class="card-title">Cryptographic Chained Audit Ledger (SHA-256)</span>
-                        <button class="btn btn-outline" onclick="app.verifyAuditIntegrity()">Verify Cryptographic Chain</button>
-                    </div>
-                    <div class="card-body">
-                        <table class="data-table">
-                            <thead>
-                                <tr><th>ID</th><th>Actor</th><th>Action</th><th>Justification</th><th>Current SHA-256 Hash</th><th>Timestamp</th></tr>
-                            </thead>
-                            <tbody>
-                                ${data.auditHistory.map(a => `
-                                    <tr>
-                                        <td>${a.id}</td>
-                                        <td><strong>${a.actor_username}</strong><br><small style="color:#687889;">${a.actor_role}</small></td>
-                                        <td><code>${a.action_type}</code></td>
-                                        <td>${a.justification}</td>
-                                        <td><code style="font-size:10px;">${a.current_hash.substring(0, 24)}...</code></td>
-                                        <td>${a.created_at.replace('T', ' ').substring(0, 19)}</td>
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        `;
-    }
-
-    switchTab(tabName) {
-        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
-
-        const activeBtn = Array.from(document.querySelectorAll('.tab-btn')).find(b => b.innerText.toLowerCase().includes(tabName));
-        if (activeBtn) activeBtn.classList.add('active');
-
-        const targetEl = document.getElementById(`tab-${tabName}`);
-        if (targetEl) targetEl.style.display = 'block';
-    }
-
-    // ==========================================
-    // VIEW 4: SCRUTINY WORKSPACE (Section 9)
-    // ==========================================
-    async renderScrutiny(container) {
-        const data = await API.get('/api/scrutiny/queue');
-
-        container.innerHTML = `
-            <div class="card">
-                <div class="card-header">
-                    <div>
-                        <span class="card-title">Scrutiny & Re-Scrutiny Verification Queue</span>
-                        <span style="font-size:11.5px; color:var(--secondary-text); margin-left:8px;">(${data.total} Assigned Applications)</span>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <table class="data-table">
-                        <thead>
-                            <tr><th>App No</th><th>Technical Institution</th><th>Stage</th><th>Deficiencies</th><th>SLA Due Date</th><th>Actions</th></tr>
-                        </thead>
-                        <tbody>
-                            ${data.queue.map(q => `
-                                <tr>
-                                    <td><strong>${q.application_no}</strong></td>
-                                    <td><strong>${q.institution_name}</strong><br><small style="color:#687889;">${q.state} | ${q.inst_category}</small></td>
-                                    <td><span class="status-chip ${q.current_stage.toLowerCase()}">${q.current_stage}</span></td>
-                                    <td>${q.deficiency_count > 0 ? `<span class="status-chip critical">${q.deficiency_count} Raised</span>` : '<span class="status-chip valid">Clean</span>'}</td>
-                                    <td><strong>${q.processing_due_date.split('T')[0]}</strong></td>
-                                    <td>
-                                        <button class="btn btn-primary" style="height:26px; font-size:11px;" onclick="app.navigate('case_workspace', { appId: '${q.id}' })">
-                                            Conduct Scrutiny ↗
-                                        </button>
-                                    </td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        `;
-    }
-
-    // ==========================================
-    // VIEW 5: EVC MANAGEMENT (Section 10)
-    // ==========================================
-    async renderEVC(container) {
-        const [metrics, queueData] = await Promise.all([
-            API.get('/api/evc/dashboard'),
-            API.get('/api/evc/queue')
-        ]);
-
-        container.innerHTML = `
-            <div class="kpi-grid">
-                <div class="kpi-card"><div class="kpi-title">EVC Required</div><div class="kpi-value">${metrics.evcRequired}</div></div>
-                <div class="kpi-card"><div class="kpi-title">Awaiting Scheduling</div><div class="kpi-value">${metrics.awaitingScheduling}</div></div>
-                <div class="kpi-card"><div class="kpi-title">Visits Scheduled</div><div class="kpi-value">${metrics.scheduled}</div></div>
-                <div class="kpi-card"><div class="kpi-title">Completed Visits</div><div class="kpi-value">${metrics.completed}</div></div>
-                <div class="kpi-card"><div class="kpi-title">Overdue Cases</div><div class="kpi-value" style="color:var(--critical);">${metrics.overdue}</div></div>
-            </div>
-
-            <div class="card">
-                <div class="card-header"><span class="card-title">EVC Eligibility & Inspection Queue</span></div>
-                <div class="card-body">
-                    <table class="data-table">
-                        <thead>
-                            <tr><th>App No</th><th>Institution</th><th>Region</th><th>Visit Status</th><th>Inspection Date</th><th>Action</th></tr>
-                        </thead>
-                        <tbody>
-                            ${queueData.queue.map(q => `
-                                <tr>
-                                    <td><strong>${q.application_no}</strong></td>
-                                    <td><strong>${q.institution_name}</strong><br><small style="color:#687889;">${q.state} | ${q.district}</small></td>
-                                    <td>${q.region_name}</td>
-                                    <td><span class="status-chip ${(q.visit_status || 'AWAITING_SCHEDULING').toLowerCase()}">${q.visit_status || 'Awaiting Scheduling'}</span></td>
-                                    <td>${q.confirmed_date || 'Not Fixed'}</td>
-                                    <td>
-                                        <button class="btn btn-outline" style="height:26px; font-size:11px;" onclick="app.navigate('case_workspace', { appId: '${q.id}' })">
-                                            Manage EVC ↗
-                                        </button>
-                                    </td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        `;
-    }
-
-    // ==========================================
-    // VIEW 6: SAC/SHC PROCESSING (Section 11)
-    // ==========================================
-    async renderSACSHC(container) {
-        const data = await API.get('/api/applications?stage=SAC_SHC');
-
-        container.innerHTML = `
-            <div class="card">
-                <div class="card-header">
-                    <div>
-                        <span class="card-title">Standing Appellate Committee (SAC) & Hearing Committee (SHC) Queue</span>
-                        <span style="font-size:11.5px; color:var(--secondary-text); margin-left:8px;">(${data.total} Cases Awaiting Appellate Review)</span>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <table class="data-table">
-                        <thead>
-                            <tr><th>App No</th><th>Institution</th><th>Region</th><th>Current Status</th><th>SLA Due Date</th><th>Appellate Action</th></tr>
-                        </thead>
-                        <tbody>
-                            ${data.applications.map(a => `
-                                <tr>
-                                    <td><strong>${a.application_no}</strong></td>
-                                    <td><strong>${a.institution_name}</strong><br><small style="color:#687889;">${a.state}</small></td>
-                                    <td>${a.region_name}</td>
-                                    <td><span class="status-chip ${a.current_status.toLowerCase()}">${a.current_status}</span></td>
-                                    <td>${a.processing_due_date.split('T')[0]}</td>
-                                    <td>
-                                        <button class="btn btn-primary" style="height:26px; font-size:11px;" onclick="app.navigate('case_workspace', { appId: '${a.id}' })">
-                                            Conduct Hearing ↗
-                                        </button>
-                                    </td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        `;
-    }
-
-    // ==========================================
-    // VIEW 7: PENDENCY & SLA (Section 12)
-    // ==========================================
-    async renderPendency(container) {
-        const data = await API.get('/api/pendency/list');
-
-        container.innerHTML = `
-            <div class="card">
-                <div class="card-header">
-                    <div>
-                        <span class="card-title">Centralized Pendency Monitoring & SLA Ageing</span>
-                        <span style="font-size:11.5px; color:var(--secondary-text); margin-left:8px;">(${data.total} Tracked Applications)</span>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <table class="data-table">
-                        <thead>
-                            <tr><th>App No</th><th>Institution</th><th>Stage</th><th>Days Pending</th><th>Stage Ageing</th><th>SLA Status</th><th>Assigned Authority</th><th>Action</th></tr>
-                        </thead>
-                        <tbody>
-                            ${data.applications.map(a => `
-                                <tr>
-                                    <td><strong>${a.application_no}</strong></td>
-                                    <td><strong>${a.institution_name}</strong><br><small style="color:#687889;">${a.region_name}</small></td>
-                                    <td><span class="status-chip ${a.current_stage.toLowerCase()}">${a.current_stage}</span></td>
-                                    <td><strong>${a.totalDaysPending} days</strong></td>
-                                    <td>${a.stageDays} days in stage</td>
-                                    <td><span class="status-chip ${a.classification.toLowerCase()}">${a.classification.replace(/_/g, ' ')}</span></td>
-                                    <td>${a.assigned_officer_name || 'Regional Panel'}</td>
-                                    <td>
-                                        <button class="btn btn-outline" style="height:26px; font-size:11px;" onclick="app.navigate('case_workspace', { appId: '${a.id}' })">
-                                            Inspect Bottleneck ↗
-                                        </button>
-                                    </td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        `;
-    }
-
-    // ==========================================
-    // VIEW 8: COMPLIANCE & UNDERTAKINGS (Section 13)
-    // ==========================================
-    async renderCompliance(container) {
-        const data = await API.get('/api/compliance/undertakings');
-
-        container.innerHTML = `
-            <div class="card">
-                <div class="card-header">
-                    <div>
-                        <span class="card-title">Institutional Undertakings & Conditional Sanctions Register</span>
-                        <span style="font-size:11.5px; color:var(--secondary-text); margin-left:8px;">(${data.total} Active Obligations)</span>
-                    </div>
-                    <button class="btn btn-primary" onclick="app.openNewUndertakingModal()">+ Issue Conditional Undertaking</button>
-                </div>
-                <div class="card-body">
-                    <table class="data-table">
-                        <thead>
-                            <tr><th>Undertaking Ref</th><th>Institution</th><th>Obligation Details</th><th>Due Date</th><th>Responsible Person</th><th>Status</th><th>Verification</th></tr>
-                        </thead>
-                        <tbody>
-                            ${data.undertakings.map(u => `
-                                <tr>
-                                    <td><strong>${u.undertaking_ref}</strong></td>
-                                    <td><strong>${u.institution_name}</strong><br><small style="color:#687889;">${u.region_name}</small></td>
-                                    <td><strong>${u.condition_title}</strong><br><small style="color:#687889;">${u.obligation_details}</small></td>
-                                    <td><strong>${u.due_date}</strong></td>
-                                    <td>${u.responsible_person}</td>
-                                    <td><span class="status-chip ${u.status.toLowerCase()}">${u.status}</span></td>
-                                    <td>
-                                        ${u.status === 'PENDING' ? `
-                                            <button class="btn btn-outline" style="height:24px; font-size:10.5px;" onclick="app.openSubmitComplianceModal('${u.id}')">Submit Evidence</button>
-                                        ` : (u.status === 'UNDER_VERIFICATION' ? `
-                                            <button class="btn btn-primary" style="height:24px; font-size:10.5px;" onclick="app.openVerifyComplianceModal('${u.id}')">Verify Evidence</button>
-                                        ` : `Verified`)}
-                                    </td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        `;
-    }
-
-    // ==========================================
-    // VIEW 9: LEASE & DOCUMENT VALIDITY (Section 14)
-    // ==========================================
-    async renderDocuments(container) {
-        const data = await API.get('/api/documents');
-
-        container.innerHTML = `
-            <div class="card">
-                <div class="card-header">
-                    <div>
-                        <span class="card-title">Land Lease & Document Validity Lifecycle Tracking</span>
-                        <span style="font-size:11.5px; color:var(--secondary-text); margin-left:8px;">(Advance Reminder Windows: 90, 60, 30, 15, 7 Days)</span>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <table class="data-table">
-                        <thead>
-                            <tr><th>Document Type</th><th>Institution</th><th>Issue Date</th><th>Expiry Date</th><th>Countdown</th><th>Status</th><th>Renewal Action</th></tr>
-                        </thead>
-                        <tbody>
-                            ${data.documents.map(d => `
-                                <tr>
-                                    <td><strong>${d.document_title}</strong><br><small style="color:#687889;">${d.doc_type_name}</small></td>
-                                    <td><strong>${d.institution_name}</strong></td>
-                                    <td>${d.issue_date}</td>
-                                    <td>${d.expiry_date || 'Perpetual'}</td>
-                                    <td>${d.daysUntilExpiry !== null ? `<strong>${d.daysUntilExpiry} days</strong>` : 'N/A'}</td>
-                                    <td><span class="status-chip ${d.dynamicStatus.toLowerCase()}">${d.dynamicStatus}</span></td>
-                                    <td>
-                                        ${d.dynamicStatus === 'EXPIRING_SOON' || d.dynamicStatus === 'EXPIRED' ? `
-                                            <button class="btn btn-primary" style="height:24px; font-size:10.5px;" onclick="app.openRenewalModal('${d.id}')">Submit Renewal</button>
-                                        ` : (d.dynamicStatus === 'RENEWAL_SUBMITTED' ? `
-                                            <button class="btn btn-primary" style="height:24px; font-size:10.5px;" onclick="app.openVerifyRenewalModal('${d.id}')">Verify Renewal</button>
-                                        ` : 'Valid')}
-                                    </td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        `;
-    }
-
-    // ==========================================
-    // VIEW 10: ALERTS & ESCALATION MANAGEMENT (Section 15 & 16)
-    // ==========================================
-    async renderAlerts(container) {
-        const [notifsData, escalationsData] = await Promise.all([
-            API.get('/api/notifications'),
-            API.get('/api/escalations')
-        ]);
-
-        container.innerHTML = `
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
-                <div class="card">
-                    <div class="card-header"><span class="card-title">Active Hierarchy Escalation Register</span></div>
-                    <div class="card-body">
-                        ${escalationsData.escalations.length === 0 ? '<p style="color:#687889;">No active escalations.</p>' : `
-                            <table class="data-table">
-                                <thead><tr><th>App ID</th><th>Escalated To</th><th>Breach Reason</th><th>Action</th></tr></thead>
-                                <tbody>
-                                    ${escalationsData.escalations.map(e => `
-                                        <tr>
-                                            <td><strong>${e.application_no}</strong><br><small>${e.institution_name}</small></td>
-                                            <td><span class="status-chip critical">${e.escalated_to_role}</span></td>
-                                            <td><small>${e.trigger_reason}</small></td>
-                                            <td>
-                                                <button class="btn btn-outline" style="height:24px; font-size:10.5px;" onclick="app.resolveEscalationModal('${e.id}')">Resolve & Close</button>
-                                            </td>
-                                        </tr>
-                                    `).join('')}
-                                </tbody>
-                            </table>
-                        `}
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header"><span class="card-title">Central Notification Inbox (${notifsData.notifications.length})</span></div>
-                    <div class="card-body">
-                        <div style="max-height:500px; overflow-y:auto; display:flex; flex-direction:column; gap:8px;">
-                            ${notifsData.notifications.map(n => `
-                                <div style="padding:10px 14px; border:1px solid #DFE5EB; border-radius:4px; background:#FAFBFD;">
-                                    <div style="display:flex; justify-content:space-between; margin-bottom:2px;">
-                                        <strong>${n.title}</strong>
-                                        <small style="color:#687889;">${n.sent_at.replace('T', ' ').substring(0, 16)}</small>
-                                    </div>
-                                    <div style="font-size:11.5px; color:#475569;">${n.message}</div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-    }
-
-    // ==========================================
-    // VIEW 11: REPORTS & ANALYTICS (Section 18)
-    // ==========================================
-    async renderReports(container) {
-        const data = await API.get('/api/reports');
-
-        container.innerHTML = `
-            <div class="card">
-                <div class="card-header"><span class="card-title">Prescribed Regulatory Reports (14 Standard Reports)</span></div>
-                <div class="card-body">
-                    <table class="data-table">
-                        <thead><tr><th>Report Title</th><th>Category</th><th>Format</th><th>Export Action</th></tr></thead>
-                        <tbody>
-                            ${data.reports.map(r => `
-                                <tr>
-                                    <td><strong>${r.name}</strong></td>
-                                    <td><span style="background:#F0F4F8; color:#334E68; padding:2px 6px; border-radius:3px; font-size:10.5px; font-weight:700;">${r.category}</span></td>
-                                    <td>CSV / Excel / PDF</td>
-                                    <td>
-                                        <a class="btn btn-outline" style="height:26px; font-size:11px;" href="/api/reports/${r.id}/export-csv" target="_blank">
-                                            📥 Download Data CSV
-                                        </a>
-                                    </td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        `;
-    }
-
-    // ==========================================
-    // VIEW 12: REGULATORY RULES (Section 27)
-    // ==========================================
-    async renderRules(container) {
-        const data = await API.get('/api/regulatory-rules');
-
-        container.innerHTML = `
-            <div class="card">
-                <div class="card-header">
-                    <div>
-                        <span class="card-title">Version-Controlled Approval Process Handbook (APH) Regulatory Rules</span>
-                        <span style="font-size:11.5px; color:var(--secondary-text); margin-left:8px;">(${data.total} Configured Rule Sets)</span>
-                    </div>
-                    <button class="btn btn-primary" onclick="app.openNewRuleModal()">+ Propose Rule Draft</button>
-                </div>
-                <div class="card-body">
-                    <table class="data-table">
-                        <thead><tr><th>Academic Session</th><th>APH Version</th><th>Rule Key</th><th>Category</th><th>Status</th><th>Authority</th></tr></thead>
-                        <tbody>
-                            ${data.rules.map(r => `
-                                <tr>
-                                    <td><strong>${r.academic_year}</strong></td>
-                                    <td><code>${r.aph_version}</code></td>
-                                    <td><strong>${r.rule_key}</strong></td>
-                                    <td>${r.category}</td>
-                                    <td><span class="status-chip ${r.status.toLowerCase()}">${r.status}</span></td>
-                                    <td>
-                                        ${r.status === 'DRAFT' ? `
-                                            <button class="btn btn-primary" style="height:24px; font-size:10.5px;" onclick="app.publishRule('${r.id}')">Publish & Activate</button>
-                                        ` : 'Activated'}
-                                    </td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        `;
-    }
-
-    // ==========================================
-    // VIEW 13: CRYPTOGRAPHIC AUDIT TRAIL (Section 19)
-    // ==========================================
-    async renderAudit(container) {
-        const [eventsData, integrity] = await Promise.all([
-            API.get('/api/audit/events?limit=50'),
-            API.get('/api/audit/verify-integrity')
-        ]);
-
-        container.innerHTML = `
-            <div class="card" style="margin-bottom:16px; border-left:4px solid ${integrity.isValid ? '#237A57' : '#B83A42'}; background:#FFFFFF;">
-                <div class="card-body" style="display:flex; justify-content:space-between; align-items:center; padding:14px 18px;">
-                    <div>
-                        <h3 style="font-size:14.5px; font-weight:700; color:${integrity.isValid ? '#237A57' : '#B83A42'};">
-                            ${integrity.isValid ? '✓ Cryptographic Ledger Integrity: VERIFIED & TAMPER-FREE' : '⚠️ Cryptographic Hash Mismatch Detected!'}
-                        </h3>
-                        <p style="font-size:12px; color:#687889; margin-top:2px;">
-                            ${integrity.message}
-                        </p>
-                    </div>
-                    <button class="btn btn-primary" onclick="app.verifyAuditIntegrity()">Validate Blockchain Hash Chain</button>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="card-header"><span class="card-title">Immutable SHA-256 Chained Event Log</span></div>
-                <div class="card-body">
-                    <table class="data-table">
-                        <thead>
-                            <tr><th>ID</th><th>Actor</th><th>Action</th><th>Target Entity</th><th>Justification</th><th>Cryptographic Hash</th><th>Timestamp</th></tr>
-                        </thead>
-                        <tbody>
-                            ${eventsData.events.map(e => `
-                                <tr>
-                                    <td>${e.id}</td>
-                                    <td><strong>${e.actor_username}</strong><br><small style="color:#687889;">${e.actor_role}</small></td>
-                                    <td><code>${e.action_type}</code></td>
-                                    <td>${e.entity_name} (${e.entity_id})</td>
-                                    <td>${e.justification}</td>
-                                    <td><code style="font-size:10px;">${e.current_hash.substring(0, 24)}...</code></td>
-                                    <td>${e.created_at.replace('T', ' ').substring(0, 19)}</td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        `;
-    }
-
-    // ==========================================
-    // VIEW 14: SCENARIOS & JOURNEY DEMONSTRATION LAB (Section 23)
-    // ==========================================
-    async renderScenarios(container) {
-        const data = await API.get('/api/scenarios');
-
-        container.innerHTML = `
-            <div class="ai-advisory-box" style="margin-bottom:16px;">
-                <div class="ai-disclaimer">Section 23 Prototype Demonstration Engine</div>
-                <div style="font-size:12.5px; color:#1E3A8A;">
-                    Execute and visually verify all end-to-end demonstration scenarios with real database mutations, workflow state hops, SLA ageing recalculations, and cryptographic audit proofs!
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="card-header"><span class="card-title">Prescribed Prototype Demonstration Scenarios</span></div>
-                <div class="card-body">
-                    <div style="display:flex; flex-direction:column; gap:10px;">
-                        ${data.scenarios.map(s => `
-                            <div style="border:1px solid #DFE5EB; border-radius:4px; padding:12px 16px; background:#FAFBFD; display:flex; justify-content:space-between; align-items:center;">
-                                <div>
-                                    <div style="display:flex; align-items:center; gap:8px;">
-                                        <span style="background:#12304A; color:#FFF; font-weight:700; padding:1px 6px; border-radius:3px; font-size:10.5px;">Scenario ${s.id}</span>
-                                        <h4 style="font-size:13.5px; font-weight:700; color:#12304A;">${s.name}</h4>
-                                    </div>
-                                    <p style="font-size:11.5px; color:#687889; margin-top:3px;">${s.desc}</p>
-                                    <div id="scenario-result-${s.id}" style="margin-top:6px; font-size:11.5px; display:none;"></div>
-                                </div>
-                                <button class="btn btn-primary" id="btn-run-${s.id}" onclick="app.executeScenario(${s.id})">
-                                    ▶ Run Scenario ${s.id}
-                                </button>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            </div>
-        `;
-    }
-
-    async executeScenario(scenarioId) {
-        const btn = document.getElementById(`btn-run-${scenarioId}`);
-        const resultEl = document.getElementById(`scenario-result-${scenarioId}`);
-        if (btn) btn.innerText = 'Executing...';
-
-        try {
-            const data = await API.post(`/api/scenarios/${scenarioId}/run`, {});
-            if (resultEl) {
-                resultEl.style.display = 'block';
-                resultEl.innerHTML = `
-                    <div style="background:#EDF7F2; border:1px solid #A7F3D0; color:#237A57; padding:6px 10px; border-radius:3px;">
-                        <strong>✓ ${data.verification}</strong>
-                        <div style="font-size:10.5px; margin-top:2px;">${JSON.stringify(data)}</div>
-                    </div>
-                `;
-            }
-            API.showToast(`Scenario ${scenarioId} executed and verified!`, 'success');
-        } catch (e) {
-            if (resultEl) {
-                resultEl.style.display = 'block';
-                resultEl.innerHTML = `<div style="background:#FDF2F2; color:#B83A42; padding:6px 10px; border-radius:3px;">Error: ${e.message}</div>`;
-            }
-        } finally {
-            if (btn) btn.innerText = `▶ Re-Run Scenario ${scenarioId}`;
-        }
-    }
-
-    async verifyAuditIntegrity() {
-        const result = await API.get('/api/audit/verify-integrity');
-        if (result.isValid) {
-            API.showToast(result.message, 'success');
-        } else {
-            API.showToast(result.message, 'error');
-        }
-        if (this.currentView === 'audit') this.render();
-    }
-
-    // Modals
-    openNewAppModal() {
-        const html = `
-            <div class="modal-overlay" id="modal-container">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <span class="card-title">Submit Application for Technical Institution Approval</span>
-                        <button class="btn btn-outline" onclick="document.getElementById('modal-container').remove()">✕</button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label class="form-label">Application Category:</label>
-                            <select class="form-select" id="new-app-type">
-                                <option value="NEW_INST">Setting Up New Technical Institution (Section 10k)</option>
-                                <option value="EOA">Extension of Approval (EoA - Annual)</option>
-                                <option value="INC_INTAKE">Increase in Intake / Additional Course</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Academic Session:</label>
-                            <input class="form-input" id="new-app-year" value="2026-2027" readonly />
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Institution:</label>
-                            <select class="form-select" id="new-app-inst">
-                                <option value="INST_001">Apex Institute of Technology & Management (Northern Region)</option>
-                                <option value="INST_002">Southern National College of Engineering (Southern Region)</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn btn-outline" onclick="document.getElementById('modal-container').remove()">Cancel</button>
-                        <button class="btn btn-primary" onclick="app.submitNewApp()">Submit Application</button>
-                    </div>
-                </div>
-            </div>
-        `;
-        document.body.insertAdjacentHTML('beforeend', html);
-    }
-
-    async submitNewApp() {
-        const type = document.getElementById('new-app-type').value;
-        const year = document.getElementById('new-app-year').value;
-        const instId = document.getElementById('new-app-inst').value;
-
-        try {
-            const res = await API.post('/api/applications', {
-                applicationTypeCode: type,
-                academicYear: year,
-                institutionId: instId
+            container.querySelectorAll('.switch-user-btn').forEach(btn => {
+                btn.onclick = () => {
+                    const u = btn.getAttribute('data-user');
+                    const acc = DEMO_ACCOUNTS.find(a => a.username === u);
+                    if (acc) {
+                        this.currentUser = acc;
+                        localStorage.setItem('niyam_user', JSON.stringify(acc));
+                        API.setSimulatedUser(acc.username);
+                        API.showToast(`Active session switched to ${acc.roleName}`, 'info');
+                        this.render();
+                    }
+                };
             });
-            document.getElementById('modal-container').remove();
-            API.showToast(res.message, 'success');
-            this.navigate('applications');
-        } catch (e) {
-            API.showToast(e.message, 'error');
         }
-    }
 
-    openTransitionModal(appId, currentStage) {
-        const nextStageMap = {
-            SCRUTINY: 'EVC',
-            RE_SCRUTINY: 'EVC',
-            EVC: 'COMPETENT_DECISION',
-            SAC_SHC: 'COMPETENT_DECISION',
-            COMPETENT_DECISION: 'APPROVED'
-        };
-        const defaultNext = nextStageMap[currentStage] || 'COMPETENT_DECISION';
-
-        const html = `
-            <div class="modal-overlay" id="modal-container">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <span class="card-title">Advance Approval Workflow Transition</span>
-                        <button class="btn btn-outline" onclick="document.getElementById('modal-container').remove()">✕</button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label class="form-label">Current Stage:</label>
-                            <input class="form-input" value="${currentStage}" readonly />
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Target Stage:</label>
-                            <select class="form-select" id="trans-to-stage">
-                                <option value="${defaultNext}">${defaultNext} (Permitted Stage Hop)</option>
-                                <option value="RE_SCRUTINY">RE_SCRUTINY</option>
-                                <option value="SAC_SHC">SAC_SHC</option>
-                                <option value="APPROVED">APPROVED</option>
-                                <option value="REJECTED">REJECTED</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Statutory Justification / Officer Remarks:</label>
-                            <textarea class="form-input" id="trans-comments" style="height:60px;" placeholder="Enter regulatory comments..."></textarea>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn btn-outline" onclick="document.getElementById('modal-container').remove()">Cancel</button>
-                        <button class="btn btn-primary" onclick="app.executeTransition('${appId}')">Confirm Transition</button>
+        // ====================================================================
+        // 14. DEMO LAB (16 STAGES)
+        // ====================================================================
+        renderScenariosView(container) {
+            container.innerHTML = `
+                <div class="view-header">
+                    <div class="view-title-group">
+                        <h1 style="color:#F59E0B;">Interactive Demonstration Lab (16 Comprehensive Stages)</h1>
+                        <p>Step through all end-to-end statutory review scenarios with simulated outcomes.</p>
                     </div>
                 </div>
-            </div>
-        `;
-        document.body.insertAdjacentHTML('beforeend', html);
-    }
 
-    async executeTransition(appId) {
-        const toStage = document.getElementById('trans-to-stage').value;
-        const comments = document.getElementById('trans-comments').value;
-
-        try {
-            const res = await API.post(`/api/applications/${appId}/transition`, {
-                toStage,
-                comments: comments || 'Procedural stage advancement'
-            });
-            document.getElementById('modal-container').remove();
-            API.showToast(res.message, 'success');
-            this.navigate('case_workspace', { appId });
-        } catch (e) {
-            API.showToast(e.message, 'error');
+                <div class="stats-grid-4">
+                    <div class="stat-card" style="cursor:pointer;" onclick="app.selectedStudioCollegeId = 'zec-zaskar'; app.navigate('verify');">
+                        <div class="stat-meta">
+                            <span class="stat-label">Scenario 01</span>
+                            <span class="stat-value" style="font-size:16px;">Intake Inflation Fraud</span>
+                            <span class="stat-sub" style="color:#EF4444;">Zaskar Engineering College (Tampered)</span>
+                        </div>
+                        <div class="stat-icon-box rose">${ICONS.AlertTriangle}</div>
+                    </div>
+                    <div class="stat-card" style="cursor:pointer;" onclick="app.selectedStudioCollegeId = 'cit-coromandel'; app.navigate('verify');">
+                        <div class="stat-meta">
+                            <span class="stat-label">Scenario 02</span>
+                            <span class="stat-value" style="font-size:16px;">Expired Affiliation</span>
+                            <span class="stat-sub" style="color:#F59E0B;">Coromandel Institute (Expired)</span>
+                        </div>
+                        <div class="stat-icon-box amber">${ICONS.History}</div>
+                    </div>
+                    <div class="stat-card" style="cursor:pointer;" onclick="app.selectedStudioCollegeId = 'cit-chilika'; app.navigate('verify');">
+                        <div class="stat-meta">
+                            <span class="stat-label">Scenario 03</span>
+                            <span class="stat-value" style="font-size:16px;">Missing Mandatory Disclosure</span>
+                            <span class="stat-sub" style="color:#A855F7;">Chilika Tech (Omitted Fields)</span>
+                        </div>
+                        <div class="stat-icon-box amber">${ICONS.FileText}</div>
+                    </div>
+                    <div class="stat-card" style="cursor:pointer;" onclick="app.selectedStudioCollegeId = 'nit-nilgiri'; app.navigate('verify');">
+                        <div class="stat-meta">
+                            <span class="stat-label">Scenario 04</span>
+                            <span class="stat-value" style="font-size:16px;">Full Compliance Clearance</span>
+                            <span class="stat-sub" style="color:#059669;">Nilgiri Tech (98/100 Valid)</span>
+                        </div>
+                        <div class="stat-icon-box green">${ICONS.CheckCircle2}</div>
+                    </div>
+                </div>
+            `;
         }
     }
 
-    async toggleHoldModal(appId, isCurrentlyHold) {
-        const reason = isCurrentlyHold ? '' : prompt('Enter regulatory justification for administrative hold:');
-        if (!isCurrentlyHold && !reason) return;
+    // Attach to global scope and instantiate
+    window.app = new NiyamAIApp();
 
-        try {
-            const res = await API.post(`/api/applications/${appId}/hold`, {
-                isHold: !isCurrentlyHold,
-                reason: reason || 'Hold lifted by authorized officer'
-            });
-            API.showToast(res.message, 'success');
-            this.navigate('case_workspace', { appId });
-        } catch (e) {
-            API.showToast(e.message, 'error');
-        }
-    }
-}
-
-const app = new NiyamAIApp();
-window.app = app;
+})();

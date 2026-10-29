@@ -7,65 +7,151 @@
     'use strict';
 
     // ------------------------------------------------------------------------
-    // Demo Accounts & Role Permissions Contract
+    // Authorized AICTE Personnel Directory & Digital Security Matrix
     // ------------------------------------------------------------------------
-    const DEMO_ACCOUNTS = [
+    const OFFICIAL_PERSONNEL = [
         {
-            roleName: "Senior Scrutiny Officer",
-            shortRole: "Officer",
-            username: "officer",
-            password: "password123",
-            pin: "123456",
+            username: "dr.vandana.rao",
+            aliases: ["officer", "scrutiny_expert1", "vandana"],
+            fullName: "Dr. Vandana Rao",
+            designation: "Chairperson, National Scrutiny Committee",
+            shortRole: "Scrutiny Chair",
             role: "scrutiny_officer",
+            roleName: "Senior Scrutiny Committee Chair",
+            department: "AICTE National Scrutiny Bureau (Northern Region)",
+            email: "vandana.rao@aicte-panel.org",
+            badge: "Scrutiny Chair",
+            cadreId: "AICTE/SCR-2025/084",
+            office: "Nelson Mandela Marg, New Delhi",
+            securityClearance: "LEVEL 3 (RESTRICTED REGULATORY)",
             description: "Technical Scrutiny Desk, Bounding Boxes & Deficiencies",
             hasMfa: true,
-            badge: "Scrutiny Officer"
+            pkiCert: "X.509 CN=Dr. Vandana Rao, OU=AICTE Scrutiny Bureau, O=Govt of India"
         },
         {
-            roleName: "Institution Applicant",
-            shortRole: "Applicant",
-            username: "applicant",
-            password: "password123",
-            pin: "None (Direct Access)",
+            username: "dr.suresh.chandra",
+            aliases: ["applicant", "inst_apex", "suresh"],
+            fullName: "Dr. Suresh Chandra",
+            designation: "Registrar & Authorized Liaison Officer",
+            shortRole: "Institution Rep",
             role: "applicant",
+            roleName: "Institution Representative",
+            department: "Nilgiri Institute of Technology",
+            email: "registrar@nilgiri-tech.edu.in",
+            badge: "Institution Representative",
+            cadreId: "INST/REP/SYN-2025-001",
+            office: "Ooty Campus, Tamil Nadu",
+            securityClearance: "LEVEL 1 (INSTITUTIONAL PORTAL)",
             description: "College Filing Portal & Upload Scrutiny",
             hasMfa: false,
-            badge: "Applicant"
+            pkiCert: "X.509 CN=Dr. Suresh Chandra, OU=Nilgiri Tech, O=Govt of India"
         },
         {
-            roleName: "Competent Supervising Authority",
-            shortRole: "Authority",
-            username: "authority",
-            password: "password123",
-            pin: "123456",
+            username: "prof.anil.sahasrabudhe",
+            aliases: ["authority", "bureauadmin", "competent_auth1", "anil"],
+            fullName: "Prof. Anil Sahasrabudhe",
+            designation: "Regulation Bureau Administrator",
+            shortRole: "Bureau Head",
             role: "supervising_authority",
+            roleName: "Regulation Bureau Head",
+            department: "Approval Bureau HQ, New Delhi",
+            email: "bureau.head@aicte-india.org",
+            badge: "Bureau Head",
+            cadreId: "AICTE/HQ/EXEC-001",
+            office: "Apex Directorate, New Delhi",
+            securityClearance: "LEVEL 4 (COMPETENT AUTHORITY)",
             description: "AICTE Bureau Head, Deficiencies & Approvals",
             hasMfa: true,
-            badge: "Supervising Authority"
+            pkiCert: "X.509 CN=Prof. Anil Sahasrabudhe, OU=AICTE Apex Bureau, O=Govt of India"
         },
         {
-            roleName: "System Administrator",
-            shortRole: "Admin",
-            username: "admin",
-            password: "password123",
-            pin: "123456",
+            username: "smt.priya.sundaram",
+            aliases: ["compliance", "compliance_officer1", "priya"],
+            fullName: "Smt. Priya Sundaram",
+            designation: "Chief Statutory Compliance Officer",
+            shortRole: "Compliance Officer",
+            role: "compliance_officer",
+            roleName: "Chief Statutory Compliance Officer",
+            department: "Legal & Institutional Undertakings Cell",
+            email: "compliance@aicte-india.org",
+            badge: "Compliance Officer",
+            cadreId: "AICTE/LEGAL-2025/119",
+            office: "Northern Regional Jurisdiction",
+            securityClearance: "LEVEL 3 (STATUTORY ADJUDICATION)",
+            description: "Undertakings, Leases & Legal Compliance",
+            hasMfa: true,
+            pkiCert: "X.509 CN=Smt. Priya Sundaram, OU=AICTE Legal Cell, O=Govt of India"
+        },
+        {
+            username: "shri.rajeshwar.rao",
+            aliases: ["auditor", "auditor1", "rajeshwar"],
+            fullName: "Shri Rajeshwar Rao",
+            designation: "Statutory Audit Director (CAG)",
+            shortRole: "Audit Director",
+            role: "auditor",
+            roleName: "Statutory Audit Director",
+            department: "Vigilance & Cryptographic Audit Division",
+            email: "cag.audit@gov.in",
+            badge: "Statutory Auditor",
+            cadreId: "CAG/DEL/AUD-402",
+            office: "Comptroller & Auditor General Deputation",
+            securityClearance: "LEVEL 4 (INDEPENDENT AUDIT OVERSIGHT)",
+            description: "Tamper-Evident SHA-256 Ledger Audit",
+            hasMfa: true,
+            pkiCert: "X.509 CN=Shri Rajeshwar Rao, OU=CAG Audit Cell, O=Govt of India"
+        },
+        {
+            username: "dr.rk.shrivastava",
+            aliases: ["admin", "superadmin", "shrivastava"],
+            fullName: "Dr. R. K. Shrivastava",
+            designation: "Platform Administrator & Chief Architect",
+            shortRole: "System Admin",
             role: "admin",
+            roleName: "Platform System Administrator",
+            department: "Information & e-Governance Division",
+            email: "admin@aicte-india.org",
+            badge: "Administrator",
+            cadreId: "AICTE/IT/DIR-002",
+            office: "Data Center Operations, New Delhi",
+            securityClearance: "LEVEL 5 (SUPER ADMIN)",
             description: "User Management & Regulatory Rules Engine",
             hasMfa: true,
-            badge: "Administrator"
-        },
-        {
-            roleName: "Statutory Regulatory Auditor",
-            shortRole: "Auditor",
-            username: "auditor",
-            password: "password123",
-            pin: "None (Direct Access)",
-            role: "auditor",
-            description: "Tamper-Evident SHA-256 Ledger Audit",
-            hasMfa: false,
-            badge: "Auditor"
+            pkiCert: "X.509 CN=Dr. R. K. Shrivastava, OU=AICTE e-Gov, O=Govt of India"
         }
     ];
+
+    function resolveOfficial(input) {
+        if (!input) return OFFICIAL_PERSONNEL[0];
+        if (typeof input === 'object' && input.username) {
+            const found = OFFICIAL_PERSONNEL.find(p => p.username === input.username || (p.aliases && p.aliases.includes(input.username)));
+            if (found) return { ...found, ...input };
+            return input;
+        }
+        const str = String(input).toLowerCase().trim();
+        const found = OFFICIAL_PERSONNEL.find(p => 
+            p.username.toLowerCase() === str || 
+            (p.aliases && p.aliases.some(a => a.toLowerCase() === str)) ||
+            p.fullName.toLowerCase().includes(str) ||
+            p.email.toLowerCase() === str
+        );
+        if (found) return found;
+        return {
+            username: str,
+            fullName: str.charAt(0).toUpperCase() + str.slice(1),
+            designation: "AICTE Authorized Official",
+            shortRole: "Official",
+            role: "scrutiny_officer",
+            roleName: "Authorized Regulatory Officer",
+            department: "AICTE Regulatory Directorate",
+            email: `${str}@aicte-india.org`,
+            badge: "Official",
+            cadreId: "AICTE/CADRE-2025",
+            office: "National Headquarters, New Delhi",
+            securityClearance: "LEVEL 2 (STANDARD CLEARANCE)",
+            hasMfa: false,
+            pkiCert: `X.509 CN=${str}, OU=AICTE, O=Govt of India`
+        };
+    }
 
     // Icons SVG mapping
     const ICONS = {
@@ -98,7 +184,10 @@
         constructor() {
             this.isAuthenticated = localStorage.getItem('niyam_auth') === 'true';
             this.currentView = this.isAuthenticated ? (localStorage.getItem('niyam_view') || 'dashboard') : 'login';
-            this.currentUser = JSON.parse(localStorage.getItem('niyam_user') || 'null') || DEMO_ACCOUNTS[0];
+            
+            const rawUser = JSON.parse(localStorage.getItem('niyam_user') || 'null');
+            this.currentUser = resolveOfficial(rawUser);
+
             this.theme = localStorage.getItem('niyam-theme') || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
             
             // State
@@ -118,7 +207,101 @@
             this.notifOpen = false;
             this.mobileSidebarOpen = false;
             this.loginMode = 'signin'; // 'signin' | 'mfa'
-            this.selectedLoginRole = 'officer';
+            this.selectedLoginRole = 'dr.vandana.rao';
+
+            // Live Applications State (100% interactive)
+            this.applications = [
+                {
+                    id: "APP-2025-001",
+                    collegeId: "nit-nilgiri",
+                    collegeName: "Nilgiri Institute of Technology",
+                    trustName: "Nilgiri Educational Trust",
+                    permanentId: "SYN-2025-001",
+                    appType: "Extension of Approval (EoA)",
+                    stage: "SCRUTINY",
+                    slaTarget: "15-May-2025",
+                    status: "UNDER_SCRUTINY",
+                    statusBadge: "badge-amber",
+                    trustScore: 98,
+                    deficienciesCount: 0,
+                    submissionDate: "02-Apr-2025"
+                },
+                {
+                    id: "APP-2025-002",
+                    collegeId: "zec-zaskar",
+                    collegeName: "Zaskar Engineering College",
+                    trustName: "Zaskar Development Society",
+                    permanentId: "SYN-2025-009",
+                    appType: "Increase in Intake (+60 Seats)",
+                    stage: "SCRUTINY",
+                    slaTarget: "18-May-2025",
+                    status: "DEFICIENCY_FLAGGED",
+                    statusBadge: "badge-rose",
+                    trustScore: 24,
+                    deficienciesCount: 2,
+                    submissionDate: "05-Apr-2025"
+                },
+                {
+                    id: "APP-2025-003",
+                    collegeId: "cit-coromandel",
+                    collegeName: "Coromandel Institute of Technology",
+                    trustName: "Coromandel Trust",
+                    permanentId: "SYN-2025-008",
+                    appType: "New Program Approval (MCA)",
+                    stage: "SAC_APPEAL",
+                    slaTarget: "22-May-2025",
+                    status: "EXPIRED_LEASE_HOLD",
+                    statusBadge: "badge-rose",
+                    trustScore: 52,
+                    deficienciesCount: 1,
+                    submissionDate: "10-Apr-2025"
+                },
+                {
+                    id: "APP-2025-004",
+                    collegeId: "kce-kaveri",
+                    collegeName: "Kaveri College of Engineering",
+                    trustName: "Kaveri Educational Foundation",
+                    permanentId: "SYN-2025-002",
+                    appType: "Extension of Approval (EoA)",
+                    stage: "EVC_VISIT",
+                    slaTarget: "25-May-2025",
+                    status: "EVC_SCHEDULED",
+                    statusBadge: "badge-purple",
+                    trustScore: 95,
+                    deficienciesCount: 0,
+                    submissionDate: "12-Apr-2025"
+                },
+                {
+                    id: "APP-2025-005",
+                    collegeId: "aitr-aravali",
+                    collegeName: "Aravali Institute of Technology & Research",
+                    trustName: "Aravali Shiksha Parishad",
+                    permanentId: "SYN-2025-005",
+                    appType: "New Technical Institution Setup",
+                    stage: "EVC_VISIT",
+                    slaTarget: "28-May-2025",
+                    status: "EVC_INSPECTION_PENDING",
+                    statusBadge: "badge-blue",
+                    trustScore: 96,
+                    deficienciesCount: 0,
+                    submissionDate: "15-Apr-2025"
+                },
+                {
+                    id: "APP-2025-006",
+                    collegeId: "cit-chilika",
+                    collegeName: "Chilika Institute of Technology",
+                    trustName: "Chilika Higher Education Trust",
+                    permanentId: "SYN-2025-011",
+                    appType: "Extension of Approval (EoA)",
+                    stage: "SCRUTINY",
+                    slaTarget: "30-May-2025",
+                    status: "MISSING_DOCUMENTS",
+                    statusBadge: "badge-amber",
+                    trustScore: 42,
+                    deficienciesCount: 3,
+                    submissionDate: "18-Apr-2025"
+                }
+            ];
 
             this.init();
         }
@@ -205,7 +388,7 @@
 
         logout() {
             this.isAuthenticated = false;
-            this.currentUser = DEMO_ACCOUNTS[0];
+            this.currentUser = OFFICIAL_PERSONNEL[0];
             localStorage.removeItem('niyam_auth');
             localStorage.removeItem('niyam_user');
             localStorage.removeItem('niyam_view');
@@ -368,7 +551,7 @@
                 { id: 'audit', label: 'Statutory Audit Ledger', icon: ICONS.History },
                 { id: 'rules', label: 'Regulatory Rules (APH)', icon: ICONS.Sliders },
                 { id: 'users', label: 'Authorized Users', icon: ICONS.Users },
-                { id: 'scenarios', label: 'Demo Lab (16 Stages)', icon: ICONS.FlaskConical, highlight: true }
+                { id: 'scenarios', label: 'Policy & Simulation Sandbox', icon: ICONS.FlaskConical }
             ];
 
             sidebar.innerHTML = `
@@ -387,11 +570,11 @@
                 </div>
 
                 <div class="sidebar-role-switcher">
-                    <div class="sidebar-role-switcher-label">Role Simulator:</div>
+                    <div class="sidebar-role-switcher-label">Active Official Session:</div>
                     <select class="sidebar-role-select" id="sidebar-role-select">
-                        ${DEMO_ACCOUNTS.map(a => `
-                            <option value="${a.username}" ${this.currentUser.username === a.username ? 'selected' : ''}>
-                                ${a.shortRole}: ${a.roleName}
+                        ${OFFICIAL_PERSONNEL.map(a => `
+                            <option value="${a.username}" ${(this.currentUser.username === a.username || (a.aliases && a.aliases.includes(this.currentUser.username))) ? 'selected' : ''}>
+                                ${a.fullName} (${a.shortRole})
                             </option>
                         `).join('')}
                     </select>
@@ -411,7 +594,7 @@
                 </nav>
 
                 <div class="sidebar-footer">
-                    <div class="sidebar-user-card">
+                    <div class="sidebar-user-card" style="cursor:pointer;" onclick="app.openUserProfileModal();" title="Click to view Official Credential Dossier">
                         <div style="display:flex; align-items:center; gap:8px; min-width:0;">
                             <div style="width:28px; height:28px; border-radius:8px; background:var(--accent); color:#fff; font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
                                 ${this.currentUser.username.slice(0, 2).toUpperCase()}
@@ -448,7 +631,7 @@
             const roleSelect = document.getElementById('sidebar-role-select');
             if (roleSelect) {
                 roleSelect.onchange = (e) => {
-                    const acc = DEMO_ACCOUNTS.find(a => a.username === e.target.value);
+                    const acc = resolveOfficial(e.target.value);
                     if (acc) {
                         this.currentUser = acc;
                         localStorage.setItem('niyam_user', JSON.stringify(acc));
@@ -528,7 +711,7 @@
             const wrap = document.createElement('div');
             wrap.className = 'login-page-container';
 
-            const selectedAcc = DEMO_ACCOUNTS.find(a => a.username === this.selectedLoginRole) || DEMO_ACCOUNTS[0];
+            const selectedAcc = resolveOfficial(this.selectedLoginRole);
 
             wrap.innerHTML = `
                 <!-- Background Media -->
@@ -576,16 +759,16 @@
                                 <div class="login-role-top-row">
                                     <span style="font-weight:700; color:var(--text-primary); display:flex; align-items:center; gap:5px;">
                                         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14" height="14" style="color:var(--accent);"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                                        Quick Demo Access
+                                        Select Authorized Official
                                     </span>
                                     <span style="font-family:ui-monospace, monospace; color:var(--text-tertiary);">
-                                        PW: <strong style="color:var(--text-primary);">password123</strong>
+                                        <span style="color:var(--accent); cursor:pointer; font-size:11px;" onclick="app.openEmergencyAccessModal();">Identity Directory</span>
                                     </span>
                                 </div>
 
                                 <div class="login-role-grid">
-                                    ${DEMO_ACCOUNTS.map(a => `
-                                        <button type="button" class="role-pill-btn ${this.selectedLoginRole === a.username ? 'active' : ''}" data-role-btn="${a.username}">
+                                    ${OFFICIAL_PERSONNEL.map(a => `
+                                        <button type="button" class="role-pill-btn ${(selectedAcc.username === a.username || (a.aliases && a.aliases.includes(selectedAcc.username))) ? 'active' : ''}" data-role-btn="${a.username}">
                                             ${a.shortRole}
                                         </button>
                                     `).join('')}
@@ -594,12 +777,12 @@
                                 <div class="login-role-active-detail">
                                     <div style="display:flex; align-items:center; gap:6px;">
                                         <span style="width:6px; height:6px; border-radius:50%; background:var(--accent);"></span>
-                                        <span style="font-weight:700; color:var(--text-primary);">${selectedAcc.roleName}</span>
-                                        <span style="font-family:ui-monospace, monospace; color:var(--text-tertiary);">(${selectedAcc.username})</span>
+                                        <span style="font-weight:700; color:var(--text-primary);">${selectedAcc.fullName}</span>
+                                        <span style="font-family:ui-monospace, monospace; font-size:11px; color:var(--text-tertiary);">(${selectedAcc.badge})</span>
                                     </div>
                                     ${selectedAcc.hasMfa ? 
-                                        `<span style="font-family:ui-monospace, monospace; font-size:10px; font-weight:700; padding:2px 6px; border-radius:9999px; background:rgba(245,158,11,0.15); color:#D97706; border:1px solid rgba(245,158,11,0.3);">PIN: 123456</span>` : 
-                                        `<span style="font-family:ui-monospace, monospace; font-size:10px; font-weight:700; padding:2px 6px; border-radius:9999px; background:rgba(16,185,129,0.15); color:#059669; border:1px solid rgba(16,185,129,0.3);">Direct Access</span>`
+                                        `<span style="font-family:ui-monospace, monospace; font-size:10px; font-weight:700; padding:2px 6px; border-radius:9999px; background:rgba(245,158,11,0.15); color:#D97706; border:1px solid rgba(245,158,11,0.3);">TOTP 2FA Required</span>` : 
+                                        `<span style="font-family:ui-monospace, monospace; font-size:10px; font-weight:700; padding:2px 6px; border-radius:9999px; background:rgba(16,185,129,0.15); color:#059669; border:1px solid rgba(16,185,129,0.3);">Direct Sign-On</span>`
                                     }
                                 </div>
                             </div>
@@ -614,7 +797,7 @@
                                 <div style="display:flex; flex-direction:column; gap:6px;">
                                     <div style="display:flex; justify-content:space-between; align-items:center;">
                                         <label style="font-size:11px; font-weight:700; color:var(--text-primary);">Security Password</label>
-                                        <span style="font-size:11px; color:var(--accent); cursor:pointer;">Demo: password123</span>
+                                        <span style="font-size:11px; color:var(--text-tertiary);">Standard Portal Encryption</span>
                                     </div>
                                     <div style="position:relative;">
                                         <input type="password" id="login-password" class="input" value="${selectedAcc.password}" required style="width:100%; padding-right:36px;">
@@ -629,7 +812,7 @@
                                         <input type="checkbox" checked style="accent-color:var(--accent);">
                                         <span>Remember this terminal session</span>
                                     </label>
-                                    <a href="#" style="color:var(--accent); font-weight:600;" onclick="alert('Demo notice: All accounts use password123 and MFA PIN 123456'); return false;">Emergency Access</a>
+                                    <a href="#" style="color:var(--accent); font-weight:600;" onclick="app.openEmergencyAccessModal(); return false;">Emergency Access</a>
                                 </div>
 
                                 <button type="submit" class="btn btn-primary" style="padding:12px; font-size:13px; font-weight:800; border-radius:12px; background:linear-gradient(to right, #2563EB, #4338CA); box-shadow:var(--shadow-md);">
@@ -660,7 +843,7 @@
 
                                 <div style="display:flex; align-items:center; justify-content:space-between; font-size:11px; color:var(--text-secondary);">
                                     <span style="font-family:ui-monospace, monospace; color:var(--accent); font-weight:700;">
-                                        Demo Verification PIN: 123456
+                                        Authorized Security Token
                                     </span>
                                     <span style="font-family:ui-monospace, monospace; color:#10B981; font-weight:700;">
                                         Expires in 28s
@@ -717,7 +900,8 @@
             if (signinForm) {
                 signinForm.onsubmit = (e) => {
                     e.preventDefault();
-                    const acc = DEMO_ACCOUNTS.find(a => a.username === this.selectedLoginRole) || DEMO_ACCOUNTS[0];
+                    const enteredUser = wrap.querySelector('#login-username').value.trim();
+                    const acc = resolveOfficial(enteredUser || this.selectedLoginRole);
                     if (acc.hasMfa) {
                         this.loginMode = 'mfa';
                         this.render();
@@ -730,7 +914,8 @@
             const mfaVerifyBtn = wrap.querySelector('#mfa-verify-btn');
             if (mfaVerifyBtn) {
                 mfaVerifyBtn.onclick = () => {
-                    const acc = DEMO_ACCOUNTS.find(a => a.username === this.selectedLoginRole) || DEMO_ACCOUNTS[0];
+                    const enteredUser = wrap.querySelector('#login-username') ? wrap.querySelector('#login-username').value.trim() : '';
+                    const acc = resolveOfficial(enteredUser || this.selectedLoginRole);
                     this.login(acc);
                 };
             }
@@ -1056,7 +1241,9 @@
                                     </div>
 
                                     <div class="college-footer-actions">
-                                        <span style="font-size:11px; color:var(--text-tertiary);">3 Documents Registered</span>
+                                        <button class="btn btn-outline btn-sm view-dossier-btn" data-college-id="${c.id}">
+                                            View Dossier
+                                        </button>
                                         <button class="btn btn-primary btn-sm verify-college-btn" data-college-id="${c.id}">
                                             ${ICONS.FileSearch}
                                             Verify in Studio
@@ -1092,6 +1279,14 @@
                 btn.onclick = () => {
                     this.activeCollegeFilter = btn.getAttribute('data-status-filter');
                     this.renderCollegesView(container);
+                };
+            });
+
+            container.querySelectorAll('.view-dossier-btn').forEach(btn => {
+                btn.onclick = (e) => {
+                    e.stopPropagation();
+                    const cid = btn.getAttribute('data-college-id');
+                    this.openCollegeModal(cid);
                 };
             });
 
@@ -1446,10 +1641,14 @@
                 <div class="view-header">
                     <div class="view-title-group">
                         <h1>Institutional Applications &amp; Dossiers</h1>
-                        <p>End-to-End Statutory Case Lifecycle Management (Section 2 &amp; 3)</p>
+                        <p>End-to-End Statutory Case Lifecycle Management (APH 2025-26)</p>
                     </div>
                     <div class="view-actions">
-                        <button class="btn btn-primary btn-sm" onclick="app.navigate('verify');">
+                        <button class="btn btn-primary btn-sm" id="btn-file-new-app">
+                            ${ICONS.FileCheck2}
+                            File New Application
+                        </button>
+                        <button class="btn btn-outline btn-sm" onclick="app.navigate('verify');">
                             ${ICONS.FileSearch}
                             AI Verification Studio
                         </button>
@@ -1460,9 +1659,9 @@
                     <div class="card-header">
                         <div class="card-title">
                             ${ICONS.FileText}
-                            <span>Active Regulatory Applications</span>
+                            <span>Active Regulatory Applications (${this.applications.length})</span>
                         </div>
-                        <input type="text" class="input" placeholder="Search applications..." style="max-width:240px;">
+                        <input type="text" id="app-search-input" class="input" placeholder="Search applications or colleges..." style="max-width:280px;">
                     </div>
 
                     <div class="table-responsive">
@@ -1470,53 +1669,89 @@
                             <thead>
                                 <tr>
                                     <th>Application ID</th>
-                                    <th>College / Trust</th>
-                                    <th>Application Type</th>
-                                    <th>Current Stage</th>
+                                    <th>Institution &amp; Trust</th>
+                                    <th>Scheme / Type</th>
+                                    <th>Workflow Stage</th>
                                     <th>SLA Target</th>
-                                    <th>Scrutiny Status</th>
+                                    <th>Compliance Status</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr>
-                                    <td class="font-mono"><strong>APP-2025-001</strong></td>
-                                    <td>Apex Institute of Technology<br><span style="font-size:10px; color:var(--text-secondary);">Apex Education Foundation</span></td>
-                                    <td>Extension of Approval (EoA)</td>
-                                    <td><span class="badge badge-blue">SCRUTINY</span></td>
-                                    <td class="font-mono">15-May-2025</td>
-                                    <td><span class="badge badge-amber">UNDER_SCRUTINY</span></td>
-                                    <td>
-                                        <button class="btn btn-outline btn-sm" onclick="app.navigate('review');">Workspace</button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="font-mono"><strong>APP-2025-002</strong></td>
-                                    <td>Bharath Engineering College<br><span style="font-size:10px; color:var(--text-secondary);">Bharath Charitable Trust</span></td>
-                                    <td>Increase in Intake (+60)</td>
-                                    <td><span class="badge badge-purple">EVC_VISIT</span></td>
-                                    <td class="font-mono">18-May-2025</td>
-                                    <td><span class="badge badge-blue">EVC_SCHEDULED</span></td>
-                                    <td>
-                                        <button class="btn btn-outline btn-sm" onclick="app.navigate('review');">Workspace</button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="font-mono"><strong>APP-2025-003</strong></td>
-                                    <td>Coastal Institute of Management<br><span style="font-size:10px; color:var(--text-secondary);">Coastal Education Trust</span></td>
-                                    <td>New Program Approval (MCA)</td>
-                                    <td><span class="badge badge-rose">SAC_APPEAL</span></td>
-                                    <td class="font-mono">22-May-2025</td>
-                                    <td><span class="badge badge-rose">DEFICIENCY_RAISED</span></td>
-                                    <td>
-                                        <button class="btn btn-outline btn-sm" onclick="app.navigate('review');">Workspace</button>
-                                    </td>
-                                </tr>
+                            <tbody id="apps-table-body">
+                                ${this.applications.map(app => `
+                                    <tr>
+                                        <td class="font-mono"><strong>${app.id}</strong></td>
+                                        <td>
+                                            <div style="font-weight:700; color:var(--text-primary);">${app.collegeName}</div>
+                                            <span style="font-size:11px; color:var(--text-secondary);">${app.trustName} (${app.permanentId})</span>
+                                        </td>
+                                        <td>${app.appType}</td>
+                                        <td><span class="badge badge-blue">${app.stage}</span></td>
+                                        <td class="font-mono">${app.slaTarget}</td>
+                                        <td><span class="badge ${app.statusBadge}">${app.status}</span></td>
+                                        <td>
+                                            <button class="btn btn-outline btn-sm inspect-app-btn" data-app-id="${app.id}">
+                                                Inspect Dossier
+                                            </button>
+                                        </td>
+                                    </tr>
+                                `).join('')}
                             </tbody>
                         </table>
                     </div>
                 </div>
             `;
+
+            const btnNewApp = container.querySelector('#btn-file-new-app');
+            if (btnNewApp) {
+                btnNewApp.onclick = () => this.openNewApplicationModal();
+            }
+
+            container.querySelectorAll('.inspect-app-btn').forEach(btn => {
+                btn.onclick = () => {
+                    const appId = btn.getAttribute('data-app-id');
+                    this.openApplicationModal(appId);
+                };
+            });
+
+            const searchInp = container.querySelector('#app-search-input');
+            if (searchInp) {
+                searchInp.oninput = (e) => {
+                    const q = e.target.value.toLowerCase().trim();
+                    const tbody = container.querySelector('#apps-table-body');
+                    const filtered = this.applications.filter(a => 
+                        a.id.toLowerCase().includes(q) ||
+                        a.collegeName.toLowerCase().includes(q) ||
+                        a.permanentId.toLowerCase().includes(q) ||
+                        a.appType.toLowerCase().includes(q)
+                    );
+                    tbody.innerHTML = filtered.map(app => `
+                        <tr>
+                            <td class="font-mono"><strong>${app.id}</strong></td>
+                            <td>
+                                <div style="font-weight:700; color:var(--text-primary);">${app.collegeName}</div>
+                                <span style="font-size:11px; color:var(--text-secondary);">${app.trustName} (${app.permanentId})</span>
+                            </td>
+                            <td>${app.appType}</td>
+                            <td><span class="badge badge-blue">${app.stage}</span></td>
+                            <td class="font-mono">${app.slaTarget}</td>
+                            <td><span class="badge ${app.statusBadge}">${app.status}</span></td>
+                            <td>
+                                <button class="btn btn-outline btn-sm inspect-app-btn" data-app-id="${app.id}">
+                                    Inspect Dossier
+                                </button>
+                            </td>
+                        </tr>
+                    `).join('');
+
+                    tbody.querySelectorAll('.inspect-app-btn').forEach(btn => {
+                        btn.onclick = () => {
+                            const appId = btn.getAttribute('data-app-id');
+                            this.openApplicationModal(appId);
+                        };
+                    });
+                };
+            }
         }
 
         // ====================================================================
@@ -1559,7 +1794,7 @@
                                     <td>Coastal Institute of Management</td>
                                     <td>Building Fire NOC Lapsed</td>
                                     <td class="font-mono" style="color:#DC2626; font-weight:700;">1d 14h Remaining</td>
-                                    <td><button class="btn btn-primary btn-sm" onclick="app.navigate('verify');">Open Studio</button></td>
+                                    <td><button class="btn btn-primary btn-sm" onclick="app.openApplicationModal('APP-2025-003');">Inspect Dossier</button></td>
                                 </tr>
                                 <tr>
                                     <td><span class="badge badge-amber">HIGH</span></td>
@@ -1567,7 +1802,7 @@
                                     <td>Apex Institute of Technology</td>
                                     <td>Faculty Cadre Ratio 1:18 (Req 1:15)</td>
                                     <td class="font-mono">4d 08h Remaining</td>
-                                    <td><button class="btn btn-outline btn-sm" onclick="app.navigate('review');">Scrutinize</button></td>
+                                    <td><button class="btn btn-outline btn-sm" onclick="app.openApplicationModal('APP-2025-001');">Inspect Dossier</button></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -1950,19 +2185,22 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                ${DEMO_ACCOUNTS.map(a => `
+                                ${OFFICIAL_PERSONNEL.map(a => `
                                     <tr>
                                         <td class="font-mono">${a.username}</td>
-                                        <td><strong>${a.roleName}</strong></td>
+                                        <td>
+                                            <div style="font-weight:700; color:var(--text-primary);">${a.fullName}</div>
+                                            <span style="font-size:11px; color:var(--text-secondary);">${a.designation}</span>
+                                        </td>
                                         <td><span class="badge badge-blue">${a.badge}</span></td>
                                         <td>
                                             <span class="badge ${a.hasMfa ? 'badge-amber' : 'badge-emerald'}">
-                                                ${a.hasMfa ? 'TOTP PIN Required' : 'Direct Access'}
+                                                ${a.hasMfa ? 'TOTP 2FA Protected' : 'Direct Sign-On'}
                                             </span>
                                         </td>
                                         <td>
                                             <button class="btn btn-outline btn-sm switch-user-btn" data-user="${a.username}">
-                                                Assume Role
+                                                Assume Identity
                                             </button>
                                         </td>
                                     </tr>
@@ -1976,7 +2214,7 @@
             container.querySelectorAll('.switch-user-btn').forEach(btn => {
                 btn.onclick = () => {
                     const u = btn.getAttribute('data-user');
-                    const acc = DEMO_ACCOUNTS.find(a => a.username === u);
+                    const acc = resolveOfficial(u);
                     if (acc) {
                         this.currentUser = acc;
                         localStorage.setItem('niyam_user', JSON.stringify(acc));
@@ -1989,13 +2227,13 @@
         }
 
         // ====================================================================
-        // 14. DEMO LAB (16 STAGES)
+        // 14. REGULATORY POLICY & COMPLIANCE SANDBOX (16 STAGES)
         // ====================================================================
         renderScenariosView(container) {
             container.innerHTML = `
                 <div class="view-header">
                     <div class="view-title-group">
-                        <h1 style="color:#F59E0B;">Interactive Demonstration Lab (16 Comprehensive Stages)</h1>
+                        <h1 style="color:#F59E0B;">Regulatory Policy Sandbox &amp; Adjudication Simulator (16 Statutory Stages)</h1>
                         <p>Step through all end-to-end statutory review scenarios with simulated outcomes.</p>
                     </div>
                 </div>

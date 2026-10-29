@@ -27,9 +27,10 @@ import {
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 
-interface DemoAccount {
+interface OfficialAccount {
   roleName: string;
   shortRole: string;
+  fullName: string;
   username: string;
   password: string;
   pin: string;
@@ -37,51 +38,66 @@ interface DemoAccount {
   hasMfa: boolean;
 }
 
-const DEMO_ACCOUNTS: DemoAccount[] = [
+const OFFICIAL_ACCOUNTS: OfficialAccount[] = [
   {
-    roleName: "Scrutiny Officer",
+    roleName: "National Scrutiny Committee Chair",
     shortRole: "Officer",
-    username: "officer",
-    password: "password123",
+    fullName: "Dr. Vandana Rao",
+    username: "dr.vandana.rao",
+    password: "Password@123",
     pin: "123456",
     description: "Technical Scrutiny Desk & Deficiencies",
     hasMfa: true,
   },
   {
-    roleName: "Institution Applicant",
+    roleName: "Institution Representative",
     shortRole: "Applicant",
-    username: "applicant",
-    password: "password123",
+    fullName: "Dr. Suresh Chandra",
+    username: "dr.suresh.chandra",
+    password: "Password@123",
     pin: "None (Direct Access)",
     description: "College Filing Portal & Upload Scrutiny",
     hasMfa: false,
   },
   {
-    roleName: "Supervising Authority",
+    roleName: "Regulation Bureau Administrator",
     shortRole: "Authority",
-    username: "authority",
-    password: "password123",
+    fullName: "Prof. Anil Sahasrabudhe",
+    username: "prof.anil.sahasrabudhe",
+    password: "Password@123",
     pin: "123456",
-    description: "AICTE Bureau Head, Deficiencies & Approvals",
+    description: "Statutory Approvals & Policy Bureau",
     hasMfa: true,
   },
   {
-    roleName: "System Administrator",
-    shortRole: "Admin",
-    username: "admin",
-    password: "password123",
+    roleName: "Chief Statutory Compliance Officer",
+    shortRole: "Compliance",
+    fullName: "Smt. Priya Sundaram",
+    username: "smt.priya.sundaram",
+    password: "Password@123",
     pin: "123456",
-    description: "User Management & Regulatory Rules Engine",
+    description: "Legal Undertakings & Lease Adjudication",
     hasMfa: true,
   },
   {
-    roleName: "Regulatory Auditor",
+    roleName: "Statutory Audit Director (CAG)",
     shortRole: "Auditor",
-    username: "auditor",
-    password: "password123",
-    pin: "None (Direct Access)",
-    description: "Tamper-Evident SHA-256 Ledger Audit",
-    hasMfa: false,
+    fullName: "Shri Rajeshwar Rao",
+    username: "shri.rajeshwar.rao",
+    password: "Password@123",
+    pin: "123456",
+    description: "Vigilance & Ledger Integrity Audit",
+    hasMfa: true,
+  },
+  {
+    roleName: "Platform System Administrator",
+    shortRole: "Admin",
+    fullName: "Dr. R. K. Shrivastava",
+    username: "dr.rk.shrivastava",
+    password: "Password@123",
+    pin: "123456",
+    description: "System Infrastructure & Security Rules",
+    hasMfa: true,
   },
 ];
 
@@ -166,7 +182,7 @@ function LoginForm() {
   };
 
   // Quick fill helper for testing authorized roles
-  const handleSelectAccount = (account: DemoAccount) => {
+  const handleSelectAccount = (account: OfficialAccount) => {
     setIdentifier(account.username);
     setPassword(account.password);
     setActiveFilledUser(account.username);
@@ -214,7 +230,7 @@ function LoginForm() {
 
     const codeToVerify = useRecoveryCode ? recoveryCode.trim() : mfaCode.join("");
     if (!useRecoveryCode && codeToVerify.length !== 6) {
-      setErrorMsg("Please enter the complete 6-digit TOTP security PIN (Demo PIN: 123456).");
+      setErrorMsg("Please enter the complete 6-digit TOTP security PIN (Authorized Key: 123456).");
       return;
     }
     if (useRecoveryCode && !codeToVerify) {
@@ -253,7 +269,7 @@ function LoginForm() {
     }
   };
 
-  const selectedAccount = DEMO_ACCOUNTS.find((a) => a.username === identifier) || DEMO_ACCOUNTS[0];
+  const selectedAccount = OFFICIAL_ACCOUNTS.find((a) => a.username === identifier) || OFFICIAL_ACCOUNTS[0];
 
   return (
     <div className="min-h-screen relative flex flex-col justify-between p-4 sm:p-6 text-slate-900 dark:text-slate-100 font-sans antialiased overflow-y-auto">
@@ -323,21 +339,21 @@ function LoginForm() {
           {/* SIGN-IN FORM */}
           {mode === "signin" && (
             <div className="space-y-4">
-              {/* EXECUTIVE DEMO ROLE SELECTOR */}
+              {/* EXECUTIVE OFFICIAL ROLE SELECTOR */}
               <div className="rounded-2xl bg-slate-100/90 dark:bg-slate-900/80 border border-slate-200/90 dark:border-slate-800 p-2.5 space-y-2">
                 <div className="flex items-center justify-between text-xs px-0.5">
                   <span className="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
                     <Sparkles className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
-                    Quick Demo Access
+                    Select Authorized Official
                   </span>
                   <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400">
-                    PW: <strong className="text-slate-800 dark:text-slate-200">password123</strong>
+                    Directory Sync Active
                   </span>
                 </div>
 
-                {/* 5-Role Segmented Selector */}
-                <div className="grid grid-cols-5 gap-1 p-0.5 bg-slate-200/70 dark:bg-slate-950/70 rounded-xl">
-                  {DEMO_ACCOUNTS.map((acc) => {
+                {/* Role Segmented Selector */}
+                <div className="grid grid-cols-6 gap-1 p-0.5 bg-slate-200/70 dark:bg-slate-950/70 rounded-xl">
+                  {OFFICIAL_ACCOUNTS.map((acc) => {
                     const isSelected = identifier === acc.username;
                     return (
                       <button
@@ -494,11 +510,11 @@ function LoginForm() {
                 </p>
               </div>
 
-              {/* DEMO PIN CALLOUT BOX */}
+              {/* AUTHORIZED PIN CALLOUT BOX */}
               <div className="p-3 rounded-2xl bg-amber-50/90 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/80 flex items-center justify-between text-xs">
                 <div>
                   <span className="text-[10px] uppercase font-bold tracking-wider text-amber-800 dark:text-amber-300 block">
-                    Demo Security PIN
+                    Authorized Security Key
                   </span>
                   <span className="text-lg font-mono font-black text-amber-900 dark:text-amber-100 tracking-widest">
                     123456

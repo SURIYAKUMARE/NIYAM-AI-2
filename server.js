@@ -64,7 +64,18 @@ const server = http.createServer(async (req, res) => {
             req.body = {};
         }
 
-        const urlObj = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
+        let urlObj = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
+        if (urlObj.searchParams.has('__route__')) {
+            const sub = urlObj.searchParams.get('__route__');
+            urlObj.searchParams.delete('__route__');
+            const search = urlObj.searchParams.toString();
+            req.url = `/api/${sub}` + (search ? `?${search}` : '');
+            urlObj = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
+        } else if (req.headers['x-matched-path'] && req.headers['x-matched-path'].startsWith('/api/')) {
+            req.url = req.headers['x-matched-path'];
+            urlObj = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
+        }
+
         const pathname = urlObj.pathname;
 
         // 1. API Route matching
@@ -126,16 +137,20 @@ const server = http.createServer(async (req, res) => {
 // Start Background Worker
 schedulerService.start(60000); // Check deadlines every 60s
 
-server.listen(PORT, () => {
-    console.log('================================================================');
-    console.log(' AICTE SMART APPROVAL & COMPLIANCE MANAGEMENT SYSTEM');
-    console.log(' Department of Regulation Bureau | Problem Statement ID: 26262');
-    console.log(` Web Application & REST APIs Live on: http://localhost:${PORT}`);
-    console.log('================================================================');
-});
+if (!process.env.VERCEL) {
+    server.listen(PORT, () => {
+        console.log('================================================================');
+        console.log(' AICTE SMART APPROVAL & COMPLIANCE MANAGEMENT SYSTEM');
+        console.log(' Department of Regulation Bureau | Problem Statement ID: 26262');
+        console.log(` Web Application & REST APIs Live on: http://localhost:${PORT}`);
+        console.log('================================================================');
+    });
+}
 
 process.on('SIGINT', () => {
     console.log('[AICTE Platform] Shutting down gracefully...');
     schedulerService.stop();
     server.close(() => process.exit(0));
 });
+
+module.exports = server;

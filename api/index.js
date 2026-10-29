@@ -11,6 +11,18 @@ module.exports = (req, res) => {
         return;
     }
 
+    try {
+        const parsed = new URL(req.url, 'http://localhost');
+        if (parsed.searchParams.has('__route__')) {
+            const subpath = parsed.searchParams.get('__route__');
+            parsed.searchParams.delete('__route__');
+            const search = parsed.searchParams.toString();
+            req.url = `/api/${subpath}` + (search ? `?${search}` : '');
+        } else if (req.headers['x-matched-path'] && req.headers['x-matched-path'].startsWith('/api/')) {
+            req.url = req.headers['x-matched-path'];
+        }
+    } catch (_) {}
+
     const handled = apiRouter.handle(req, res);
     if (!handled && !res.headersSent) {
         res.statusCode = 404;

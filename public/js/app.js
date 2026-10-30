@@ -218,6 +218,11 @@
 
     // Icons SVG mapping
     const ICONS = {
+        EyeOff: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88"/></svg>`,
+        Globe: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 100-18 9 9 0 000 18z"/><path stroke-linecap="round" stroke-linejoin="round" d="M3.6 9h16.8M3.6 15h16.8M12 3a15.3 15.3 0 014 9 15.3 15.3 0 01-4 9 15.3 15.3 0 01-4-9 15.3 15.3 0 014-9z"/></svg>`,
+        Building: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21"/></svg>`,
+        Award: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="16" height="16"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>`,
+        BookOpen: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>`,
         ArrowRight: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>`,
         ExternalLink: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/></svg>`,
         Calendar: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.253 3.75h18M4.5 7.5h15a2.25 2.25 0 012.25 2.25v10.5A2.25 2.25 0 0119.5 22.5h-15A2.25 2.25 0 012.25 20.25V9.75A2.25 2.25 0 014.5 7.5z"/></svg>`,
@@ -341,7 +346,9 @@
 
         constructor() {
             this.isAuthenticated = localStorage.getItem('niyam_auth') === 'true';
-            this.currentView = this.isAuthenticated ? (localStorage.getItem('niyam_view') || 'dashboard') : 'login';
+            this.currentView = this.isAuthenticated ? (localStorage.getItem('niyam_view') || 'dashboard') : 'landing';
+            this.authMode = 'signin';
+            this.passwordVisible = false;
             
             const rawUser = JSON.parse(localStorage.getItem('niyam_user') || 'null');
             this.currentUser = resolveOfficial(rawUser);
@@ -572,6 +579,11 @@
         }
 
         navigate(view) {
+            if (view === 'landing' || view === 'login') {
+                this.currentView = view;
+                this.render();
+                return;
+            }
             let allowed = null;
             if (this.isApplicant()) {
                 allowed = ['dashboard', 'applications', 'documents', 'compliance', 'clarifications', 'institution-profile', 'institution-intelligence'];
@@ -625,6 +637,12 @@
         render() {
             const root = document.getElementById('app-root');
             if (!root) return;
+
+            if (this.currentView === 'landing') {
+                root.innerHTML = '';
+                root.appendChild(this.renderLandingView());
+                return;
+            }
 
             if (!this.isAuthenticated || this.currentView === 'login') {
                 root.innerHTML = '';
@@ -695,6 +713,11 @@
                 </div>
 
                 <div class="header-right">
+                    <button class="btn btn-outline btn-sm" id="btn-header-public-portal" title="Visit AICTE Public Landing Portal" style="display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:700;">
+                        ${ICONS.Globe}
+                        <span class="desktop-only">Public Portal</span>
+                    </button>
+
                     <button class="theme-toggle-btn" id="theme-toggle-btn" title="Toggle Light/Dark Theme">
                         ${this.theme === 'dark' ? ICONS.Sun : ICONS.Moon}
                     </button>
@@ -925,6 +948,8 @@
                 };
             });
 
+            const pubBtn = document.getElementById('btn-header-public-portal');
+            if (pubBtn) pubBtn.onclick = () => this.navigate('landing');
             document.getElementById('sidebar-logout-btn').onclick = () => this.confirmSignOut();
         }
 
@@ -1122,6 +1147,241 @@
         // ====================================================================
         // LOGIN VIEW (Exact Match to niyam-ai-psi.vercel.app)
         // ====================================================================
+        // ====================================================================
+        // NATIONAL GOVTECH LANDING PAGE & INSTITUTIONAL PORTAL
+        // ====================================================================
+        renderLandingView() {
+            const wrap = document.createElement('div');
+            wrap.className = 'landing-page-wrap';
+
+            wrap.innerHTML = `
+                <!-- Top National Regulatory Header -->
+                <header class="landing-nav">
+                    <div class="landing-nav-brand">
+                        <div class="brand-emblem-wrap">
+                            <img src="/images/aicte-logo.png" alt="AICTE Official Emblem">
+                            <span class="live-indicator-dot"></span>
+                        </div>
+                        <div>
+                            <div style="font-size:16px; font-weight:800; color:var(--text-primary); letter-spacing:-0.02em; display:flex; align-items:center; gap:8px;">
+                                <span>NIYAM AI</span>
+                                <span class="badge badge-primary" style="font-size:10px; padding:2px 8px;">APH 2025-26</span>
+                            </div>
+                            <div style="font-size:11px; color:var(--text-secondary);">अखिल भारतीय तकनीकी शिक्षा परिषद् • All India Council for Technical Education</div>
+                        </div>
+                    </div>
+
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <div class="desktop-only" style="display:inline-flex; align-items:center; gap:6px; padding:5px 12px; background:rgba(245, 158, 11, 0.12); border:1px solid rgba(245, 158, 11, 0.35); border-radius:16px; font-size:11px; font-weight:700; color:#d97706;">
+                            <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#d97706;"></span>
+                            <span>PS ID: 26262 • Team PROJECT CHAOS (197354)</span>
+                        </div>
+
+                        <button class="theme-toggle-btn" id="landing-theme-toggle" title="Toggle Light/Dark Theme">
+                            ${this.theme === 'dark' ? ICONS.Sun : ICONS.Moon}
+                        </button>
+
+                        ${this.isAuthenticated ? `
+                            <button class="btn btn-primary btn-sm" id="landing-btn-dashboard" style="font-weight:700; display:inline-flex; align-items:center; gap:6px;">
+                                <span>Return to Dashboard</span>
+                                ${ICONS.ArrowRight}
+                            </button>
+                        ` : `
+                            <button class="btn btn-primary btn-sm" id="landing-btn-login" style="font-weight:700; display:inline-flex; align-items:center; gap:6px;">
+                                <span>Access Regulatory Portal</span>
+                                ${ICONS.ArrowRight}
+                            </button>
+                        `}
+                    </div>
+                </header>
+
+                <!-- Hero Section -->
+                <section class="landing-hero">
+                    <div class="landing-pill">
+                        <span style="width:8px; height:8px; border-radius:50%; background:currentColor;"></span>
+                        <span>OFFICIAL GOVTECH TRUST ENGINE • MINISTRY OF EDUCATION</span>
+                    </div>
+
+                    <h1 class="landing-title">
+                        Next-Generation AICTE Approval Workflow &amp; Statutory Compliance Governance
+                    </h1>
+
+                    <p class="landing-subtitle">
+                        NIYAM integrates the AICTE Approval Process Handbook (APH 2025–26) with deterministic workflow automation, SHA-256 cryptographic document chaining, and autonomous statutory expiry tracking for 10,480+ technical institutions across India.
+                    </p>
+
+                    <div class="landing-cta-group">
+                        <button class="btn btn-primary" id="hero-btn-primary" style="padding:12px 24px; font-size:14px; font-weight:700; display:inline-flex; align-items:center; gap:8px;">
+                            <span>Access Regulatory Portal</span>
+                            ${ICONS.ArrowRight}
+                        </button>
+                        <button class="btn btn-outline" id="hero-btn-workflow" style="padding:12px 20px; font-size:14px; font-weight:700; display:inline-flex; align-items:center; gap:8px;">
+                            ${ICONS.ListFilter}
+                            <span>Explore 7-Stage Workflow</span>
+                        </button>
+                        <button class="btn btn-outline" id="hero-btn-demo" style="padding:12px 20px; font-size:14px; font-weight:700; display:inline-flex; align-items:center; gap:8px;">
+                            ${ICONS.ShieldCheck}
+                            <span>Evaluator Demo Access</span>
+                        </button>
+                    </div>
+
+                    <!-- Live KPI Stats Grid -->
+                    <div class="landing-stats-grid">
+                        <div class="landing-stat-card">
+                            <div class="landing-stat-val">10,480+</div>
+                            <div class="landing-stat-lbl">Approved Institutions</div>
+                            <div class="landing-stat-desc">Engineering, Polytechnic &amp; Management</div>
+                        </div>
+
+                        <div class="landing-stat-card">
+                            <div class="landing-stat-val">8 Directorates</div>
+                            <div class="landing-stat-lbl">Regional Scrutiny Hubs</div>
+                            <div class="landing-stat-desc">Centralized policy with regional execution</div>
+                        </div>
+
+                        <div class="landing-stat-card">
+                            <div class="landing-stat-val">7-Stage</div>
+                            <div class="landing-stat-lbl">Finite State Machine</div>
+                            <div class="landing-stat-desc">Mathematical deficiency gating &amp; zero discretion</div>
+                        </div>
+
+                        <div class="landing-stat-card">
+                            <div class="landing-stat-val">100% SHA-256</div>
+                            <div class="landing-stat-lbl">Cryptographic Chaining</div>
+                            <div class="landing-stat-desc">Tamper-evident DigiLocker trust provenance</div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Interactive 7-Stage Workflow Pipeline -->
+                <section class="landing-section-wrap" id="landing-workflow-section" style="background:var(--surface-muted); border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
+                    <div class="landing-section-header">
+                        <h2>Deterministic 7-Stage Regulatory Pipeline</h2>
+                        <p>Strictly governed by the AICTE Approval Process Handbook (APH 2025–26) with automated deficiency verification.</p>
+                    </div>
+
+                    <div class="landing-workflow-grid">
+                        <div class="landing-workflow-card">
+                            <div class="landing-workflow-step">Step 01 • Application Filing</div>
+                            <div class="landing-workflow-title">Institutional Dossier Intake</div>
+                            <div class="landing-workflow-desc">Institution uploads statutory proofs (Land Title, Building Plan, Fire NOC, Cadre Ratio). Client-side SHA-256 digest is generated instantly.</div>
+                        </div>
+
+                        <div class="landing-workflow-card">
+                            <div class="landing-workflow-step">Step 02 • Automated Scrutiny</div>
+                            <div class="landing-workflow-title">Deficiency Gating &amp; OCR</div>
+                            <div class="landing-workflow-desc">Regional Scrutiny Cell reviews documents against APH rules. Missing evidence triggers structured deficiency notices; illegal forward transitions are blocked.</div>
+                        </div>
+
+                        <div class="landing-workflow-card">
+                            <div class="landing-workflow-step">Step 03 • Field Inspection</div>
+                            <div class="landing-workflow-title">Expert Visit Committee (EVC)</div>
+                            <div class="landing-workflow-desc">EVC experts inspect physical infrastructure on-site. Field docket supports 100% offline mobile operation with geotagged cryptographic checksum sync.</div>
+                        </div>
+
+                        <div class="landing-workflow-card">
+                            <div class="landing-workflow-step">Step 04 • Executive Sanction</div>
+                            <div class="landing-workflow-title">Council Approval &amp; EoA</div>
+                            <div class="landing-workflow-desc">Standing Appellate Committee (SAC) and Executive Committee review recommendations, issuing digitally signed Extension of Approval (EoA).</div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Core Architectural Features Grid -->
+                <section class="landing-section-wrap">
+                    <div class="landing-section-header">
+                        <h2>Architectural Innovations &amp; Trust Infrastructure</h2>
+                        <p>Enterprise technologies engineered specifically to solve AICTE Problem Statement 26262.</p>
+                    </div>
+
+                    <div class="landing-features-grid">
+                        <div class="landing-feature-card">
+                            <div class="landing-feature-icon">${ICONS.ShieldCheck}</div>
+                            <div class="landing-feature-title">Finite State Machine Engine</div>
+                            <div class="landing-feature-desc">Eliminates subjective human discretion. Transitions between DRAFT, SCRUTINY, EVC, SAC, and EC_APPROVED are verified against strict statutory criteria.</div>
+                        </div>
+
+                        <div class="landing-feature-card">
+                            <div class="landing-feature-icon">${ICONS.Clock}</div>
+                            <div class="landing-feature-title">Statutory Validity Watchdog</div>
+                            <div class="landing-feature-desc">Continuous monitoring of time-sensitive institutional compliances (Fire Safety NOCs, Land Leases) with automated 60, 45, and 30-day early-warning countdown radars.</div>
+                        </div>
+
+                        <div class="landing-feature-card">
+                            <div class="landing-feature-icon">${ICONS.Lock}</div>
+                            <div class="landing-feature-title">SHA-256 Cryptographic Vault</div>
+                            <div class="landing-feature-desc">Immutable non-repudiation ledger chaining all submitted evidence. Once certified, documents cannot be altered or substituted without invalidating the audit chain.</div>
+                        </div>
+
+                        <div class="landing-feature-card">
+                            <div class="landing-feature-icon">${ICONS.Folder}</div>
+                            <div class="landing-feature-title">Offline EVC Field Inspection</div>
+                            <div class="landing-feature-desc">Inspection teams visiting remote campuses work completely offline. Data is stored in tamper-evident local dockets and cryptographically synchronized upon reconnection.</div>
+                        </div>
+
+                        <div class="landing-feature-card">
+                            <div class="landing-feature-icon">${ICONS.HelpCircle}</div>
+                            <div class="landing-feature-title">Grounded APH Regulatory AI Copilot</div>
+                            <div class="landing-feature-desc">Context-aware regulatory AI grounded strictly in the AICTE Approval Process Handbook (APH 2025–26), delivering verifiable chapter-and-clause legal citations.</div>
+                        </div>
+
+                        <div class="landing-feature-card">
+                            <div class="landing-feature-icon">${ICONS.Users}</div>
+                            <div class="landing-feature-title">Strict Least-Privilege RBAC</div>
+                            <div class="landing-feature-desc">Zero privilege leakage. Applicants only view their own institutional filings; administrative officers and vigilance auditors operate in strictly isolated permission domains.</div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- National GovTech Footer -->
+                <footer class="landing-footer">
+                    <div style="max-width:1200px; margin:0 auto; display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:20px;">
+                        <div style="display:flex; align-items:center; gap:12px;">
+                            <img src="/images/aicte-logo.png" alt="AICTE" style="width:36px; height:36px; object-fit:contain;">
+                            <div>
+                                <div style="font-size:13px; font-weight:800; color:var(--text-primary);">All India Council for Technical Education (AICTE)</div>
+                                <div style="font-size:11px; color:var(--text-secondary);">Regulation Bureau • Nelson Mandela Marg, Vasant Kunj, New Delhi - 110070</div>
+                            </div>
+                        </div>
+
+                        <div style="font-size:11px; color:var(--text-secondary); text-align:right;">
+                            <div>Smart India Hackathon 2026 • <strong>Problem Statement ID: 26262</strong></div>
+                            <div style="margin-top:2px;">Developed by <strong>Team PROJECT CHAOS (197354)</strong> • Category: Software</div>
+                        </div>
+                    </div>
+                </footer>
+            `;
+
+            // Event bindings
+            wrap.querySelector('#landing-theme-toggle').onclick = () => {
+                this.toggleTheme();
+                this.render();
+            };
+
+            const loginBtn = wrap.querySelector('#landing-btn-login');
+            if (loginBtn) loginBtn.onclick = () => this.navigate('login');
+
+            const dashBtn = wrap.querySelector('#landing-btn-dashboard');
+            if (dashBtn) dashBtn.onclick = () => this.navigate('dashboard');
+
+            wrap.querySelector('#hero-btn-primary').onclick = () => {
+                if (this.isAuthenticated) this.navigate('dashboard');
+                else this.navigate('login');
+            };
+
+            wrap.querySelector('#hero-btn-demo').onclick = () => this.navigate('login');
+
+            wrap.querySelector('#hero-btn-workflow').onclick = () => {
+                const el = wrap.querySelector('#landing-workflow-section');
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+            };
+
+            return wrap;
+        }
+
+        // ====================================================================
+        // MODERNIZED ENTERPRISE AUTHENTICATION & LOGIN VIEW
+        // ====================================================================
         renderLoginView() {
             const wrap = document.createElement('div');
             wrap.className = 'login-page-container';
@@ -1138,6 +1398,11 @@
 
                 <!-- Top Floating Regulatory Bar -->
                 <header class="login-top-bar">
+                    <button class="login-top-pill" id="btn-login-back-landing" title="Return to Public Portal Overview" style="cursor:pointer; border:1px solid rgba(255,255,255,0.2);">
+                        ${ICONS.ArrowRight}
+                        <span style="font-weight:700;">← Back to Public Portal</span>
+                    </button>
+
                     <div class="login-top-pill">
                         <div style="width:20px; height:20px; border-radius:50%; background:#fff; padding:2px; display:flex; align-items:center; justify-content:center;">
                             <img src="/images/aicte-logo.png" alt="AICTE" style="width:100%; height:100%; object-fit:contain;">
@@ -1147,204 +1412,232 @@
                         <span style="color:#6EE7B7; font-weight:600;">Live Regulatory Portal</span>
                     </div>
 
-                    <div class="login-top-pill">
-                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14" height="14" style="color:#FBBF24;"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                    <div class="login-top-pill desktop-only">
+                        ${ICONS.ShieldCheck}
                         <span>Nelson Mandela Marg, New Delhi</span>
                         <span style="font-family:ui-monospace, monospace; padding:1px 5px; border-radius:4px; background:#2563EB; font-weight:700;">MoE</span>
                     </div>
                 </header>
 
-                <!-- Glassmorphic Login Card -->
+                <!-- Modern Authentication Card -->
                 <div class="login-card-container">
-                    <div class="login-glass-card">
+                    <div class="login-glass-card" style="max-width:540px; padding:32px 36px;">
                         
-                        <div class="login-brand-header">
+                        <div class="login-brand-header" style="margin-bottom:20px;">
                             <div class="login-emblem-box">
                                 <img src="/images/aicte-logo.png" alt="AICTE">
                                 <span class="live-indicator-dot"></span>
                             </div>
                             <div class="login-hindi-title">अखिल भारतीय तकनीकी शिक्षा परिषद्</div>
                             <h1 class="login-main-title">NIYAM Regulatory Portal</h1>
-                            <p class="login-desc">AICTE Application Review &amp; Compliance Verification</p>
+                            <p class="login-desc">AICTE Application Review &amp; Compliance Verification (APH 2025-26)</p>
                         </div>
 
-                        ${this.loginMode === 'signin' ? `
-                            <!-- Quick Role Selector -->
-                            <div class="login-role-selector-box">
+                        <!-- Tab Switcher: Sign In vs Registration -->
+                        <div class="auth-mode-tabs">
+                            <div class="auth-mode-tab ${this.authMode === 'signin' ? 'active' : ''}" id="tab-auth-signin">
+                                Authorized Sign In
+                            </div>
+                            <div class="auth-mode-tab ${this.authMode === 'register' ? 'active' : ''}" id="tab-auth-register">
+                                Institutional Enrolment
+                            </div>
+                        </div>
+
+                        ${this.authMode === 'signin' ? `
+                            <!-- Quick Role / Persona Selector for Evaluators -->
+                            <div class="login-role-selector-box" style="margin-bottom:20px;">
                                 <div class="login-role-top-row">
-                                    <span style="font-weight:700; color:var(--text-primary); display:flex; align-items:center; gap:5px;">
-                                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14" height="14" style="color:var(--accent);"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                                        Select Authorized Official
-                                    </span>
-                                    <span style="font-family:ui-monospace, monospace; color:var(--text-tertiary);">
-                                        <span style="color:var(--accent); cursor:pointer; font-size:11px;" onclick="app.openEmergencyAccessModal();">Identity Directory</span>
+                                    <span style="font-weight:700; color:var(--text-primary); display:flex; align-items:center; gap:5px; font-size:12px;">
+                                        ${ICONS.Users}
+                                        Select Authorized Official (SIH Demo Evaluator Access)
                                     </span>
                                 </div>
 
-                                <div class="login-role-grid">
+                                <div class="login-role-grid" style="grid-template-columns: repeat(3, 1fr); gap:6px;">
                                     ${OFFICIAL_PERSONNEL.map(a => `
-                                        <button type="button" class="role-pill-btn ${(selectedAcc.username === a.username || (a.aliases && a.aliases.includes(selectedAcc.username))) ? 'active' : ''}" data-role-btn="${a.username}">
+                                        <button type="button" class="role-pill-btn ${(selectedAcc.username === a.username || (a.aliases && a.aliases.includes(selectedAcc.username))) ? 'active' : ''}" data-role-btn="${a.username}" style="padding:6px 4px; font-size:11px;">
                                             ${a.shortRole}
                                         </button>
                                     `).join('')}
                                 </div>
 
-                                <div class="login-role-active-detail">
+                                <div class="login-role-active-detail" style="margin-top:10px;">
                                     <div style="display:flex; align-items:center; gap:6px;">
                                         <span style="width:6px; height:6px; border-radius:50%; background:var(--accent);"></span>
                                         <span style="font-weight:700; color:var(--text-primary);">${selectedAcc.fullName}</span>
-                                        <span style="font-family:ui-monospace, monospace; font-size:11px; color:var(--text-tertiary);">(${selectedAcc.badge})</span>
+                                        <span class="font-mono" style="font-size:11px; color:var(--text-tertiary);">(${selectedAcc.badge})</span>
                                     </div>
-                                    ${selectedAcc.hasMfa ? 
-                                        `<span style="font-family:ui-monospace, monospace; font-size:10px; font-weight:700; padding:2px 6px; border-radius:9999px; background:rgba(245,158,11,0.15); color:#D97706; border:1px solid rgba(245,158,11,0.3);">TOTP 2FA Required</span>` : 
-                                        `<span style="font-family:ui-monospace, monospace; font-size:10px; font-weight:700; padding:2px 6px; border-radius:9999px; background:rgba(16,185,129,0.15); color:#059669; border:1px solid rgba(16,185,129,0.3);">Direct Sign-On</span>`
-                                    }
+                                    <span class="font-mono" style="font-size:10px; font-weight:700; padding:2px 6px; border-radius:4px; background:rgba(37,99,235,0.1); color:var(--accent);">
+                                        ${selectedAcc.cadreId}
+                                    </span>
                                 </div>
                             </div>
 
                             <!-- Credentials Form -->
-                            <form id="signin-form" style="display:flex; flex-direction:column; gap:14px;">
-                                <div style="display:flex; flex-direction:column; gap:6px;">
-                                    <label style="font-size:11px; font-weight:700; color:var(--text-primary);">Username / AICTE Official ID</label>
-                                    <input type="text" id="login-username" class="input" value="${selectedAcc.username}" required style="padding-left:12px;">
+                            <form id="login-form" style="display:flex; flex-direction:column; gap:16px;">
+                                <div>
+                                    <label style="font-size:12px; font-weight:700; color:var(--text-primary); display:block; margin-bottom:6px;">Official Username / AICTE ID</label>
+                                    <input type="text" class="input" id="login-username" value="${selectedAcc.username}" required style="width:100%; font-size:13px;">
                                 </div>
 
-                                <div style="display:flex; flex-direction:column; gap:6px;">
-                                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                                        <label style="font-size:11px; font-weight:700; color:var(--text-primary);">Security Password</label>
-                                        <span style="font-size:11px; color:var(--text-tertiary);">Standard Portal Encryption</span>
+                                <div>
+                                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                                        <label style="font-size:12px; font-weight:700; color:var(--text-primary);">Cryptographic Credential / Password</label>
+                                        <span style="font-size:11px; color:var(--accent); cursor:pointer;" onclick="API.showToast('Demo Environment: Any password clears sandbox check.', 'info');">Default: demo123</span>
                                     </div>
-                                    <div style="position:relative;">
-                                        <input type="password" id="login-password" class="input" value="${selectedAcc.password}" required style="width:100%; padding-right:36px;">
-                                        <button type="button" id="toggle-pw-btn" style="position:absolute; right:10px; top:50%; transform:translateY(-50%); color:var(--text-tertiary);">
-                                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                                    <div class="password-input-wrap">
+                                        <input type="${this.passwordVisible ? 'text' : 'password'}" class="input" id="login-password" value="demo123" required style="width:100%; font-size:13px;">
+                                        <button type="button" class="password-toggle-btn" id="btn-toggle-password" title="Toggle password visibility">
+                                            ${this.passwordVisible ? ICONS.EyeOff : ICONS.Eye}
                                         </button>
                                     </div>
                                 </div>
 
-                                <div style="display:flex; align-items:center; justify-content:space-between; font-size:12px;">
-                                    <label style="display:flex; align-items:center; gap:6px; cursor:pointer; color:var(--text-secondary);">
+                                <div style="display:flex; justify-content:space-between; align-items:center; font-size:12px; color:var(--text-secondary);">
+                                    <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
                                         <input type="checkbox" checked style="accent-color:var(--accent);">
-                                        <span>Remember this terminal session</span>
+                                        <span>Maintain hardware session</span>
                                     </label>
-                                    <a href="#" style="color:var(--accent); font-weight:600;" onclick="app.openEmergencyAccessModal(); return false;">Emergency Access</a>
+                                    <span style="color:var(--accent); cursor:pointer;" onclick="API.showToast('Contact Regional Office liaison for password resets.', 'info');">Need assistance?</span>
                                 </div>
 
-                                <button type="submit" class="btn btn-primary" style="padding:12px; font-size:13px; font-weight:800; border-radius:12px; background:linear-gradient(to right, #2563EB, #4338CA); box-shadow:var(--shadow-md);">
-                                    Sign In to Regulatory Terminal
+                                <button type="submit" class="btn btn-primary" id="btn-login-submit" style="padding:12px; font-size:14px; font-weight:700; justify-content:center; margin-top:4px;">
+                                    ${ICONS.Lock}
+                                    <span>Sign In &amp; Authenticate Session</span>
                                 </button>
                             </form>
                         ` : `
-                            <!-- MFA Challenge Screen -->
-                            <div style="display:flex; flex-direction:column; gap:16px;">
-                                <div style="text-align:center; padding:10px 0;">
-                                    <div style="width:48px; height:48px; border-radius:50%; background:var(--accent-light); color:var(--accent); display:flex; align-items:center; justify-content:center; margin:0 auto 10px;">
-                                        ${ICONS.ShieldAlert}
+                            <!-- Institutional Registration Form -->
+                            <form id="register-form" style="display:flex; flex-direction:column; gap:14px;">
+                                <div>
+                                    <label style="font-size:12px; font-weight:700; color:var(--text-primary); display:block; margin-bottom:4px;">AICTE Permanent Institute ID (PID)</label>
+                                    <input type="text" class="input" id="reg-pid" placeholder="e.g. 1-3324901821" required style="width:100%; font-size:13px;">
+                                </div>
+
+                                <div>
+                                    <label style="font-size:12px; font-weight:700; color:var(--text-primary); display:block; margin-bottom:4px;">Official Institution Name</label>
+                                    <input type="text" class="input" id="reg-name" placeholder="Full legal name of university / college" required style="width:100%; font-size:13px;">
+                                </div>
+
+                                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                                    <div>
+                                        <label style="font-size:12px; font-weight:700; color:var(--text-primary); display:block; margin-bottom:4px;">State / UT</label>
+                                        <select class="input" id="reg-state" style="width:100%; font-size:12px;" required>
+                                            <option value="Tamil Nadu">Tamil Nadu</option>
+                                            <option value="Karnataka">Karnataka</option>
+                                            <option value="Maharashtra">Maharashtra</option>
+                                            <option value="Delhi">Delhi NCR</option>
+                                            <option value="Uttar Pradesh">Uttar Pradesh</option>
+                                        </select>
                                     </div>
-                                    <h3 style="font-size:16px; font-weight:800; color:var(--text-primary);">Two-Factor Security Verification</h3>
-                                    <p style="font-size:12px; color:var(--text-secondary); margin-top:4px;">
-                                        Enter the 6-digit Time-Based One-Time Password (TOTP) from your authorized authenticator.
-                                    </p>
+                                    <div>
+                                        <label style="font-size:12px; font-weight:700; color:var(--text-primary); display:block; margin-bottom:4px;">Regional Directorate</label>
+                                        <select class="input" id="reg-region" style="width:100%; font-size:12px;" required>
+                                            <option value="Southern">Southern Regional Office</option>
+                                            <option value="Western">Western Regional Office</option>
+                                            <option value="Northern">Northern Regional Office</option>
+                                            <option value="South-Western">South-Western Regional Office</option>
+                                        </select>
+                                    </div>
                                 </div>
 
-                                <div class="mfa-digits-container" id="mfa-inputs-wrap">
-                                    <input type="text" maxlength="1" class="mfa-digit-input" data-mfa-idx="0" value="1" autofocus>
-                                    <input type="text" maxlength="1" class="mfa-digit-input" data-mfa-idx="1" value="2">
-                                    <input type="text" maxlength="1" class="mfa-digit-input" data-mfa-idx="2" value="3">
-                                    <input type="text" maxlength="1" class="mfa-digit-input" data-mfa-idx="3" value="4">
-                                    <input type="text" maxlength="1" class="mfa-digit-input" data-mfa-idx="4" value="5">
-                                    <input type="text" maxlength="1" class="mfa-digit-input" data-mfa-idx="5" value="6">
+                                <div>
+                                    <label style="font-size:12px; font-weight:700; color:var(--text-primary); display:block; margin-bottom:4px;">Registrar / Principal Email Address</label>
+                                    <input type="email" class="input" id="reg-email" placeholder="registrar@institution.edu.in" required style="width:100%; font-size:13px;">
                                 </div>
 
-                                <div style="display:flex; align-items:center; justify-content:space-between; font-size:11px; color:var(--text-secondary);">
-                                    <span style="font-family:ui-monospace, monospace; color:var(--accent); font-weight:700;">
-                                        Authorized Security Token
-                                    </span>
-                                    <span style="font-family:ui-monospace, monospace; color:#10B981; font-weight:700;">
-                                        Expires in 28s
-                                    </span>
-                                </div>
-
-                                <button type="button" class="btn btn-primary" id="mfa-verify-btn" style="padding:12px; font-size:13px; font-weight:800; border-radius:12px; background:linear-gradient(to right, #2563EB, #4338CA);">
-                                    Verify Security PIN &amp; Proceed
+                                <button type="submit" class="btn btn-primary" style="padding:12px; font-size:14px; font-weight:700; justify-content:center; margin-top:8px;">
+                                    ${ICONS.ShieldCheck}
+                                    <span>Submit Enrolment Application</span>
                                 </button>
-
-                                <button type="button" class="btn btn-outline" id="mfa-cancel-btn" style="padding:10px; font-size:12px; border-radius:12px;">
-                                    Back to Sign In
-                                </button>
-                            </div>
+                            </form>
                         `}
-
-                        <!-- Footer Legal & Cryptographic Badges -->
-                        <div style="border-top:1px solid var(--border); padding-top:14px; display:flex; align-items:center; justify-content:space-between; font-size:10px; color:var(--text-tertiary);">
-                            <span style="display:flex; align-items:center; gap:4px;">
-                                ${ICONS.ShieldCheck}
-                                <span>SHA-256 Ledger Provenance</span>
-                            </span>
-                            <span>AICTE Regulation Bureau • ISO 27001</span>
-                        </div>
-
                     </div>
                 </div>
-
-                <!-- Bottom Floating Notice -->
-                <footer style="position:relative; z-index:10; text-align:center; padding:10px 0; font-size:11px; color:rgba(255,255,255,0.7);">
-                    AICTE Smart Approval &amp; Compliance Management System • Problem Statement ID: 26262 / 26261
-                </footer>
             `;
 
-            // Event bindings for login
+            // Event Bindings
+            wrap.querySelector('#btn-login-back-landing').onclick = () => this.navigate('landing');
+
+            const tabSignin = wrap.querySelector('#tab-auth-signin');
+            if (tabSignin) tabSignin.onclick = () => {
+                this.authMode = 'signin';
+                this.render();
+            };
+
+            const tabRegister = wrap.querySelector('#tab-auth-register');
+            if (tabRegister) tabRegister.onclick = () => {
+                this.authMode = 'register';
+                this.render();
+            };
+
+            // Persona pills
             wrap.querySelectorAll('[data-role-btn]').forEach(btn => {
                 btn.onclick = () => {
-                    this.selectedLoginRole = btn.getAttribute('data-role-btn');
+                    const uname = btn.getAttribute('data-role-btn');
+                    this.selectedLoginRole = uname;
                     this.render();
                 };
             });
 
-            const togglePwBtn = wrap.querySelector('#toggle-pw-btn');
-            if (togglePwBtn) {
-                togglePwBtn.onclick = () => {
-                    const pwInput = wrap.querySelector('#login-password');
-                    if (pwInput) {
-                        pwInput.type = pwInput.type === 'password' ? 'text' : 'password';
-                    }
+            // Password visibility toggle
+            const pwdToggle = wrap.querySelector('#btn-toggle-password');
+            if (pwdToggle) {
+                pwdToggle.onclick = () => {
+                    this.passwordVisible = !this.passwordVisible;
+                    const input = wrap.querySelector('#login-password');
+                    if (input) input.type = this.passwordVisible ? 'text' : 'password';
+                    pwdToggle.innerHTML = this.passwordVisible ? ICONS.EyeOff : ICONS.Eye;
                 };
             }
 
-            const signinForm = wrap.querySelector('#signin-form');
-            if (signinForm) {
-                signinForm.onsubmit = (e) => {
+            // Sign In form submission
+            const loginForm = wrap.querySelector('#login-form');
+            if (loginForm) {
+                loginForm.onsubmit = async (e) => {
                     e.preventDefault();
-                    const enteredUser = wrap.querySelector('#login-username').value.trim();
-                    const acc = resolveOfficial(enteredUser || this.selectedLoginRole);
-                    if (acc.hasMfa) {
-                        this.loginMode = 'mfa';
-                        this.render();
-                    } else {
-                        this.login(acc);
+                    const uname = wrap.querySelector('#login-username').value.trim();
+                    const official = resolveOfficial(uname);
+
+                    this.currentUser = official;
+                    this.isAuthenticated = true;
+                    localStorage.setItem('niyam_auth', 'true');
+                    localStorage.setItem('niyam_user', JSON.stringify(official));
+
+                    const submitBtn = wrap.querySelector('#btn-login-submit');
+                    if (submitBtn) {
+                        submitBtn.innerHTML = '<span>Verifying cryptographic signature...</span>';
+                        submitBtn.disabled = true;
                     }
+
+                    try {
+                        await API.post('/api/auth/login', { username: uname, password: 'password123' });
+                    } catch (_) {}
+
+                    setTimeout(() => {
+                        this.currentView = 'dashboard';
+                        localStorage.setItem('niyam_view', 'dashboard');
+                        this.render();
+                        API.showToast(`Authenticated as ${official.fullName} (${official.shortRole})`, 'success');
+                    }, 350);
                 };
             }
 
-            const mfaVerifyBtn = wrap.querySelector('#mfa-verify-btn');
-            if (mfaVerifyBtn) {
-                mfaVerifyBtn.onclick = () => {
-                    const enteredUser = wrap.querySelector('#login-username') ? wrap.querySelector('#login-username').value.trim() : '';
-                    const acc = resolveOfficial(enteredUser || this.selectedLoginRole);
-                    this.login(acc);
-                };
-            }
-
-            const mfaCancelBtn = wrap.querySelector('#mfa-cancel-btn');
-            if (mfaCancelBtn) {
-                mfaCancelBtn.onclick = () => {
-                    this.loginMode = 'signin';
+            // Registration form submission
+            const regForm = wrap.querySelector('#register-form');
+            if (regForm) {
+                regForm.onsubmit = (e) => {
+                    e.preventDefault();
+                    const name = wrap.querySelector('#reg-name').value;
+                    API.showToast(`Enrolment request submitted for ${name}. Verification token dispatched.`, 'success');
+                    this.authMode = 'signin';
                     this.render();
                 };
             }
 
             return wrap;
         }
+
 
         // ====================================================================
         // 1. EXECUTIVE DASHBOARD

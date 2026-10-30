@@ -4,70 +4,96 @@
    Tailwind CSS & Google Stitch Visual Direction | Dark & Light Modes
 ============================================================================ */
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Manrope:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
 :root {
-  --background: #F8FAFC;
+  /* Master Palette — AICTE Regulation Bureau / Enterprise GovTech */
+  --primary: #10233F;        /* Deep Navy */
+  --primary-hover: #0B192C;
+  --secondary: #2457D6;      /* Royal Blue */
+  --secondary-hover: #1E47B2;
+  --background: #F5F7FB;     /* Enterprise Light Canvas */
   --surface: #FFFFFF;
-  --surface-muted: #F1F5F9;
-  --surface-hover: #F8FAFC;
-  --text-primary: #0F172A;
-  --text-secondary: #475569;
+  --surface-muted: #F8FAFD;
+  --surface-hover: #F1F5F9;
+  --text-primary: #17243A;   /* Crisp Navy Charcoal */
+  --text-secondary: #64748B; /* Professional Slate Gray */
   --text-tertiary: #94A3B8;
-  --border: #E2E8F0;
+  --border: #E5EAF1;         /* Refined Subtle Border */
   --border-strong: #CBD5E1;
-  --accent: #2563EB;
-  --accent-hover: #1D4ED8;
-  --accent-active: #1E40AF;
-  --accent-light: #EFF6FF;
-  --accent-muted: #DBEAFE;
-  --gold: #F59E0B;
+  --accent: #2457D6;         /* Royal Blue Accent */
+  --accent-hover: #1E47B2;
+  --accent-active: #183A92;
+  --accent-light: #EEF3FE;
+  --accent-muted: #D9E4FC;
+  --gold: #E9A23B;
   --gold-light: #FEF3C7;
-  --success: #059669;
-  --warning: #D97706;
-  --error: #DC2626;
-  --info: #2563EB;
+  --success: #16A36A;        /* Crisp Emerald */
+  --success-light: #ECFDF5;
+  --warning: #E9A23B;        /* Enterprise Amber */
+  --warning-light: #FFFBEB;
+  --error: #DC4545;          /* Crisp Enterprise Red */
+  --danger: #DC4545;
+  --danger-light: #FEF2F2;
+  --info: #2457D6;
   --sidebar-bg: #FFFFFF;
-  --sidebar-border: #E2E8F0;
-  --header-bg: rgba(255, 255, 255, 0.95);
-  --header-border: #E2E8F0;
+  --sidebar-border: #E5EAF1;
+  --header-bg: rgba(255, 255, 255, 0.96);
+  --header-border: #E5EAF1;
   --card-bg: #FFFFFF;
-  --card-border: #E2E8F0;
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  --card-border: #E5EAF1;
+  --shadow-xs: 0 1px 2px rgba(16, 35, 63, 0.04);
+  --shadow-sm: 0 1px 3px rgba(16, 35, 63, 0.06), 0 1px 2px rgba(16, 35, 63, 0.04);
+  --shadow-md: 0 4px 10px -2px rgba(16, 35, 63, 0.06), 0 2px 4px -2px rgba(16, 35, 63, 0.03);
+  --shadow-lg: 0 12px 24px -4px rgba(16, 35, 63, 0.08), 0 4px 8px -2px rgba(16, 35, 63, 0.03);
+  --shadow-xl: 0 20px 32px -8px rgba(16, 35, 63, 0.1);
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+  --font-sans: 'Inter', 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
 .dark {
-  --background: #090D16;
-  --surface: #0F172A;
-  --surface-muted: #162036;
-  --surface-hover: #1E293B;
+  --primary: #10233F;
+  --primary-hover: #1A3156;
+  --secondary: #3B82F6;
+  --secondary-hover: #60A5FA;
+  --background: #0B111E;
+  --surface: #10192A;
+  --surface-muted: #152238;
+  --surface-hover: #1B2B46;
   --text-primary: #F8FAFC;
-  --text-secondary: #CBD5E1;
+  --text-secondary: #94A3B8;
   --text-tertiary: #64748B;
-  --border: #1E293B;
-  --border-strong: #334155;
+  --border: #1E2D44;
+  --border-strong: #2A3C5B;
   --accent: #3B82F6;
-  --accent-hover: #2563EB;
-  --accent-active: #1D4ED8;
+  --accent-hover: #60A5FA;
+  --accent-active: #2563EB;
   --accent-light: #172554;
   --accent-muted: #1E3A8A;
   --gold: #F59E0B;
   --gold-light: #451A03;
   --success: #10B981;
+  --success-light: #064E3B;
   --warning: #F59E0B;
+  --warning-light: #451A03;
   --error: #EF4444;
+  --danger: #EF4444;
+  --danger-light: #450A0A;
   --info: #3B82F6;
-  --sidebar-bg: #0B101D;
-  --sidebar-border: #1E293B;
-  --header-bg: rgba(9, 13, 22, 0.95);
-  --header-border: #1E293B;
-  --card-bg: #0F172A;
-  --card-border: #1E293B;
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.4);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+  --sidebar-bg: #0D1524;
+  --sidebar-border: #1E2D44;
+  --header-bg: rgba(13, 21, 36, 0.96);
+  --header-border: #1E2D44;
+  --card-bg: #10192A;
+  --card-border: #1E2D44;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.45);
+  --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.55);
 }
 
 /* Base Resets & Typography */
@@ -87,7 +113,7 @@ body {
   color: var(--text-primary);
   background-color: var(--background);
   transition: background-color 0.25s cubic-bezier(0.4, 0, 0.2, 1), color 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-family: var(--font-sans);
   font-size: 14px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
@@ -2105,4 +2131,351 @@ input, select, textarea {
   max-width: 440px;
   line-height: 1.5;
   margin-bottom: 16px;
+}
+
+/* ============================================================================
+   ENTERPRISE GOVTECH LANDING PAGE STYLES
+============================================================================ */
+.landing-page-wrap {
+  min-height: 100vh;
+  background-color: var(--background);
+  color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
+}
+
+.landing-nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--header-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.landing-nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.landing-hero {
+  position: relative;
+  padding: 72px 24px 48px;
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.landing-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  background: var(--accent-light);
+  border: 1px solid var(--accent-muted);
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 24px;
+}
+
+.landing-title {
+  font-size: 40px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  color: var(--text-primary);
+  max-width: 960px;
+  margin-bottom: 20px;
+}
+
+@media (min-width: 768px) {
+  .landing-title {
+    font-size: 50px;
+  }
+}
+
+.landing-subtitle {
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  max-width: 780px;
+  margin-bottom: 36px;
+}
+
+.landing-cta-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 48px;
+}
+
+.landing-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  width: 100%;
+  max-width: 1040px;
+  margin: 0 auto 64px;
+}
+
+@media (min-width: 768px) {
+  .landing-stats-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.landing-stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px 18px;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.landing-stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+
+.landing-stat-val {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--accent);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin-bottom: 6px;
+}
+
+.landing-stat-lbl {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.landing-stat-desc {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.landing-section-wrap {
+  padding: 56px 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.landing-section-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.landing-section-header h2 {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+  letter-spacing: -0.02em;
+}
+
+.landing-section-header p {
+  font-size: 14px;
+  color: var(--text-secondary);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.landing-features-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+@media (min-width: 768px) {
+  .landing-features-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.landing-feature-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 26px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+
+.landing-feature-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--accent);
+  box-shadow: var(--shadow-lg);
+}
+
+.landing-feature-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--accent-light);
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.landing-feature-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.3;
+}
+
+.landing-feature-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.landing-workflow-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+@media (min-width: 768px) {
+  .landing-workflow-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.landing-workflow-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px 18px;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s;
+}
+
+.landing-workflow-card:hover {
+  transform: translateY(-2px);
+}
+
+.landing-workflow-step {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.landing-workflow-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+
+.landing-workflow-desc {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.landing-footer {
+  margin-top: auto;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  padding: 40px 24px 30px;
+}
+
+/* Password Toggle and Form Enhancements */
+.password-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-input-wrap .input {
+  padding-right: 42px;
+}
+
+.password-toggle-btn {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-tertiary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  transition: color 0.2s;
+}
+
+.password-toggle-btn:hover {
+  color: var(--accent);
+}
+
+/* Tab Switcher in Login Card */
+.auth-mode-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 20px;
+}
+
+.auth-mode-tab {
+  flex: 1;
+  text-align: center;
+  padding: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.auth-mode-tab.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+.auth-mode-tab:hover:not(.active) {
+  color: var(--text-primary);
+}
+
+/* Skeleton Loading Animation */
+.skeleton {
+  background: linear-gradient(90deg, var(--surface-muted) 25%, var(--border) 37%, var(--surface-muted) 63%);
+  background-size: 400% 100%;
+  animation: skeleton-loading 1.4s ease infinite;
+  border-radius: 6px;
+}
+
+@keyframes skeleton-loading {
+  0% { background-position: 100% 50%; }
+  100% { background-position: 0 50%; }
 }

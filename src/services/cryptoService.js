@@ -2,6 +2,11 @@ const crypto = require('node:crypto');
 const { JWT_SECRET } = require('../config/constants');
 
 class CryptoService {
+    constructor() {
+        this.revokedTokens = new Set();
+        this.revokedUsers = new Map(); // userId -> revokedAtTimestamp
+    }
+
     // Cryptographically secure password hashing using Scrypt
     hashPassword(password) {
         const salt = crypto.randomBytes(16).toString('hex');
@@ -33,9 +38,33 @@ class CryptoService {
         return `${b64Header}.${b64Payload}.${signature}`;
     }
 
+    revokeToken(token) {
+        if (!token) return;
+        this.revokedTokens.add(token);
+    }
+
+    isTokenRevoked(token) {
+        if (!token) return false;
+        return this.revokedTokens.has(token);
+    }
+
+    revokeUser(userId) {
+        if (!userId) return;
+        this.revokedUsers.set(userId, Date.now());
+    }
+
+    isUserRevoked(userId, issuedAtSeconds) {
+        if (!userId) return false;
+        const revokedAt = this.revokedUsers.get(userId);
+        if (!revokedAt) return false;
+        if (!issuedAtSeconds) return true;
+        return (issuedAtSeconds * 1000) < revokedAt;
+    }
+
     verifyToken(token) {
         try {
             if (!token) return null;
+            if (this.isTokenRevoked(token)) return null;
             const parts = token.split('.');
             if (parts.length !== 3) return null;
             const [b64Header, b64Payload, signature] = parts;
@@ -53,6 +82,9 @@ class CryptoService {
             const now = Math.floor(Date.now() / 1000);
             if (payload.exp && payload.exp < now) {
                 return null; // Expired
+            }
+            if (this.isUserRevoked(payload.userId, payload.iat)) {
+                return null; // Session revoked
             }
             return payload;
         } catch {

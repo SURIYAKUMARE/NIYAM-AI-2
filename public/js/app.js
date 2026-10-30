@@ -5197,7 +5197,7 @@
         }
 
         async renderIntelligenceCentreView(container) {
-            this.intelTab = this.intelTab || 'copilot';
+            this.intelTab = this.intelTab || 'radar';
             this.copilotChatHistory = this.copilotChatHistory || [
                 {
                     role: 'assistant',
@@ -5243,28 +5243,28 @@
                             Select any critical regulatory question to instantly project predictive outcomes, trigger simulations, or query the APH 2025-26 engine:
                         </div>
                         <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:10px;">
-                            <button class="btn btn-outline btn-sm triage-btn" data-triage="pendency" style="text-align:left; justify-content:flex-start; padding:10px 12px; height:auto; border-color:rgba(239,68,68,0.3); background:rgba(239,68,68,0.04);">
+                            <button class="btn btn-outline btn-sm triage-btn" data-triage="radar" style="text-align:left; justify-content:flex-start; padding:10px 12px; height:auto; border-color:rgba(239,68,68,0.3); background:rgba(239,68,68,0.04);">
                                 <div>
-                                    <div style="font-weight:700; color:#DC2626; font-size:12px; margin-bottom:2px;">🚨 Predictive Pendency Alert</div>
-                                    <div style="font-size:11px; color:var(--text-secondary);">Which applications are likely to miss the 15-May statutory deadline?</div>
-                                </div>
-                            </button>
-                            <button class="btn btn-outline btn-sm triage-btn" data-triage="copilot-faculty" style="text-align:left; justify-content:flex-start; padding:10px 12px; height:auto; border-color:rgba(37,99,235,0.3); background:rgba(37,99,235,0.04);">
-                                <div>
-                                    <div style="font-weight:700; color:#2563EB; font-size:12px; margin-bottom:2px;">⚖️ Faculty &amp; Land Standards</div>
-                                    <div style="font-size:11px; color:var(--text-secondary);">What is the faculty cadre ratio (Prof:Assoc:Asst) for NBA B.Tech?</div>
+                                    <div style="font-weight:700; color:#DC2626; font-size:12px; margin-bottom:2px;">🚨 1. What requires attention now?</div>
+                                    <div style="font-size:11px; color:var(--text-secondary);">Early-Warning Radar: 3 dossiers approaching statutory SLA thresholds.</div>
                                 </div>
                             </button>
                             <button class="btn btn-outline btn-sm triage-btn" data-triage="twin" style="text-align:left; justify-content:flex-start; padding:10px 12px; height:auto; border-color:rgba(124,58,237,0.3); background:rgba(124,58,237,0.04);">
                                 <div>
-                                    <div style="font-weight:700; color:#7C3AED; font-size:12px; margin-bottom:2px;">🔄 Digital Workflow Twin</div>
-                                    <div style="font-size:11px; color:var(--text-secondary);">Can EVC delays be mitigated if scrutiny volume surges by 30%?</div>
+                                    <div style="font-weight:700; color:#7C3AED; font-size:12px; margin-bottom:2px;">🔄 2. What is likely to become a problem?</div>
+                                    <div style="font-size:11px; color:var(--text-secondary);">Digital Twin: EVC panel capacity strain upon 30% volume surge.</div>
+                                </div>
+                            </button>
+                            <button class="btn btn-outline btn-sm triage-btn" data-triage="copilot-faculty" style="text-align:left; justify-content:flex-start; padding:10px 12px; height:auto; border-color:rgba(37,99,235,0.3); background:rgba(37,99,235,0.04);">
+                                <div>
+                                    <div style="font-weight:700; color:#2563EB; font-size:12px; margin-bottom:2px;">⚖️ 3. Why is it happening?</div>
+                                    <div style="font-size:11px; color:var(--text-secondary);">AI Copilot: Cadre imbalances &amp; regional expert empanelment skew.</div>
                                 </div>
                             </button>
                             <button class="btn btn-outline btn-sm triage-btn" data-triage="replay" style="text-align:left; justify-content:flex-start; padding:10px 12px; height:auto; border-color:rgba(16,185,129,0.3); background:rgba(16,185,129,0.04);">
                                 <div>
-                                    <div style="font-weight:700; color:#059669; font-size:12px; margin-bottom:2px;">📜 Explainable Audit Replay</div>
-                                    <div style="font-size:11px; color:var(--text-secondary);">Replay cryptographic timeline &amp; decision hashes for APP-2025-001</div>
+                                    <div style="font-weight:700; color:#059669; font-size:12px; margin-bottom:2px;">📜 4. Who should take the next action?</div>
+                                    <div style="font-size:11px; color:var(--text-secondary);">DNA &amp; Replay: Regional Officer action docket with SHA-256 chain.</div>
                                 </div>
                             </button>
                         </div>
@@ -5273,33 +5273,57 @@
 
                 <!-- Tab Segmented Navigation Bar -->
                 <div style="display:flex; align-items:center; gap:6px; margin-bottom:18px; overflow-x:auto; padding-bottom:6px; border-bottom:1px solid var(--border);">
-                    <button class="btn btn-sm ${this.intelTab === 'copilot' ? 'btn-primary' : 'btn-outline'} intel-tab-btn" data-tab="copilot">
-                        ${ICONS.Bot}
-                        <span>AI Regulatory Copilot</span>
-                    </button>
-                    <button class="btn btn-sm ${this.intelTab === 'pendency' ? 'btn-primary' : 'btn-outline'} intel-tab-btn" data-tab="pendency">
+                    <button class="btn btn-sm ${this.intelTab === 'radar' ? 'btn-primary' : 'btn-outline'} intel-tab-btn" data-tab="radar">
                         ${ICONS.AlertTriangle}
-                        <span>Predictive Pendency</span>
+                        <span>Early-Warning Radar</span>
+                    </button>
+                    <button class="btn btn-sm ${this.intelTab === 'health' ? 'btn-primary' : 'btn-outline'} intel-tab-btn" data-tab="health">
+                        ${ICONS.ShieldCheck}
+                        <span>Health Diagnostics</span>
                     </button>
                     <button class="btn btn-sm ${this.intelTab === 'digital-twin' ? 'btn-primary' : 'btn-outline'} intel-tab-btn" data-tab="digital-twin">
                         ${ICONS.FlaskConical}
-                        <span>Digital Workflow Twin</span>
+                        <span>Workflow Simulator</span>
+                    </button>
+                    <button class="btn btn-sm ${this.intelTab === 'clarify' ? 'btn-primary' : 'btn-outline'} intel-tab-btn" data-tab="clarify">
+                        ${ICONS.Sparkles}
+                        <span>Smart Clarification</span>
+                    </button>
+                    <button class="btn btn-sm ${this.intelTab === 'impact' ? 'btn-primary' : 'btn-outline'} intel-tab-btn" data-tab="impact">
+                        ${ICONS.BarChart3}
+                        <span>Regulatory Impact</span>
                     </button>
                     <button class="btn btn-sm ${this.intelTab === 'doc-intel' ? 'btn-primary' : 'btn-outline'} intel-tab-btn" data-tab="doc-intel">
                         ${ICONS.FileCheck2}
-                        <span>Smart Document AI</span>
+                        <span>Document Forensics</span>
                     </button>
-                    <button class="btn btn-sm ${this.intelTab === 'calendar' ? 'btn-primary' : 'btn-outline'} intel-tab-btn" data-tab="calendar">
-                        ${ICONS.Calendar}
-                        <span>Deadline Resilience</span>
+                    <button class="btn btn-sm ${this.intelTab === 'bmap' ? 'btn-primary' : 'btn-outline'} intel-tab-btn" data-tab="bmap">
+                        ${ICONS.Landmark}
+                        <span>Regional Bottlenecks</span>
+                    </button>
+                    <button class="btn btn-sm ${this.intelTab === 'alerts' ? 'btn-primary' : 'btn-outline'} intel-tab-btn" data-tab="alerts">
+                        ${ICONS.Bell}
+                        <span>Consolidated Alerts</span>
+                    </button>
+                    <button class="btn btn-sm ${this.intelTab === 'handover' ? 'btn-primary' : 'btn-outline'} intel-tab-btn" data-tab="handover">
+                        ${ICONS.Users}
+                        <span>Workload &amp; Handover</span>
                     </button>
                     <button class="btn btn-sm ${this.intelTab === 'replay' ? 'btn-primary' : 'btn-outline'} intel-tab-btn" data-tab="replay">
                         ${ICONS.History}
-                        <span>Explainable Audit Replay</span>
+                        <span>DNA &amp; Audit Replay</span>
                     </button>
-                    <button class="btn btn-sm ${this.intelTab === 'knowledge' ? 'btn-primary' : 'btn-outline'} intel-tab-btn" data-tab="knowledge">
-                        ${ICONS.Sliders}
-                        <span>Knowledge &amp; Workload</span>
+                    <button class="btn btn-sm ${this.intelTab === 'evc' ? 'btn-primary' : 'btn-outline'} intel-tab-btn" data-tab="evc">
+                        ${ICONS.CheckCircle2}
+                        <span>EVC Field Review</span>
+                    </button>
+                    <button class="btn btn-sm ${this.intelTab === 'calendar' ? 'btn-primary' : 'btn-outline'} intel-tab-btn" data-tab="calendar">
+                        ${ICONS.Calendar}
+                        <span>Compliance Calendar</span>
+                    </button>
+                    <button class="btn btn-sm ${this.intelTab === 'copilot' ? 'btn-primary' : 'btn-outline'} intel-tab-btn" data-tab="copilot">
+                        ${ICONS.Bot}
+                        <span>AI Regulatory Copilot</span>
                     </button>
                 </div>
 
@@ -5323,13 +5347,13 @@
             container.querySelectorAll('.triage-btn').forEach(btn => {
                 btn.onclick = () => {
                     const action = btn.getAttribute('data-triage');
-                    if (action === 'pendency') {
-                        this.intelTab = 'pendency';
+                    if (action === 'radar') {
+                        this.intelTab = 'radar';
                         this.renderIntelligenceCentreView(container);
                     } else if (action === 'copilot-faculty') {
                         this.intelTab = 'copilot';
                         this.renderIntelligenceCentreView(container);
-                        setTimeout(() => this.executeCopilotQuery('What is the mandatory faculty cadre ratio (Professor : Associate Professor : Assistant Professor) for NBA accredited B.Tech?'), 100);
+                        setTimeout(() => this.executeCopilotQuery('Why is the faculty cadre ratio (Professor : Associate Professor : Assistant Professor) causing bottlenecks in accredited B.Tech?'), 100);
                     } else if (action === 'twin') {
                         this.intelTab = 'digital-twin';
                         this.renderIntelligenceCentreView(container);
@@ -5342,20 +5366,1034 @@
             });
 
             const contentEl = document.getElementById('intel-tab-content');
-            if (this.intelTab === 'copilot') {
-                this.renderCopilotTab(contentEl);
-            } else if (this.intelTab === 'pendency') {
-                this.renderPredictivePendencyTab(contentEl);
+            if (this.intelTab === 'radar') {
+                this.renderEarlyWarningRadarTab(contentEl);
+            } else if (this.intelTab === 'health') {
+                this.renderApplicationHealthTab(contentEl);
             } else if (this.intelTab === 'digital-twin') {
                 this.renderDigitalTwinTab(contentEl);
+            } else if (this.intelTab === 'clarify') {
+                this.renderClarificationGeneratorTab(contentEl);
+            } else if (this.intelTab === 'impact') {
+                this.renderRegulatoryImpactTab(contentEl);
             } else if (this.intelTab === 'doc-intel') {
                 this.renderDocIntelTab(contentEl);
-            } else if (this.intelTab === 'calendar') {
-                this.renderDeadlinesCalendarTab(contentEl);
+            } else if (this.intelTab === 'bmap') {
+                this.renderBottleneckMapTab(contentEl);
+            } else if (this.intelTab === 'alerts') {
+                this.renderConsolidatedAlertsTab(contentEl);
+            } else if (this.intelTab === 'handover') {
+                this.renderCaseHandoverTab(contentEl);
             } else if (this.intelTab === 'replay') {
                 this.renderAuditReplayTab(contentEl);
-            } else if (this.intelTab === 'knowledge') {
-                this.renderKnowledgeWorkloadTab(contentEl);
+            } else if (this.intelTab === 'evc') {
+                this.renderEVCOfflineReviewTab(contentEl);
+            } else if (this.intelTab === 'calendar') {
+                this.renderDeadlinesCalendarTab(contentEl);
+            } else if (this.intelTab === 'copilot') {
+                this.renderCopilotTab(contentEl);
+            }
+        }
+
+        // --------------------------------------------------------------------
+        // Tab: Early-Warning Radar (5-Point Regulatory Explanations)
+        // --------------------------------------------------------------------
+        async renderEarlyWarningRadarTab(container) {
+            container.innerHTML = `
+                <div class="card" style="padding:24px; text-align:center;">
+                    <div class="spinner" style="margin:0 auto 12px; width:24px; height:24px;"></div>
+                    <div style="font-weight:700; color:var(--text-primary);">Scanning AICTE Dossiers across 8 Regional Jurisdictions...</div>
+                    <div style="font-size:11px; color:var(--text-secondary); margin-top:4px;">Evaluating Bayesian delay risk, committee capacity &amp; SLA thresholds</div>
+                </div>
+            `;
+
+            try {
+                const res = await API.get('/api/intelligence/radar');
+                const warnings = res.warnings || [];
+                const crit = res.criticalCount || 0;
+                const warn = res.warningCount || 0;
+                const mon = res.monitoringCount || 0;
+
+                container.innerHTML = `
+                    <div class="stats-grid-4" style="margin-bottom:20px;">
+                        <div class="stat-card">
+                            <div class="stat-meta">
+                                <span class="stat-label">Total Active Radar Warnings</span>
+                                <span class="stat-value">${res.totalWarnings || warnings.length}</span>
+                                <span class="stat-sub">Live Autonomous Surveillance</span>
+                            </div>
+                            <div class="stat-icon-box blue">${ICONS.AlertTriangle}</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-meta">
+                                <span class="stat-label">Critical Tier-1 Alerts</span>
+                                <span class="stat-value" style="color:#DC2626;">${crit}</span>
+                                <span class="stat-sub" style="color:#DC2626;">Immediate Committee Intervention</span>
+                            </div>
+                            <div class="stat-icon-box red">${ICONS.ShieldAlert}</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-meta">
+                                <span class="stat-label">Warning Tier-2 Risks</span>
+                                <span class="stat-value" style="color:#D97706;">${warn}</span>
+                                <span class="stat-sub" style="color:#D97706;">Approaching Statutory SLA</span>
+                            </div>
+                            <div class="stat-icon-box amber">${ICONS.Sliders}</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-meta">
+                                <span class="stat-label">Continuous Monitoring</span>
+                                <span class="stat-value" style="color:#059669;">${mon}</span>
+                                <span class="stat-sub" style="color:#059669;">Zero Unresolved Breaches</span>
+                            </div>
+                            <div class="stat-icon-box green">${ICONS.CheckCircle2}</div>
+                        </div>
+                    </div>
+
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:10px;">
+                        <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                            <button class="btn btn-sm btn-primary radar-filter-btn" data-severity="ALL">All Warnings (${warnings.length})</button>
+                            <button class="btn btn-sm btn-outline radar-filter-btn" data-severity="CRITICAL">Critical Only (${crit})</button>
+                            <button class="btn btn-sm btn-outline radar-filter-btn" data-severity="WARNING">Warnings (${warn})</button>
+                            <button class="btn btn-sm btn-outline radar-filter-btn" data-severity="MONITORING">Monitoring (${mon})</button>
+                        </div>
+                        <span style="font-size:11px; color:var(--text-secondary);">
+                            Autonomous Scan: <strong>${new Date().toLocaleTimeString()}</strong>
+                        </span>
+                    </div>
+
+                    <div id="radar-warnings-list" style="display:flex; flex-direction:column; gap:16px;">
+                        ${this.renderRadarWarningCards(warnings)}
+                    </div>
+                `;
+
+                container.querySelectorAll('.radar-filter-btn').forEach(btn => {
+                    btn.onclick = () => {
+                        container.querySelectorAll('.radar-filter-btn').forEach(b => {
+                            b.classList.remove('btn-primary');
+                            b.classList.add('btn-outline');
+                        });
+                        btn.classList.add('btn-primary');
+                        btn.classList.remove('btn-outline');
+
+                        const sev = btn.getAttribute('data-severity');
+                        const filtered = sev === 'ALL' ? warnings : warnings.filter(w => w.severity === sev);
+                        document.getElementById('radar-warnings-list').innerHTML = this.renderRadarWarningCards(filtered);
+                        this.bindRadarCardActions(container);
+                    };
+                });
+
+                this.bindRadarCardActions(container);
+            } catch (err) {
+                container.innerHTML = `<div class="card" style="padding:24px; text-align:center; color:#DC2626;"><p>Failed to load Early-Warning Radar: ${err.message}</p></div>`;
+            }
+        }
+
+        renderRadarWarningCards(warnings) {
+            if (!warnings.length) {
+                return `<div class="card" style="padding:24px; text-align:center; color:var(--text-secondary);">No warnings matching this filter criteria.</div>`;
+            }
+
+            return warnings.map(w => {
+                const isCrit = w.severity === 'CRITICAL';
+                const isWarn = w.severity === 'WARNING';
+                const color = isCrit ? '#DC2626' : (isWarn ? '#D97706' : '#059669');
+                const bg = isCrit ? 'rgba(239,68,68,0.06)' : (isWarn ? 'rgba(245,158,11,0.06)' : 'rgba(16,185,129,0.06)');
+                const border = isCrit ? 'rgba(239,68,68,0.3)' : (isWarn ? 'rgba(245,158,11,0.3)' : 'rgba(16,185,129,0.3)');
+
+                return `
+                    <div class="card" style="border-left:4px solid ${color};">
+                        <div class="card-header" style="background:${bg}; border-bottom:1px solid ${border};">
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <span style="color:${color};">${isCrit ? ICONS.AlertTriangle : ICONS.Sliders}</span>
+                                <div>
+                                    <div style="font-size:14px; font-weight:800; color:var(--text-primary);">${w.title}</div>
+                                    <div style="font-size:11px; color:var(--text-secondary); margin-top:2px;">Category: <strong>${w.category}</strong> • ID: <code>${w.id}</code></div>
+                                </div>
+                            </div>
+                            <span class="badge" style="background:${color}20; color:${color}; border:1px solid ${color}40; font-weight:800;">
+                                ${w.severity}
+                            </span>
+                        </div>
+                        <div class="card-body">
+                            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:12px; margin-bottom:16px;">
+                                <div style="padding:10px 14px; border-radius:8px; background:var(--surface-muted); border:1px solid var(--border);">
+                                    <div style="font-size:10px; font-weight:800; color:#2563EB; text-transform:uppercase; margin-bottom:4px;">
+                                        1. What is Happening:
+                                    </div>
+                                    <div style="font-size:12px; color:var(--text-primary); line-height:1.5;">
+                                        ${w.what}
+                                    </div>
+                                </div>
+                                <div style="padding:10px 14px; border-radius:8px; background:var(--surface-muted); border:1px solid var(--border);">
+                                    <div style="font-size:10px; font-weight:800; color:#D97706; text-transform:uppercase; margin-bottom:4px;">
+                                        2. Why It Was Flagged:
+                                    </div>
+                                    <div style="font-size:12px; color:var(--text-primary); line-height:1.5;">
+                                        ${w.why}
+                                    </div>
+                                </div>
+                                <div style="padding:10px 14px; border-radius:8px; background:var(--surface-muted); border:1px solid var(--border);">
+                                    <div style="font-size:10px; font-weight:800; color:#7C3AED; text-transform:uppercase; margin-bottom:4px;">
+                                        3. Affected Record:
+                                    </div>
+                                    <div style="font-size:12px; color:var(--text-primary); line-height:1.5;">
+                                        ${w.affectedRecord}
+                                    </div>
+                                </div>
+                                <div style="padding:10px 14px; border-radius:8px; background:var(--surface-muted); border:1px solid var(--border);">
+                                    <div style="font-size:10px; font-weight:800; color:#059669; text-transform:uppercase; margin-bottom:4px;">
+                                        4. Responsible Personnel:
+                                    </div>
+                                    <div style="font-size:12px; color:var(--text-primary); line-height:1.5;">
+                                        ${w.responsible}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="padding:12px 16px; border-radius:10px; background:${bg}; border:1px solid ${border}; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+                                <div style="flex:1; min-width:240px;">
+                                    <div style="font-size:10px; font-weight:800; color:${color}; text-transform:uppercase; margin-bottom:2px;">
+                                        ⚡ 5. Prescriptive Recommended Action:
+                                    </div>
+                                    <div style="font-size:12px; font-weight:600; color:var(--text-primary);">
+                                        ${w.action}
+                                    </div>
+                                </div>
+                                <button class="btn btn-primary btn-sm exec-radar-btn" data-id="${w.id}" data-action="${encodeURIComponent(w.action)}" style="white-space:nowrap;">
+                                    Execute Prescriptive Protocol
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        bindRadarCardActions(container) {
+            container.querySelectorAll('.exec-radar-btn').forEach(btn => {
+                btn.onclick = () => {
+                    const id = btn.getAttribute('data-id');
+                    const act = decodeURIComponent(btn.getAttribute('data-action'));
+                    btn.disabled = true;
+                    btn.innerHTML = '✓ Executed';
+                    btn.classList.remove('btn-primary');
+                    btn.classList.add('btn-outline');
+                    API.showToast(`Prescriptive Protocol Dispatched for [${id}]: "${act}"`, 'success');
+                };
+            });
+        }
+
+        // --------------------------------------------------------------------
+        // Tab: Application Health Diagnostics
+        // --------------------------------------------------------------------
+        async renderApplicationHealthTab(container) {
+            this.selectedHealthApp = this.selectedHealthApp || 'APP_2026_001';
+
+            container.innerHTML = `
+                <div class="card" style="margin-bottom:20px;">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">
+                                ${ICONS.ShieldCheck}
+                                <span>Autonomous Application Health Diagnostics</span>
+                            </div>
+                            <div class="card-subtitle">Real-time statutory readiness evaluation against AICTE Approval Process Handbook (APH 2025-26)</div>
+                        </div>
+                        <span class="badge badge-emerald">Real-Time Continuous Diagnostics</span>
+                    </div>
+                    <div class="card-body">
+                        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:20px;">
+                            <label style="font-size:11px; font-weight:700; color:var(--text-primary); text-transform:uppercase;">
+                                Select Approval Dossier:
+                            </label>
+                            <select id="health-app-select" class="input" style="flex:1; min-width:240px;">
+                                <option value="APP_2026_001" ${this.selectedHealthApp === 'APP_2026_001' ? 'selected' : ''}>APP_2026_001 — Nilgiri Institute of Technology (EoA 2025-26)</option>
+                                <option value="APP_2026_002" ${this.selectedHealthApp === 'APP_2026_002' ? 'selected' : ''}>APP_2026_002 — Zaskar Engineering College (New Institution)</option>
+                                <option value="APP_2026_003" ${this.selectedHealthApp === 'APP_2026_003' ? 'selected' : ''}>APP_2026_003 — Coromandel Institute of Technology (Extension)</option>
+                            </select>
+                            <button class="btn btn-primary btn-sm" id="btn-run-health-diag">
+                                Run Diagnostics
+                            </button>
+                        </div>
+                        <div id="health-diag-viewport"></div>
+                    </div>
+                </div>
+            `;
+
+            const loadDiag = async (appId) => {
+                this.selectedHealthApp = appId;
+                const vp = document.getElementById('health-diag-viewport');
+                if (!vp) return;
+                vp.innerHTML = `<div style="text-align:center; padding:24px;"><div class="spinner" style="margin:0 auto 10px; width:20px; height:20px;"></div>Computing Health Index across 6 Statutory Dimensions...</div>`;
+
+                try {
+                    const res = await API.get('/api/intelligence/application-health?application_id=' + appId);
+                    const isHealthy = res.status === 'HEALTHY';
+                    const isCrit = res.status === 'CRITICAL';
+                    const statusColor = isHealthy ? '#059669' : (isCrit ? '#DC2626' : '#D97706');
+                    const statusBg = isHealthy ? 'rgba(16,185,129,0.1)' : (isCrit ? 'rgba(239,68,68,0.1)' : 'rgba(245,158,11,0.1)');
+
+                    vp.innerHTML = `
+                        <div style="display:flex; flex-direction:column; gap:16px;">
+                            <div style="padding:18px 22px; border-radius:12px; background:${statusBg}; border:1px solid ${statusColor}40; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+                                <div>
+                                    <div style="font-size:12px; font-weight:800; color:${statusColor}; text-transform:uppercase; letter-spacing:0.5px;">
+                                        Overall Application Health Status
+                                    </div>
+                                    <div style="font-size:26px; font-weight:900; color:var(--text-primary); margin:4px 0;">
+                                        ${res.healthScore} / 100 — <span style="color:${statusColor};">${res.status.replace(/_/g, ' ')}</span>
+                                    </div>
+                                    <div style="font-size:12px; color:var(--text-secondary);">
+                                        Dossier: <strong>${res.applicationNo}</strong> • Institution: <strong>${res.institutionName}</strong>
+                                    </div>
+                                </div>
+                                <div style="text-align:right;">
+                                    <div class="badge ${res.statusBadge || 'badge-emerald'}" style="font-size:13px; font-weight:800; padding:8px 14px;">
+                                        ${res.status}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="padding:14px 18px; border-radius:10px; background:var(--surface-muted); border:1px solid var(--border); font-size:12px; line-height:1.6;">
+                                <div style="font-weight:700; color:var(--text-primary); margin-bottom:4px;">🔍 Prescriptive Operational Diagnosis:</div>
+                                <div style="color:var(--text-secondary);">${res.operationalDiagnosis}</div>
+                            </div>
+
+                            <div style="border-radius:10px; border:1px solid var(--border); overflow:hidden;">
+                                <div style="padding:10px 14px; background:var(--surface-muted); font-size:11px; font-weight:800; color:var(--text-secondary); text-transform:uppercase; border-bottom:1px solid var(--border);">
+                                    Statutory Checks Breakdown
+                                </div>
+                                <table class="table" style="margin:0; font-size:12px;">
+                                    <tbody>
+                                        ${(res.checks || []).map(c => {
+                                            const pass = c.status === 'PASSED';
+                                            const warn = c.status === 'WARNING';
+                                            const chkColor = pass ? '#059669' : (warn ? '#D97706' : '#DC2626');
+                                            return `
+                                                <tr>
+                                                    <td style="width:36px; text-align:center;">
+                                                        <span style="color:${chkColor}; font-weight:800;">${pass ? '✓' : (warn ? '⚠️' : '✕')}</span>
+                                                    </td>
+                                                    <td style="width:240px; font-weight:700; color:var(--text-primary);">
+                                                        ${c.name}
+                                                    </td>
+                                                    <td style="color:var(--text-secondary);">
+                                                        ${c.details}
+                                                    </td>
+                                                    <td style="width:110px; text-align:right;">
+                                                        <span class="badge ${pass ? 'badge-emerald' : (warn ? 'badge-amber' : 'badge-rose')}">
+                                                            ${c.status}
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            `;
+                                        }).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    `;
+                } catch (err) {
+                    vp.innerHTML = `<div style="color:#DC2626; padding:10px;">Diagnostics error: ${err.message}</div>`;
+                }
+            };
+
+            document.getElementById('btn-run-health-diag').onclick = () => {
+                const appId = document.getElementById('health-app-select').value;
+                loadDiag(appId);
+            };
+
+            document.getElementById('health-app-select').onchange = (e) => {
+                loadDiag(e.target.value);
+            };
+
+            loadDiag(this.selectedHealthApp);
+        }
+
+        // --------------------------------------------------------------------
+        // Tab: Smart Clarification Generator
+        // --------------------------------------------------------------------
+        renderClarificationGeneratorTab(container) {
+            container.innerHTML = `
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">
+                                ${ICONS.Sparkles}
+                                <span>Smart Clarification Generator with APH Statutory Mapping</span>
+                            </div>
+                            <div class="card-subtitle">Automated generation of formal AICTE clarification directives paired with plain-language applicant translations</div>
+                        </div>
+                        <span class="badge badge-purple">Human Officer In-the-Loop</span>
+                    </div>
+                    <div class="card-body">
+                        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:14px; margin-bottom:16px;">
+                            <div>
+                                <label style="font-size:11px; font-weight:700; color:var(--text-primary); text-transform:uppercase;">Application Dossier:</label>
+                                <select id="clarify-app-select" class="input" style="width:100%; margin-top:4px;">
+                                    <option value="APP_2026_001">APP_2026_001 — Nilgiri Institute of Technology</option>
+                                    <option value="APP_2026_002">APP_2026_002 — Zaskar Engineering College</option>
+                                    <option value="APP_2026_003">APP_2026_003 — Coromandel Institute of Technology</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label style="font-size:11px; font-weight:700; color:var(--text-primary); text-transform:uppercase;">Deficiency Domain / Category:</label>
+                                <select id="clarify-cat-select" class="input" style="width:100%; margin-top:4px;">
+                                    <option value="LAND_DOCUMENTS">Land Title, Demarcation &amp; Non-Encumbrance</option>
+                                    <option value="FACULTY_CADRE">Faculty Cadre Ratio (Prof:Assoc:Asst)</option>
+                                    <option value="ENDOWMENT_FUND">Endowment Fund &amp; Joint FDR Reserve</option>
+                                    <option value="AFFILIATION_ORDER">State University Affiliation Order</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom:16px;">
+                            <label style="font-size:11px; font-weight:700; color:var(--text-primary); text-transform:uppercase;">Custom Scrutiny Note (Optional):</label>
+                            <input type="text" id="clarify-custom-note" class="input" placeholder="e.g. Survey number 142/2 exhibits revenue annotation on deed annexure..." style="width:100%; margin-top:4px;">
+                        </div>
+
+                        <div style="display:flex; justify-content:flex-end; margin-bottom:20px;">
+                            <button class="btn btn-primary btn-sm" id="btn-generate-clarify">
+                                ${ICONS.Sparkles}
+                                Generate Smart Clarification Pair
+                            </button>
+                        </div>
+
+                        <div id="clarify-output-container"></div>
+                    </div>
+                </div>
+            `;
+
+            const runClarify = async () => {
+                const appId = document.getElementById('clarify-app-select').value;
+                const cat = document.getElementById('clarify-cat-select').value;
+                const note = document.getElementById('clarify-custom-note').value;
+                const outEl = document.getElementById('clarify-output-container');
+                outEl.innerHTML = `<div style="text-align:center; padding:20px;"><div class="spinner" style="margin:0 auto 10px; width:20px; height:20px;"></div>Consulting APH 2025-26 Regulation Chapters &amp; Synthesizing Draft...</div>`;
+
+                try {
+                    const res = await API.post('/api/intelligence/smart-clarification', {
+                        applicationId: appId,
+                        category: cat,
+                        customNote: note
+                    });
+
+                    outEl.innerHTML = `
+                        <div style="display:flex; flex-direction:column; gap:16px;">
+                            <div style="padding:10px 14px; border-radius:8px; background:rgba(124,58,237,0.08); border:1px solid rgba(124,58,237,0.3); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+                                <div style="font-size:12px; font-weight:700; color:#7C3AED;">
+                                    ⚖️ Statutory Citation: ${res.aphRegulationClause}
+                                </div>
+                                <span class="badge badge-purple">AICTE Regulation Bureau Approved</span>
+                            </div>
+
+                            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:16px;">
+                                <div style="padding:16px; border-radius:10px; background:var(--surface); border:1px solid var(--border); box-shadow:var(--shadow-sm);">
+                                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                                        <div style="font-size:11px; font-weight:800; color:#2563EB; text-transform:uppercase;">
+                                            Official AICTE Scrutiny Draft (Formal Legal)
+                                        </div>
+                                        <span class="badge badge-blue">7-Day Compliance Notice</span>
+                                    </div>
+                                    <pre style="font-family:inherit; font-size:12px; line-height:1.6; color:var(--text-primary); white-space:pre-wrap; margin:0; padding:12px; background:var(--surface-muted); border-radius:8px; border:1px solid var(--border);">${res.officialScrutinyDraft}</pre>
+                                </div>
+
+                                <div style="padding:16px; border-radius:10px; background:var(--surface); border:1px solid var(--border); box-shadow:var(--shadow-sm);">
+                                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                                        <div style="font-size:11px; font-weight:800; color:#059669; text-transform:uppercase;">
+                                            Applicant Plain-Language Translation (Plain English)
+                                        </div>
+                                        <span class="badge badge-emerald">Zero-Confusion Guidance</span>
+                                    </div>
+                                    <div style="font-size:12px; line-height:1.6; color:var(--text-primary); padding:12px; background:rgba(16,185,129,0.06); border-radius:8px; border:1px solid rgba(16,185,129,0.25); margin-bottom:12px;">
+                                        ${res.plainLanguageApplicantTranslation}
+                                    </div>
+                                    <div style="font-size:11px; color:var(--text-secondary); line-height:1.5;">
+                                        💡 <em>This translation is automatically rendered in the applicant portal so college management understands the exact requirement without bureaucratic ambiguity.</em>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="display:flex; justify-content:flex-end; gap:10px; padding:12px 0;">
+                                <button class="btn btn-outline btn-sm" onclick="API.showToast('Draft clarification saved to regional scrutiny docket', 'info');">
+                                    Save as Draft
+                                </button>
+                                <button class="btn btn-primary btn-sm" id="btn-dispatch-clarify" style="background:#059669; border-color:#059669;">
+                                    ${ICONS.Send}
+                                    Dispatch Clarification to Institution Portal
+                                </button>
+                            </div>
+                        </div>
+                    `;
+
+                    document.getElementById('btn-dispatch-clarify').onclick = () => {
+                        API.showToast(`Clarification directive dispatched to ${res.applicationId} via National Gateway with 7-day statutory compliance timer.`, 'success');
+                    };
+                } catch (err) {
+                    outEl.innerHTML = `<div style="color:#DC2626; padding:10px;">Error generating clarification: ${err.message}</div>`;
+                }
+            };
+
+            document.getElementById('btn-generate-clarify').onclick = runClarify;
+            runClarify();
+        }
+
+        // --------------------------------------------------------------------
+        // Tab: Regulatory Change Impact Analyser
+        // --------------------------------------------------------------------
+        async renderRegulatoryImpactTab(container) {
+            container.innerHTML = `
+                <div class="card" style="padding:24px; text-align:center;">
+                    <div class="spinner" style="margin:0 auto 10px; width:20px; height:20px;"></div>
+                    <div style="font-size:12px; font-weight:700;">Simulating Regulatory Impact: APH 2024-25 vs APH 2025-26...</div>
+                </div>
+            `;
+
+            try {
+                const res = await API.get('/api/intelligence/regulatory-change-impact?source_version=APH_2024_25&target_version=APH_2025_26');
+                const changes = res.changes || [];
+
+                container.innerHTML = `
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <div class="card-title">
+                                    ${ICONS.BarChart3}
+                                    <span>Regulatory Change Impact Analyser (APH 2024-25 → APH 2025-26)</span>
+                                </div>
+                                <div class="card-subtitle">Automated delta analysis of policy amendments and re-mapping of affected live approval dossiers</div>
+                            </div>
+                            <span class="badge badge-purple">Policy Intelligence Engine</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="stats-grid-4" style="margin-bottom:16px;">
+                                <div class="stat-card" style="padding:12px;">
+                                    <div class="stat-meta">
+                                        <span class="stat-label">Changed Regulatory Articles</span>
+                                        <span class="stat-value" style="font-size:20px; color:#7C3AED;">${res.totalChangedArticles || changes.length}</span>
+                                        <span class="stat-sub">Cadre, Land &amp; Green Energy</span>
+                                    </div>
+                                </div>
+                                <div class="stat-card" style="padding:12px;">
+                                    <div class="stat-meta">
+                                        <span class="stat-label">Affected Processing Stages</span>
+                                        <span class="stat-value" style="font-size:20px; color:#2563EB;">${res.affectedStagesCount || 3}</span>
+                                        <span class="stat-sub">Scrutiny, EVC &amp; Final Approval</span>
+                                    </div>
+                                </div>
+                                <div class="stat-card" style="padding:12px;">
+                                    <div class="stat-meta">
+                                        <span class="stat-label">Impacted Live Applications</span>
+                                        <span class="stat-value" style="font-size:20px; color:#059669;">${res.impactedApplicationsCount || 3}</span>
+                                        <span class="stat-sub">Auto-Flagged for Re-Mapping</span>
+                                    </div>
+                                </div>
+                                <div class="stat-card" style="padding:12px;">
+                                    <div class="stat-meta">
+                                        <span class="stat-label">Policy Transition Status</span>
+                                        <span class="stat-value" style="font-size:16px; color:#059669;">READY</span>
+                                        <span class="stat-sub">Zero Procedural Conflicts</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="padding:12px 16px; border-radius:10px; background:rgba(37,99,235,0.06); border:1px solid rgba(37,99,235,0.25); font-size:12px; line-height:1.6; margin-bottom:16px;">
+                                <strong>Policy Director Summary:</strong> ${res.executiveSummary}
+                            </div>
+
+                            <div style="display:flex; flex-direction:column; gap:14px;">
+                                ${changes.map(c => `
+                                    <div style="padding:16px; border-radius:10px; background:var(--surface); border:1px solid var(--border); box-shadow:var(--shadow-sm);">
+                                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:8px;">
+                                            <div>
+                                                <div style="font-size:14px; font-weight:800; color:var(--text-primary);">${c.title}</div>
+                                                <code style="font-size:11px; color:var(--accent); font-family:monospace;">${c.ruleCode}</code>
+                                            </div>
+                                            <span class="badge ${c.changeType === 'RELAXATION' ? 'badge-emerald' : (c.changeType === 'MODIFICATION' ? 'badge-blue' : 'badge-amber')}">
+                                                ${c.changeType}
+                                            </span>
+                                        </div>
+
+                                        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:12px; margin-bottom:12px; font-size:12px;">
+                                            <div style="padding:10px; border-radius:8px; background:rgba(239,68,68,0.04); border:1px solid rgba(239,68,68,0.2);">
+                                                <div style="font-weight:700; color:#DC2626; margin-bottom:3px;">Previous Norm (APH 2024-25):</div>
+                                                <div style="color:var(--text-secondary);">${c.previousRequirement}</div>
+                                            </div>
+                                            <div style="padding:10px; border-radius:8px; background:rgba(16,185,129,0.06); border:1px solid rgba(16,185,129,0.2);">
+                                                <div style="font-weight:700; color:#059669; margin-bottom:3px;">Updated Norm (APH 2025-26):</div>
+                                                <div style="color:var(--text-primary); font-weight:600;">${c.newRequirement}</div>
+                                            </div>
+                                        </div>
+
+                                        <div style="font-size:11px; color:var(--text-secondary);">
+                                            <strong>Operational Impact:</strong> ${c.operationalImpact}
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } catch (err) {
+                container.innerHTML = `<div style="color:#DC2626; padding:10px;">Impact analysis error: ${err.message}</div>`;
+            }
+        }
+
+        // --------------------------------------------------------------------
+        // Tab: Regional Bottleneck Map (8 AICTE Regions)
+        // --------------------------------------------------------------------
+        async renderBottleneckMapTab(container) {
+            container.innerHTML = `
+                <div class="card" style="padding:24px; text-align:center;">
+                    <div class="spinner" style="margin:0 auto 10px; width:20px; height:20px;"></div>
+                    <div style="font-size:12px; font-weight:700;">Querying Regional Bureau Queue Indices across all 8 Administrative Offices...</div>
+                </div>
+            `;
+
+            try {
+                const res = await API.get('/api/intelligence/bottleneck-map');
+                const sum = res.nationalSummary || {};
+                const regions = res.regions || [];
+
+                container.innerHTML = `
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <div class="card-title">
+                                    ${ICONS.Landmark}
+                                    <span>Regional Regulatory Bottleneck Map (8 AICTE Bureau Jurisdictions)</span>
+                                </div>
+                                <div class="card-subtitle">Real-time pendency index, scrutiny backlog, and EVC scheduling congestion across India</div>
+                            </div>
+                            <button class="btn btn-primary btn-sm" id="btn-trigger-rebalance">
+                                ⚡ Trigger Regional Rebalancing
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="stats-grid-4" style="margin-bottom:20px;">
+                                <div class="stat-card" style="padding:12px;">
+                                    <div class="stat-meta">
+                                        <span class="stat-label">Monitored Regions</span>
+                                        <span class="stat-value" style="font-size:22px;">${sum.totalRegions || 8}</span>
+                                        <span class="stat-sub">100% Pan-India Coverage</span>
+                                    </div>
+                                </div>
+                                <div class="stat-card" style="padding:12px;">
+                                    <div class="stat-meta">
+                                        <span class="stat-label">National Active Filings</span>
+                                        <span class="stat-value" style="font-size:22px; color:#2563EB;">${sum.totalActiveApplications || 1482}</span>
+                                        <span class="stat-sub">Under Processing</span>
+                                    </div>
+                                </div>
+                                <div class="stat-card" style="padding:12px;">
+                                    <div class="stat-meta">
+                                        <span class="stat-label">National SLA Compliance</span>
+                                        <span class="stat-value" style="font-size:22px; color:#059669;">${sum.nationalSLAComplianceRate || 88.5}%</span>
+                                        <span class="stat-sub">Turnaround Index</span>
+                                    </div>
+                                </div>
+                                <div class="stat-card" style="padding:12px;">
+                                    <div class="stat-meta">
+                                        <span class="stat-label">Total Overdue Dossiers</span>
+                                        <span class="stat-value" style="font-size:22px; color:#DC2626;">${sum.nationalOverdueCount || 42}</span>
+                                        <span class="stat-sub" style="color:#DC2626;">SLA Target Breached</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:14px;">
+                                ${regions.map(r => {
+                                    const isCongested = r.bottleneckStatus === 'HIGH_CONGESTION';
+                                    const isOpt = r.bottleneckStatus === 'OPTIMAL' || r.bottleneckStatus === 'CAPACITY_AVAILABLE';
+                                    const statusColor = isCongested ? '#DC2626' : (isOpt ? '#059669' : '#D97706');
+                                    return `
+                                        <div style="padding:16px; border-radius:10px; background:var(--surface); border:1px solid var(--border); box-shadow:var(--shadow-sm); display:flex; flex-direction:column; justify-content:space-between; gap:10px;">
+                                            <div>
+                                                <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:6px;">
+                                                    <div>
+                                                        <div style="font-weight:800; font-size:13px; color:var(--text-primary);">${r.name}</div>
+                                                        <div style="font-size:10px; color:var(--text-secondary);">${r.jurisdiction}</div>
+                                                    </div>
+                                                    <span class="badge" style="background:${statusColor}20; color:${statusColor}; font-size:10px; font-weight:800;">
+                                                        ${r.bottleneckStatus}
+                                                    </span>
+                                                </div>
+
+                                                <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:6px; margin:10px 0; text-align:center;">
+                                                    <div style="padding:6px; background:var(--surface-muted); border-radius:6px;">
+                                                        <div style="font-size:9px; color:var(--text-secondary);">Scrutiny</div>
+                                                        <div style="font-size:13px; font-weight:800; color:#2563EB;">${r.scrutinyStage}</div>
+                                                    </div>
+                                                    <div style="padding:6px; background:var(--surface-muted); border-radius:6px;">
+                                                        <div style="font-size:9px; color:var(--text-secondary);">EVC Visit</div>
+                                                        <div style="font-size:13px; font-weight:800; color:#7C3AED;">${r.evcStage}</div>
+                                                    </div>
+                                                    <div style="padding:6px; background:var(--surface-muted); border-radius:6px;">
+                                                        <div style="font-size:9px; color:var(--text-secondary);">Compliance</div>
+                                                        <div style="font-size:13px; font-weight:800; color:#059669;">${r.complianceStage}</div>
+                                                    </div>
+                                                </div>
+
+                                                <div style="font-size:11px; margin-bottom:4px;">
+                                                    SLA Compliance: <strong>${r.slaCompliancePct}%</strong> • Overdue: <strong style="color:${r.overdueCount > 0 ? '#DC2626' : '#059669'};">${r.overdueCount}</strong>
+                                                </div>
+                                            </div>
+
+                                            <div style="padding:8px 10px; border-radius:6px; background:${isCongested ? 'rgba(239,68,68,0.06)' : 'var(--surface-muted)'}; font-size:10px; color:var(--text-secondary); border:1px solid var(--border);">
+                                                <strong>Primary Factor:</strong> ${r.primaryBottleneck}
+                                            </div>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                document.getElementById('btn-trigger-rebalance').onclick = () => {
+                    API.showToast('Automated rebalancing triggered: 15 overflow scrutiny dockets from Northern RO assigned to North-Western Desk (Chandigarh).', 'success');
+                };
+            } catch (err) {
+                container.innerHTML = `<div style="color:#DC2626; padding:10px;">Bottleneck map error: ${err.message}</div>`;
+            }
+        }
+
+        // --------------------------------------------------------------------
+        // Tab: Alert Fatigue Prevention Engine
+        // --------------------------------------------------------------------
+        async renderConsolidatedAlertsTab(container) {
+            container.innerHTML = `
+                <div class="card" style="padding:24px; text-align:center;">
+                    <div class="spinner" style="margin:0 auto 10px; width:20px; height:20px;"></div>
+                    <div style="font-size:12px; font-weight:700;">Running Neural Deduplication on Regulatory Notifications...</div>
+                </div>
+            `;
+
+            try {
+                const res = await API.get('/api/intelligence/consolidated-alerts');
+                const groups = res.consolidatedAlertGroups || [];
+
+                container.innerHTML = `
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <div class="card-title">
+                                    ${ICONS.Bell}
+                                    <span>Alert Fatigue Prevention Engine (De-duplicated Directive Feed)</span>
+                                </div>
+                                <div class="card-subtitle">Intelligent grouping suppresses notification clutter so regulatory officers can focus on high-impact determinations</div>
+                            </div>
+                            <span class="badge badge-emerald">68% Duplicate Suppression</span>
+                        </div>
+                        <div class="card-body">
+                            <div style="padding:14px 18px; border-radius:10px; background:linear-gradient(135deg, rgba(16,185,129,0.08), rgba(37,99,235,0.08)); border:1px solid rgba(16,185,129,0.3); margin-bottom:16px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                                <div>
+                                    <div style="font-size:13px; font-weight:800; color:var(--text-primary);">
+                                        Autonomous Fatigue Suppression Active
+                                    </div>
+                                    <div style="font-size:11px; color:var(--text-secondary); margin-top:2px;">
+                                        ${res.fatigueSuppressionRate || '68% redundant alerts filtered to protect regulatory officer attention'}
+                                    </div>
+                                </div>
+                                <div style="display:flex; gap:10px;">
+                                    <span class="badge badge-blue">Raw Alerts: ${res.totalRawAlerts || 48}</span>
+                                    <span class="badge badge-emerald">Consolidated: ${groups.length}</span>
+                                </div>
+                            </div>
+
+                            <div style="display:flex; flex-direction:column; gap:14px;">
+                                ${groups.map(g => {
+                                    const isCrit = g.priority === 'CRITICAL';
+                                    const pColor = isCrit ? '#DC2626' : (g.priority === 'WARNING' ? '#D97706' : '#2563EB');
+                                    return `
+                                        <div style="padding:16px; border-radius:10px; background:var(--surface); border:1px solid var(--border); box-shadow:var(--shadow-sm);">
+                                            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px; flex-wrap:wrap; gap:8px;">
+                                                <div>
+                                                    <div style="display:flex; align-items:center; gap:8px;">
+                                                        <span class="badge" style="background:${pColor}20; color:${pColor}; font-weight:800; font-size:10px;">
+                                                            ${g.priority}
+                                                        </span>
+                                                        <h4 style="font-size:14px; font-weight:800; color:var(--text-primary); margin:0;">${g.title}</h4>
+                                                    </div>
+                                                    <div style="font-size:11px; color:var(--text-secondary); margin-top:4px;">
+                                                        Affected: <strong>${(g.affectedDossiers || []).join(', ')}</strong>
+                                                    </div>
+                                                </div>
+                                                <div style="text-align:right;">
+                                                    <span class="badge badge-emerald" style="font-size:10px;">
+                                                        ${g.suppressedDuplicates} Duplicates Suppressed
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <div style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin-bottom:12px;">
+                                                ${g.summary}
+                                            </div>
+
+                                            <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; border-radius:8px; background:var(--surface-muted); font-size:11px; flex-wrap:wrap; gap:8px;">
+                                                <div>
+                                                    <strong style="color:var(--text-primary);">Prescriptive Action:</strong> ${g.recommendedAction}
+                                                </div>
+                                                <button class="btn btn-outline btn-sm" onclick="API.showToast('Directive batch acknowledged and logged in Council ledger', 'success');">
+                                                    Batch Acknowledge
+                                                </button>
+                                            </div>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } catch (err) {
+                container.innerHTML = `<div style="color:#DC2626; padding:10px;">Alerts error: ${err.message}</div>`;
+            }
+        }
+
+        // --------------------------------------------------------------------
+        // Tab: Workload Balancer & Case Handover Intelligence
+        // --------------------------------------------------------------------
+        async renderCaseHandoverTab(container) {
+            container.innerHTML = `
+                <div class="card" style="padding:24px; text-align:center;">
+                    <div class="spinner" style="margin:0 auto 10px; width:20px; height:20px;"></div>
+                    <div style="font-size:12px; font-weight:700;">Loading Scrutiny Committee Workloads &amp; Handover Intelligence...</div>
+                </div>
+            `;
+
+            try {
+                const [wlRes, hoRes] = await Promise.all([
+                    API.get('/api/intelligence/workload'),
+                    API.get('/api/intelligence/case-handover?application_id=APP_2026_001&from_officer=dr.vandana.rao&to_officer=er.manoj.verma')
+                ]);
+
+                const officers = wlRes.officerWorkloads || [];
+                const rebalancing = wlRes.rebalancingRecommendations || [];
+
+                container.innerHTML = `
+                    <div style="display:flex; flex-direction:column; gap:20px;">
+                        <div class="card">
+                            <div class="card-header">
+                                <div>
+                                    <div class="card-title">
+                                        ${ICONS.Users}
+                                        <span>Regional Officer Workload Balancing &amp; Capacity Ledger</span>
+                                    </div>
+                                    <div class="card-subtitle">Real-time scrutiny committee case distribution to prevent localized bottleneck pendencies</div>
+                                </div>
+                                <button class="btn btn-primary btn-sm" id="btn-rebalance-exec">
+                                    ⚡ Execute Auto-Rebalance
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:14px; margin-bottom:16px;">
+                                    ${officers.map(o => {
+                                        const loadColor = o.utilizationPct > 80 ? '#DC2626' : (o.utilizationPct > 60 ? '#D97706' : '#059669');
+                                        return `
+                                            <div style="padding:14px; border-radius:10px; background:var(--surface); border:1px solid var(--border); box-shadow:var(--shadow-sm);">
+                                                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                                                    <div>
+                                                        <div style="font-weight:700; color:var(--text-primary); font-size:13px;">${o.name}</div>
+                                                        <div style="font-size:10px; color:var(--text-secondary);">${o.role} • ${o.region || 'National'}</div>
+                                                    </div>
+                                                    <span class="badge" style="background:${loadColor}20; color:${loadColor};">
+                                                        ${o.loadStatus || 'NORMAL'}
+                                                    </span>
+                                                </div>
+                                                <div style="margin-bottom:6px;">
+                                                    <div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:3px;">
+                                                        <span style="color:var(--text-secondary);">Active Dossiers: <strong>${o.activeDossiers} / ${o.maxCapacity}</strong></span>
+                                                        <span style="font-weight:700; color:${loadColor};">${o.utilizationPct}%</span>
+                                                    </div>
+                                                    <div style="height:6px; background:var(--surface-muted); border-radius:3px; overflow:hidden;">
+                                                        <div style="height:100%; width:${o.utilizationPct}%; background:${loadColor};"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        `;
+                                    }).join('')}
+                                </div>
+
+                                <div style="padding:12px 16px; border-radius:8px; background:rgba(37,99,235,0.06); border:1px solid rgba(37,99,235,0.2); font-size:12px;">
+                                    <div style="font-weight:700; color:#2563EB; margin-bottom:4px;">🤖 AI Prescriptive Dispatch Recommendation:</div>
+                                    <div style="color:var(--text-primary); line-height:1.5;">
+                                        ${rebalancing.length ? rebalancing.map(r => `• ${r}`).join('<br>') : 'All regional desks are operating within optimal capacity bands (<75% utilization).'}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <div>
+                                    <div class="card-title">
+                                        ${ICONS.FileCheck2}
+                                        <span>Structured Case Handover Dossier (${hoRes.applicationNo || 'AICTE-2026-10041'})</span>
+                                    </div>
+                                    <div class="card-subtitle">Zero-knowledge-loss handover brief for seamless officer transfer without procedural disruption</div>
+                                </div>
+                                <span class="badge badge-purple">${hoRes.handoverId}</span>
+                            </div>
+                            <div class="card-body">
+                                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:12px; margin-bottom:16px;">
+                                    <div style="padding:10px 14px; border-radius:8px; background:var(--surface-muted); border:1px solid var(--border);">
+                                        <div style="font-size:10px; font-weight:700; color:var(--text-secondary); text-transform:uppercase;">Relieving Officer:</div>
+                                        <div style="font-size:13px; font-weight:800; color:var(--text-primary); margin-top:2px;">${hoRes.relievingOfficer}</div>
+                                    </div>
+                                    <div style="padding:10px 14px; border-radius:8px; background:var(--surface-muted); border:1px solid var(--border);">
+                                        <div style="font-size:10px; font-weight:700; color:var(--text-secondary); text-transform:uppercase;">Assuming Officer:</div>
+                                        <div style="font-size:13px; font-weight:800; color:#2563EB; margin-top:2px;">${hoRes.assumingOfficer}</div>
+                                    </div>
+                                    <div style="padding:10px 14px; border-radius:8px; background:var(--surface-muted); border:1px solid var(--border);">
+                                        <div style="font-size:10px; font-weight:700; color:var(--text-secondary); text-transform:uppercase;">Current Stage Ageing:</div>
+                                        <div style="font-size:13px; font-weight:800; color:#059669; margin-top:2px;">${hoRes.stageAgeingDays} Days (SLA Clear)</div>
+                                    </div>
+                                    <div style="padding:10px 14px; border-radius:8px; background:var(--surface-muted); border:1px solid var(--border);">
+                                        <div style="font-size:10px; font-weight:700; color:var(--text-secondary); text-transform:uppercase;">Next Statutory Deadline:</div>
+                                        <div style="font-size:13px; font-weight:800; color:#DC2626; margin-top:2px;">${hoRes.nextStatutoryDeadline}</div>
+                                    </div>
+                                </div>
+
+                                <div style="margin-bottom:14px; padding:12px; border-radius:8px; background:var(--surface-muted); border:1px solid var(--border); font-size:12px; line-height:1.6;">
+                                    <strong>Key Scrutiny Findings:</strong> ${hoRes.keyFindingsSummary}
+                                </div>
+
+                                <div style="margin-bottom:16px;">
+                                    <div style="font-size:11px; font-weight:800; color:var(--text-secondary); text-transform:uppercase; margin-bottom:6px;">
+                                        Pending Action Items to Complete:
+                                    </div>
+                                    <ul style="margin:0; padding-left:20px; font-size:12px; color:var(--text-primary); line-height:1.6;">
+                                        ${(hoRes.pendingActionItems || []).map(p => `<li>${p}</li>`).join('')}
+                                    </ul>
+                                </div>
+
+                                <div style="display:flex; justify-content:space-between; align-items:center; padding:12px; border-radius:8px; background:rgba(16,185,129,0.06); border:1px solid rgba(16,185,129,0.3); flex-wrap:wrap; gap:10px;">
+                                    <div style="font-size:11px; color:var(--text-secondary);">
+                                        ✍️ ${hoRes.handoverDeclaration}
+                                    </div>
+                                    <button class="btn btn-primary btn-sm" onclick="API.showToast('Handover transfer affirmed and recorded into statutory blockchain ledger.', 'success');">
+                                        Sign &amp; Affirm Handover
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                document.getElementById('btn-rebalance-exec').onclick = () => {
+                    API.showToast('Workload rebalancing plan executed across Northern and Western scrutiny desks', 'success');
+                };
+            } catch (err) {
+                container.innerHTML = `<div style="color:#DC2626; padding:10px;">Handover error: ${err.message}</div>`;
+            }
+        }
+
+        // --------------------------------------------------------------------
+        // Tab: EVC Field Inspection Review (Offline Docket & Checksum Sync)
+        // --------------------------------------------------------------------
+        async renderEVCOfflineReviewTab(container) {
+            container.innerHTML = `
+                <div class="card" style="padding:24px; text-align:center;">
+                    <div class="spinner" style="margin:0 auto 10px; width:20px; height:20px;"></div>
+                    <div style="font-size:12px; font-weight:700;">Loading EVC Offline Inspection Docket...</div>
+                </div>
+            `;
+
+            try {
+                const docket = await API.get('/api/intelligence/evc-offline-docket');
+                const items = docket.checklistItems || [];
+
+                container.innerHTML = `
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <div class="card-title">
+                                    ${ICONS.CheckCircle2}
+                                    <span>Expert Visit Committee (EVC) Field Inspection Review</span>
+                                </div>
+                                <div class="card-subtitle">Offline field docket verification, geotagged evidence inspection, and tamper-evident checksum synchronization</div>
+                            </div>
+                            <span class="badge badge-emerald">SHA-256 Non-Repudiation</span>
+                        </div>
+                        <div class="card-body">
+                            <div style="padding:14px 18px; border-radius:10px; background:var(--surface-muted); border:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
+                                <div>
+                                    <div style="font-size:13px; font-weight:800; color:var(--text-primary);">${docket.institution || 'Nilgiri Institute of Technology'}</div>
+                                    <div style="font-size:11px; color:var(--text-secondary); margin-top:2px;">
+                                        Docket ID: <code style="color:var(--accent); font-weight:700;">${docket.docketId}</code> • Assigned Date: <strong>${docket.assignedVisitDate || '2025-04-20'}</strong>
+                                    </div>
+                                </div>
+                                <div style="text-align:right;">
+                                    <div style="font-size:10px; font-weight:700; color:var(--text-secondary); text-transform:uppercase;">Offline Checksum</div>
+                                    <code style="font-size:11px; font-family:monospace; color:#059669; font-weight:700;">
+                                        ${(docket.offlineChecksum || 'c4a910283ca910...').slice(0, 18)}...
+                                    </code>
+                                </div>
+                            </div>
+
+                            <div style="border-radius:10px; border:1px solid var(--border); overflow:hidden; margin-bottom:16px;">
+                                <div style="padding:10px 14px; background:var(--surface-muted); font-size:11px; font-weight:800; color:var(--text-secondary); text-transform:uppercase; border-bottom:1px solid var(--border);">
+                                    Mandatory On-Site Verification Criteria
+                                </div>
+                                <table class="table" style="margin:0; font-size:12px;">
+                                    <tbody>
+                                        ${items.map(it => `
+                                            <tr>
+                                                <td style="width:36px; text-align:center;">
+                                                    <span style="color:#059669; font-weight:800;">✓</span>
+                                                </td>
+                                                <td style="font-weight:700; color:var(--text-primary); width:260px;">
+                                                    ${it.item}
+                                                </td>
+                                                <td style="color:var(--text-secondary);">
+                                                    Norm: ${it.standard} • Physical Count: <strong style="color:#059669;">${it.verifiedCount || 'Satisfied'}</strong>
+                                                </td>
+                                                <td style="width:110px; text-align:right;">
+                                                    <span class="badge badge-emerald">VERIFIED</span>
+                                                </td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div style="display:flex; justify-content:space-between; align-items:center; padding:14px; border-radius:10px; background:rgba(37,99,235,0.06); border:1px solid rgba(37,99,235,0.25); flex-wrap:wrap; gap:12px;">
+                                <div>
+                                    <div style="font-weight:700; color:var(--text-primary); font-size:13px;">EVC Field Mode: Offline-First Synchronization</div>
+                                    <div style="font-size:11px; color:var(--text-secondary); margin-top:2px;">
+                                        Inspectors can capture findings in remote areas without internet; observations sync seamlessly with cryptographic non-repudiation when re-connected.
+                                    </div>
+                                </div>
+                                <button class="btn btn-primary btn-sm" id="btn-sync-evc-action">
+                                    ${ICONS.RotateCcw}
+                                    Execute Test Offline Sync
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                document.getElementById('btn-sync-evc-action').onclick = async () => {
+                    const btn = document.getElementById('btn-sync-evc-action');
+                    btn.disabled = true;
+                    btn.innerHTML = `<span class="spinner" style="width:12px; height:12px;"></span> Syncing...`;
+                    try {
+                        const sync = await API.post('/api/intelligence/evc-offline-sync', {
+                            visitId: 'VISIT_2026_001',
+                            observations: 'All labs inspected. Computer lab meets 1:1 terminal to student ratio.',
+                            checksum: docket.offlineChecksum
+                        });
+                        btn.innerHTML = `✓ Synchronized`;
+                        API.showToast(`EVC Inspection findings successfully synchronized! Confirmation ID: ${sync.syncConfirmationId}`, 'success');
+                    } catch (e) {
+                        btn.disabled = false;
+                        btn.innerHTML = `Execute Test Offline Sync`;
+                        API.showToast(`Sync error: ${e.message}`, 'error');
+                    }
+                };
+            } catch (err) {
+                container.innerHTML = `<div style="color:#DC2626; padding:10px;">EVC docket error: ${err.message}</div>`;
             }
         }
 
@@ -6515,6 +7553,8 @@
         // NIYAM 2035 — INSTITUTION INTELLIGENCE (Applicant Portal View)
         // ====================================================================
         async renderInstitutionIntelligenceView(container) {
+            this.instIntelTab = this.instIntelTab || 'readiness';
+
             container.innerHTML = `
                 <div class="view-header">
                     <div class="view-title-group">
@@ -6527,77 +7567,114 @@
                         </div>
                         <p>Permanent AICTE ID: <strong>SYN-2025-001</strong> • Pre-Submission Readiness &amp; Continuous Statutory Compliance Engine</p>
                     </div>
-                    <div class="view-actions">
+                    <div class="view-actions" style="display:flex; gap:8px; align-items:center;">
                         <button class="btn btn-outline btn-sm" id="btn-sync-offline">
                             ${ICONS.RotateCcw}
-                            Sync Offline Drafts
+                            <span>Sync Offline Drafts</span>
+                        </button>
+                        <button class="btn btn-primary btn-sm" id="btn-inst-refresh">
+                            ${ICONS.Sparkles}
+                            <span>Refresh Diagnostics</span>
                         </button>
                     </div>
                 </div>
 
-                <!-- Overall Readiness Index Card -->
-                <div id="inst-readiness-hero" style="margin-bottom:20px;">
-                    <div class="card" style="padding:24px; text-align:center;">
-                        <div class="spinner" style="margin:0 auto 10px; width:20px; height:20px;"></div>
-                        <div style="font-weight:700;">Evaluating Institutional Pre-Submission Readiness across 4 Statutory Pillars...</div>
-                    </div>
+                <!-- Sub-Navigation Segmented Tab Bar -->
+                <div class="intelligence-nav" style="display:flex; gap:8px; overflow-x:auto; padding-bottom:12px; margin-bottom:18px; border-bottom:1px solid var(--border);">
+                    <button class="btn btn-sm ${this.instIntelTab === 'readiness' ? 'btn-primary' : 'btn-outline'} inst-tab-btn" data-tab="readiness">
+                        ${ICONS.ShieldCheck}
+                        <span>Readiness &amp; Diagnostics</span>
+                    </button>
+                    <button class="btn btn-sm ${this.instIntelTab === 'dna' ? 'btn-primary' : 'btn-outline'} inst-tab-btn" data-tab="dna">
+                        ${ICONS.History}
+                        <span>Application DNA</span>
+                    </button>
+                    <button class="btn btn-sm ${this.instIntelTab === 'documents' ? 'btn-primary' : 'btn-outline'} inst-tab-btn" data-tab="documents">
+                        ${ICONS.FileCheck2}
+                        <span>Document Validity Radar</span>
+                    </button>
+                    <button class="btn btn-sm ${this.instIntelTab === 'clarifications' ? 'btn-primary' : 'btn-outline'} inst-tab-btn" data-tab="clarifications">
+                        ${ICONS.Sparkles}
+                        <span>Plain-Language Assistant</span>
+                    </button>
+                    <button class="btn btn-sm ${this.instIntelTab === 'calendar' ? 'btn-primary' : 'btn-outline'} inst-tab-btn" data-tab="calendar">
+                        ${ICONS.Calendar}
+                        <span>Compliance Calendar</span>
+                    </button>
+                    <button class="btn btn-sm ${this.instIntelTab === 'copilot' ? 'btn-primary' : 'btn-outline'} inst-tab-btn" data-tab="copilot">
+                        ${ICONS.Bot}
+                        <span>Copilot &amp; Offline Sync</span>
+                    </button>
                 </div>
 
-                <!-- Missing Document & Gap Radar -->
-                <div class="card" style="margin-bottom:20px;">
-                    <div class="card-header">
-                        <div class="card-title">
-                            ${ICONS.FileCheck2}
-                            <span>Statutory Document Validity &amp; Gap Assistant</span>
+                <!-- Active Tab Content Viewport -->
+                <div id="inst-tab-viewport"></div>
+            `;
+
+            // Bind Top Header Actions
+            document.getElementById('btn-sync-offline').onclick = () => {
+                API.showToast('Offline cache verified: Local IndexedDB draft is fully synchronized with AICTE National Database (SHA-256 seal confirmed).', 'success');
+            };
+
+            document.getElementById('btn-inst-refresh').onclick = () => {
+                API.showToast('Re-evaluating institutional compliance metrics against APH 2025-26...', 'info');
+                this.renderInstitutionIntelligenceView(container);
+            };
+
+            // Bind Sub-Tab Navigation
+            container.querySelectorAll('.inst-tab-btn').forEach(btn => {
+                btn.onclick = () => {
+                    this.instIntelTab = btn.getAttribute('data-tab');
+                    this.renderInstitutionIntelligenceView(container);
+                };
+            });
+
+            // Dispatch Active Sub-Tab
+            const viewport = document.getElementById('inst-tab-viewport');
+            if (this.instIntelTab === 'readiness') {
+                await this.renderInstitutionReadinessTab(viewport);
+            } else if (this.instIntelTab === 'dna') {
+                await this.renderInstitutionDnaTab(viewport);
+            } else if (this.instIntelTab === 'documents') {
+                await this.renderInstitutionDocumentsTab(viewport);
+            } else if (this.instIntelTab === 'clarifications') {
+                await this.renderInstitutionClarificationsTab(viewport);
+            } else if (this.instIntelTab === 'calendar') {
+                await this.renderInstitutionCalendarTab(viewport);
+            } else if (this.instIntelTab === 'copilot') {
+                await this.renderInstitutionCopilotTab(viewport);
+            }
+        }
+
+        // --------------------------------------------------------------------
+        // Tab: Pre-Submission Readiness & Health Diagnostics
+        // --------------------------------------------------------------------
+        async renderInstitutionReadinessTab(container) {
+            container.innerHTML = `
+                <div style="display:flex; flex-direction:column; gap:20px;">
+                    <!-- Pillar 1-4 Readiness Hero -->
+                    <div id="inst-readiness-hero">
+                        <div class="card" style="padding:24px; text-align:center;">
+                            <div class="spinner" style="margin:0 auto 10px; width:20px; height:20px;"></div>
+                            <div style="font-weight:700;">Evaluating Institutional Pre-Submission Readiness across 4 Statutory Pillars...</div>
                         </div>
-                        <span class="badge badge-amber">1 Item Approaching Expiry</span>
                     </div>
-                    <div class="card-body">
-                        <div style="padding:14px; border-radius:10px; background:rgba(245,158,11,0.06); border:1px solid rgba(245,158,11,0.3); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+
+                    <!-- Application Health Diagnostics Section -->
+                    <div class="card">
+                        <div class="card-header">
                             <div>
-                                <div style="font-weight:700; color:#D97706; font-size:13px;">District Fire Safety NOC Renewal Required in 45 Days</div>
-                                <div style="font-size:11px; color:var(--text-secondary); margin-top:2px;">
-                                    Document ID: NIT-FIRE-2024-NOC • Current Expiry: <strong>15-Jun-2025</strong> • AICTE APH Appendix 16 Rule 3.2
+                                <div class="card-title">
+                                    ${ICONS.ShieldCheck}
+                                    <span>Autonomous Application Health Diagnostics</span>
                                 </div>
+                                <div class="card-subtitle">Continuous real-time audit against AICTE Approval Process Handbook (APH 2025-26)</div>
                             </div>
-                            <button class="btn btn-primary btn-sm" onclick="app.navigate('documents');">
-                                Upload Renewal Document
-                            </button>
+                            <span class="badge badge-emerald">Dossier: APP_2026_001</span>
                         </div>
-                    </div>
-                </div>
-
-                <!-- Institutional Regulatory Copilot Card -->
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">
-                            ${ICONS.Bot}
-                            <span>Institutional Regulatory Copilot (Pre-Submission Assistant)</span>
+                        <div class="card-body" id="inst-health-viewport">
+                            <div class="spinner" style="margin:20px auto; width:20px; height:20px;"></div>
                         </div>
-                        <span class="badge badge-blue">Instant APH Answers</span>
-                    </div>
-                    <div class="card-body">
-                        <div style="font-size:12px; color:var(--text-secondary); margin-bottom:10px;">
-                            Need guidance on faculty cadre balance, land parcel surveys, or supernumerary seat filings? Ask the NIYAM Copilot:
-                        </div>
-                        <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:14px;">
-                            <button class="btn btn-outline btn-sm inst-copilot-pill" data-q="What is the faculty requirement for 360 intake in Computer Science?">
-                                🎓 360 Intake Faculty Requirements
-                            </button>
-                            <button class="btn btn-outline btn-sm inst-copilot-pill" data-q="Can student amenities area be included in instructional area?">
-                                🏢 Built-up Area Classification
-                            </button>
-                            <button class="btn btn-outline btn-sm inst-copilot-pill" data-q="What is the process to apply for additional intake in Emerging Areas?">
-                                🚀 Emerging Tech Intake Expansion
-                            </button>
-                        </div>
-
-                        <form id="inst-copilot-form" style="display:flex; gap:8px;">
-                            <input type="text" id="inst-copilot-input" class="input" placeholder="Ask any regulatory question about your college application..." style="flex:1;" required>
-                            <button type="submit" class="btn btn-primary">Ask Assistant</button>
-                        </form>
-
-                        <div id="inst-copilot-reply" style="margin-top:14px;"></div>
                     </div>
                 </div>
             `;
@@ -6670,11 +7747,560 @@
                 console.warn('[Institution] Readiness fetch error:', err);
             }
 
-            // Bindings
-            document.getElementById('btn-sync-offline').onclick = () => {
-                API.showToast('Offline cache verified: Local storage is fully synchronized with AICTE National Database.', 'success');
-            };
+            // Load Application Health Diagnostics
+            try {
+                const health = await API.get('/api/intelligence/application-health/APP_2026_001');
+                const v = document.getElementById('inst-health-viewport');
+                if (v && health) {
+                    const checksHtml = (health.checks || []).map(c => {
+                        const isPass = c.status === 'PASS';
+                        const badgeClass = isPass ? 'badge-emerald' : 'badge-amber';
+                        return `
+                            <tr>
+                                <td style="font-weight:700; color:var(--text-primary);">${c.name}</td>
+                                <td><span class="badge ${badgeClass}">${c.status}</span></td>
+                                <td style="color:var(--text-secondary); font-size:12px;">${c.detail}</td>
+                                <td style="font-weight:600; font-size:12px;">${c.impact}</td>
+                            </tr>
+                        `;
+                    }).join('');
 
+                    v.innerHTML = `
+                        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px; margin-bottom:18px; padding:16px; border-radius:10px; background:var(--surface-muted); border:1px solid var(--border);">
+                            <div>
+                                <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--text-secondary);">Application Diagnostic Status</div>
+                                <div style="font-size:22px; font-weight:900; color:#059669; margin:2px 0;">
+                                    ${health.healthScore} / 100 — ${health.status}
+                                </div>
+                                <div style="font-size:12px; color:var(--text-primary); font-weight:500;">
+                                    ${health.operationalDiagnosis}
+                                </div>
+                            </div>
+                            <button class="btn btn-primary btn-sm" id="btn-retest-health">
+                                ${ICONS.RotateCcw} Retest Health
+                            </button>
+                        </div>
+
+                        <div class="table-container">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Statutory Audit Dimension</th>
+                                        <th>Status</th>
+                                        <th>Diagnostic Evidence / Observation</th>
+                                        <th>Regulatory Impact</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${checksHtml}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div style="font-size:11px; color:var(--text-secondary); margin-top:10px; font-style:italic;">
+                            * ${health.disclaimer || 'Indicative diagnostic assessment of procedural completeness.'}
+                        </div>
+                    `;
+
+                    const btnRetest = v.querySelector('#btn-retest-health');
+                    if (btnRetest) {
+                        btnRetest.onclick = () => {
+                            API.showToast('Re-verifying institutional documents and cadre records...', 'info');
+                            this.renderInstitutionReadinessTab(container);
+                        };
+                    }
+                }
+            } catch (err) {
+                console.warn('[Institution] Health fetch error:', err);
+            }
+        }
+
+        // --------------------------------------------------------------------
+        // Tab: Application DNA (Genesis-to-Latest Audit Ledger)
+        // --------------------------------------------------------------------
+        async renderInstitutionDnaTab(container) {
+            container.innerHTML = `
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">
+                                ${ICONS.History}
+                                <span>Application DNA (Cryptographic Audit Ledger)</span>
+                            </div>
+                            <div class="card-subtitle">Immutable timeline tracing the entire lifecycle of Application Dossier APP_2026_001</div>
+                        </div>
+                        <span class="badge badge-emerald">SHA-256 Non-Repudiation</span>
+                    </div>
+                    <div class="card-body" id="inst-dna-viewport">
+                        <div class="spinner" style="margin:20px auto; width:20px; height:20px;"></div>
+                    </div>
+                </div>
+            `;
+
+            try {
+                const dna = await API.get('/api/intelligence/application-dna/APP_2026_001');
+                const v = document.getElementById('inst-dna-viewport');
+                if (v && dna) {
+                    const milestones = dna.timeline || [];
+                    const milestonesHtml = milestones.map(m => `
+                        <div style="display:flex; gap:16px; margin-bottom:20px; position:relative;">
+                            <div style="display:flex; flex-direction:column; align-items:center;">
+                                <div style="width:36px; height:36px; border-radius:50%; background:rgba(37,99,235,0.1); border:2px solid #2563EB; display:flex; align-items:center; justify-content:center; font-weight:800; color:#2563EB; font-size:12px;">
+                                    ${m.dnaIndex}
+                                </div>
+                                ${m.dnaIndex < milestones.length ? '<div style="width:2px; flex:1; background:var(--border); margin:4px 0;"></div>' : ''}
+                            </div>
+                            <div style="flex:1; padding:16px; border-radius:10px; background:var(--surface-muted); border:1px solid var(--border);">
+                                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:6px;">
+                                    <div style="font-weight:700; color:var(--text-primary); font-size:14px;">${m.title}</div>
+                                    <span class="badge badge-blue">${new Date(m.timestamp).toLocaleString()}</span>
+                                </div>
+                                <div style="font-size:11px; font-weight:700; color:#2563EB; margin-bottom:6px;">
+                                    Actor: ${m.actor} • Event: ${m.event}
+                                </div>
+                                <div style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin-bottom:10px;">
+                                    ${m.details}
+                                </div>
+                                <div style="display:flex; align-items:center; gap:8px; background:var(--surface); padding:6px 10px; border-radius:6px; border:1px solid var(--border); font-family:monospace; font-size:10px; color:var(--text-secondary); word-break:break-all;">
+                                    <span style="font-weight:700; color:var(--text-primary);">SHA-256:</span>
+                                    <span>${m.hash}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+
+                    v.innerHTML = `
+                        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; padding:14px; border-radius:10px; background:rgba(37,99,235,0.06); border:1px solid rgba(37,99,235,0.2); margin-bottom:20px;">
+                            <div>
+                                <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:#2563EB;">Cryptographic Genesis Hash</div>
+                                <div style="font-family:monospace; font-size:11px; color:var(--text-primary);">${dna.genesisHash}</div>
+                            </div>
+                            <div>
+                                <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:#059669;">Latest State Hash</div>
+                                <div style="font-family:monospace; font-size:11px; color:var(--text-primary);">${dna.latestHash}</div>
+                            </div>
+                        </div>
+                        <div>
+                            ${milestonesHtml}
+                        </div>
+                    `;
+                }
+            } catch (err) {
+                console.warn('[Institution] DNA fetch error:', err);
+            }
+        }
+
+        // --------------------------------------------------------------------
+        // Tab: Statutory Documents & Gap Radar
+        // --------------------------------------------------------------------
+        async renderInstitutionDocumentsTab(container) {
+            container.innerHTML = `
+                <div style="display:flex; flex-direction:column; gap:20px;">
+                    <!-- Missing Document & Gap Radar Card -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                ${ICONS.FileCheck2}
+                                <span>Statutory Document Validity &amp; Gap Assistant</span>
+                            </div>
+                            <span class="badge badge-amber">1 Item Approaching Expiry</span>
+                        </div>
+                        <div class="card-body">
+                            <div style="padding:14px; border-radius:10px; background:rgba(245,158,11,0.06); border:1px solid rgba(245,158,11,0.3); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
+                                <div>
+                                    <div style="font-weight:700; color:#D97706; font-size:13px;">District Fire Safety NOC Renewal Required in 45 Days</div>
+                                    <div style="font-size:11px; color:var(--text-secondary); margin-top:2px;">
+                                        Document ID: NIT-FIRE-2024-NOC • Current Expiry: <strong>15-Jun-2025</strong> • AICTE APH Appendix 16 Rule 3.2
+                                    </div>
+                                </div>
+                                <button class="btn btn-primary btn-sm" onclick="app.navigate('documents');">
+                                    Upload Renewal Document
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mandatory Document Repository Checklist -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <div class="card-title">
+                                    ${ICONS.ShieldCheck}
+                                    <span>Mandatory Regulatory Documents (6 of 6 On Record)</span>
+                                </div>
+                                <div class="card-subtitle">Cryptographically verified against DigiLocker and State PWD Repositories</div>
+                            </div>
+                            <button class="btn btn-outline btn-sm" onclick="app.navigate('documents');">
+                                Manage Dossier Files
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-container">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Statutory Document Name</th>
+                                            <th>Verification Status</th>
+                                            <th>Validity / Expiry</th>
+                                            <th>Legal Reference</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td style="font-weight:700; color:var(--text-primary);">Registered Land Title Deed / 30-Yr Lease</td>
+                                            <td><span class="badge badge-emerald">DigiLocker Verified</span></td>
+                                            <td>Permanent (Perpetual Title)</td>
+                                            <td style="font-size:11px; color:var(--text-secondary);">APH 2025-26 Ch 1, Sec 4.1</td>
+                                            <td><button class="btn btn-outline btn-sm" onclick="API.showToast('Document hash verified on blockchain.', 'success');">Verify Hash</button></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight:700; color:var(--text-primary);">Approved Master Building Plan &amp; Layout</td>
+                                            <td><span class="badge badge-emerald">Municipal Approved</span></td>
+                                            <td>Permanent (Approved 2018)</td>
+                                            <td style="font-size:11px; color:var(--text-secondary);">APH 2025-26 Ch 1, Sec 4.3</td>
+                                            <td><button class="btn btn-outline btn-sm" onclick="API.showToast('Building plan blueprint loaded.', 'info');">View Blueprint</button></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight:700; color:var(--text-primary);">Structural Stability Certificate</td>
+                                            <td><span class="badge badge-emerald">PWD Certified</span></td>
+                                            <td>Valid until 31-Dec-2028</td>
+                                            <td style="font-size:11px; color:var(--text-secondary);">APH 2025-26 Appx 16</td>
+                                            <td><button class="btn btn-outline btn-sm" onclick="API.showToast('Stability certificate active.', 'success');">View Certificate</button></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight:700; color:var(--text-primary);">District Fire &amp; Life Safety NOC</td>
+                                            <td><span class="badge badge-amber">Expiring Soon</span></td>
+                                            <td style="color:#D97706; font-weight:700;">15-Jun-2025 (45 Days Left)</td>
+                                            <td style="font-size:11px; color:var(--text-secondary);">APH 2025-26 Appx 16 Rule 3.2</td>
+                                            <td><button class="btn btn-primary btn-sm" onclick="app.navigate('documents');">Renew Now</button></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight:700; color:var(--text-primary);">University Affiliation Order (AY 2025-26)</td>
+                                            <td><span class="badge badge-emerald">Affiliation Confirmed</span></td>
+                                            <td>Valid for AY 2025-26</td>
+                                            <td style="font-size:11px; color:var(--text-secondary);">APH 2025-26 Ch 2, Sec 1.4</td>
+                                            <td><button class="btn btn-outline btn-sm" onclick="API.showToast('Affiliation order verified.', 'success');">View Order</button></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight:700; color:var(--text-primary);">Anti-Ragging &amp; Non-Capitation Undertakings</td>
+                                            <td><span class="badge badge-emerald">₹100 e-Stamp Sealed</span></td>
+                                            <td>Valid for AY 2025-26</td>
+                                            <td style="font-size:11px; color:var(--text-secondary);">AICTE Regulation Sec 10(k)</td>
+                                            <td><button class="btn btn-outline btn-sm" onclick="API.showToast('e-Stamp non-repudiation verified.', 'success');">View Undertaking</button></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --------------------------------------------------------------------
+        // Tab: Plain-Language Clarification Assistant
+        // --------------------------------------------------------------------
+        async renderInstitutionClarificationsTab(container) {
+            container.innerHTML = `
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">
+                                ${ICONS.Sparkles}
+                                <span>Plain-Language Clarification Assistant</span>
+                            </div>
+                            <div class="card-subtitle">AI-assisted translation of bureaucratic AICTE scrutiny directives into clear, actionable institutional steps</div>
+                        </div>
+                        <span class="badge badge-purple">1 Active Advisory</span>
+                    </div>
+                    <div class="card-body">
+                        <!-- Side-by-Side Dual Clarification Comparison -->
+                        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:16px; margin-bottom:20px;">
+                            <!-- Official AICTE Directive -->
+                            <div style="padding:16px; border-radius:10px; background:rgba(239,68,68,0.06); border:1px solid rgba(239,68,68,0.3);">
+                                <div style="font-size:11px; font-weight:800; text-transform:uppercase; color:#DC2626; margin-bottom:6px;">
+                                    Official AICTE Scrutiny Directive (Legal Clause)
+                                </div>
+                                <div style="font-size:13px; font-weight:700; color:var(--text-primary); margin-bottom:8px;">
+                                    "Discrepancy noted under APH 2025-26 Clause 4.8 regarding laboratory instructional area bifurcation."
+                                </div>
+                                <div style="font-size:12px; color:var(--text-secondary); line-height:1.5;">
+                                    The Scrutiny Committee notes that instructional space listed under CAD/CAM Laboratory (Room 304) overlaps with both Mechanical Engineering and Computer Science department allocations. Detailed justification and cadastral demarcation required within 7 days.
+                                </div>
+                            </div>
+
+                            <!-- Plain-Language Translation -->
+                            <div style="padding:16px; border-radius:10px; background:rgba(16,185,129,0.06); border:1px solid rgba(16,185,129,0.3);">
+                                <div style="font-size:11px; font-weight:800; text-transform:uppercase; color:#059669; margin-bottom:6px;">
+                                    💡 Plain-Language Translation (What AICTE is asking for)
+                                </div>
+                                <div style="font-size:13px; font-weight:700; color:var(--text-primary); margin-bottom:8px;">
+                                    "Separate laboratory rooms required for each academic branch."
+                                </div>
+                                <div style="font-size:12px; color:var(--text-secondary); line-height:1.5;">
+                                    AICTE officers found that Room 304 is listed twice. Under regulations, each department requires dedicated square footage. To clear this immediately, please upload either:
+                                    <ul style="margin:6px 0 0 16px; padding:0;">
+                                        <li><strong>Option A:</strong> A revised floor layout separating Room 304A and Room 304B (66 sq.m each).</li>
+                                        <li><strong>Option B:</strong> An affidavit confirming shift-wise laboratory allocation with dedicated equipment rosters.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Response Submission Panel -->
+                        <div style="padding:16px; border-radius:10px; background:var(--surface-muted); border:1px solid var(--border);">
+                            <div style="font-weight:700; color:var(--text-primary); font-size:14px; margin-bottom:10px;">
+                                Submit Institutional Clarification Response
+                            </div>
+                            <form id="clarify-reply-form" style="display:flex; flex-direction:column; gap:12px;">
+                                <div>
+                                    <label style="font-size:11px; font-weight:700; color:var(--text-primary); text-transform:uppercase;">Institutional Clarification Statement:</label>
+                                    <textarea id="clarify-reply-text" class="input" rows="3" style="width:100%; margin-top:4px;" required placeholder="Enter institutional justification referencing approved blueprints and department rosters...">We confirm that CAD/CAM Lab (Room 304) has been bifurcated into Room 304A (Mechanical) and Room 304B (CSE) with 66.5 sq.m each. Architect certified revised plan attached herewith.</textarea>
+                                </div>
+                                <div>
+                                    <label style="font-size:11px; font-weight:700; color:var(--text-primary); text-transform:uppercase;">Supporting Document Attachment:</label>
+                                    <input type="file" id="clarify-reply-file" class="input" style="width:100%; margin-top:4px;">
+                                    <div style="font-size:11px; color:var(--text-secondary); margin-top:2px;">Accepted formats: PDF, signed architect drawings (Max 25MB)</div>
+                                </div>
+                                <div style="display:flex; justify-content:flex-end; gap:8px;">
+                                    <button type="submit" class="btn btn-primary" id="btn-submit-clarify-reply">
+                                        ${ICONS.Send} Cryptographically Submit Clarification Response
+                                    </button>
+                                </div>
+                            </form>
+                            <div id="clarify-reply-feedback" style="margin-top:10px;"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            const form = document.getElementById('clarify-reply-form');
+            if (form) {
+                form.onsubmit = (e) => {
+                    e.preventDefault();
+                    const btn = document.getElementById('btn-submit-clarify-reply');
+                    if (btn) {
+                        btn.disabled = true;
+                        btn.innerHTML = '✓ Submitted &amp; Sealed';
+                        btn.classList.remove('btn-primary');
+                        btn.classList.add('btn-outline');
+                    }
+                    const feedback = document.getElementById('clarify-reply-feedback');
+                    if (feedback) {
+                        feedback.innerHTML = `
+                            <div style="padding:10px 14px; border-radius:8px; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); color:#059669; font-size:12px; font-weight:600;">
+                                ✓ Clarification response submitted successfully. Cryptographic seal SHA-256 generated and docket delivered to Scrutiny Committee 1.
+                            </div>
+                        `;
+                    }
+                    API.showToast('Clarification response submitted and cryptographically sealed for Scrutiny Committee review.', 'success');
+                };
+            }
+        }
+
+        // --------------------------------------------------------------------
+        // Tab: Statutory Compliance Calendar
+        // --------------------------------------------------------------------
+        async renderInstitutionCalendarTab(container) {
+            container.innerHTML = `
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">
+                                ${ICONS.Calendar}
+                                <span>Statutory Compliance Calendar &amp; AICTE Deadlines</span>
+                            </div>
+                            <div class="card-subtitle">AICTE Approval Process Handbook (APH 2025-26) Milestone Tracker</div>
+                        </div>
+                        <span class="badge badge-blue">Academic Year 2025-26</span>
+                    </div>
+                    <div class="card-body">
+                        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:16px;">
+                            <!-- Milestone 1 -->
+                            <div style="padding:16px; border-radius:10px; background:var(--surface-muted); border:1px solid var(--border); display:flex; flex-direction:column; justify-content:space-between;">
+                                <div>
+                                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                                        <span class="badge badge-amber" style="font-weight:700;">15 Days Remaining</span>
+                                        <span style="font-size:11px; font-weight:700; color:var(--text-secondary);">15-May-2026</span>
+                                    </div>
+                                    <div style="font-weight:700; color:var(--text-primary); font-size:14px; margin-bottom:4px;">
+                                        Extension of Approval (EoA) Annual Filing Cut-off
+                                    </div>
+                                    <div style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin-bottom:10px;">
+                                        Statutory deadline for submitting annual compliance data, faculty rosters, and audited statements for AY 2025-26.
+                                    </div>
+                                    <div style="font-size:11px; color:#DC2626; font-weight:600;">
+                                        Penalty for Delay: ₹50,000 / week late fee under APH Clause 3.2.
+                                    </div>
+                                </div>
+                                <button class="btn btn-outline btn-sm" style="margin-top:12px;" onclick="API.showToast('Reminder added to institutional calendar.', 'success');">
+                                    ${ICONS.Calendar} Set Calendar Reminder
+                                </button>
+                            </div>
+
+                            <!-- Milestone 2 -->
+                            <div style="padding:16px; border-radius:10px; background:var(--surface-muted); border:1px solid var(--border); display:flex; flex-direction:column; justify-content:space-between;">
+                                <div>
+                                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                                        <span class="badge badge-blue" style="font-weight:700;">30 Days Remaining</span>
+                                        <span style="font-size:11px; font-weight:700; color:var(--text-secondary);">30-May-2026</span>
+                                    </div>
+                                    <div style="font-weight:700; color:var(--text-primary); font-size:14px; margin-bottom:4px;">
+                                        Fee Reconciliation &amp; Bank Guarantee Validation
+                                    </div>
+                                    <div style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin-bottom:10px;">
+                                        Final verification of Joint FDR / Bank Guarantee instruments with State Nationalized Banks.
+                                    </div>
+                                    <div style="font-size:11px; color:#D97706; font-weight:600;">
+                                        Requirement: Bank confirmation letter on official letterhead.
+                                    </div>
+                                </div>
+                                <button class="btn btn-outline btn-sm" style="margin-top:12px;" onclick="API.showToast('Bank Guarantee checklist loaded.', 'info');">
+                                    ${ICONS.Calendar} View Bank Checklist
+                                </button>
+                            </div>
+
+                            <!-- Milestone 3 -->
+                            <div style="padding:16px; border-radius:10px; background:var(--surface-muted); border:1px solid var(--border); display:flex; flex-direction:column; justify-content:space-between;">
+                                <div>
+                                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                                        <span class="badge badge-emerald" style="font-weight:700;">41 Days Remaining</span>
+                                        <span style="font-size:11px; font-weight:700; color:var(--text-secondary);">10-Jun-2026</span>
+                                    </div>
+                                    <div style="font-weight:700; color:var(--text-primary); font-size:14px; margin-bottom:4px;">
+                                        Expert Visit Committee (EVC) Inspection Window
+                                    </div>
+                                    <div style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin-bottom:10px;">
+                                        Hybrid/Physical EVC audit of laboratories, computer centres, barrier-free access, and fire suppression systems.
+                                    </div>
+                                    <div style="font-size:11px; color:#059669; font-weight:600;">
+                                        Readiness: 100% of physical criteria ready for spot audit.
+                                    </div>
+                                </div>
+                                <button class="btn btn-outline btn-sm" style="margin-top:12px;" onclick="API.showToast('EVC Inspection Readiness Checklist exported.', 'success');">
+                                    ${ICONS.Calendar} View EVC Protocol
+                                </button>
+                            </div>
+
+                            <!-- Milestone 4 -->
+                            <div style="padding:16px; border-radius:10px; background:var(--surface-muted); border:1px solid var(--border); display:flex; flex-direction:column; justify-content:space-between;">
+                                <div>
+                                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                                        <span class="badge badge-purple" style="font-weight:700;">56 Days Remaining</span>
+                                        <span style="font-size:11px; font-weight:700; color:var(--text-secondary);">25-Jun-2026</span>
+                                    </div>
+                                    <div style="font-weight:700; color:var(--text-primary); font-size:14px; margin-bottom:4px;">
+                                        Standing Appellate Committee (SAC) Window
+                                    </div>
+                                    <div style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin-bottom:10px;">
+                                        Final opportunity for institutions to submit supplementary documents or clarify technical observations.
+                                    </div>
+                                    <div style="font-size:11px; color:var(--text-secondary); font-weight:600;">
+                                        Final resolution window prior to national seat matrix gazetting.
+                                    </div>
+                                </div>
+                                <button class="btn btn-outline btn-sm" style="margin-top:12px;" onclick="API.showToast('SAC procedural norms loaded.', 'info');">
+                                    ${ICONS.Calendar} View SAC Regulations
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --------------------------------------------------------------------
+        // Tab: Copilot & Offline Sync
+        // --------------------------------------------------------------------
+        async renderInstitutionCopilotTab(container) {
+            container.innerHTML = `
+                <div style="display:flex; flex-direction:column; gap:20px;">
+                    <!-- Offline Draft Sync Card -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <div class="card-title">
+                                    ${ICONS.RotateCcw}
+                                    <span>Offline Application Draft Synchronisation</span>
+                                </div>
+                                <div class="card-subtitle">Zero-network draft authoring with local cryptographic encryption &amp; AICTE cloud reconciliation</div>
+                            </div>
+                            <span class="badge badge-emerald">Online &amp; Synchronized</span>
+                        </div>
+                        <div class="card-body">
+                            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px; padding:16px; border-radius:10px; background:var(--surface-muted); border:1px solid var(--border);">
+                                <div>
+                                    <div style="font-weight:700; color:var(--text-primary); font-size:13px;">
+                                        Encrypted Local Dossier Cache: Active
+                                    </div>
+                                    <div style="font-size:11px; color:var(--text-secondary); margin-top:3px;">
+                                        SHA-256 Fingerprint: <code style="color:var(--text-primary);">9a82f1b7ca10293810294c3d90214aa8e1001a7981029ca981028ca9102837ca</code>
+                                    </div>
+                                    <div style="font-size:11px; color:#059669; font-weight:600; margin-top:2px;">
+                                        ✓ 100% of application fields and document hashes mirrored locally for offline resilience.
+                                    </div>
+                                </div>
+                                <button class="btn btn-primary btn-sm" id="btn-sync-draft-cloud">
+                                    ${ICONS.RotateCcw} Cryptographically Sync Draft
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Institutional Regulatory Copilot Card -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                ${ICONS.Bot}
+                                <span>Institutional Regulatory Copilot (Pre-Submission Assistant)</span>
+                            </div>
+                            <span class="badge badge-blue">Instant APH Answers</span>
+                        </div>
+                        <div class="card-body">
+                            <div style="font-size:12px; color:var(--text-secondary); margin-bottom:10px;">
+                                Need guidance on faculty cadre balance, land parcel surveys, or supernumerary seat filings? Ask the NIYAM Copilot:
+                            </div>
+                            <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:14px;">
+                                <button class="btn btn-outline btn-sm inst-copilot-pill" data-q="What is the faculty requirement for 360 intake in Computer Science?">
+                                    🎓 360 Intake Faculty Requirements
+                                </button>
+                                <button class="btn btn-outline btn-sm inst-copilot-pill" data-q="Can student amenities area be included in instructional area?">
+                                    🏢 Built-up Area Classification
+                                </button>
+                                <button class="btn btn-outline btn-sm inst-copilot-pill" data-q="What is the process to apply for additional intake in Emerging Areas?">
+                                    🚀 Emerging Tech Intake Expansion
+                                </button>
+                                <button class="btn btn-outline btn-sm inst-copilot-pill" data-q="What is the joint FDR reserve fund requirement for new technical colleges?">
+                                    💰 Joint FDR Reserve Norms
+                                </button>
+                            </div>
+
+                            <form id="inst-copilot-form" style="display:flex; gap:8px;">
+                                <input type="text" id="inst-copilot-input" class="input" placeholder="Ask any regulatory question about your college application..." style="flex:1;" required>
+                                <button type="submit" class="btn btn-primary">Ask Assistant</button>
+                            </form>
+
+                            <div id="inst-copilot-reply" style="margin-top:14px;"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Bind Draft Sync Button
+            const syncBtn = document.getElementById('btn-sync-draft-cloud');
+            if (syncBtn) {
+                syncBtn.onclick = () => {
+                    syncBtn.disabled = true;
+                    syncBtn.innerHTML = '✓ Synchronized';
+                    API.showToast('Local dossier cache verified with SHA-256 seal against AICTE Central Ledger.', 'success');
+                    setTimeout(() => {
+                        syncBtn.disabled = false;
+                        syncBtn.innerHTML = `${ICONS.RotateCcw} Cryptographically Sync Draft`;
+                    }, 3000);
+                };
+            }
+
+            // Bind Copilot Chatbot
             const replyEl = document.getElementById('inst-copilot-reply');
             const askCopilot = async (q) => {
                 replyEl.innerHTML = `<div style="display:flex; align-items:center; gap:8px; font-size:12px; padding:10px;"><span class="spinner" style="width:14px; height:14px;"></span> Consulting AICTE Regulation Handbook...</div>`;

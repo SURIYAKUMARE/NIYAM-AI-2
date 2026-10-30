@@ -122,6 +122,129 @@ class IntelligenceController {
             return res.status(500).json({ error: err.message });
         }
     }
+
+    getEarlyWarningRadar(req, res) {
+        try {
+            const regionId = req.enforcedRegionId || req.query.regionId;
+            const result = intelligenceService.getEarlyWarningRadar({ user: req.user, regionId });
+            return res.json(result);
+        } catch (err) {
+            return res.status(500).json({ error: err.message });
+        }
+    }
+
+    getApplicationHealth(req, res) {
+        try {
+            const appId = req.params.id || req.query.application_id || req.query.applicationId || 'APP_2026_001';
+            const result = intelligenceService.getApplicationHealth(appId);
+            return res.json(result);
+        } catch (err) {
+            return res.status(500).json({ error: err.message });
+        }
+    }
+
+    getApplicationDNA(req, res) {
+        try {
+            const appId = req.params.id || req.query.application_id || req.query.applicationId || 'APP_2026_001';
+            const result = intelligenceService.getApplicationDNA(appId);
+            return res.json(result);
+        } catch (err) {
+            return res.status(500).json({ error: err.message });
+        }
+    }
+
+    generateSmartClarification(req, res) {
+        try {
+            const { applicationId, category, customNote } = req.body || {};
+            const result = intelligenceService.generateSmartClarification({ applicationId, category, customNote });
+            return res.json(result);
+        } catch (err) {
+            return res.status(500).json({ error: err.message });
+        }
+    }
+
+    getRegulatoryChangeImpact(req, res) {
+        try {
+            const sourceVersion = (req.query && (req.query.source_version || req.query.sourceVersion)) || 'APH_2024_25';
+            const targetVersion = (req.query && (req.query.target_version || req.query.targetVersion)) || 'APH_2025_26';
+            const result = intelligenceService.getRegulatoryChangeImpact({ sourceVersion, targetVersion });
+            return res.json(result);
+        } catch (err) {
+            return res.status(500).json({ error: err.message });
+        }
+    }
+
+    getDocumentForensics(req, res) {
+        try {
+            const params = req.method === 'GET' ? (req.query || {}) : (req.body || {});
+            const documentId = params.document_id || params.documentId || 'DOC_001';
+            const compareVersion = params.compare_version || params.compareVersion;
+            const result = intelligenceService.getDocumentForensics({ documentId, compareVersion });
+            return res.json(result);
+        } catch (err) {
+            return res.status(500).json({ error: err.message });
+        }
+    }
+
+    getOfflineInspectionDocket(req, res) {
+        try {
+            const officerId = (req.user && req.user.username) || 'prof.devendra.pathak';
+            const result = intelligenceService.getOfflineInspectionDocket(officerId);
+            return res.json(result);
+        } catch (err) {
+            return res.status(500).json({ error: err.message });
+        }
+    }
+
+    syncOfflineInspection(req, res) {
+        try {
+            const { visitId, observations, checksum } = req.body || {};
+            const officerId = (req.user && req.user.username) || 'prof.devendra.pathak';
+            const result = intelligenceService.syncOfflineInspection({ officerId, visitId, observations, checksum });
+            return res.json(result);
+        } catch (err) {
+            return res.status(500).json({ error: err.message });
+        }
+    }
+
+    getRegulatoryBottleneckMap(req, res) {
+        try {
+            const result = intelligenceService.getRegulatoryBottleneckMap();
+            return res.json(result);
+        } catch (err) {
+            return res.status(500).json({ error: err.message });
+        }
+    }
+
+    getConsolidatedAlerts(req, res) {
+        try {
+            const result = intelligenceService.getConsolidatedAlerts({ user: req.user });
+            return res.json(result);
+        } catch (err) {
+            return res.status(500).json({ error: err.message });
+        }
+    }
+
+    getCaseHandoverSummary(req, res) {
+        try {
+            const appId = req.params.id || req.query.application_id || req.query.applicationId || 'APP_2026_001';
+            const fromOfficer = req.query.from || req.query.from_officer || (req.user && req.user.username) || 'dr.vandana.rao';
+            const toOfficer = req.query.to || req.query.to_officer || 'er.manoj.verma';
+            const result = intelligenceService.getCaseHandoverSummary({ applicationId: appId, fromOfficer, toOfficer });
+            return res.json(result);
+        } catch (err) {
+            return res.status(500).json({ error: err.message });
+        }
+    }
+
+    getCommandIntelligenceSummary(req, res) {
+        try {
+            const result = intelligenceService.getCommandIntelligenceSummary();
+            return res.json(result);
+        } catch (err) {
+            return res.status(500).json({ error: err.message });
+        }
+    }
 }
 
 module.exports = new IntelligenceController();

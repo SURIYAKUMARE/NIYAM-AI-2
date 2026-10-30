@@ -32,6 +32,26 @@ class AuthController {
         return res.json({ token, user: safeUser });
     }
 
+    logout(req, res) {
+        try {
+            const authHeader = req.headers['authorization'];
+            if (authHeader && authHeader.startsWith('Bearer ')) {
+                const token = authHeader.substring(7);
+                cryptoService.revokeToken(token);
+            }
+            if (req.user && req.user.id) {
+                cryptoService.revokeUser(req.user.id);
+            }
+            return res.json({
+                success: true,
+                message: 'Session successfully invalidated and cryptographic tokens revoked.',
+                timestamp: new Date().toISOString()
+            });
+        } catch (err) {
+            return res.status(500).json({ error: err.message });
+        }
+    }
+
     getCurrentUser(req, res) {
         if (!req.user) return res.status(401).json({ error: 'Unauthenticated' });
         const { password_hash, ...safeUser } = req.user;

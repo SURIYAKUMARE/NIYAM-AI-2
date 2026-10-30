@@ -111,6 +111,7 @@ router.get('/api/v1/health', (req, res) => res.json({ status: 'UP', service: 'NI
 
 // Auth Endpoints
 router.post('/api/auth/login', authController.login.bind(authController));
+router.post('/api/auth/logout', authController.logout.bind(authController));
 router.get('/api/auth/me', requireAuth, authController.getCurrentUser.bind(authController));
 router.get('/api/auth/users', requireRole([ROLES.SUPER_ADMIN, ROLES.REGULATION_BUREAU_ADMIN]), authController.listAllUsers.bind(authController));
 
@@ -201,5 +202,23 @@ router.post('/api/intelligence/digital-twin/simulate', requireRole([ROLES.SUPER_
 router.get('/api/intelligence/knowledge-graph', requireAuth, intelligenceController.getKnowledgeGraph.bind(intelligenceController));
 router.get('/api/intelligence/institution-readiness', requireAuth, intelligenceController.getInstitutionReadiness.bind(intelligenceController));
 router.get('/api/intelligence/workload', requireRole([ROLES.SUPER_ADMIN, ROLES.REGULATION_BUREAU_ADMIN, ROLES.REGIONAL_OFFICER, ROLES.AUDITOR]), intelligenceController.getWorkloadIntelligence.bind(intelligenceController));
+
+// NIYAM 2035 — 15 Differentiating Regulatory Innovations
+router.get('/api/intelligence/radar', requireRole([ROLES.SUPER_ADMIN, ROLES.REGULATION_BUREAU_ADMIN, ROLES.REGIONAL_OFFICER, ROLES.SCRUTINY_MEMBER, ROLES.EVC_COORDINATOR, ROLES.AUDITOR]), intelligenceController.getEarlyWarningRadar.bind(intelligenceController));
+router.get('/api/intelligence/application-health/:id', requireAuth, intelligenceController.getApplicationHealth.bind(intelligenceController));
+router.get('/api/intelligence/application-health', requireAuth, intelligenceController.getApplicationHealth.bind(intelligenceController));
+router.get('/api/intelligence/application-dna/:id', requireAuth, intelligenceController.getApplicationDNA.bind(intelligenceController));
+router.get('/api/intelligence/application-dna', requireAuth, intelligenceController.getApplicationDNA.bind(intelligenceController));
+router.post('/api/intelligence/smart-clarification', requireRole([ROLES.SCRUTINY_MEMBER, ROLES.REGIONAL_OFFICER, ROLES.REGULATION_BUREAU_ADMIN]), intelligenceController.generateSmartClarification.bind(intelligenceController));
+router.get('/api/intelligence/regulatory-change-impact', requireAuth, intelligenceController.getRegulatoryChangeImpact.bind(intelligenceController));
+router.post('/api/intelligence/document-forensics', requireAuth, intelligenceController.getDocumentForensics.bind(intelligenceController));
+router.get('/api/intelligence/document-forensics', requireAuth, intelligenceController.getDocumentForensics.bind(intelligenceController));
+router.get('/api/intelligence/evc-offline-docket', requireRole([ROLES.EVC_MEMBER, ROLES.EVC_COORDINATOR, ROLES.REGIONAL_OFFICER]), intelligenceController.getOfflineInspectionDocket.bind(intelligenceController));
+router.post('/api/intelligence/evc-offline-sync', requireRole([ROLES.EVC_MEMBER, ROLES.EVC_COORDINATOR, ROLES.REGIONAL_OFFICER]), intelligenceController.syncOfflineInspection.bind(intelligenceController));
+router.get('/api/intelligence/bottleneck-map', requireAuth, intelligenceController.getRegulatoryBottleneckMap.bind(intelligenceController));
+router.get('/api/intelligence/consolidated-alerts', requireAuth, intelligenceController.getConsolidatedAlerts.bind(intelligenceController));
+router.get('/api/intelligence/case-handover/:id', requireRole([ROLES.REGIONAL_OFFICER, ROLES.SCRUTINY_MEMBER, ROLES.REGULATION_BUREAU_ADMIN]), intelligenceController.getCaseHandoverSummary.bind(intelligenceController));
+router.get('/api/intelligence/case-handover', requireRole([ROLES.REGIONAL_OFFICER, ROLES.SCRUTINY_MEMBER, ROLES.REGULATION_BUREAU_ADMIN]), intelligenceController.getCaseHandoverSummary.bind(intelligenceController));
+router.get('/api/intelligence/command-summary', requireAuth, intelligenceController.getCommandIntelligenceSummary.bind(intelligenceController));
 
 module.exports = router;

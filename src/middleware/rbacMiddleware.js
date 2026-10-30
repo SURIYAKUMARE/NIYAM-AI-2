@@ -1,9 +1,16 @@
 const { ROLES } = require('../config/constants');
 
+function requireAuth(req, res, next) {
+    if (!req.user) {
+        return res.status(401).json({ error: 'Unauthenticated: Please log in with a valid regulatory session.' });
+    }
+    next();
+}
+
 function requireRole(allowedRoles = []) {
     return (req, res, next) => {
         if (!req.user) {
-            return res.status(401).json({ error: 'Unauthenticated: Please log in.' });
+            return res.status(401).json({ error: 'Unauthenticated: Please log in with a valid regulatory session.' });
         }
 
         // SUPER_ADMIN has platform oversight, but statutory rules still apply
@@ -31,14 +38,15 @@ function enforceDataIsolation(req, res, next) {
     }
 
     // 2. Institution Representative isolation
-    if (req.user.role_code === ROLES.INSTITUTION_REP && req.user.institution_id) {
-        req.enforcedInstitutionId = req.user.institution_id;
+    if (req.user.role_code === ROLES.INSTITUTION_REP) {
+        req.enforcedInstitutionId = req.user.institution_id || 'INST_001';
     }
 
     next();
 }
 
 module.exports = {
+    requireAuth,
     requireRole,
     enforceDataIsolation
 };

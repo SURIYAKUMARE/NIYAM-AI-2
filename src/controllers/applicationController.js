@@ -186,6 +186,7 @@ class ApplicationController {
 
             return res.json({
                 overview: app,
+                application: app,
                 workflow: { stages: stagesHistory, transitions },
                 documents,
                 scrutiny: { reviews: scrutinyReviews, deficiencies },

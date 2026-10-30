@@ -181,12 +181,27 @@
     };
 
     class NiyamAIApp {
+        isApplicant() {
+            if (!this.currentUser) return false;
+            const r = (this.currentUser.role || '').toLowerCase();
+            const rc = (this.currentUser.roleCode || '').toUpperCase();
+            const username = (this.currentUser.username || '').toLowerCase();
+            return r === 'applicant' || rc === 'INSTITUTION_REP' || username === 'dr.suresh.chandra' || username === 'inst_apex';
+        }
+
         constructor() {
             this.isAuthenticated = localStorage.getItem('niyam_auth') === 'true';
             this.currentView = this.isAuthenticated ? (localStorage.getItem('niyam_view') || 'dashboard') : 'login';
             
             const rawUser = JSON.parse(localStorage.getItem('niyam_user') || 'null');
             this.currentUser = resolveOfficial(rawUser);
+
+            if (this.isApplicant()) {
+                const allowedApplicantViews = ['dashboard', 'applications', 'documents', 'compliance', 'clarifications', 'institution-profile'];
+                if (!allowedApplicantViews.includes(this.currentView)) {
+                    this.currentView = 'dashboard';
+                }
+            }
 
             this.theme = localStorage.getItem('niyam-theme') || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
             
@@ -370,6 +385,16 @@
         }
 
         navigate(view) {
+            if (this.isApplicant()) {
+                const allowed = ['dashboard', 'applications', 'documents', 'compliance', 'clarifications', 'institution-profile'];
+                if (!allowed.includes(view)) {
+                    API.showToast('Access Denied: Administrative views are restricted to authorized AICTE regulatory officers.', 'error');
+                    this.currentView = 'dashboard';
+                    localStorage.setItem('niyam_view', 'dashboard');
+                    this.render();
+                    return;
+                }
+            }
             this.currentView = view;
             localStorage.setItem('niyam_view', view);
             this.mobileSidebarOpen = false;
@@ -429,6 +454,7 @@
             const header = document.getElementById('app-header');
             if (!header) return;
 
+            const isApp = this.isApplicant();
             const initials = (this.currentUser.roleName || this.currentUser.username || 'NY')
                 .split(' ')
                 .map(n => n[0])
@@ -451,15 +477,15 @@
                                 <span class="brand-title">NIYAM</span>
                                 <span class="brand-tag">AICTE APH 2025-26</span>
                             </div>
-                            <span class="brand-subtitle">Regulatory Decision-Support &amp; Document Authentication</span>
+                            <span class="brand-subtitle">${isApp ? 'Institutional Approval &amp; Compliance Filing Portal' : 'Regulatory Decision-Support &amp; Document Authentication'}</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="header-right">
                     <div class="sync-status-pill">
-                        <span class="sync-dot"></span>
-                        <span>REGULATORY SYNC: ACTIVE</span>
+                        <span class="sync-dot" ${isApp ? 'style="background:#10B981;"' : ''}></span>
+                        <span>${isApp ? 'INSTITUTION PORTAL: SECURE' : 'REGULATORY SYNC: ACTIVE'}</span>
                     </div>
 
                     <button class="theme-toggle-btn" id="theme-toggle-btn" title="Toggle Light/Dark Theme">
@@ -467,33 +493,46 @@
                     </button>
 
                     <div class="notification-bell-wrap">
-                        <button class="notif-btn" id="notif-toggle-btn" title="Regulatory Directives">
+                        <button class="notif-btn" id="notif-toggle-btn" title="${isApp ? 'Institutional Notices' : 'Regulatory Directives'}">
                             ${ICONS.Bell}
                             <span class="notif-badge-count">2</span>
                         </button>
                         <div class="notifications-popup" id="notif-popup" style="display: ${this.notifOpen ? 'block' : 'none'};">
                             <div class="notif-header">
-                                <span class="notif-header-title">Regulatory Alerts &amp; Directives</span>
+                                <span class="notif-header-title">${isApp ? 'Institutional Notices &amp; Reminders' : 'Regulatory Alerts &amp; Directives'}</span>
                                 <span class="notif-badge-pill">2 Unread</span>
                             </div>
                             <div class="notif-list">
-                                <div class="notif-item unread">
-                                    <div class="notif-title">High Risk Deficiencies Flagged</div>
-                                    <div class="notif-msg">Zaskar Engineering College dossier exhibits intake tampering in Course Cadre Table.</div>
-                                    <div class="notif-time">Just now • APH Ch. I R4.2</div>
-                                </div>
-                                <div class="notif-item unread">
-                                    <div class="notif-title">Affiliation Expiration Warning</div>
-                                    <div class="notif-msg">Coromandel Institute of Technology university clearance lapsed on 2024-06-30.</div>
-                                    <div class="notif-time">12 mins ago • SLA Watch</div>
-                                </div>
+                                ${isApp ? `
+                                    <div class="notif-item unread">
+                                        <div class="notif-title">Completeness Check Cleared</div>
+                                        <div class="notif-msg">Preliminary scrutiny completed for APP-2025-001 with 98% compliance index.</div>
+                                        <div class="notif-time">Today • AICTE Scrutiny Desk</div>
+                                    </div>
+                                    <div class="notif-item unread">
+                                        <div class="notif-title">Statutory Renewal Reminder</div>
+                                        <div class="notif-msg">District Fire Safety NOC due for periodic renewal in 45 days (15-Jun-2025).</div>
+                                        <div class="notif-time">2 days ago • Statutory Advisory</div>
+                                    </div>
+                                ` : `
+                                    <div class="notif-item unread">
+                                        <div class="notif-title">High Risk Deficiencies Flagged</div>
+                                        <div class="notif-msg">Zaskar Engineering College dossier exhibits intake tampering in Course Cadre Table.</div>
+                                        <div class="notif-time">Just now • APH Ch. I R4.2</div>
+                                    </div>
+                                    <div class="notif-item unread">
+                                        <div class="notif-title">Affiliation Expiration Warning</div>
+                                        <div class="notif-msg">Coromandel Institute of Technology university clearance lapsed on 2024-06-30.</div>
+                                        <div class="notif-time">12 mins ago • SLA Watch</div>
+                                    </div>
+                                `}
                             </div>
                         </div>
                     </div>
 
-                    <div class="header-role-badge">
+                    <div class="header-role-badge" ${isApp ? 'style="background:rgba(16,185,129,0.15); color:#059669; border-color:rgba(16,185,129,0.3);"' : ''}>
                         ${ICONS.ShieldCheck}
-                        <span>${this.currentUser.badge || 'Scrutiny Officer'}</span>
+                        <span>${isApp ? 'Nilgiri Tech (SYN-2025-001)' : (this.currentUser.badge || 'Scrutiny Officer')}</span>
                     </div>
 
                     <div class="user-header-profile">
@@ -536,7 +575,16 @@
             const sidebar = document.getElementById('app-sidebar');
             if (!sidebar) return;
 
-            const navItems = [
+            const isApp = this.isApplicant();
+
+            const navItems = isApp ? [
+                { id: 'dashboard', label: 'Applicant Dashboard', icon: ICONS.LayoutDashboard },
+                { id: 'applications', label: 'My Applications', icon: ICONS.FileText, badge: '1 Active' },
+                { id: 'documents', label: 'Document Submission & Validity', icon: ICONS.FileCheck2, badge: '6' },
+                { id: 'compliance', label: 'Compliance & Undertakings', icon: ICONS.ShieldCheck, badge: '4' },
+                { id: 'clarifications', label: 'Clarifications & Notices', icon: ICONS.MessageSquare, badge: '1' },
+                { id: 'institution-profile', label: 'Institution Profile', icon: ICONS.Building2 }
+            ] : [
                 { id: 'dashboard', label: 'Executive Overview', icon: ICONS.LayoutDashboard },
                 { id: 'colleges', label: 'Synthetic Colleges', icon: ICONS.GraduationCap, badge: '12' },
                 { id: 'verify', label: 'AI Verification Studio', icon: ICONS.FileSearch, badge: 'AI' },
@@ -560,28 +608,37 @@
                         <img src="/images/aicte-logo.png" alt="AICTE">
                     </div>
                     <div class="sidebar-header-meta">
-                        <div class="sidebar-meta-top">AICTE Council</div>
+                        <div class="sidebar-meta-top">${isApp ? 'Nilgiri Tech Portal' : 'AICTE Council'}</div>
                         <div class="sidebar-meta-role">
-                            <span class="sidebar-role-dot"></span>
-                            <span>${this.currentUser.badge || 'Scrutiny Officer'}</span>
+                            <span class="sidebar-role-dot" ${isApp ? 'style="background:#10B981;"' : ''}></span>
+                            <span>${this.currentUser.badge || (isApp ? 'Institution Rep' : 'Scrutiny Officer')}</span>
                         </div>
                     </div>
-                    <span class="sidebar-aph-tag">APH 2025</span>
+                    <span class="sidebar-aph-tag" ${isApp ? 'style="background:rgba(16,185,129,0.15); color:#059669; border-color:rgba(16,185,129,0.3); font-size:10px;"' : ''}>${isApp ? 'SYN-2025-001' : 'APH 2025'}</span>
                 </div>
 
                 <div class="sidebar-role-switcher">
-                    <div class="sidebar-role-switcher-label">Active Official Session:</div>
+                    <div class="sidebar-role-switcher-label">Active Portal Identity:</div>
                     <select class="sidebar-role-select" id="sidebar-role-select">
-                        ${OFFICIAL_PERSONNEL.map(a => `
-                            <option value="${a.username}" ${(this.currentUser.username === a.username || (a.aliases && a.aliases.includes(this.currentUser.username))) ? 'selected' : ''}>
-                                ${a.fullName} (${a.shortRole})
-                            </option>
-                        `).join('')}
+                        <optgroup label="Institutional Applicants">
+                            ${OFFICIAL_PERSONNEL.filter(a => a.role === 'applicant' || a.shortRole === 'Institution Rep').map(a => `
+                                <option value="${a.username}" ${(this.currentUser.username === a.username || (a.aliases && a.aliases.includes(this.currentUser.username))) ? 'selected' : ''}>
+                                    ${a.fullName} (${a.shortRole} - Nilgiri Tech)
+                                </option>
+                            `).join('')}
+                        </optgroup>
+                        <optgroup label="Authorized AICTE Regulatory Officials">
+                            ${OFFICIAL_PERSONNEL.filter(a => a.role !== 'applicant' && a.shortRole !== 'Institution Rep').map(a => `
+                                <option value="${a.username}" ${(this.currentUser.username === a.username || (a.aliases && a.aliases.includes(this.currentUser.username))) ? 'selected' : ''}>
+                                    ${a.fullName} (${a.shortRole})
+                                </option>
+                            `).join('')}
+                        </optgroup>
                     </select>
                 </div>
 
                 <nav class="sidebar-nav-container">
-                    <div class="sidebar-section-title">Command Modules</div>
+                    <div class="sidebar-section-title">${isApp ? 'Institutional Portal' : 'Command Modules'}</div>
                     ${navItems.map(item => `
                         <div class="sidebar-nav-item ${this.currentView === item.id ? 'active' : ''}" data-nav="${item.id}" ${item.highlight ? 'style="color:#F59E0B; font-weight:700;"' : ''}>
                             <div class="sidebar-nav-left">
@@ -601,7 +658,7 @@
                             </div>
                             <div style="min-width:0;">
                                 <div style="font-size:12px; font-weight:700; color:var(--text-primary); text-overflow:ellipsis; overflow:hidden; white-space:nowrap;">
-                                    ${this.currentUser.username}
+                                    ${this.currentUser.fullName || this.currentUser.username}
                                 </div>
                                 <div style="font-size:10px; color:var(--text-secondary);">${this.currentUser.badge}</div>
                             </div>
@@ -614,9 +671,9 @@
                     <div class="sidebar-statutory-card">
                         <div class="sidebar-statutory-title">
                             ${ICONS.ShieldCheck}
-                            <span>Statutory Decision Support</span>
+                            <span>${isApp ? 'Statutory Filing Verification' : 'Statutory Decision Support'}</span>
                         </div>
-                        AI advisory findings assist review. Final statutory approval decisions remain with competent AICTE authorities.
+                        ${isApp ? 'All submissions are hashed with SHA-256 for non-repudiation and timestamped under AICTE APH 2025.' : 'AI advisory findings assist review. Final statutory approval decisions remain with competent AICTE authorities.'}
                     </div>
                 </div>
             `;
@@ -636,7 +693,11 @@
                         this.currentUser = acc;
                         localStorage.setItem('niyam_user', JSON.stringify(acc));
                         API.setSimulatedUser(acc.username);
-                        API.showToast(`Switched active view to ${acc.roleName}`, 'info');
+                        API.showToast(`Switched active session to ${acc.roleName}`, 'info');
+                        if (this.isApplicant()) {
+                            this.currentView = 'dashboard';
+                            localStorage.setItem('niyam_view', 'dashboard');
+                        }
                         this.render();
                     }
                 };
@@ -657,50 +718,82 @@
 
             switch (this.currentView) {
                 case 'dashboard':
-                    this.renderDashboardView(container);
-                    break;
-                case 'colleges':
-                    this.renderCollegesView(container);
-                    break;
-                case 'verify':
-                    this.renderVerifyStudioView(container);
+                    if (this.isApplicant()) {
+                        this.renderApplicantDashboardView(container);
+                    } else {
+                        this.renderDashboardView(container);
+                    }
                     break;
                 case 'applications':
                 case 'review':
-                    this.renderApplicationsView(container);
+                    if (this.isApplicant()) {
+                        this.renderMyApplicationsView(container);
+                    } else {
+                        this.renderApplicationsView(container);
+                    }
                     break;
-                case 'queue':
-                    this.renderQueueView(container);
+                case 'documents':
+                    this.renderDocumentSubmissionView(container);
                     break;
-                case 'findings':
-                    this.renderFindingsView(container);
+                case 'compliance':
+                    this.renderComplianceUndertakingsView(container);
                     break;
                 case 'clarifications':
                     this.renderClarificationsView(container);
                     break;
+                case 'institution-profile':
+                    this.renderInstitutionProfileView(container);
+                    break;
+                case 'colleges':
+                    if (this.isApplicant()) { this.navigate('dashboard'); return; }
+                    this.renderCollegesView(container);
+                    break;
+                case 'verify':
+                    if (this.isApplicant()) { this.navigate('dashboard'); return; }
+                    this.renderVerifyStudioView(container);
+                    break;
+                case 'queue':
+                    if (this.isApplicant()) { this.navigate('dashboard'); return; }
+                    this.renderQueueView(container);
+                    break;
+                case 'findings':
+                    if (this.isApplicant()) { this.navigate('dashboard'); return; }
+                    this.renderFindingsView(container);
+                    break;
                 case 'verification':
+                    if (this.isApplicant()) { this.navigate('dashboard'); return; }
                     this.renderSourceVerificationView(container);
                     break;
                 case 'infrastructure':
+                    if (this.isApplicant()) { this.navigate('dashboard'); return; }
                     this.renderInfrastructureView(container);
                     break;
                 case 'analytics':
+                    if (this.isApplicant()) { this.navigate('dashboard'); return; }
                     this.renderAnalyticsView(container);
                     break;
                 case 'audit':
+                    if (this.isApplicant()) { this.navigate('dashboard'); return; }
                     this.renderAuditView(container);
                     break;
                 case 'rules':
+                    if (this.isApplicant()) { this.navigate('dashboard'); return; }
                     this.renderRulesView(container);
                     break;
                 case 'users':
+                    if (this.isApplicant()) { this.navigate('dashboard'); return; }
                     this.renderUsersView(container);
                     break;
                 case 'scenarios':
+                    if (this.isApplicant()) { this.navigate('dashboard'); return; }
                     this.renderScenariosView(container);
                     break;
                 default:
-                    this.renderDashboardView(container);
+                    if (this.isApplicant()) {
+                        this.renderApplicantDashboardView(container);
+                    } else {
+                        this.renderDashboardView(container);
+                    }
             }
         }
 
@@ -1864,11 +1957,12 @@
         // 7. CLARIFICATIONS & DIRECTIVES
         // ====================================================================
         renderClarificationsView(container) {
+            const isApp = this.isApplicant();
             container.innerHTML = `
                 <div class="view-header">
                     <div class="view-title-group">
-                        <h1>Institutional Clarifications &amp; Communication Thread</h1>
-                        <p>Two-way tamper-evident query stream between AICTE Officers and Institutions.</p>
+                        <h1>Institutional Clarifications &amp; Communication Stream</h1>
+                        <p>Two-way tamper-evident query stream between AICTE Scrutiny Officers and Institutions (APH 2025-26)</p>
                     </div>
                 </div>
 
@@ -1876,26 +1970,62 @@
                     <div style="display:flex; flex-direction:column; gap:16px;">
                         <div style="padding:14px; border-radius:12px; background:var(--surface-muted); border:1px solid var(--border);">
                             <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--text-secondary); margin-bottom:6px;">
-                                <strong>Scrutiny Officer Desk (Dr. R. K. Shrivastava)</strong>
+                                <strong>Scrutiny Officer Desk (Dr. Vandana Rao)</strong>
                                 <span class="font-mono">28-Apr-2025 14:32 IST</span>
                             </div>
                             <div style="font-size:12px; line-height:1.5;">
-                                Please submit the updated Fire Safety Clearance Certificate endorsed by the Chief Fire Officer. The certificate attached to your initial filing reflects an expiration date of March 31, 2025.
+                                Please confirm the renewal progress of the District Fire Safety NOC prior to the Expert Visit Committee (EVC) window. The existing clearance expires on 15-Jun-2025.
                             </div>
                         </div>
 
                         <div style="padding:14px; border-radius:12px; background:var(--accent-light); border:1px solid var(--accent-muted); margin-left:24px;">
                             <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--accent); margin-bottom:6px;">
-                                <strong>Apex Institute of Technology (Principal Office)</strong>
+                                <strong>Nilgiri Institute of Technology (Registrar Office)</strong>
                                 <span class="font-mono">29-Apr-2025 10:15 IST</span>
                             </div>
                             <div style="font-size:12px; line-height:1.5;">
-                                We have applied for renewal on 15-Mar-2025 and attach the official renewal receipt and provisional inspection certificate from CFO office.
+                                Renewal application has been submitted to Chief Fire Officer, Coimbatore Region (Challan #BK-2025-TN-9982). Inspection receipt uploaded under Document Repository.
+                            </div>
+                        </div>
+
+                        <div id="clarification-responses-stream"></div>
+
+                        <!-- Clarification Reply Form -->
+                        <div style="border-top:1px solid var(--border); padding-top:16px; margin-top:8px;">
+                            <label style="font-size:12px; font-weight:700; color:var(--text-primary); display:block; margin-bottom:6px;">
+                                ${isApp ? 'Submit Institutional Response / Supporting Clarification' : 'Post Regulatory Clarification Query'}
+                            </label>
+                            <div style="display:flex; gap:10px;">
+                                <textarea id="clarification-reply-input" class="input" style="flex:1; height:70px; resize:none; padding:10px;" placeholder="${isApp ? 'Enter official institution response or upload notification statement...' : 'Enter committee inquiry for institution...'}"></textarea>
+                                <button class="btn btn-primary" id="btn-post-clarification" style="align-self:flex-end; padding:10px 18px;">
+                                    Send
+                                </button>
                             </div>
                         </div>
                     </div>
                 </div>
             `;
+
+            const btnPost = container.querySelector('#btn-post-clarification');
+            if (btnPost) {
+                btnPost.onclick = () => {
+                    const text = container.querySelector('#clarification-reply-input').value.trim();
+                    if (!text) return;
+                    const stream = container.querySelector('#clarification-responses-stream');
+                    const div = document.createElement('div');
+                    div.style.cssText = `padding:14px; border-radius:12px; background:${isApp ? 'var(--accent-light)' : 'var(--surface-muted)'}; border:1px solid ${isApp ? 'var(--accent-muted)' : 'var(--border)'}; margin-left:${isApp ? '24px' : '0'}; margin-top:8px;`;
+                    div.innerHTML = `
+                        <div style="display:flex; justify-content:space-between; font-size:11px; color:${isApp ? 'var(--accent)' : 'var(--text-secondary)'}; margin-bottom:6px;">
+                            <strong>${isApp ? 'Nilgiri Institute of Technology (' + this.currentUser.fullName + ')' : 'AICTE Officer (' + this.currentUser.fullName + ')'}</strong>
+                            <span class="font-mono">Just Now</span>
+                        </div>
+                        <div style="font-size:12px; line-height:1.5;">${text}</div>
+                    `;
+                    stream.appendChild(div);
+                    container.querySelector('#clarification-reply-input').value = '';
+                    API.showToast('Clarification posted to encrypted case record', 'success');
+                };
+            }
         }
 
         // ====================================================================
@@ -2273,6 +2403,1106 @@
                     </div>
                 </div>
             `;
+        }
+
+        // ====================================================================
+        // 15. APPLICANT DASHBOARD (Institutional User Portal)
+        // ====================================================================
+        renderApplicantDashboardView(container) {
+            container.innerHTML = `
+                <div class="view-header">
+                    <div class="view-title-group">
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <h1>Applicant Institutional Portal — Nilgiri Institute of Technology</h1>
+                            <span class="badge badge-emerald">Live Institutional Session</span>
+                        </div>
+                        <p>Permanent AICTE ID: <strong>SYN-2025-001</strong> • Academic Year 2025-26 Extension of Approval (EoA)</p>
+                    </div>
+                    <div class="view-actions">
+                        <button class="btn btn-outline btn-sm" onclick="app.navigate('documents');">
+                            ${ICONS.FileCheck2}
+                            Document Repository
+                        </button>
+                        <button class="btn btn-primary btn-sm" id="btn-applicant-file-new">
+                            ${ICONS.FileText}
+                            File New Application
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 4 KPI Metrics -->
+                <div class="stats-grid-4">
+                    <div class="stat-card">
+                        <div class="stat-meta">
+                            <span class="stat-label">Active Approval Docket</span>
+                            <span class="stat-value" style="font-size:18px;">APP-2025-001</span>
+                            <span class="stat-sub" style="color:#2563EB;">Submitted 02-Apr-2025 • EoA Scheme</span>
+                        </div>
+                        <div class="stat-icon-box blue">${ICONS.FileText}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-meta">
+                            <span class="stat-label">Institutional Trust Index</span>
+                            <span class="stat-value" style="color:#059669;">98 / 100</span>
+                            <span class="stat-sub" style="color:#059669;">Zero AI Anomaly Flags • High Trust</span>
+                        </div>
+                        <div class="stat-icon-box green">${ICONS.ShieldCheck}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-meta">
+                            <span class="stat-label">Statutory Documents on Record</span>
+                            <span class="stat-value">6 Verified</span>
+                            <span class="stat-sub" style="color:#F59E0B;">1 Approaching Renewal (45d)</span>
+                        </div>
+                        <div class="stat-icon-box emerald">${ICONS.FileCheck2}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-meta">
+                            <span class="stat-label">Open Deficiencies</span>
+                            <span class="stat-value" style="color:#059669;">0 Critical</span>
+                            <span class="stat-sub" style="color:#059669;">Full Regulatory Compliance</span>
+                        </div>
+                        <div class="stat-icon-box green">${ICONS.CheckCircle2}</div>
+                    </div>
+                </div>
+
+                <!-- Application Lifecycle Stage Progression Tracker -->
+                <div class="card" style="margin-bottom:20px;">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">
+                                ${ICONS.Sliders}
+                                <span>Approval Workflow Stage Tracker — APP-2025-001</span>
+                            </div>
+                            <div class="card-subtitle">Current Status: <strong>SCRUTINY_DESK</strong> (Assigned to Northern Regional Scrutiny Committee)</div>
+                        </div>
+                        <button class="btn btn-outline btn-sm" onclick="app.openApplicationModal('APP-2025-001');">
+                            Inspect Full Dossier
+                        </button>
+                    </div>
+
+                    <div style="padding:16px 0 8px;">
+                        <div style="display:flex; justify-content:space-between; position:relative; margin-bottom:24px;">
+                            <div style="position:absolute; top:18px; left:5%; right:5%; height:4px; background:var(--border); z-index:1;"></div>
+                            <div style="position:absolute; top:18px; left:5%; width:30%; height:4px; background:#10B981; z-index:2;"></div>
+
+                            <!-- Step 1 -->
+                            <div style="position:relative; z-index:3; text-align:center; width:20%;">
+                                <div style="width:36px; height:36px; border-radius:50%; background:#10B981; color:#fff; display:flex; align-items:center; justify-content:center; margin:0 auto 8px; font-weight:800; font-size:12px; box-shadow:0 0 0 4px var(--surface);">
+                                    ✓
+                                </div>
+                                <div style="font-size:12px; font-weight:700; color:var(--text-primary);">Filing &amp; Submission</div>
+                                <div style="font-size:10px; color:var(--text-secondary);">Completed 02-Apr</div>
+                            </div>
+
+                            <!-- Step 2 -->
+                            <div style="position:relative; z-index:3; text-align:center; width:20%;">
+                                <div style="width:36px; height:36px; border-radius:50%; background:#2563EB; color:#fff; display:flex; align-items:center; justify-content:center; margin:0 auto 8px; font-weight:800; font-size:12px; box-shadow:0 0 0 4px var(--surface), 0 0 12px rgba(37,99,235,0.4);">
+                                    2
+                                </div>
+                                <div style="font-size:12px; font-weight:800; color:#2563EB;">Technical Scrutiny</div>
+                                <div style="font-size:10px; color:#2563EB; font-weight:600;">ACTIVE DESK (98% Clear)</div>
+                            </div>
+
+                            <!-- Step 3 -->
+                            <div style="position:relative; z-index:3; text-align:center; width:20%;">
+                                <div style="width:36px; height:36px; border-radius:50%; background:var(--surface-muted); border:2px solid var(--border-strong); color:var(--text-tertiary); display:flex; align-items:center; justify-content:center; margin:0 auto 8px; font-weight:700; font-size:12px;">
+                                    3
+                                </div>
+                                <div style="font-size:12px; font-weight:600; color:var(--text-secondary);">Expert Visit (EVC)</div>
+                                <div style="font-size:10px; color:var(--text-tertiary);">Upcoming Stage</div>
+                            </div>
+
+                            <!-- Step 4 -->
+                            <div style="position:relative; z-index:3; text-align:center; width:20%;">
+                                <div style="width:36px; height:36px; border-radius:50%; background:var(--surface-muted); border:2px solid var(--border-strong); color:var(--text-tertiary); display:flex; align-items:center; justify-content:center; margin:0 auto 8px; font-weight:700; font-size:12px;">
+                                    4
+                                </div>
+                                <div style="font-size:12px; font-weight:600; color:var(--text-secondary);">SAC / SHC Review</div>
+                                <div style="font-size:10px; color:var(--text-tertiary);">Standing Committee</div>
+                            </div>
+
+                            <!-- Step 5 -->
+                            <div style="position:relative; z-index:3; text-align:center; width:20%;">
+                                <div style="width:36px; height:36px; border-radius:50%; background:var(--surface-muted); border:2px solid var(--border-strong); color:var(--text-tertiary); display:flex; align-items:center; justify-content:center; margin:0 auto 8px; font-weight:700; font-size:12px;">
+                                    5
+                                </div>
+                                <div style="font-size:12px; font-weight:600; color:var(--text-secondary);">Council Approval</div>
+                                <div style="font-size:10px; color:var(--text-tertiary);">EoA Letter Issuance</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Two-Column Grid: Deadlines & Recent Notices -->
+                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap:20px;">
+                    <!-- Pending Actions & Statutory Deadlines -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                ${ICONS.AlertTriangle}
+                                <span>Pending Actions &amp; Compliance Deadlines</span>
+                            </div>
+                            <span class="badge badge-amber">1 Action Required</span>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Statutory Requirement</th>
+                                        <th>Expiry / Due</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <div style="font-weight:700; color:var(--text-primary);">Building Fire Safety NOC</div>
+                                            <span style="font-size:11px; color:var(--text-secondary);">Municipal Fire Service Certificate</span>
+                                        </td>
+                                        <td class="font-mono" style="color:#D97706; font-weight:700;">15-Jun-2025 (45d)</td>
+                                        <td><span class="badge badge-amber">EXPIRING_SOON</span></td>
+                                        <td>
+                                            <button class="btn btn-outline btn-sm" onclick="app.openUploadDocumentModal('FIRE_NOC');">
+                                                Submit Renewal
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div style="font-weight:700; color:var(--text-primary);">Mandatory Web Disclosure</div>
+                                            <span style="font-size:11px; color:var(--text-secondary);">Publicly Hosted Portal Audit</span>
+                                        </td>
+                                        <td class="font-mono">Annual (Verified)</td>
+                                        <td><span class="badge badge-emerald">COMPLIANT</span></td>
+                                        <td><span class="badge badge-emerald">VERIFIED</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div style="font-weight:700; color:var(--text-primary);">Anti-Ragging Undertaking</div>
+                                            <span style="font-size:11px; color:var(--text-secondary);">Affidavit on Non-Judicial Stamp</span>
+                                        </td>
+                                        <td class="font-mono">AY 2025-26</td>
+                                        <td><span class="badge badge-emerald">COMPLIANT</span></td>
+                                        <td><span class="badge badge-emerald">VERIFIED</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Institutional Communications & Clarifications -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                ${ICONS.MessageSquare}
+                                <span>Recent AICTE Notices &amp; Communications</span>
+                            </div>
+                            <button class="btn btn-outline btn-sm" onclick="app.navigate('clarifications');">View Thread</button>
+                        </div>
+                        <div style="display:flex; flex-direction:column; gap:12px; padding-top:4px;">
+                            <div style="padding:12px; border-radius:10px; background:var(--surface-muted); border:1px solid var(--border);">
+                                <div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:4px;">
+                                    <strong style="color:var(--text-primary);">National Scrutiny Committee (Dr. Vandana Rao)</strong>
+                                    <span class="font-mono" style="color:var(--text-tertiary);">20-Apr-2025</span>
+                                </div>
+                                <div style="font-size:12px; color:var(--text-secondary); line-height:1.4;">
+                                    Preliminary scrutiny completed for APP-2025-001. All land boundaries and faculty cadremen align with APH 2025 norms (Score 98/100).
+                                </div>
+                            </div>
+                            <div style="padding:12px; border-radius:10px; background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.25);">
+                                <div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:4px;">
+                                    <strong style="color:#D97706;">Automated Regulatory Alert</strong>
+                                    <span class="font-mono" style="color:var(--text-tertiary);">18-Apr-2025</span>
+                                </div>
+                                <div style="font-size:12px; color:var(--text-secondary); line-height:1.4;">
+                                    Reminder: Upload the renewal certificate for Fire Safety NOC at least 15 days before the scheduled EVC window opens.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            const btnNew = container.querySelector('#btn-applicant-file-new');
+            if (btnNew) btnNew.onclick = () => this.openNewApplicationModal();
+        }
+
+        // ====================================================================
+        // 16. MY APPLICATIONS (Applicant Isolated View)
+        // ====================================================================
+        renderMyApplicationsView(container) {
+            const myApps = this.applications.filter(a => a.collegeId === 'nit-nilgiri' || a.id === 'APP-2025-001');
+
+            container.innerHTML = `
+                <div class="view-header">
+                    <div class="view-title-group">
+                        <h1>My Submitted Applications &amp; Approval Dossiers</h1>
+                        <p>Nilgiri Institute of Technology (Permanent ID: SYN-2025-001) • Track approval status &amp; inspect case files</p>
+                    </div>
+                    <div class="view-actions">
+                        <button class="btn btn-primary btn-sm" id="btn-my-apps-file-new">
+                            ${ICONS.FileCheck2}
+                            File New Application
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            ${ICONS.FileText}
+                            <span>Submitted Institutional Dossiers (${myApps.length})</span>
+                        </div>
+                        <input type="text" id="my-apps-search" class="input" placeholder="Search my applications..." style="max-width:240px;">
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Application ID</th>
+                                    <th>Scheme / Type</th>
+                                    <th>Academic Year</th>
+                                    <th>Workflow Stage</th>
+                                    <th>SLA Target</th>
+                                    <th>Compliance Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="my-apps-table-body">
+                                ${myApps.map(app => `
+                                    <tr>
+                                        <td class="font-mono"><strong>${app.id}</strong></td>
+                                        <td>
+                                            <div style="font-weight:700; color:var(--text-primary);">${app.appType}</div>
+                                            <span style="font-size:11px; color:var(--text-secondary);">480 Seats Approved</span>
+                                        </td>
+                                        <td>2025-26</td>
+                                        <td><span class="badge badge-blue">${app.stage}</span></td>
+                                        <td class="font-mono">${app.slaTarget}</td>
+                                        <td><span class="badge ${app.statusBadge}">${app.status}</span></td>
+                                        <td>
+                                            <div style="display:flex; align-items:center; gap:8px;">
+                                                <button class="btn btn-outline btn-sm inspect-my-app-btn" data-app-id="${app.id}">
+                                                    Inspect Dossier
+                                                </button>
+                                                <button class="btn btn-outline btn-sm" onclick="API.showToast('Generating official AICTE Case Docket (PDF)...', 'info');">
+                                                    Docket PDF
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+
+            const btnNew = container.querySelector('#btn-my-apps-file-new');
+            if (btnNew) btnNew.onclick = () => this.openNewApplicationModal();
+
+            container.querySelectorAll('.inspect-my-app-btn').forEach(btn => {
+                btn.onclick = () => {
+                    const appId = btn.getAttribute('data-app-id');
+                    this.openApplicationModal(appId);
+                };
+            });
+        }
+
+        // ====================================================================
+        // 17. DOCUMENT SUBMISSION & VALIDITY DESK
+        // ====================================================================
+        renderDocumentSubmissionView(container) {
+            const docs = [
+                { id: 'DOC-01', name: 'Land Title & Registered Lease Deed', category: 'Land & Infrastructure', status: 'VERIFIED', validity: '99-Year Leasehold (Valid)', hash: 'a4f912c091e88231', isExpiring: false },
+                { id: 'DOC-02', name: 'Approved Building Master Plan', category: 'Civil & Safety', status: 'VERIFIED', validity: 'Permanent Institutional Approval', hash: '87b3e102f928aa14', isExpiring: false },
+                { id: 'DOC-03', name: 'Fire Safety Clearance NOC', category: 'Statutory Safety', status: 'EXPIRING_SOON', validity: '15-Jun-2025 (45 Days Remaining)', hash: 'c3d90214aa8e1001', isExpiring: true },
+                { id: 'DOC-04', name: 'AICTE Previous Year Approval (EoA 2024-25)', category: 'Academic Regulatory', status: 'VERIFIED', validity: 'Academic Year 2024-25', hash: '56e910283c71a9f0', isExpiring: false },
+                { id: 'DOC-05', name: 'Governing Board Resolution & Intake Sanction', category: 'Governance', status: 'VERIFIED', validity: 'Signed & Sealed', hash: '109a82e7bca23419', isExpiring: false },
+                { id: 'DOC-06', name: 'Faculty List & Cadre Aadhaar Verification', category: 'Human Resources', status: 'VERIFIED', validity: 'Cadre Ratio 1:15 Validated', hash: 'f00192a83e66bb42', isExpiring: false }
+            ];
+
+            container.innerHTML = `
+                <div class="view-header">
+                    <div class="view-title-group">
+                        <h1>Document Submission &amp; Statutory Validity Desk</h1>
+                        <p>Nilgiri Institute of Technology • Cryptographic SHA-256 integrity verification with AICTE DigiLocker Gateway</p>
+                    </div>
+                    <div class="view-actions">
+                        <button class="btn btn-primary btn-sm" id="btn-upload-doc">
+                            ${ICONS.FileCheck2}
+                            Upload / Resubmit Document
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            ${ICONS.FileCheck2}
+                            <span>Mandatory Institutional Document Repository (${docs.length})</span>
+                        </div>
+                        <span class="badge badge-emerald">6 / 6 Compliant On Record</span>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Document Name</th>
+                                    <th>Category</th>
+                                    <th>Validity Status</th>
+                                    <th>SHA-256 Fingerprint</th>
+                                    <th>Verification</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${docs.map(d => `
+                                    <tr>
+                                        <td>
+                                            <div style="font-weight:700; color:var(--text-primary);">${d.name}</div>
+                                            <span style="font-size:11px; color:var(--text-secondary);">${d.id} • PDF / OCR Extracted</span>
+                                        </td>
+                                        <td>${d.category}</td>
+                                        <td>
+                                            <span style="font-size:12px; font-weight:600; color:${d.isExpiring ? '#D97706' : 'var(--text-primary)'};">
+                                                ${d.validity}
+                                            </span>
+                                        </td>
+                                        <td><span class="font-mono" style="font-size:11px; color:var(--text-secondary);">${d.hash}...</span></td>
+                                        <td>
+                                            <span class="badge ${d.isExpiring ? 'badge-amber' : 'badge-emerald'}">
+                                                ${d.status}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <div style="display:flex; align-items:center; gap:6px;">
+                                                <button class="btn btn-outline btn-sm" onclick="API.showToast('Inspecting verified cryptographic document ${d.id}...', 'info');">
+                                                    View
+                                                </button>
+                                                ${d.isExpiring ? `
+                                                    <button class="btn btn-primary btn-sm" onclick="app.openUploadDocumentModal('${d.id}');">
+                                                        Renew
+                                                    </button>
+                                                ` : ''}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+
+            container.querySelector('#btn-upload-doc').onclick = () => this.openUploadDocumentModal();
+        }
+
+        // ====================================================================
+        // 18. COMPLIANCE & UNDERTAKINGS
+        // ====================================================================
+        renderComplianceUndertakingsView(container) {
+            const undertakings = [
+                { id: 'UND-01', title: 'Anti-Ragging Statutory Undertaking', clause: 'APH 2025 Ch. VI', status: 'COMPLIANT', dueDate: 'Annual Filing', evidence: 'Affidavit_AntiRagging_2025.pdf' },
+                { id: 'UND-02', title: 'Land Non-Encumbrance & Title Declaration', clause: 'APH 2025 Ch. II R4.1', status: 'COMPLIANT', dueDate: 'AY 2025-26', evidence: 'Title_NonEncumbrance_Deed.pdf' },
+                { id: 'UND-03', title: 'Student Grievance Redressal Committee (SGRC)', clause: 'APH 2025 Ch. VIII', status: 'COMPLIANT', dueDate: 'Permanent Mandate', evidence: 'SGRC_Gazette_Notification.pdf' },
+                { id: 'UND-04', title: 'Internal Complaints Committee (Women Harassment)', clause: 'AICTE Regulations 2016', status: 'COMPLIANT', dueDate: 'Annual Committee', evidence: 'ICC_Constitution_Minutes.pdf' },
+                { id: 'UND-05', title: 'Fire Safety Renewal Undertaking (Conditional)', clause: 'APH 2025 Ch. IV', status: 'UNDER_VERIFICATION', dueDate: '15-Jun-2025', evidence: 'Fire_NOC_Challan_Receipt.pdf' }
+            ];
+
+            container.innerHTML = `
+                <div class="view-header">
+                    <div class="view-title-group">
+                        <h1>Statutory Undertakings &amp; Compliance Management</h1>
+                        <p>Mandatory declarations, legal affidavits, and time-bound statutory obligations under AICTE Regulations</p>
+                    </div>
+                    <div class="view-actions">
+                        <button class="btn btn-primary btn-sm" onclick="app.openUploadDocumentModal('UNDERTAKING');">
+                            ${ICONS.ShieldCheck}
+                            Submit New Undertaking
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            ${ICONS.ShieldCheck}
+                            <span>Applicable Institutional Undertakings (${undertakings.length})</span>
+                        </div>
+                        <span class="badge badge-emerald">4 Compliant • 1 Under Verification</span>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Undertaking Title</th>
+                                    <th>Regulatory Clause</th>
+                                    <th>Compliance Deadline</th>
+                                    <th>Evidence File</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${undertakings.map(u => `
+                                    <tr>
+                                        <td>
+                                            <div style="font-weight:700; color:var(--text-primary);">${u.title}</div>
+                                            <span style="font-size:11px; color:var(--text-secondary);">${u.id} • Registered Liaison Affidavit</span>
+                                        </td>
+                                        <td class="font-mono">${u.clause}</td>
+                                        <td class="font-mono">${u.dueDate}</td>
+                                        <td>
+                                            <span style="font-size:12px; color:var(--accent); cursor:pointer;" onclick="API.showToast('Downloading verified evidence: ${u.evidence}', 'info');">
+                                                📄 ${u.evidence}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="badge ${u.status === 'COMPLIANT' ? 'badge-emerald' : 'badge-amber'}">
+                                                ${u.status}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-outline btn-sm" onclick="app.openUploadDocumentModal('${u.id}');">
+                                                ${u.status === 'COMPLIANT' ? 'Update Evidence' : 'Submit Proof'}
+                                            </button>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ====================================================================
+        // 19. INSTITUTION PROFILE
+        // ====================================================================
+        renderInstitutionProfileView(container) {
+            container.innerHTML = `
+                <div class="view-header">
+                    <div class="view-title-group">
+                        <h1>Institution Profile &amp; Regulatory Credentials</h1>
+                        <p>Nilgiri Institute of Technology • AICTE Permanent Record &amp; Liaison Details</p>
+                    </div>
+                    <div class="view-actions">
+                        <button class="btn btn-outline btn-sm" onclick="API.showToast('Synchronized with AICTE Central Database', 'success');">
+                            Refresh Registry
+                        </button>
+                    </div>
+                </div>
+
+                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap:20px; margin-bottom:20px;">
+                    <!-- Institution Overview -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                ${ICONS.Building2}
+                                <span>Campus &amp; Legal Entity</span>
+                            </div>
+                            <span class="badge badge-emerald">Established 1998</span>
+                        </div>
+                        <div style="display:flex; flex-direction:column; gap:12px; font-size:12px;">
+                            <div>
+                                <span style="color:var(--text-secondary);">Institution Full Name:</span>
+                                <div style="font-weight:700; color:var(--text-primary); margin-top:2px;">Nilgiri Institute of Technology</div>
+                            </div>
+                            <div>
+                                <span style="color:var(--text-secondary);">Sponsoring Trust / Society:</span>
+                                <div style="font-weight:700; color:var(--text-primary); margin-top:2px;">Nilgiri Educational &amp; Charitable Trust</div>
+                            </div>
+                            <div>
+                                <span style="color:var(--text-secondary);">Permanent AICTE ID:</span>
+                                <div class="font-mono" style="font-weight:800; color:var(--accent); margin-top:2px;">SYN-2025-001</div>
+                            </div>
+                            <div>
+                                <span style="color:var(--text-secondary);">AISHE Code:</span>
+                                <div class="font-mono" style="font-weight:700; margin-top:2px;">C-41289</div>
+                            </div>
+                            <div>
+                                <span style="color:var(--text-secondary);">Affiliating Technological University:</span>
+                                <div style="font-weight:700; margin-top:2px;">Anna University, Chennai</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Geolocation & Campus -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                ${ICONS.Landmark}
+                                <span>Campus Location &amp; Boundaries</span>
+                            </div>
+                            <span class="badge badge-blue">Geotagged</span>
+                        </div>
+                        <div style="display:flex; flex-direction:column; gap:12px; font-size:12px;">
+                            <div>
+                                <span style="color:var(--text-secondary);">Campus Address:</span>
+                                <div style="font-weight:700; color:var(--text-primary); margin-top:2px;">Ooty-Coonoor Highway, The Nilgiris, Tamil Nadu — 643001</div>
+                            </div>
+                            <div>
+                                <span style="color:var(--text-secondary);">Jurisdictional Region:</span>
+                                <div style="font-weight:700; color:var(--text-primary); margin-top:2px;">Southern Regional Office (SRO), Chennai</div>
+                            </div>
+                            <div>
+                                <span style="color:var(--text-secondary);">GIS Coordinates:</span>
+                                <div class="font-mono" style="font-weight:700; color:var(--accent); margin-top:2px;">11.4102° N, 76.6950° E</div>
+                            </div>
+                            <div>
+                                <span style="color:var(--text-secondary);">Campus Land Area:</span>
+                                <div style="font-weight:700; margin-top:2px;">12.5 Acres (Unencumbered Single Plot)</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Authorized Liaison Details -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                ${ICONS.Users}
+                                <span>Authorized Liaison Officer</span>
+                            </div>
+                            <span class="badge badge-emerald">Active Sign-On</span>
+                        </div>
+                        <div style="display:flex; flex-direction:column; gap:12px; font-size:12px;">
+                            <div>
+                                <span style="color:var(--text-secondary);">Representative Name:</span>
+                                <div style="font-weight:700; color:var(--text-primary); margin-top:2px;">Dr. Suresh Chandra</div>
+                            </div>
+                            <div>
+                                <span style="color:var(--text-secondary);">Designation:</span>
+                                <div style="font-weight:700; color:var(--text-primary); margin-top:2px;">Registrar &amp; Authorized Liaison Officer</div>
+                            </div>
+                            <div>
+                                <span style="color:var(--text-secondary);">Registered Email:</span>
+                                <div class="font-mono" style="font-weight:700; margin-top:2px;">registrar@nilgiri-tech.edu.in</div>
+                            </div>
+                            <div>
+                                <span style="color:var(--text-secondary);">Official Cadre ID:</span>
+                                <div class="font-mono" style="font-weight:700; color:var(--accent); margin-top:2px;">INST/REP/SYN-2025-001</div>
+                            </div>
+                            <div style="padding-top:8px;">
+                                <button class="btn btn-outline btn-sm" onclick="API.showToast('Security settings simulated: Password reset link dispatched.', 'info');">
+                                    Change Security Password
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ====================================================================
+        // MODALS & DIALOGS (100% Functional & RBAC-Protected)
+        // ====================================================================
+        openApplicationModal(appId) {
+            const app = this.applications.find(a => a.id === appId) || {
+                id: appId,
+                collegeName: "Nilgiri Institute of Technology",
+                permanentId: "SYN-2025-001",
+                appType: "Extension of Approval (EoA)",
+                stage: "SCRUTINY",
+                slaTarget: "15-May-2025",
+                status: "UNDER_SCRUTINY",
+                statusBadge: "badge-amber",
+                trustScore: 98,
+                deficienciesCount: 0
+            };
+
+            // RBAC Check: applicant cannot view other colleges' applications!
+            if (this.isApplicant() && app.collegeId && app.collegeId !== 'nit-nilgiri') {
+                API.showToast('Access Denied: You are not authorized to inspect confidential dossiers of other institutions.', 'error');
+                return;
+            }
+
+            const isApp = this.isApplicant();
+
+            // Create Modal Dialog
+            const overlay = document.createElement('div');
+            overlay.className = 'modal-overlay';
+            overlay.id = 'app-dossier-modal';
+
+            overlay.innerHTML = `
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-header">
+                        <div class="modal-title-group">
+                            <div style="width:36px; height:36px; border-radius:10px; background:var(--accent-light); color:var(--accent); display:flex; align-items:center; justify-content:center;">
+                                ${ICONS.FileText}
+                            </div>
+                            <div>
+                                <h3 class="modal-title">Dossier Workspace — ${app.id}</h3>
+                                <div class="modal-subtitle">${app.collegeName} • Permanent ID: ${app.permanentId}</div>
+                            </div>
+                        </div>
+                        <button class="modal-close-btn" id="modal-close-x">✕</button>
+                    </div>
+
+                    <div class="modal-nav-tabs">
+                        <button class="modal-nav-tab active" data-tab="tab-overview">Overview</button>
+                        <button class="modal-nav-tab" data-tab="tab-stages">Workflow Stages</button>
+                        <button class="modal-nav-tab" data-tab="tab-docs">Documents (${isApp ? '6' : '8'})</button>
+                        <button class="modal-nav-tab" data-tab="tab-scrutiny">Scrutiny &amp; Deficiencies</button>
+                    </div>
+
+                    <div class="modal-body" id="modal-tab-content">
+                        <!-- Content rendered dynamically by tab -->
+                    </div>
+
+                    <div class="modal-footer">
+                        <div style="font-size:11px; color:var(--text-tertiary); display:flex; align-items:center; gap:6px;">
+                            ${ICONS.ShieldCheck}
+                            <span>SHA-256 Verified Dossier • AICTE APH 2025</span>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            ${isApp ? `
+                                <button class="btn btn-outline btn-sm" onclick="API.showToast('Printing Case Docket...', 'info');">
+                                    Print Docket
+                                </button>
+                                <button class="btn btn-primary btn-sm" onclick="document.getElementById('modal-close-x').click(); app.navigate('documents');">
+                                    Manage Documents
+                                </button>
+                            ` : `
+                                <button class="btn btn-outline btn-sm" style="color:#DC2626; border-color:rgba(220,38,38,0.3);" onclick="API.showToast('Deficiency notice flagged for applicant', 'error');">
+                                    Issue Deficiency
+                                </button>
+                                <button class="btn btn-primary btn-sm" onclick="API.showToast('Application transitioned to EVC Scheduling stage', 'success'); document.getElementById('modal-close-x').click();">
+                                    Advance Workflow
+                                </button>
+                            `}
+                            <button class="btn btn-outline btn-sm" id="modal-close-btn">Close</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(overlay);
+
+            const renderTab = (tabName) => {
+                const tabContent = overlay.querySelector('#modal-tab-content');
+                if (!tabContent) return;
+
+                if (tabName === 'tab-overview') {
+                    tabContent.innerHTML = `
+                        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:16px;">
+                            <div style="padding:14px; border-radius:12px; background:var(--surface-muted); border:1px solid var(--border);">
+                                <span style="font-size:11px; color:var(--text-secondary);">Application Type:</span>
+                                <div style="font-weight:700; color:var(--text-primary); margin-top:2px;">${app.appType}</div>
+                            </div>
+                            <div style="padding:14px; border-radius:12px; background:var(--surface-muted); border:1px solid var(--border);">
+                                <span style="font-size:11px; color:var(--text-secondary);">Current Workflow Stage:</span>
+                                <div style="font-weight:700; color:var(--accent); margin-top:2px;">${app.stage}</div>
+                            </div>
+                            <div style="padding:14px; border-radius:12px; background:var(--surface-muted); border:1px solid var(--border);">
+                                <span style="font-size:11px; color:var(--text-secondary);">Statutory SLA Target:</span>
+                                <div class="font-mono" style="font-weight:700; margin-top:2px;">${app.slaTarget}</div>
+                            </div>
+                            <div style="padding:14px; border-radius:12px; background:var(--surface-muted); border:1px solid var(--border);">
+                                <span style="font-size:11px; color:var(--text-secondary);">Trust Score Baseline:</span>
+                                <div style="font-weight:800; color:#059669; margin-top:2px;">${app.trustScore || 98} / 100</div>
+                            </div>
+                        </div>
+                        <div style="padding:14px; border-radius:12px; background:var(--accent-light); border:1px solid var(--accent-muted); font-size:12px; line-height:1.5;">
+                            <strong>AI Pre-Screening Summary:</strong> Optical recognition verified 100% of text tokens against regional land records and Bharatkosh fee receipts. No critical discrepancies or tampering indicators flagged.
+                        </div>
+                    `;
+                } else if (tabName === 'tab-stages') {
+                    tabContent.innerHTML = `
+                        <div style="display:flex; flex-direction:column; gap:12px;">
+                            <div style="display:flex; align-items:center; justify-content:space-between; padding:12px; border-radius:10px; background:var(--surface-muted); border:1px solid var(--border);">
+                                <div>
+                                    <strong style="color:var(--text-primary);">Stage 1: Application Submission &amp; Fee Realization</strong>
+                                    <div style="font-size:11px; color:var(--text-secondary);">Bharatkosh Challan verified • 02-Apr-2025</div>
+                                </div>
+                                <span class="badge badge-emerald">COMPLETED</span>
+                            </div>
+                            <div style="display:flex; align-items:center; justify-content:space-between; padding:12px; border-radius:10px; background:var(--accent-light); border:1px solid var(--accent-muted);">
+                                <div>
+                                    <strong style="color:var(--accent);">Stage 2: Technical Scrutiny &amp; Document Completeness</strong>
+                                    <div style="font-size:11px; color:var(--text-secondary);">Assigned to Northern Scrutiny Desk • Under Evaluation</div>
+                                </div>
+                                <span class="badge badge-blue">IN PROGRESS</span>
+                            </div>
+                            <div style="display:flex; align-items:center; justify-content:space-between; padding:12px; border-radius:10px; background:var(--surface-muted); opacity:0.6;">
+                                <div>
+                                    <strong>Stage 3: Expert Visit Committee (EVC) Physical Verification</strong>
+                                    <div style="font-size:11px; color:var(--text-secondary);">Pending Scrutiny Clearance</div>
+                                </div>
+                                <span class="badge">QUEUED</span>
+                            </div>
+                        </div>
+                    `;
+                } else if (tabName === 'tab-docs') {
+                    tabContent.innerHTML = `
+                        <div style="display:flex; flex-direction:column; gap:8px;">
+                            <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; border-radius:8px; background:var(--surface-muted); font-size:12px;">
+                                <span>📄 Land Title Deed &amp; 99-Year Leasehold</span>
+                                <span class="badge badge-emerald">SHA-256 VERIFIED</span>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; border-radius:8px; background:var(--surface-muted); font-size:12px;">
+                                <span>📄 Municipal Approved Master Building Plan</span>
+                                <span class="badge badge-emerald">SHA-256 VERIFIED</span>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; border-radius:8px; background:var(--surface-muted); font-size:12px;">
+                                <span>📄 District Fire Safety Clearance NOC</span>
+                                <span class="badge badge-amber">EXPIRING_SOON (45d)</span>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; border-radius:8px; background:var(--surface-muted); font-size:12px;">
+                                <span>📄 Faculty Roster &amp; Aadhaar Cadre Ratio</span>
+                                <span class="badge badge-emerald">1:15 COMPLIANT</span>
+                            </div>
+                        </div>
+                    `;
+                } else if (tabName === 'tab-scrutiny') {
+                    tabContent.innerHTML = `
+                        <div style="padding:20px; text-align:center; color:var(--text-secondary); font-size:13px;">
+                            <div style="width:40px; height:40px; border-radius:50%; background:rgba(16,185,129,0.1); color:#059669; display:flex; align-items:center; justify-content:center; margin:0 auto 10px;">
+                                ${ICONS.CheckCircle2}
+                            </div>
+                            <strong style="color:var(--text-primary); display:block; margin-bottom:4px;">Zero Deficiencies Flagged</strong>
+                            All uploaded documentation meets AICTE Approval Process Handbook (APH 2025-26) Chapter II norms.
+                        </div>
+                    `;
+                }
+            };
+
+            renderTab('tab-overview');
+
+            overlay.querySelectorAll('.modal-nav-tab').forEach(tab => {
+                tab.onclick = () => {
+                    overlay.querySelectorAll('.modal-nav-tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    renderTab(tab.getAttribute('data-tab'));
+                };
+            });
+
+            const close = () => overlay.remove();
+            overlay.querySelector('#modal-close-x').onclick = close;
+            overlay.querySelector('#modal-close-btn').onclick = close;
+            overlay.onclick = (e) => { if (e.target === overlay) close(); };
+        }
+
+        openNewApplicationModal() {
+            const overlay = document.createElement('div');
+            overlay.className = 'modal-overlay';
+            overlay.innerHTML = `
+                <div class="modal-dialog">
+                    <div class="modal-header">
+                        <div class="modal-title-group">
+                            <div style="width:36px; height:36px; border-radius:10px; background:var(--accent-light); color:var(--accent); display:flex; align-items:center; justify-content:center;">
+                                ${ICONS.FileText}
+                            </div>
+                            <div>
+                                <h3 class="modal-title">File New Approval Application</h3>
+                                <div class="modal-subtitle">AICTE Approval Process Handbook (APH 2025-26)</div>
+                            </div>
+                        </div>
+                        <button class="modal-close-btn" id="new-app-close-x">✕</button>
+                    </div>
+
+                    <form id="new-app-form" style="display:flex; flex-direction:column; gap:16px; padding:24px;">
+                        <div>
+                            <label style="font-size:12px; font-weight:700; color:var(--text-primary); display:block; margin-bottom:6px;">Application Scheme / Purpose</label>
+                            <select id="new-app-type" class="input" style="width:100%;" required>
+                                <option value="Extension of Approval (EoA)">Extension of Approval (EoA) — 2025-26</option>
+                                <option value="Increase in Sanctioned Intake">Increase in Sanctioned Intake (+60 Seats)</option>
+                                <option value="Introduction of New Program (UG/PG)">Introduction of New Program (Artificial Intelligence &amp; Data Science)</option>
+                                <option value="Change of Site / Location">Change of Campus Site</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label style="font-size:12px; font-weight:700; color:var(--text-primary); display:block; margin-bottom:6px;">Academic Session</label>
+                            <input type="text" class="input" value="2025-2026" readonly style="width:100%;">
+                        </div>
+
+                        <div>
+                            <label style="font-size:12px; font-weight:700; color:var(--text-primary); display:block; margin-bottom:6px;">Bharatkosh Transaction Reference</label>
+                            <input type="text" id="new-app-challan" class="input" placeholder="e.g. BK-2025-TN-9982" value="BK-2025-TN-9982" required style="width:100%;">
+                        </div>
+
+                        <div style="font-size:11px; color:var(--text-secondary); background:var(--surface-muted); padding:10px; border-radius:8px;">
+                            By submitting, you certify under penalty of perjury that all attached institutional declarations and land boundaries are bona fide.
+                        </div>
+
+                        <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:8px;">
+                            <button type="button" class="btn btn-outline" id="new-app-cancel-btn">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Submit Application</button>
+                        </div>
+                    </form>
+                </div>
+            `;
+
+            document.body.appendChild(overlay);
+
+            const close = () => overlay.remove();
+            overlay.querySelector('#new-app-close-x').onclick = close;
+            overlay.querySelector('#new-app-cancel-btn').onclick = close;
+
+            overlay.querySelector('#new-app-form').onsubmit = (e) => {
+                e.preventDefault();
+                const type = overlay.querySelector('#new-app-type').value;
+                const newId = `APP-2025-${String(this.applications.length + 1).padStart(3, '0')}`;
+                
+                this.applications.unshift({
+                    id: newId,
+                    collegeId: "nit-nilgiri",
+                    collegeName: "Nilgiri Institute of Technology",
+                    trustName: "Nilgiri Educational Trust",
+                    permanentId: "SYN-2025-001",
+                    appType: type,
+                    stage: "SUBMITTED",
+                    slaTarget: "15-Jun-2025",
+                    status: "SUBMITTED_SUCCESS",
+                    statusBadge: "badge-blue",
+                    trustScore: 98,
+                    deficienciesCount: 0,
+                    submissionDate: new Date().toLocaleDateString('en-GB')
+                });
+
+                close();
+                API.showToast(`Application ${newId} submitted successfully and assigned to Scrutiny Desk!`, 'success');
+                this.render();
+            };
+        }
+
+        openUploadDocumentModal(docType = '') {
+            const overlay = document.createElement('div');
+            overlay.className = 'modal-overlay';
+            overlay.innerHTML = `
+                <div class="modal-dialog">
+                    <div class="modal-header">
+                        <div class="modal-title-group">
+                            <div style="width:36px; height:36px; border-radius:10px; background:var(--accent-light); color:var(--accent); display:flex; align-items:center; justify-content:center;">
+                                ${ICONS.FileCheck2}
+                            </div>
+                            <div>
+                                <h3 class="modal-title">Upload Statutory Evidence Document</h3>
+                                <div class="modal-subtitle">Instant SHA-256 Fingerprinting &amp; AICTE Vault Registration</div>
+                            </div>
+                        </div>
+                        <button class="modal-close-btn" id="upload-close-x">✕</button>
+                    </div>
+
+                    <form id="doc-upload-form" style="display:flex; flex-direction:column; gap:16px; padding:24px;">
+                        <div>
+                            <label style="font-size:12px; font-weight:700; color:var(--text-primary); display:block; margin-bottom:6px;">Document Classification</label>
+                            <select id="upload-doc-type" class="input" style="width:100%;" required>
+                                <option value="FIRE_NOC" ${docType.includes('FIRE') ? 'selected' : ''}>District Fire Safety Clearance NOC (Renewal)</option>
+                                <option value="LAND_DEED">Land Title &amp; Registered 99-Year Leasehold</option>
+                                <option value="BUILDING_PLAN">Approved Building Master Layout Plan</option>
+                                <option value="AFFILIATION">State University Affiliation Order</option>
+                                <option value="UNDERTAKING">Statutory Affidavit / Undertaking</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label style="font-size:12px; font-weight:700; color:var(--text-primary); display:block; margin-bottom:6px;">Select Document File (PDF / Scanned Certificate)</label>
+                            <input type="file" id="upload-file-input" class="input" style="width:100%; padding:8px;" accept=".pdf,.png,.jpg">
+                        </div>
+
+                        <div id="upload-hash-preview" style="font-size:11px; font-family:ui-monospace, monospace; color:var(--text-secondary); background:var(--surface-muted); padding:10px; border-radius:8px;">
+                            Simulated SHA-256 Digest: <strong style="color:var(--accent);">e3b0c44298fc1c149afbf4c8996fb92427ae41e4...</strong>
+                        </div>
+
+                        <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:8px;">
+                            <button type="button" class="btn btn-outline" id="upload-cancel-btn">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Compute Hash &amp; Submit</button>
+                        </div>
+                    </form>
+                </div>
+            `;
+
+            document.body.appendChild(overlay);
+
+            const close = () => overlay.remove();
+            overlay.querySelector('#upload-close-x').onclick = close;
+            overlay.querySelector('#upload-cancel-btn').onclick = close;
+
+            overlay.querySelector('#doc-upload-form').onsubmit = (e) => {
+                e.preventDefault();
+                close();
+                API.showToast('Evidence document uploaded and verified on SHA-256 Provenance Chain!', 'success');
+                this.render();
+            };
+        }
+
+        openUserProfileModal() {
+            const u = this.currentUser;
+            const overlay = document.createElement('div');
+            overlay.className = 'modal-overlay';
+            overlay.innerHTML = `
+                <div class="modal-dialog modal-sm">
+                    <div class="modal-header">
+                        <div class="modal-title-group">
+                            <div style="width:36px; height:36px; border-radius:10px; background:var(--accent); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800;">
+                                ${u.username.slice(0, 2).toUpperCase()}
+                            </div>
+                            <div>
+                                <h3 class="modal-title">${u.fullName || u.username}</h3>
+                                <div class="modal-subtitle">${u.roleName || u.badge}</div>
+                            </div>
+                        </div>
+                        <button class="modal-close-btn" id="profile-close-x">✕</button>
+                    </div>
+
+                    <div style="display:flex; flex-direction:column; gap:12px; padding:20px; font-size:12px;">
+                        <div>
+                            <span style="color:var(--text-secondary);">Cadre ID:</span>
+                            <div class="font-mono" style="font-weight:700; color:var(--text-primary); margin-top:2px;">${u.cadreId || 'AICTE/OFFICER-2025'}</div>
+                        </div>
+                        <div>
+                            <span style="color:var(--text-secondary);">Department / Directorate:</span>
+                            <div style="font-weight:700; color:var(--text-primary); margin-top:2px;">${u.department || 'Regulatory Directorate'}</div>
+                        </div>
+                        <div>
+                            <span style="color:var(--text-secondary);">Official Email:</span>
+                            <div class="font-mono" style="font-weight:700; margin-top:2px;">${u.email || u.username + '@aicte-india.org'}</div>
+                        </div>
+                        <div>
+                            <span style="color:var(--text-secondary);">Security Clearance:</span>
+                            <div style="font-weight:700; color:#059669; margin-top:2px;">${u.securityClearance || 'LEVEL 1'}</div>
+                        </div>
+                        <div>
+                            <span style="color:var(--text-secondary);">Digital X.509 PKI Subject:</span>
+                            <div class="font-mono" style="font-size:10px; color:var(--text-secondary); margin-top:2px; word-break:break-all;">${u.pkiCert || 'X.509 CN=' + u.username}</div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer" style="justify-content:flex-end;">
+                        <button class="btn btn-outline btn-sm" id="profile-close-btn">Close</button>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(overlay);
+            const close = () => overlay.remove();
+            overlay.querySelector('#profile-close-x').onclick = close;
+            overlay.querySelector('#profile-close-btn').onclick = close;
+        }
+
+        openEmergencyAccessModal() {
+            const overlay = document.createElement('div');
+            overlay.className = 'modal-overlay';
+            overlay.innerHTML = `
+                <div class="modal-dialog">
+                    <div class="modal-header">
+                        <div class="modal-title-group">
+                            <div style="width:36px; height:36px; border-radius:10px; background:var(--accent-light); color:var(--accent); display:flex; align-items:center; justify-content:center;">
+                                ${ICONS.Users}
+                            </div>
+                            <div>
+                                <h3 class="modal-title">AICTE Authorized Personnel Directory</h3>
+                                <div class="modal-subtitle">Switch between official regulatory roles and institutional applicant accounts</div>
+                            </div>
+                        </div>
+                        <button class="modal-close-btn" id="emergency-close-x">✕</button>
+                    </div>
+
+                    <div style="padding:20px; display:flex; flex-direction:column; gap:10px; max-height:480px; overflow-y:auto;">
+                        <div style="font-size:11px; font-weight:800; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.5px;">Institutional Applicant Identity</div>
+                        ${OFFICIAL_PERSONNEL.filter(a => a.role === 'applicant' || a.shortRole === 'Institution Rep').map(a => `
+                            <div style="display:flex; justify-content:space-between; align-items:center; padding:12px; border-radius:10px; background:var(--surface-muted); border:1px solid var(--border);">
+                                <div>
+                                    <div style="font-weight:700; color:var(--text-primary); font-size:13px;">${a.fullName}</div>
+                                    <div style="font-size:11px; color:var(--text-secondary);">${a.department} • <strong style="color:#059669;">Institutional Portal</strong></div>
+                                </div>
+                                <button class="btn btn-outline btn-sm switch-ident-btn" data-username="${a.username}">
+                                    Sign In as Applicant
+                                </button>
+                            </div>
+                        `).join('')}
+
+                        <div style="font-size:11px; font-weight:800; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.5px; margin-top:12px;">Authorized Regulatory Officials</div>
+                        ${OFFICIAL_PERSONNEL.filter(a => a.role !== 'applicant' && a.shortRole !== 'Institution Rep').map(a => `
+                            <div style="display:flex; justify-content:space-between; align-items:center; padding:12px; border-radius:10px; background:var(--surface-muted); border:1px solid var(--border);">
+                                <div>
+                                    <div style="font-weight:700; color:var(--text-primary); font-size:13px;">${a.fullName}</div>
+                                    <div style="font-size:11px; color:var(--text-secondary);">${a.designation} • ${a.badge}</div>
+                                </div>
+                                <button class="btn btn-primary btn-sm switch-ident-btn" data-username="${a.username}">
+                                    Sign In as Officer
+                                </button>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <div class="modal-footer" style="justify-content:flex-end;">
+                        <button class="btn btn-outline btn-sm" id="emergency-close-btn">Close</button>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(overlay);
+            const close = () => overlay.remove();
+            overlay.querySelector('#emergency-close-x').onclick = close;
+            overlay.querySelector('#emergency-close-btn').onclick = close;
+
+            overlay.querySelectorAll('.switch-ident-btn').forEach(btn => {
+                btn.onclick = () => {
+                    const u = btn.getAttribute('data-username');
+                    const acc = resolveOfficial(u);
+                    if (acc) {
+                        close();
+                        this.login(acc);
+                    }
+                };
+            });
+        }
+
+        openCollegeModal(cid) {
+            if (this.isApplicant() && cid !== 'nit-nilgiri') {
+                API.showToast('Access Denied: Institutional representatives cannot browse other colleges.', 'error');
+                return;
+            }
+            const col = (this.colleges || []).find(c => c.id === cid) || {
+                name: "Nilgiri Institute of Technology",
+                state: "Tamil Nadu",
+                trustScore: 98,
+                permanentId: "SYN-2025-001"
+            };
+
+            const overlay = document.createElement('div');
+            overlay.className = 'modal-overlay';
+            overlay.innerHTML = `
+                <div class="modal-dialog">
+                    <div class="modal-header">
+                        <div class="modal-title-group">
+                            <div style="width:36px; height:36px; border-radius:10px; background:var(--accent-light); color:var(--accent); display:flex; align-items:center; justify-content:center;">
+                                ${ICONS.GraduationCap}
+                            </div>
+                            <div>
+                                <h3 class="modal-title">${col.name}</h3>
+                                <div class="modal-subtitle">Permanent ID: ${col.permanentId || 'SYN-2025-001'} • ${col.state || 'Tamil Nadu'}</div>
+                            </div>
+                        </div>
+                        <button class="modal-close-btn" id="college-modal-close-x">✕</button>
+                    </div>
+                    <div style="padding:20px; font-size:12px; display:flex; flex-direction:column; gap:12px;">
+                        <div>
+                            <span style="color:var(--text-secondary);">Trust Score:</span>
+                            <div style="font-weight:800; color:#059669; font-size:16px;">${col.trustScore || 98} / 100</div>
+                        </div>
+                        <div>
+                            <span style="color:var(--text-secondary);">Sanctioned Capacity:</span>
+                            <div style="font-weight:700;">480 Seats (4 Approved Engineering Streams)</div>
+                        </div>
+                    </div>
+                    <div class="modal-footer" style="justify-content:flex-end;">
+                        <button class="btn btn-outline btn-sm" id="college-modal-close-btn">Close</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+            const close = () => overlay.remove();
+            overlay.querySelector('#college-modal-close-x').onclick = close;
+            overlay.querySelector('#college-modal-close-btn').onclick = close;
         }
     }
 

@@ -1,6 +1,28 @@
 const db = require('../database/db');
 const cryptoService = require('../services/cryptoService');
 
+const USERNAME_ALIASES = {
+    'dr.vandana.rao': 'scrutiny_expert1',
+    'officer': 'scrutiny_expert1',
+    'dr.suresh.chandra': 'inst_apex',
+    'applicant': 'inst_apex',
+    'prof.anil.sahasrabudhe': 'bureauadmin',
+    'authority': 'bureauadmin',
+    'smt.priya.sundaram': 'compliance_officer1',
+    'compliance': 'compliance_officer1',
+    'shri.rajeshwar.rao': 'auditor1',
+    'auditor': 'auditor1',
+    'dr.rk.shrivastava': 'superadmin',
+    'admin': 'superadmin',
+    'er.manoj.verma': 'ro_northern',
+    'ro_north': 'ro_northern',
+    'regional_officer': 'ro_northern',
+    'shri.vikramaditya.rathore': 'evc_coord1',
+    'evc_coord': 'evc_coord1',
+    'prof.devendra.pathak': 'evc_expert1',
+    'evc_member': 'evc_expert1'
+};
+
 class AuthController {
     login(req, res) {
         const { username, password } = req.body;
@@ -8,7 +30,13 @@ class AuthController {
             return res.status(400).json({ error: 'Username is required.' });
         }
 
-        const user = db.queryOne('SELECT * FROM users WHERE username = ? AND is_active = 1', [username]);
+        const normalizedUsername = (username || '').toLowerCase().trim();
+        const targetUsername = USERNAME_ALIASES[normalizedUsername] || normalizedUsername;
+
+        const user = db.queryOne(
+            'SELECT * FROM users WHERE (LOWER(username) = ? OR LOWER(username) = ?) AND is_active = 1',
+            [normalizedUsername, targetUsername]
+        );
         if (!user) {
             return res.status(401).json({ error: 'Invalid credentials.' });
         }

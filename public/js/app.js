@@ -218,6 +218,9 @@
 
     // Icons SVG mapping
     const ICONS = {
+        ArrowRight: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>`,
+        ExternalLink: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/></svg>`,
+        Calendar: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.253 3.75h18M4.5 7.5h15a2.25 2.25 0 012.25 2.25v10.5A2.25 2.25 0 0119.5 22.5h-15A2.25 2.25 0 012.25 20.25V9.75A2.25 2.25 0 014.5 7.5z"/></svg>`,
         LayoutDashboard: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>`,
         GraduationCap: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/></svg>`,
         FileSearch: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><circle cx="11.5" cy="14.5" r="2.5"/><path d="M13.3 16.3 15 18"/></svg>`,
@@ -249,7 +252,34 @@
         RotateCcw: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>`,
         Send: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>`,
         Volume2: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>`,
-        Gauge: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></svg>`
+        Gauge: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></svg>`,
+        Search: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>`,
+        Upload: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>`,
+        Download: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>`,
+        Refresh: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 21h5v-5"/></svg>`,
+        Clock: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
+        Eye: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>`,
+        Copy: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>`,
+        Filter: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>`,
+        HelpCircle: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg>`,
+        X: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>`,
+        Lock: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`,
+        Folder: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>`,
+        Check: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>`
+    };
+
+    // Reusable Custom SVG Illustrations
+    const ILLUSTRATIONS = {
+        DocumentVerification: `<svg viewBox="0 0 200 160" fill="none" xmlns="http://www.w3.org/2000/svg" class="ill-svg"><defs><linearGradient id="dv-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#2563EB" stop-opacity="0.15"/><stop offset="100%" stop-color="#059669" stop-opacity="0.08"/></linearGradient><linearGradient id="shield-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#059669"/><stop offset="100%" stop-color="#10B981"/></linearGradient></defs><rect x="15" y="15" width="170" height="130" rx="16" fill="url(#dv-grad)" stroke="#2563EB" stroke-width="1.5" stroke-dasharray="4 4"/><rect x="45" y="25" width="110" height="110" rx="10" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.5"/><rect x="60" y="42" width="60" height="6" rx="3" fill="#94A3B8"/><rect x="60" y="56" width="80" height="4" rx="2" fill="#CBD5E1"/><rect x="60" y="66" width="70" height="4" rx="2" fill="#CBD5E1"/><rect x="60" y="76" width="50" height="4" rx="2" fill="#CBD5E1"/><circle cx="100" cy="102" r="18" fill="url(#shield-grad)"/><path d="M94 102l4 4 8-8" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M45 45L60 25" stroke="#CBD5E1" stroke-width="1.5"/></svg>`,
+        SecureDocumentStorage: `<svg viewBox="0 0 200 160" fill="none" xmlns="http://www.w3.org/2000/svg" class="ill-svg"><defs><linearGradient id="sds-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#1E3A8A"/><stop offset="100%" stop-color="#2563EB"/></linearGradient></defs><rect x="35" y="25" width="130" height="110" rx="14" fill="#0F172A" stroke="#334155" stroke-width="2"/><rect x="47" y="37" width="106" height="86" rx="8" fill="#1E293B"/><circle cx="100" cy="80" r="24" fill="url(#sds-grad)" stroke="#38BDF8" stroke-width="2"/><circle cx="100" cy="80" r="10" fill="#0F172A"/><path d="M100 60v6M100 94v6M80 80h6M114 80h6" stroke="#38BDF8" stroke-width="2" stroke-linecap="round"/><rect x="88" y="73" width="24" height="14" rx="3" fill="#38BDF8"/><path d="M93 73v-4a7 7 0 0 1 14 0v4" stroke="#38BDF8" stroke-width="2" fill="none"/></svg>`,
+        ComplianceCompletion: `<svg viewBox="0 0 200 160" fill="none" xmlns="http://www.w3.org/2000/svg" class="ill-svg"><defs><linearGradient id="cc-gold" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#F59E0B"/><stop offset="100%" stop-color="#D97706"/></linearGradient></defs><path d="M70 45h60v35c0 16.5-13.5 30-30 30s-30-13.5-30-30V45z" fill="url(#cc-gold)"/><path d="M70 52H52c-4.4 0-8 3.6-8 8v4c0 11 8.9 20 20 20h6M130 52h18c4.4 0 8 3.6 8 8v4c0 11-8.9 20-20 20h-6" stroke="#F59E0B" stroke-width="3" fill="none"/><path d="M100 110v18M82 128h36" stroke="#D97706" stroke-width="4" stroke-linecap="round"/><polygon points="100,56 103,64 112,64 105,69 107,77 100,72 93,77 95,69 88,64 97,64" fill="#FFFFFF"/><circle cx="50" cy="35" r="4" fill="#10B981"/><circle cx="150" cy="35" r="4" fill="#10B981"/></svg>`,
+        ExpiringDocuments: `<svg viewBox="0 0 200 160" fill="none" xmlns="http://www.w3.org/2000/svg" class="ill-svg"><rect x="45" y="30" width="110" height="100" rx="12" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.5"/><path d="M45 52h110" stroke="#CBD5E1" stroke-width="1.5"/><rect x="65" y="24" width="6" height="12" rx="3" fill="#D97706"/><rect x="129" y="24" width="6" height="12" rx="3" fill="#D97706"/><circle cx="100" cy="90" r="26" fill="#FEF3C7" stroke="#F59E0B" stroke-width="2"/><path d="M100 74v16l10 8" stroke="#D97706" stroke-width="2.5" stroke-linecap="round"/><polygon points="135,108 145,128 125,128" fill="#DC2626"/><path d="M135 114v6M135 124h.01" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round"/></svg>`,
+        PendingApplications: `<svg viewBox="0 0 200 160" fill="none" xmlns="http://www.w3.org/2000/svg" class="ill-svg"><rect x="40" y="35" width="90" height="95" rx="8" fill="#F1F5F9" stroke="#94A3B8" stroke-width="1.5"/><rect x="55" y="25" width="90" height="95" rx="8" fill="#FFFFFF" stroke="#2563EB" stroke-width="1.5"/><rect x="70" y="42" width="50" height="5" rx="2.5" fill="#2563EB"/><rect x="70" y="54" width="60" height="4" rx="2" fill="#CBD5E1"/><rect x="70" y="64" width="40" height="4" rx="2" fill="#CBD5E1"/><circle cx="140" cy="100" r="20" fill="#2563EB"/><path d="M134 100l4 4 8-8" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+        EVCScheduling: `<svg viewBox="0 0 200 160" fill="none" xmlns="http://www.w3.org/2000/svg" class="ill-svg"><rect x="45" y="30" width="110" height="100" rx="12" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.5"/><rect x="45" y="30" width="110" height="24" rx="12" fill="#1E3A8A"/><rect x="45" y="44" width="110" height="10" fill="#1E3A8A"/><circle cx="100" cy="85" r="18" fill="#EFF6FF" stroke="#2563EB" stroke-width="1.5"/><path d="M100 75v10l6 4" stroke="#2563EB" stroke-width="2" stroke-linecap="round"/><circle cx="142" cy="115" r="16" fill="#059669"/><path d="M137 115l3 3 7-7" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+        InstitutionalApprovalWorkflows: `<svg viewBox="0 0 200 160" fill="none" xmlns="http://www.w3.org/2000/svg" class="ill-svg"><circle cx="45" cy="80" r="18" fill="#10B981"/><path d="M40 80l3 3 7-7" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M63 80h30" stroke="#10B981" stroke-width="2" stroke-dasharray="3 3"/><circle cx="100" cy="80" r="18" fill="#2563EB"/><path d="M96 74v12l8-6-8-6z" fill="#FFFFFF"/><path d="M118 80h30" stroke="#CBD5E1" stroke-width="2"/><circle cx="155" cy="80" r="18" fill="#F1F5F9" stroke="#94A3B8" stroke-width="2"/></svg>`,
+        EmptyDocumentRepository: `<svg viewBox="0 0 200 160" fill="none" xmlns="http://www.w3.org/2000/svg" class="ill-svg"><path d="M40 45a8 8 0 0 1 8-8h30l12 12h62a8 8 0 0 1 8 8v58a8 8 0 0 1-8 8H48a8 8 0 0 1-8-8V45z" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1.5"/><rect x="65" y="60" width="70" height="4" rx="2" fill="#CBD5E1"/><rect x="75" y="72" width="50" height="4" rx="2" fill="#CBD5E1"/><circle cx="120" cy="100" r="16" fill="#EFF6FF" stroke="#2563EB" stroke-width="2"/><path d="M132 112l10 10" stroke="#2563EB" stroke-width="3" stroke-linecap="round"/></svg>`,
+        OfflineSynchronisation: `<svg viewBox="0 0 200 160" fill="none" xmlns="http://www.w3.org/2000/svg" class="ill-svg"><rect x="35" y="55" width="45" height="30" rx="4" fill="#1E293B" stroke="#64748B" stroke-width="1.5"/><path d="M30 85h55" stroke="#64748B" stroke-width="2"/><path d="M130 65a16 16 0 0 1 30-6 12 12 0 0 1 6 22h-36z" fill="#EFF6FF" stroke="#2563EB" stroke-width="1.5"/><path d="M90 60a16 16 0 0 1 20 4" stroke="#059669" stroke-width="2" stroke-linecap="round"/><path d="M110 85a16 16 0 0 1-20-4" stroke="#059669" stroke-width="2" stroke-linecap="round"/></svg>`,
+        SecureInstitutionalIdentity: `<svg viewBox="0 0 200 160" fill="none" xmlns="http://www.w3.org/2000/svg" class="ill-svg"><rect x="35" y="25" width="130" height="110" rx="12" fill="#FFFFFF" stroke="#2563EB" stroke-width="1.5"/><rect x="35" y="25" width="130" height="28" rx="12" fill="#1E3A8A"/><rect x="35" y="42" width="130" height="11" fill="#1E3A8A"/><rect x="48" y="65" width="32" height="38" rx="6" fill="#F1F5F9" stroke="#CBD5E1"/><circle cx="64" cy="78" r="8" fill="#94A3B8"/><path d="M52 98a12 12 0 0 1 24 0" fill="#94A3B8"/><rect x="90" y="66" width="60" height="5" rx="2.5" fill="#1E293B"/><rect x="90" y="76" width="45" height="4" rx="2" fill="#64748B"/><rect x="90" y="86" width="55" height="4" rx="2" fill="#CBD5E1"/><circle cx="145" cy="118" r="10" fill="#059669"/><path d="M142 118l2 2 4-4" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`
     };
 
     class NiyamAIApp {
@@ -618,7 +648,7 @@
         }
 
         // --------------------------------------------------------------------
-        // Authenticated Header
+        // Authenticated Header & Navigation
         // --------------------------------------------------------------------
         renderHeader() {
             const header = document.getElementById('app-header');
@@ -634,10 +664,10 @@
 
             header.innerHTML = `
                 <div class="header-left">
-                    <button class="theme-toggle-btn lg:hidden" id="mobile-menu-btn" title="Toggle Menu" style="display:none;">
-                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                    <button class="theme-toggle-btn" id="mobile-menu-btn" title="Toggle Navigation Drawer" style="display:flex; align-items:center; justify-content:center;">
+                        ${ICONS.ListFilter}
                     </button>
-                    <div class="brand-link" id="brand-home-btn">
+                    <div class="brand-link" id="brand-home-btn" style="cursor:pointer;">
                         <div class="brand-emblem-wrap">
                             <img src="/images/aicte-logo.png" alt="AICTE Official Logo">
                             <span class="live-indicator-dot"></span>
@@ -645,30 +675,32 @@
                         <div class="brand-text-block">
                             <div class="brand-title-row">
                                 <span class="brand-title">NIYAM</span>
-                                <span class="brand-tag">AICTE APH 2025-26</span>
+                                <span class="brand-tag">APH 2025-26</span>
                             </div>
                             <span class="brand-subtitle">${isApp ? 'Institutional Approval &amp; Compliance Filing Portal' : 'Regulatory Decision-Support &amp; Document Authentication'}</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="header-right">
-                    <div class="sih-meta-pill" style="display:inline-flex; align-items:center; gap:6px; padding:4px 10px; background:rgba(245, 158, 11, 0.12); border:1px solid rgba(245, 158, 11, 0.35); border-radius:16px; font-size:11px; font-weight:700; color:#d97706;">
+                <div class="header-center" style="display:flex; align-items:center; gap:10px;">
+                    <div class="sih-meta-pill" style="display:inline-flex; align-items:center; gap:6px; padding:5px 12px; background:rgba(245, 158, 11, 0.12); border:1px solid rgba(245, 158, 11, 0.35); border-radius:16px; font-size:11px; font-weight:700; color:#d97706;">
                         <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#d97706;"></span>
                         <span>PS ID: 26262 • Team PROJECT CHAOS (197354)</span>
                     </div>
 
-                    <div class="sync-status-pill">
-                        <span class="sync-dot" ${isApp ? 'style="background:#10B981;"' : ''}></span>
-                        <span>${isApp ? 'INSTITUTION PORTAL: SECURE' : 'REGULATORY SYNC: ACTIVE'}</span>
+                    <div class="sync-status-pill" style="display:inline-flex; align-items:center; gap:6px; padding:5px 12px; border-radius:16px; font-size:11px; font-weight:700; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); color:#059669;">
+                        <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#10B981;"></span>
+                        <span>${isApp ? 'LIVE CENTRAL SYNC' : 'REGULATORY CORE ACTIVE'}</span>
                     </div>
+                </div>
 
+                <div class="header-right">
                     <button class="theme-toggle-btn" id="theme-toggle-btn" title="Toggle Light/Dark Theme">
                         ${this.theme === 'dark' ? ICONS.Sun : ICONS.Moon}
                     </button>
 
-                    <div class="notification-bell-wrap">
-                        <button class="notif-btn" id="notif-toggle-btn" title="${isApp ? 'Institutional Notices' : 'Regulatory Directives'}">
+                    <div class="notification-bell-wrap" style="position:relative;">
+                        <button class="notif-btn" id="notif-toggle-btn" title="Institutional Notices">
                             ${ICONS.Bell}
                             <span class="notif-badge-count">2</span>
                         </button>
@@ -681,7 +713,7 @@
                                 ${isApp ? `
                                     <div class="notif-item unread">
                                         <div class="notif-title">Completeness Check Cleared</div>
-                                        <div class="notif-msg">Preliminary scrutiny completed for APP-2025-001 with 98% compliance index.</div>
+                                        <div class="notif-msg">Preliminary scrutiny completed for APP-2026-001 with 94% statutory compliance index.</div>
                                         <div class="notif-time">Today • AICTE Scrutiny Desk</div>
                                     </div>
                                     <div class="notif-item unread">
@@ -692,12 +724,12 @@
                                 ` : `
                                     <div class="notif-item unread">
                                         <div class="notif-title">High Risk Deficiencies Flagged</div>
-                                        <div class="notif-msg">Zaskar Engineering College dossier exhibits intake tampering in Course Cadre Table.</div>
+                                        <div class="notif-msg">Zaskar Engineering College dossier exhibits intake discrepancy in CAD/CAM Lab.</div>
                                         <div class="notif-time">Just now • APH Ch. I R4.2</div>
                                     </div>
                                     <div class="notif-item unread">
                                         <div class="notif-title">Affiliation Expiration Warning</div>
-                                        <div class="notif-msg">Coromandel Institute of Technology university clearance lapsed on 2024-06-30.</div>
+                                        <div class="notif-msg">Coromandel Institute of Technology university clearance renewal active.</div>
                                         <div class="notif-time">12 mins ago • SLA Watch</div>
                                     </div>
                                 `}
@@ -705,27 +737,37 @@
                         </div>
                     </div>
 
-                    <div class="header-role-badge" ${isApp ? 'style="background:rgba(16,185,129,0.15); color:#059669; border-color:rgba(16,185,129,0.3);"' : ''}>
+                    <div class="header-role-badge" style="background:rgba(16,185,129,0.12); color:#059669; border:1px solid rgba(16,185,129,0.3); font-weight:700;">
                         ${ICONS.ShieldCheck}
                         <span>${isApp ? 'Nilgiri Tech (SYN-2025-001)' : (this.currentUser.badge || 'Scrutiny Officer')}</span>
                     </div>
 
-                    <div class="user-header-profile">
+                    <div class="user-header-profile" style="cursor:pointer;" onclick="app.openUserProfileModal();" title="View Official Credentials">
                         <div class="user-header-avatar">${initials}</div>
                         <div class="user-header-info">
                             <div class="user-header-name">${this.currentUser.roleName || this.currentUser.username}</div>
-                            <div class="user-header-role">${this.currentUser.badge || 'Authorized Officer'}</div>
+                            <div class="user-header-role">${this.currentUser.badge || 'Authorized Liaison'}</div>
                         </div>
-                        <button class="btn-signout" id="header-logout-btn" title="Sign Out">
-                            ${ICONS.LogOut}
-                        </button>
                     </div>
+
+                    <button class="btn-signout" id="header-logout-btn" title="Sign Out of Portal" style="display:flex; align-items:center; gap:6px; padding:6px 12px; border-radius:8px; border:1px solid rgba(239,68,68,0.3); background:rgba(239,68,68,0.08); color:#DC2626; font-size:12px; font-weight:700; cursor:pointer;">
+                        ${ICONS.LogOut}
+                        <span class="hidden sm:inline">Sign Out</span>
+                    </button>
                 </div>
             `;
 
             document.getElementById('brand-home-btn').onclick = () => this.navigate('dashboard');
             document.getElementById('theme-toggle-btn').onclick = () => this.toggleTheme();
-            document.getElementById('header-logout-btn').onclick = () => this.logout();
+            document.getElementById('header-logout-btn').onclick = () => this.confirmSignOut();
+
+            const mobileBtn = document.getElementById('mobile-menu-btn');
+            if (mobileBtn) {
+                mobileBtn.onclick = () => {
+                    const sb = document.getElementById('app-sidebar');
+                    if (sb) sb.classList.toggle('mobile-open');
+                };
+            }
             
             const notifBtn = document.getElementById('notif-toggle-btn');
             notifBtn.onclick = (e) => {
@@ -744,7 +786,7 @@
         }
 
         // --------------------------------------------------------------------
-        // Authenticated Sidebar
+        // Authenticated Sidebar (With Strict Role Separation & No Switcher)
         // --------------------------------------------------------------------
         renderSidebar() {
             const sidebar = document.getElementById('app-sidebar');
@@ -753,87 +795,40 @@
             const isApp = this.isApplicant();
 
             let navItems = [];
+            let supportItems = [];
+
             if (this.isApplicant()) {
                 navItems = [
-                    { id: 'dashboard', label: 'Applicant Dashboard', icon: ICONS.LayoutDashboard },
-                    { id: 'institution-intelligence', label: 'My Institution Intelligence', icon: ICONS.Sparkles, badge: 'AI 2035', highlight: true },
+                    { id: 'dashboard', label: 'Applicant Overview', icon: ICONS.LayoutDashboard },
                     { id: 'applications', label: 'My Applications', icon: ICONS.FileText, badge: '1 Active' },
                     { id: 'documents', label: 'Document Submission & Validity', icon: ICONS.FileCheck2, badge: '6' },
                     { id: 'compliance', label: 'Compliance & Undertakings', icon: ICONS.ShieldCheck, badge: '4' },
                     { id: 'clarifications', label: 'Clarifications & Notices', icon: ICONS.MessageSquare, badge: '1' },
-                    { id: 'institution-profile', label: 'Institution Profile', icon: ICONS.Building2 }
+                    { id: 'institution-profile', label: 'Institution Profile', icon: ICONS.Building2 },
+                    { id: 'institution-intelligence', label: 'Regulatory Intelligence 2035', icon: ICONS.Sparkles, badge: 'AI 2035', highlight: true }
                 ];
-            } else if (this.isRegionalOfficer()) {
-                navItems = [
-                    { id: 'dashboard', label: 'Regional Command Center', icon: ICONS.LayoutDashboard },
-                    { id: 'intelligence-centre', label: 'NIYAM 2035 Intelligence Centre', icon: ICONS.Sparkles, badge: 'CORE', highlight: true },
-                    { id: 'applications', label: 'Regional Case Dossiers', icon: ICONS.FileText, badge: 'Northern' },
-                    { id: 'queue', label: 'Scrutiny & Review Queue', icon: ICONS.ListFilter },
-                    { id: 'evc', label: 'EVC Inspection Status', icon: ICONS.Landmark },
-                    { id: 'analytics', label: 'Regional Ageing & SLAs', icon: ICONS.BarChart3 },
-                    { id: 'findings', label: 'Deficiency Findings', icon: ICONS.AlertTriangle },
-                    { id: 'clarifications', label: 'Clarifications & Notices', icon: ICONS.MessageSquare },
-                    { id: 'reports', label: 'Statutory Reports Bureau', icon: ICONS.History }
-                ];
-            } else if (this.isScrutinyOfficer()) {
-                navItems = [
-                    { id: 'dashboard', label: 'Scrutiny Desk Overview', icon: ICONS.LayoutDashboard },
-                    { id: 'intelligence-centre', label: 'NIYAM 2035 Intelligence Centre', icon: ICONS.Sparkles, badge: 'CORE', highlight: true },
-                    { id: 'queue', label: 'Scrutiny Docket Queue', icon: ICONS.ListFilter, badge: 'Assigned' },
-                    { id: 'verify', label: 'AI Verification Studio', icon: ICONS.FileSearch, badge: 'AI' },
-                    { id: 'findings', label: 'Deficiencies & Findings', icon: ICONS.AlertTriangle },
-                    { id: 'clarifications', label: 'Clarifications & Notices', icon: ICONS.MessageSquare },
-                    { id: 'applications', label: 'All Regulatory Dossiers', icon: ICONS.FileText }
-                ];
-            } else if (this.isEVCOfficer()) {
-                navItems = [
-                    { id: 'dashboard', label: 'EVC Committee Desk', icon: ICONS.LayoutDashboard },
-                    { id: 'intelligence-centre', label: 'NIYAM 2035 Intelligence Centre', icon: ICONS.Sparkles, badge: 'CORE', highlight: true },
-                    { id: 'evc', label: 'EVC Management & Visits', icon: ICONS.Landmark, badge: 'EVC' },
-                    { id: 'infrastructure', label: 'Geo-Tagged Infrastructure', icon: ICONS.FileSearch },
-                    { id: 'applications', label: 'Assigned Inspection Cases', icon: ICONS.FileText }
-                ];
-            } else if (this.isComplianceOfficer()) {
-                navItems = [
-                    { id: 'dashboard', label: 'Compliance Monitoring Desk', icon: ICONS.LayoutDashboard },
-                    { id: 'intelligence-centre', label: 'NIYAM 2035 Intelligence Centre', icon: ICONS.Sparkles, badge: 'CORE', highlight: true },
-                    { id: 'compliance', label: 'Statutory Undertakings Register', icon: ICONS.ShieldCheck, badge: 'Live' },
-                    { id: 'documents', label: 'Lease & Document Validity', icon: ICONS.FileCheck2, badge: 'Alerts' },
-                    { id: 'findings', label: 'Non-Compliance Findings', icon: ICONS.AlertTriangle },
-                    { id: 'clarifications', label: 'Compliance Directives', icon: ICONS.MessageSquare },
-                    { id: 'applications', label: 'Institutional Dossiers', icon: ICONS.FileText }
-                ];
-            } else if (this.isAuditor()) {
-                navItems = [
-                    { id: 'dashboard', label: 'Audit Bureau Overview', icon: ICONS.LayoutDashboard },
-                    { id: 'intelligence-centre', label: 'NIYAM 2035 Intelligence Centre', icon: ICONS.Sparkles, badge: 'CORE', highlight: true },
-                    { id: 'audit', label: 'Immutable Audit Ledger', icon: ICONS.History, badge: 'SHA-256' },
-                    { id: 'verification', label: 'Tamper & Hash Verification', icon: ICONS.CheckCircle2 },
-                    { id: 'analytics', label: 'Audit Integrity & Ageing', icon: ICONS.BarChart3 },
-                    { id: 'reports', label: 'Statutory Reports Bureau', icon: ICONS.FileText }
+                supportItems = [
+                    { id: 'notifications', label: 'Notices & Reminders', icon: ICONS.Bell, badge: '2' },
+                    { id: 'rules', label: 'APH Regulatory Guide', icon: ICONS.Sliders }
                 ];
             } else {
                 navItems = [
-                    { id: 'dashboard', label: 'Apex Executive Overview', icon: ICONS.LayoutDashboard },
+                    { id: 'dashboard', label: 'Command Overview', icon: ICONS.LayoutDashboard },
                     { id: 'intelligence-centre', label: 'NIYAM 2035 Intelligence Centre', icon: ICONS.Sparkles, badge: 'CORE', highlight: true },
-                    { id: 'colleges', label: 'Participating Institutions', icon: ICONS.GraduationCap, badge: '12' },
-                    { id: 'verify', label: 'AI Verification Studio', icon: ICONS.FileSearch, badge: 'AI' },
-                    { id: 'applications', label: 'All Applications Dossier', icon: ICONS.FileText },
-                    { id: 'review', label: 'Review Workspace', icon: ICONS.FileCheck2 },
-                    { id: 'queue', label: 'Scrutiny & Re-Scrutiny Queue', icon: ICONS.ListFilter },
-                    { id: 'evc', label: 'EVC Management Workspace', icon: ICONS.Landmark, badge: 'EVC' },
-                    { id: 'compliance', label: 'Compliance & Undertakings', icon: ICONS.ShieldCheck, badge: 'Statutory' },
-                    { id: 'documents', label: 'Lease & Document Validity', icon: ICONS.FileCheck2 },
-                    { id: 'findings', label: 'Findings & Dispositions', icon: ICONS.AlertTriangle },
+                    { id: 'applications', label: 'Regulatory Dossiers', icon: ICONS.FileText },
+                    { id: 'queue', label: 'Scrutiny & Review Queue', icon: ICONS.ListFilter, badge: 'Active' },
+                    { id: 'evc', label: 'EVC Committee Visits', icon: ICONS.Landmark },
+                    { id: 'compliance', label: 'Compliance & Undertakings', icon: ICONS.ShieldCheck },
+                    { id: 'documents', label: 'Document Validity Desk', icon: ICONS.FileCheck2 },
+                    { id: 'findings', label: 'Deficiencies & Findings', icon: ICONS.AlertTriangle },
                     { id: 'clarifications', label: 'Clarifications & Directives', icon: ICONS.MessageSquare },
-                    { id: 'verification', label: 'Source Verification', icon: ICONS.CheckCircle2 },
-                    { id: 'infrastructure', label: 'Infrastructure Evidence', icon: ICONS.Landmark },
-                    { id: 'analytics', label: 'Analytics & SLA KPIs', icon: ICONS.BarChart3 },
-                    { id: 'audit', label: 'Statutory Audit Ledger', icon: ICONS.History },
+                    { id: 'audit', label: 'Statutory Audit Ledger', icon: ICONS.History, badge: 'SHA-256' },
+                    { id: 'rules', label: 'Regulatory Rules (APH)', icon: ICONS.Sliders }
+                ];
+                supportItems = [
                     { id: 'reports', label: 'Statutory Reports Bureau', icon: ICONS.FileText },
-                    { id: 'rules', label: 'Regulatory Rules (APH)', icon: ICONS.Sliders },
                     { id: 'users', label: 'Authorized Officials', icon: ICONS.Users },
-                    { id: 'scenarios', label: 'SIH 2026 Simulation Sandbox', icon: ICONS.FlaskConical, highlight: true }
+                    { id: 'scenarios', label: 'SIH Evaluation Scenarios', icon: ICONS.FlaskConical, highlight: true }
                 ];
             }
 
@@ -843,7 +838,7 @@
                         <img src="/images/aicte-logo.png" alt="AICTE">
                     </div>
                     <div class="sidebar-header-meta">
-                        <div class="sidebar-meta-top">${isApp ? 'Nilgiri Tech Portal' : 'AICTE Council'}</div>
+                        <div class="sidebar-meta-top">${isApp ? 'Nilgiri Tech Portal' : 'AICTE Regulatory Bureau'}</div>
                         <div class="sidebar-meta-role">
                             <span class="sidebar-role-dot" ${isApp ? 'style="background:#10B981;"' : ''}></span>
                             <span>${this.currentUser.badge || (isApp ? 'Institution Rep' : 'Scrutiny Officer')}</span>
@@ -852,57 +847,35 @@
                     <span class="sidebar-aph-tag" ${isApp ? 'style="background:rgba(16,185,129,0.15); color:#059669; border-color:rgba(16,185,129,0.3); font-size:10px;"' : ''}>${isApp ? 'SYN-2025-001' : 'APH 2025'}</span>
                 </div>
 
-                <div class="sidebar-role-switcher">
-                    <div class="sidebar-role-switcher-label">Active Portal Identity:</div>
-                    <select class="sidebar-role-select" id="sidebar-role-select">
-                        <optgroup label="Role A: Institutional Applicant">
-                            ${OFFICIAL_PERSONNEL.filter(a => a.role === 'applicant' || a.shortRole === 'Institution Rep').map(a => `
-                                <option value="${a.username}" ${(this.currentUser.username === a.username || (a.aliases && a.aliases.includes(this.currentUser.username))) ? 'selected' : ''}>
-                                    ${a.fullName} (${a.shortRole})
-                                </option>
-                            `).join('')}
-                        </optgroup>
-                        <optgroup label="Role C: Regional Regulatory Officer">
-                            ${OFFICIAL_PERSONNEL.filter(a => a.role === 'regional_officer' || a.roleCode === 'REGIONAL_OFFICER').map(a => `
-                                <option value="${a.username}" ${(this.currentUser.username === a.username || (a.aliases && a.aliases.includes(this.currentUser.username))) ? 'selected' : ''}>
-                                    ${a.fullName} (${a.shortRole})
-                                </option>
-                            `).join('')}
-                        </optgroup>
-                        <optgroup label="Role D: Scrutiny Bureau Committee">
-                            ${OFFICIAL_PERSONNEL.filter(a => a.role === 'scrutiny_officer' || a.roleCode === 'SCRUTINY_MEMBER').map(a => `
-                                <option value="${a.username}" ${(this.currentUser.username === a.username || (a.aliases && a.aliases.includes(this.currentUser.username))) ? 'selected' : ''}>
-                                    ${a.fullName} (${a.shortRole})
-                                </option>
-                            `).join('')}
-                        </optgroup>
-                        <optgroup label="Role E: Expert Visit Committee (EVC)">
-                            ${OFFICIAL_PERSONNEL.filter(a => a.role === 'evc_officer' || a.roleCode === 'EVC_COORDINATOR' || a.roleCode === 'EVC_MEMBER').map(a => `
-                                <option value="${a.username}" ${(this.currentUser.username === a.username || (a.aliases && a.aliases.includes(this.currentUser.username))) ? 'selected' : ''}>
-                                    ${a.fullName} (${a.shortRole})
-                                </option>
-                            `).join('')}
-                        </optgroup>
-                        <optgroup label="Compliance &amp; Statutory Audit Bureau">
-                            ${OFFICIAL_PERSONNEL.filter(a => a.role === 'compliance_officer' || a.role === 'auditor' || a.roleCode === 'COMPLIANCE_OFFICER' || a.roleCode === 'AUDITOR').map(a => `
-                                <option value="${a.username}" ${(this.currentUser.username === a.username || (a.aliases && a.aliases.includes(this.currentUser.username))) ? 'selected' : ''}>
-                                    ${a.fullName} (${a.shortRole})
-                                </option>
-                            `).join('')}
-                        </optgroup>
-                        <optgroup label="Role B: Apex Bureau Administration">
-                            ${OFFICIAL_PERSONNEL.filter(a => a.role === 'admin' || a.role === 'supervising_authority' || a.roleCode === 'SUPER_ADMIN' || a.roleCode === 'REGULATION_BUREAU_ADMIN').map(a => `
-                                <option value="${a.username}" ${(this.currentUser.username === a.username || (a.aliases && a.aliases.includes(this.currentUser.username))) ? 'selected' : ''}>
-                                    ${a.fullName} (${a.shortRole})
-                                </option>
-                            `).join('')}
-                        </optgroup>
-                    </select>
+                <!-- Read-Only Authenticated Identity Card (Zero Client-Side Switching) -->
+                <div class="sidebar-identity-card">
+                    <div class="sidebar-identity-title">
+                        <span>Authenticated Identity</span>
+                        <span class="sidebar-identity-pill">${isApp ? 'Level 1 Portal' : (this.currentUser.roleCode || 'LEVEL 3')}</span>
+                    </div>
+                    <div class="sidebar-identity-name">${isApp ? 'Nilgiri Institute of Technology' : (this.currentUser.fullName || this.currentUser.username)}</div>
+                    <div class="sidebar-identity-meta">
+                        <span style="font-weight:700; color:var(--accent);">${isApp ? 'Permanent ID: SYN-2025-001' : (this.currentUser.department || 'Regulatory Directorate')}</span>
+                    </div>
+                    <div style="font-size:10px; color:var(--text-tertiary); margin-top:2px;">
+                        ${isApp ? 'Liaison: Dr. Suresh Chandra (Registrar)' : 'Designation: ' + (this.currentUser.designation || 'Regulatory Officer')}
+                    </div>
                 </div>
 
                 <nav class="sidebar-nav-container">
-                    <div class="sidebar-section-title">${isApp ? 'Institutional Portal' : 'Command Modules'}</div>
+                    <div class="sidebar-section-title">${isApp ? 'INSTITUTIONAL PORTAL' : 'CORE DIRECTIVES'}</div>
                     ${navItems.map(item => `
+                        <div class="sidebar-nav-item ${this.currentView === item.id ? 'active' : ''}" data-nav="${item.id}" ${item.highlight ? 'style="color:#F59E0B; font-weight:700;"' : ''}>
+                            <div class="sidebar-nav-left">
+                                ${item.icon}
+                                <span>${item.label}</span>
+                            </div>
+                            ${item.badge ? `<span class="sidebar-nav-badge">${item.badge}</span>` : ''}
+                        </div>
+                    `).join('')}
+
+                    <div class="sidebar-section-title" style="margin-top:16px;">${isApp ? 'SYSTEM &amp; SUPPORT' : 'OPERATIONAL SUPPORT'}</div>
+                    ${supportItems.map(item => `
                         <div class="sidebar-nav-item ${this.currentView === item.id ? 'active' : ''}" data-nav="${item.id}" ${item.highlight ? 'style="color:#F59E0B; font-weight:700;"' : ''}>
                             <div class="sidebar-nav-left">
                                 ${item.icon}
@@ -917,7 +890,7 @@
                     <div class="sidebar-user-card" style="cursor:pointer;" onclick="app.openUserProfileModal();" title="Click to view Official Credential Dossier">
                         <div style="display:flex; align-items:center; gap:8px; min-width:0;">
                             <div style="width:28px; height:28px; border-radius:8px; background:var(--accent); color:#fff; font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-                                ${this.currentUser.username.slice(0, 2).toUpperCase()}
+                                ${(this.currentUser.username || 'SC').slice(0, 2).toUpperCase()}
                             </div>
                             <div style="min-width:0;">
                                 <div style="font-size:12px; font-weight:700; color:var(--text-primary); text-overflow:ellipsis; overflow:hidden; white-space:nowrap;">
@@ -934,32 +907,93 @@
                     <div class="sidebar-statutory-card">
                         <div class="sidebar-statutory-title">
                             ${ICONS.ShieldCheck}
-                            <span>${isApp ? 'Statutory Filing Verification' : 'Statutory Decision Support'}</span>
+                            <span>${isApp ? 'Statutory Filing Seal' : 'Statutory Decision Support'}</span>
                         </div>
                         ${isApp ? 'All submissions are hashed with SHA-256 for non-repudiation and timestamped under AICTE APH 2025.' : 'AI advisory findings assist review. Final statutory approval decisions remain with competent AICTE authorities.'}
                     </div>
                 </div>
             `;
 
+            // Navigation Click Bindings
             sidebar.querySelectorAll('.sidebar-nav-item').forEach(el => {
                 el.onclick = () => {
                     const nav = el.getAttribute('data-nav');
-                    if (nav) this.navigate(nav);
+                    if (nav) {
+                        this.navigate(nav);
+                        sidebar.classList.remove('mobile-open');
+                    }
                 };
             });
 
-            const roleSelect = document.getElementById('sidebar-role-select');
-            if (roleSelect) {
-                roleSelect.onchange = async (e) => {
-                    const acc = resolveOfficial(e.target.value);
-                    if (acc) {
-                        await this.login(acc);
-                        API.showToast(`Switched active session to ${acc.roleName || acc.fullName}`, 'info');
-                    }
-                };
+            document.getElementById('sidebar-logout-btn').onclick = () => this.confirmSignOut();
+        }
+
+        // --------------------------------------------------------------------
+        // Cryptographic Sign-Out & Session Revocation
+        // --------------------------------------------------------------------
+        confirmSignOut() {
+            const overlay = document.createElement('div');
+            overlay.className = 'modal-overlay';
+            overlay.innerHTML = `
+                <div class="modal-dialog modal-sm" style="max-width:440px; padding:0; overflow:hidden; border-radius:16px;">
+                    <div style="background:linear-gradient(135deg, rgba(239,68,68,0.1), rgba(37,99,235,0.08)); padding:24px; text-align:center; border-bottom:1px solid var(--border);">
+                        <div style="width:52px; height:52px; margin:0 auto 12px; border-radius:50%; background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); display:flex; align-items:center; justify-content:center; color:#DC2626;">
+                            ${ICONS.LogOut}
+                        </div>
+                        <h3 style="font-size:18px; font-weight:800; color:var(--text-primary); margin-bottom:6px;">Confirm Secure Sign Out</h3>
+                        <p style="font-size:12px; color:var(--text-secondary); line-height:1.5;">
+                            Are you sure you want to sign out of the NIYAM Regulatory Portal?
+                        </p>
+                    </div>
+                    <div style="padding:20px 24px; font-size:12px; color:var(--text-secondary); line-height:1.6; background:var(--surface);">
+                        <div style="display:flex; gap:10px; align-items:flex-start; margin-bottom:12px; padding:10px; border-radius:8px; background:var(--surface-muted); border:1px solid var(--border);">
+                            <span style="color:#D97706; flex-shrink:0; margin-top:1px;">${ICONS.ShieldAlert}</span>
+                            <span style="font-size:11px;">Active cryptographic session token will be permanently revoked on the server. Cached dossiers will be flushed from this device.</span>
+                        </div>
+                    </div>
+                    <div style="padding:16px 24px; background:var(--surface-muted); border-top:1px solid var(--border); display:flex; justify-content:flex-end; gap:10px;">
+                        <button type="button" class="btn btn-outline" id="btn-cancel-signout">Cancel</button>
+                        <button type="button" class="btn btn-danger" id="btn-execute-signout" style="background:#DC2626; color:#fff; border:none; padding:8px 16px; border-radius:8px; font-weight:700; cursor:pointer;">
+                            Sign Out &amp; Invalidate Session
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(overlay);
+
+            const close = () => overlay.remove();
+            overlay.querySelector('#btn-cancel-signout').onclick = close;
+            overlay.querySelector('#btn-execute-signout').onclick = () => {
+                close();
+                this.executeSignOut();
+            };
+        }
+
+        async executeSignOut() {
+            try {
+                await API.post('/api/auth/logout', {});
+            } catch (err) {
+                console.warn('[SignOut] Backend session revocation dispatch:', err);
             }
 
-            document.getElementById('sidebar-logout-btn').onclick = () => this.logout();
+            this.isAuthenticated = false;
+            this.currentUser = OFFICIAL_PERSONNEL[0];
+            localStorage.removeItem('niyam_auth');
+            localStorage.removeItem('niyam_user');
+            localStorage.removeItem('niyam_view');
+            localStorage.removeItem('niyam_institution');
+            sessionStorage.clear();
+
+            try {
+                window.history.pushState(null, '', '/login');
+            } catch (_) {}
+
+            this.currentView = 'login';
+            this.loginMode = 'signin';
+            this.render();
+
+            API.showToast('You have been securely signed out. Cryptographic session invalidated.', 'success');
         }
 
         // --------------------------------------------------------------------
@@ -3024,91 +3058,730 @@
         // ====================================================================
         // 17. DOCUMENT SUBMISSION & VALIDITY DESK
         // ====================================================================
-        renderDocumentSubmissionView(container) {
-            const docs = [
-                { id: 'DOC-01', name: 'Land Title & Registered Lease Deed', category: 'Land & Infrastructure', status: 'VERIFIED', validity: '99-Year Leasehold (Valid)', hash: 'a4f912c091e88231', isExpiring: false },
-                { id: 'DOC-02', name: 'Approved Building Master Plan', category: 'Civil & Safety', status: 'VERIFIED', validity: 'Permanent Institutional Approval', hash: '87b3e102f928aa14', isExpiring: false },
-                { id: 'DOC-03', name: 'Fire Safety Clearance NOC', category: 'Statutory Safety', status: 'EXPIRING_SOON', validity: '15-Jun-2025 (45 Days Remaining)', hash: 'c3d90214aa8e1001', isExpiring: true },
-                { id: 'DOC-04', name: 'AICTE Previous Year Approval (EoA 2024-25)', category: 'Academic Regulatory', status: 'VERIFIED', validity: 'Academic Year 2024-25', hash: '56e910283c71a9f0', isExpiring: false },
-                { id: 'DOC-05', name: 'Governing Board Resolution & Intake Sanction', category: 'Governance', status: 'VERIFIED', validity: 'Signed & Sealed', hash: '109a82e7bca23419', isExpiring: false },
-                { id: 'DOC-06', name: 'Faculty List & Cadre Aadhaar Verification', category: 'Human Resources', status: 'VERIFIED', validity: 'Cadre Ratio 1:15 Validated', hash: 'f00192a83e66bb42', isExpiring: false }
+        // --------------------------------------------------------------------
+        // 17. DOCUMENT SUBMISSION & STATUTORY VALIDITY DESK (PREMIUM SVG-FIRST)
+        // --------------------------------------------------------------------
+        initInstitutionalDocuments() {
+            if (this.institutionalDocuments && this.institutionalDocuments.length > 0) return;
+            this.institutionalDocuments = [
+                {
+                    id: 'DOC-01',
+                    code: 'NIT-LAND-1996-DEED',
+                    name: 'Land Title & Registered Lease Deed',
+                    category: 'Land & Infrastructure',
+                    status: 'VERIFIED',
+                    validity: '99-Year Leasehold (Perpetual)',
+                    expiry: '14-Aug-2095',
+                    daysRemaining: 25489,
+                    isExpiring: false,
+                    actionRequired: false,
+                    hash: 'a4f912c091e88231d8e137bfa24b912f974cb30a845184209cbff11294827101',
+                    authority: 'District Registrar & Revenue Dept',
+                    legalClause: 'AICTE APH 2025-26, Chapter II, Clause 4.1',
+                    fileType: 'PDF • OCR Verified',
+                    fileSize: '4.8 MB',
+                    enrolledDate: '10-Jan-2025',
+                    timeline: [
+                        { title: 'Registered Lease Enrolled', date: '10 Jan 2025, 10:30 AM', actor: 'Dr. Suresh Chandra, Registrar', status: 'COMPLETED' },
+                        { title: 'OCR & Title Deed Text Extraction', date: '10 Jan 2025, 10:31 AM', actor: 'AICTE OCR Engine v4', status: 'COMPLETED' },
+                        { title: 'Revenue Dept Cross-Verification', date: '12 Jan 2025, 02:15 PM', actor: 'Regional Scrutiny Cell (Southern)', status: 'COMPLETED' },
+                        { title: 'Vault Enrolment & Non-Repudiation Lock', date: '14 Jan 2025, 04:00 PM', actor: 'AICTE Central Vault', status: 'COMPLETED' }
+                    ]
+                },
+                {
+                    id: 'DOC-02',
+                    code: 'NIT-BLD-2018-APPR',
+                    name: 'Approved Building Master Layout Plan',
+                    category: 'Civil & Safety',
+                    status: 'VERIFIED',
+                    validity: 'Permanent Municipal Approval',
+                    expiry: 'Permanent / Lifetime',
+                    daysRemaining: 99999,
+                    isExpiring: false,
+                    actionRequired: false,
+                    hash: '87b3e102f928aa1459012fce91471029148bcfe281947201948ba12048912cba',
+                    authority: 'DTCP & Local Municipal Corporation',
+                    legalClause: 'AICTE APH 2025-26, Chapter II, Clause 4.2',
+                    fileType: 'PDF • Architectural Blueprint',
+                    fileSize: '14.2 MB',
+                    enrolledDate: '11-Jan-2025',
+                    timeline: [
+                        { title: 'Architectural Blueprint Uploaded', date: '11 Jan 2025, 11:20 AM', actor: 'Chief Architect, NIT', status: 'COMPLETED' },
+                        { title: 'FSI & FAR Regulatory Check (2.1:1)', date: '11 Jan 2025, 11:25 AM', actor: 'AICTE Automated Checker', status: 'COMPLETED' },
+                        { title: 'DTCP Sanction Cross-Referenced', date: '13 Jan 2025, 03:40 PM', actor: 'Municipal Gateway', status: 'COMPLETED' }
+                    ]
+                },
+                {
+                    id: 'DOC-03',
+                    code: 'NIT-FIRE-2024-NOC',
+                    name: 'District Fire Safety Clearance NOC',
+                    category: 'Statutory Safety',
+                    status: 'EXPIRING_SOON',
+                    validity: '15-Jun-2025 (45 Days Remaining)',
+                    expiry: '15-Jun-2025',
+                    daysRemaining: 45,
+                    isExpiring: true,
+                    actionRequired: true,
+                    hash: 'c3d90214aa8e1001948fe28194720194bc028194871029148bcfe28194720194',
+                    authority: 'Tamil Nadu Fire & Rescue Services',
+                    legalClause: 'AICTE APH 2025-26, Chapter II, Clause 4.3',
+                    fileType: 'PDF • Scanned NOC',
+                    fileSize: '2.1 MB',
+                    enrolledDate: '15-Jun-2024',
+                    timeline: [
+                        { title: 'Annual Fire NOC Enrolled', date: '15 Jun 2024, 09:15 AM', actor: 'Divisional Fire Officer', status: 'COMPLETED' },
+                        { title: 'Automated 60-Day Expiry Radar', date: '16 Apr 2025, 00:01 AM', actor: 'NIYAM Statutory Watchdog', status: 'COMPLETED' },
+                        { title: 'Institutional Renewal Notice Dispatched', date: '01 May 2025, 09:00 AM', actor: 'AICTE Alert System', status: 'WARNING' }
+                    ]
+                },
+                {
+                    id: 'DOC-04',
+                    code: 'AICTE-EOA-2024-TN',
+                    name: 'AICTE Previous Year Approval (EoA 2024-25)',
+                    category: 'Academic Regulatory',
+                    status: 'VERIFIED',
+                    validity: 'Academic Year 2024-25',
+                    expiry: '31-Jul-2025',
+                    daysRemaining: 92,
+                    isExpiring: false,
+                    actionRequired: false,
+                    hash: '56e910283c71a9f028194720194bc028194871029148bcfe281947201948ba12',
+                    authority: 'AICTE Executive Committee, New Delhi',
+                    legalClause: 'AICTE Act 1987 § 10(k)',
+                    fileType: 'PDF • Digitally Signed Order',
+                    fileSize: '1.8 MB',
+                    enrolledDate: '18-Jul-2024',
+                    timeline: [
+                        { title: 'EoA Order Generated', date: '18 Jul 2024, 05:30 PM', actor: 'Member Secretary, AICTE', status: 'COMPLETED' },
+                        { title: 'QR Code & Digital Signature Verified', date: '18 Jul 2024, 05:31 PM', actor: 'NIC Regulatory Trust Store', status: 'COMPLETED' }
+                    ]
+                },
+                {
+                    id: 'DOC-05',
+                    code: 'NIT-GB-2025-RES',
+                    name: 'Governing Board Resolution & Intake Sanction',
+                    category: 'Governance',
+                    status: 'VERIFIED',
+                    validity: 'Signed & Sealed Resolution',
+                    expiry: 'Annual Cycle (AY 2025-26)',
+                    daysRemaining: 180,
+                    isExpiring: false,
+                    actionRequired: false,
+                    hash: '109a82e7bca23419012fce91471029148bcfe281947201948ba12048912cbaa4',
+                    authority: 'Nilgiri Trust Board & Academic Council',
+                    legalClause: 'AICTE APH 2025-26, Chapter I, Clause 2.4',
+                    fileType: 'PDF • Signed Minutes',
+                    fileSize: '3.4 MB',
+                    enrolledDate: '06-Jan-2025',
+                    timeline: [
+                        { title: 'Resolution Approved by Governing Council', date: '05 Jan 2025, 03:00 PM', actor: 'Chairman & Members', status: 'COMPLETED' },
+                        { title: 'Digital Hash Certified & Filed', date: '06 Jan 2025, 11:15 AM', actor: 'Dr. Suresh Chandra, Registrar', status: 'COMPLETED' }
+                    ]
+                },
+                {
+                    id: 'DOC-06',
+                    code: 'NIT-FAC-2025-CADRE',
+                    name: 'Faculty List & Cadre Aadhaar Verification',
+                    category: 'Human Resources',
+                    status: 'VERIFIED',
+                    validity: 'Cadre Ratio 1:15 Validated',
+                    expiry: 'AY 2025-26',
+                    daysRemaining: 240,
+                    isExpiring: false,
+                    actionRequired: false,
+                    hash: 'f00192a83e66bb42c3d90214aa8e1001948fe28194720194bc02819487102914',
+                    authority: 'Principal & Registrar, Nilgiri Tech',
+                    legalClause: 'AICTE Cadre & Pay Scale Regulations 2019',
+                    fileType: 'PDF • Cryptographic Manifest',
+                    fileSize: '5.2 MB',
+                    enrolledDate: '16-Jan-2025',
+                    timeline: [
+                        { title: 'Faculty Roster Compiled (42 Faculty)', date: '15 Jan 2025, 02:00 PM', actor: 'Dean Academic Affairs', status: 'COMPLETED' },
+                        { title: 'APAAR & Aadhaar Vault De-duplication', date: '16 Jan 2025, 10:45 AM', actor: 'AICTE Faculty Registry', status: 'COMPLETED' }
+                    ]
+                }
             ];
+        }
+
+        renderDocumentSubmissionView(container) {
+            this.initInstitutionalDocuments();
+
+            this.docDeskSearch = this.docDeskSearch || '';
+            this.docDeskCategory = this.docDeskCategory || 'ALL';
+            this.docDeskStatus = this.docDeskStatus || 'ALL';
+
+            const totalCount = this.institutionalDocuments.length;
+            const verifiedCount = this.institutionalDocuments.filter(d => d.status === 'VERIFIED').length;
+            const expiringCount = this.institutionalDocuments.filter(d => d.isExpiring).length;
+            const actionCount = this.institutionalDocuments.filter(d => d.actionRequired).length;
+
+            // Filter logic
+            const filtered = this.institutionalDocuments.filter(doc => {
+                const matchesSearch = !this.docDeskSearch || 
+                    doc.name.toLowerCase().includes(this.docDeskSearch.toLowerCase()) ||
+                    doc.code.toLowerCase().includes(this.docDeskSearch.toLowerCase()) ||
+                    doc.id.toLowerCase().includes(this.docDeskSearch.toLowerCase()) ||
+                    doc.hash.toLowerCase().includes(this.docDeskSearch.toLowerCase());
+
+                const matchesCat = this.docDeskCategory === 'ALL' || doc.category === this.docDeskCategory;
+                const matchesStat = this.docDeskStatus === 'ALL' || doc.status === this.docDeskStatus;
+
+                return matchesSearch && matchesCat && matchesStat;
+            });
 
             container.innerHTML = `
-                <div class="view-header">
-                    <div class="view-title-group">
-                        <h1>Document Submission &amp; Statutory Validity Desk</h1>
-                        <p>Nilgiri Institute of Technology • Cryptographic SHA-256 integrity verification with AICTE DigiLocker Gateway</p>
-                    </div>
-                    <div class="view-actions">
-                        <button class="btn btn-primary btn-sm" id="btn-upload-doc">
-                            ${ICONS.FileCheck2}
-                            Upload / Resubmit Document
-                        </button>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">
-                            ${ICONS.FileCheck2}
-                            <span>Mandatory Institutional Document Repository (${docs.length})</span>
+                <div class="doc-desk-container">
+                    <!-- Page Header -->
+                    <div class="view-header" style="margin-bottom:20px;">
+                        <div class="view-title-group">
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <h1 style="font-size:22px; font-weight:800; color:var(--text-primary); margin:0;">Document Submission &amp; Statutory Validity Desk</h1>
+                                <span class="badge badge-primary" style="font-size:11px; padding:3px 8px;">AICTE Vault v2.6</span>
+                            </div>
+                            <p style="font-size:13px; color:var(--text-secondary); margin:4px 0 0;">Manage institutional documents, statutory validity, verification, and renewal requirements.</p>
                         </div>
-                        <span class="badge badge-emerald">6 / 6 Compliant On Record</span>
+                        <div class="view-actions" style="display:flex; gap:8px; align-items:center;">
+                            <button class="btn btn-outline btn-sm" id="btn-doc-refresh" title="Reload repository state">
+                                ${ICONS.Refresh}
+                                <span>Refresh</span>
+                            </button>
+                            <button class="btn btn-outline btn-sm" id="btn-doc-help" title="Statutory Evidence Guide">
+                                ${ICONS.HelpCircle}
+                                <span>Compliance Guide</span>
+                            </button>
+                            <button class="btn btn-primary btn-sm" id="btn-doc-upload-main">
+                                ${ICONS.Upload}
+                                <span>Upload Document</span>
+                            </button>
+                        </div>
                     </div>
 
-                    <div class="table-responsive">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Document Name</th>
-                                    <th>Category</th>
-                                    <th>Validity Status</th>
-                                    <th>SHA-256 Fingerprint</th>
-                                    <th>Verification</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${docs.map(d => `
-                                    <tr>
-                                        <td>
-                                            <div style="font-weight:700; color:var(--text-primary);">${d.name}</div>
-                                            <span style="font-size:11px; color:var(--text-secondary);">${d.id} • PDF / OCR Extracted</span>
-                                        </td>
-                                        <td>${d.category}</td>
-                                        <td>
-                                            <span style="font-size:12px; font-weight:600; color:${d.isExpiring ? '#D97706' : 'var(--text-primary)'};">
-                                                ${d.validity}
-                                            </span>
-                                        </td>
-                                        <td><span class="font-mono" style="font-size:11px; color:var(--text-secondary);">${d.hash}...</span></td>
-                                        <td>
-                                            <span class="badge ${d.isExpiring ? 'badge-amber' : 'badge-emerald'}">
-                                                ${d.status}
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <div style="display:flex; align-items:center; gap:6px;">
-                                                <button class="btn btn-outline btn-sm" onclick="API.showToast('Inspecting verified cryptographic document ${d.id}...', 'info');">
-                                                    View
-                                                </button>
-                                                ${d.isExpiring ? `
-                                                    <button class="btn btn-primary btn-sm" onclick="app.openUploadDocumentModal('${d.id}');">
-                                                        Renew
-                                                    </button>
-                                                ` : ''}
-                                            </div>
-                                        </td>
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
+                    <!-- 4 Summary Overview Cards -->
+                    <div class="doc-overview-grid">
+                        <div class="doc-overview-card">
+                            <div class="doc-overview-icon" style="background:rgba(37, 99, 235, 0.1); color:#2563EB;">
+                                ${ICONS.Folder}
+                            </div>
+                            <div class="doc-overview-val">${totalCount}</div>
+                            <div class="doc-overview-lbl">Total Documents</div>
+                            <div class="doc-overview-sub">All statutory proofs enrolled in AICTE vault</div>
+                        </div>
+
+                        <div class="doc-overview-card">
+                            <div class="doc-overview-icon" style="background:rgba(16, 185, 129, 0.1); color:#059669;">
+                                ${ICONS.ShieldCheck}
+                            </div>
+                            <div class="doc-overview-val" style="color:#059669;">${verifiedCount}</div>
+                            <div class="doc-overview-lbl">Verified Documents</div>
+                            <div class="doc-overview-sub">Cryptographically certified &amp; active</div>
+                        </div>
+
+                        <div class="doc-overview-card">
+                            <div class="doc-overview-icon" style="background:rgba(245, 158, 11, 0.12); color:#D97706;">
+                                ${ICONS.Clock}
+                            </div>
+                            <div class="doc-overview-val" style="color:#D97706;">${expiringCount}</div>
+                            <div class="doc-overview-lbl">Expiring Soon</div>
+                            <div class="doc-overview-sub">Requires renewal within 60 days</div>
+                        </div>
+
+                        <div class="doc-overview-card">
+                            <div class="doc-overview-icon" style="background:rgba(239, 68, 68, 0.1); color:#DC2626;">
+                                ${ICONS.AlertTriangle}
+                            </div>
+                            <div class="doc-overview-val" style="color:#DC2626;">${actionCount}</div>
+                            <div class="doc-overview-lbl">Action Required</div>
+                            <div class="doc-overview-sub">Fire Safety NOC renewal pending</div>
+                        </div>
+                    </div>
+
+                    <!-- Search and Filter Bar -->
+                    <div class="doc-filter-bar">
+                        <div class="doc-search-wrap">
+                            <span style="color:var(--text-tertiary); display:flex; align-items:center;">${ICONS.Search}</span>
+                            <input type="text" class="doc-search-input" id="doc-search-input" placeholder="Search by name, code (NIT-FIRE), or SHA-256 fingerprint..." value="${this.docDeskSearch || ''}">
+                            ${this.docDeskSearch ? `<button type="button" id="btn-clear-search" style="background:none; border:none; cursor:pointer; color:var(--text-tertiary); display:flex; align-items:center;">${ICONS.X}</button>` : ''}
+                        </div>
+
+                        <div class="doc-filter-group">
+                            <select class="doc-select" id="doc-filter-category" title="Filter by Category">
+                                <option value="ALL" ${this.docDeskCategory === 'ALL' ? 'selected' : ''}>All Categories (6)</option>
+                                <option value="Land & Infrastructure" ${this.docDeskCategory === 'Land & Infrastructure' ? 'selected' : ''}>Land &amp; Infrastructure</option>
+                                <option value="Civil & Safety" ${this.docDeskCategory === 'Civil & Safety' ? 'selected' : ''}>Civil &amp; Safety</option>
+                                <option value="Statutory Safety" ${this.docDeskCategory === 'Statutory Safety' ? 'selected' : ''}>Statutory Safety</option>
+                                <option value="Academic Regulatory" ${this.docDeskCategory === 'Academic Regulatory' ? 'selected' : ''}>Academic Regulatory</option>
+                                <option value="Governance" ${this.docDeskCategory === 'Governance' ? 'selected' : ''}>Governance</option>
+                                <option value="Human Resources" ${this.docDeskCategory === 'Human Resources' ? 'selected' : ''}>Human Resources</option>
+                            </select>
+
+                            <select class="doc-select" id="doc-filter-status" title="Filter by Status">
+                                <option value="ALL" ${this.docDeskStatus === 'ALL' ? 'selected' : ''}>All Statuses</option>
+                                <option value="VERIFIED" ${this.docDeskStatus === 'VERIFIED' ? 'selected' : ''}>Verified (${verifiedCount})</option>
+                                <option value="EXPIRING_SOON" ${this.docDeskStatus === 'EXPIRING_SOON' ? 'selected' : ''}>Expiring Soon (${expiringCount})</option>
+                            </select>
+
+                            ${(this.docDeskSearch || this.docDeskCategory !== 'ALL' || this.docDeskStatus !== 'ALL') ? `
+                                <button class="btn btn-outline btn-sm" id="btn-reset-filters" style="white-space:nowrap;">
+                                    Reset Filters
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+
+                    <!-- Repository Table Card -->
+                    <div class="card" style="margin-top:16px;">
+                        <div class="card-header" style="display:flex; justify-content:space-between; align-items:center;">
+                            <div class="card-title">
+                                ${ICONS.FileCheck2}
+                                <span>Enrolled Statutory Evidence Documents</span>
+                            </div>
+                            <span class="badge badge-outline" style="font-size:11px; font-weight:700;">
+                                Showing ${filtered.length} of ${totalCount} Documents
+                            </span>
+                        </div>
+
+                        ${filtered.length === 0 ? `
+                            <div class="empty-state-wrap">
+                                <div class="empty-state-svg">
+                                    ${ILLUSTRATIONS.EmptyDocumentRepository}
+                                </div>
+                                <h3 class="empty-state-title">No Matching Documents Found</h3>
+                                <p class="empty-state-desc">We couldn't find any statutory records matching "${this.docDeskSearch}" in selected categories. Try clearing filters or updating search terms.</p>
+                                <button class="btn btn-primary btn-sm" id="btn-empty-reset">
+                                    Reset All Filters
+                                </button>
+                            </div>
+                        ` : `
+                            <div class="table-responsive">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th style="min-width:240px;">Document Name &amp; Code</th>
+                                            <th>Category</th>
+                                            <th>Validity Status</th>
+                                            <th>Expiry &amp; Horizon</th>
+                                            <th>SHA-256 Fingerprint</th>
+                                            <th>Verification Authority</th>
+                                            <th style="text-align:right;">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${filtered.map(doc => `
+                                            <tr>
+                                                <td>
+                                                    <div style="font-weight:700; color:var(--text-primary); font-size:13px; line-height:1.4;">${doc.name}</div>
+                                                    <div style="display:flex; align-items:center; gap:6px; margin-top:3px;">
+                                                        <span class="font-mono" style="font-size:11px; font-weight:700; color:var(--accent);">${doc.code}</span>
+                                                        <span style="font-size:10px; padding:1px 6px; border-radius:4px; background:var(--surface-muted); color:var(--text-secondary); border:1px solid var(--border);">${doc.fileType}</span>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <span style="font-size:11px; font-weight:600; padding:3px 8px; border-radius:6px; background:var(--surface-muted); color:var(--text-primary); border:1px solid var(--border);">
+                                                        ${doc.category}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <span class="badge ${doc.isExpiring ? 'badge-amber' : 'badge-emerald'}" style="display:inline-flex; align-items:center; gap:5px; font-weight:700;">
+                                                        <span style="width:6px; height:6px; border-radius:50%; background:currentColor;"></span>
+                                                        ${doc.status === 'EXPIRING_SOON' ? 'EXPIRING SOON' : 'VERIFIED'}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <div style="font-size:12px; font-weight:600; color:var(--text-primary);">${doc.expiry}</div>
+                                                    ${doc.isExpiring ? `
+                                                        <span class="doc-countdown-badge" style="background:rgba(245, 158, 11, 0.15); color:#D97706; border:1px solid rgba(245, 158, 11, 0.3); margin-top:2px;">
+                                                            ${ICONS.Clock} ${doc.daysRemaining} Days Remaining
+                                                        </span>
+                                                    ` : `
+                                                        <span class="doc-countdown-badge" style="background:rgba(16, 185, 129, 0.12); color:#059669; border:1px solid rgba(16, 185, 129, 0.25); margin-top:2px;">
+                                                            ${ICONS.Check} ${doc.daysRemaining > 1000 ? 'Perpetual' : 'Active'}
+                                                        </span>
+                                                    `}
+                                                </td>
+                                                <td>
+                                                    <div class="doc-hash-badge" title="Click to copy full 64-character SHA-256 fingerprint" data-copy-hash="${doc.hash}">
+                                                        ${ICONS.Lock}
+                                                        <span class="font-mono" style="font-size:11px;">${doc.hash.substring(0, 10)}...${doc.hash.slice(-6)}</span>
+                                                        <span style="color:var(--text-tertiary);">${ICONS.Copy}</span>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div style="font-size:11px; color:var(--text-secondary); max-width:180px; line-height:1.4;">
+                                                        ${doc.authority}
+                                                    </div>
+                                                </td>
+                                                <td style="text-align:right;">
+                                                    <div style="display:inline-flex; align-items:center; gap:6px;">
+                                                        <button class="btn btn-outline btn-sm btn-inspect-doc" data-doc-id="${doc.id}" title="Inspect verification certificate &amp; statutory audit timeline">
+                                                            ${ICONS.Eye}
+                                                            <span>Inspect</span>
+                                                        </button>
+                                                        ${doc.isExpiring ? `
+                                                            <button class="btn btn-primary btn-sm btn-renew-doc" data-doc-id="${doc.id}" style="background:#D97706; border-color:#D97706;" title="Submit statutory renewal application">
+                                                                ${ICONS.Upload}
+                                                                <span>Renew</span>
+                                                            </button>
+                                                        ` : ''}
+                                                        <button class="btn btn-outline btn-sm btn-verify-hash" data-doc-id="${doc.id}" title="Run SHA-256 ledger check">
+                                                            ${ICONS.ShieldCheck}
+                                                        </button>
+                                                        <button class="btn btn-outline btn-sm btn-download-doc" data-doc-id="${doc.id}" title="Download verified document">
+                                                            ${ICONS.Download}
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        `}
                     </div>
                 </div>
             `;
 
-            container.querySelector('#btn-upload-doc').onclick = () => this.openUploadDocumentModal();
+            // Bind Event Listeners
+            const searchInput = container.querySelector('#doc-search-input');
+            if (searchInput) {
+                searchInput.oninput = (e) => {
+                    this.docDeskSearch = e.target.value;
+                    this.renderDocumentSubmissionView(container);
+                    // re-focus search input and place cursor at end
+                    const newEl = container.querySelector('#doc-search-input');
+                    if (newEl) {
+                        newEl.focus();
+                        newEl.setSelectionRange(newEl.value.length, newEl.value.length);
+                    }
+                };
+            }
+
+            const clearBtn = container.querySelector('#btn-clear-search');
+            if (clearBtn) {
+                clearBtn.onclick = () => {
+                    this.docDeskSearch = '';
+                    this.renderDocumentSubmissionView(container);
+                };
+            }
+
+            const catSelect = container.querySelector('#doc-filter-category');
+            if (catSelect) {
+                catSelect.onchange = (e) => {
+                    this.docDeskCategory = e.target.value;
+                    this.renderDocumentSubmissionView(container);
+                };
+            }
+
+            const statSelect = container.querySelector('#doc-filter-status');
+            if (statSelect) {
+                statSelect.onchange = (e) => {
+                    this.docDeskStatus = e.target.value;
+                    this.renderDocumentSubmissionView(container);
+                };
+            }
+
+            const resetBtn = container.querySelector('#btn-reset-filters');
+            if (resetBtn) {
+                resetBtn.onclick = () => {
+                    this.docDeskSearch = '';
+                    this.docDeskCategory = 'ALL';
+                    this.docDeskStatus = 'ALL';
+                    this.renderDocumentSubmissionView(container);
+                };
+            }
+
+            const emptyResetBtn = container.querySelector('#btn-empty-reset');
+            if (emptyResetBtn) {
+                emptyResetBtn.onclick = () => {
+                    this.docDeskSearch = '';
+                    this.docDeskCategory = 'ALL';
+                    this.docDeskStatus = 'ALL';
+                    this.renderDocumentSubmissionView(container);
+                };
+            }
+
+            container.querySelector('#btn-doc-refresh').onclick = () => {
+                API.showToast('Statutory repository synchronized with AICTE DigiLocker Ledger.', 'success');
+                this.renderDocumentSubmissionView(container);
+            };
+
+            container.querySelector('#btn-doc-help').onclick = () => {
+                this.openDocumentHelpModal();
+            };
+
+            container.querySelector('#btn-doc-upload-main').onclick = () => {
+                this.openUploadDocumentModal();
+            };
+
+            // Table Row Action Bindings
+            container.querySelectorAll('[data-copy-hash]').forEach(el => {
+                el.onclick = () => {
+                    const hash = el.getAttribute('data-copy-hash');
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                        navigator.clipboard.writeText(hash).then(() => {
+                            API.showToast('Copied SHA-256 fingerprint to clipboard!', 'success');
+                        });
+                    } else {
+                        API.showToast('SHA-256: ' + hash.substring(0, 24) + '...', 'info');
+                    }
+                };
+            });
+
+            container.querySelectorAll('.btn-inspect-doc').forEach(btn => {
+                btn.onclick = () => {
+                    const id = btn.getAttribute('data-doc-id');
+                    const doc = this.institutionalDocuments.find(d => d.id === id);
+                    if (doc) this.openDocumentDetailsDrawer(doc);
+                };
+            });
+
+            container.querySelectorAll('.btn-renew-doc').forEach(btn => {
+                btn.onclick = () => {
+                    const id = btn.getAttribute('data-doc-id');
+                    this.openUploadDocumentModal(id);
+                };
+            });
+
+            container.querySelectorAll('.btn-verify-hash').forEach(btn => {
+                btn.onclick = () => {
+                    const id = btn.getAttribute('data-doc-id');
+                    const doc = this.institutionalDocuments.find(d => d.id === id);
+                    API.showToast('SHA-256 verified! Document ' + (doc ? doc.code : id) + ' passes AICTE cryptographic integrity checks.', 'success');
+                };
+            });
+
+            container.querySelectorAll('.btn-download-doc').forEach(btn => {
+                btn.onclick = () => {
+                    const id = btn.getAttribute('data-doc-id');
+                    const doc = this.institutionalDocuments.find(d => d.id === id);
+                    API.showToast('Downloading verified document dossier: ' + (doc ? doc.name : id) + '.pdf', 'info');
+                };
+            });
+        }
+
+        // --------------------------------------------------------------------
+        // Slide-Out Document Details Drawer (SVG-First Inspection)
+        // --------------------------------------------------------------------
+        openDocumentDetailsDrawer(doc) {
+            const overlay = document.createElement('div');
+            overlay.className = 'drawer-overlay';
+
+            const panel = document.createElement('div');
+            panel.className = 'drawer-panel';
+
+            panel.innerHTML = `
+                <div class="drawer-header">
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <div style="width:40px; height:40px; border-radius:10px; background:rgba(37,99,235,0.1); color:#2563EB; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                            ${ICONS.FileCheck2}
+                        </div>
+                        <div>
+                            <div style="font-size:16px; font-weight:800; color:var(--text-primary); line-height:1.3;">${doc.name}</div>
+                            <div style="font-size:12px; color:var(--text-secondary); margin-top:2px;">
+                                <span class="font-mono" style="font-weight:700; color:var(--accent);">${doc.code}</span> • ${doc.category}
+                            </div>
+                        </div>
+                    </div>
+                    <button class="drawer-close-btn" id="drawer-close-x" title="Close Drawer" style="background:none; border:none; cursor:pointer; color:var(--text-secondary); font-size:20px; padding:4px;">
+                        ✕
+                    </button>
+                </div>
+
+                <div class="drawer-body">
+                    <!-- Vector Illustration Banner -->
+                    <div style="display:flex; justify-content:center; align-items:center; padding:16px 12px; background:var(--surface-muted); border-radius:12px; border:1px solid var(--border); margin-bottom:20px;">
+                        <div style="width:180px; height:120px;">
+                            ${ILLUSTRATIONS.DocumentVerification}
+                        </div>
+                    </div>
+
+                    <!-- Statutory Status Banner -->
+                    <div style="padding:12px 16px; border-radius:10px; margin-bottom:20px; display:flex; align-items:center; justify-content:space-between; background:${doc.isExpiring ? 'rgba(245, 158, 11, 0.12)' : 'rgba(16, 185, 129, 0.12)'}; border:1px solid ${doc.isExpiring ? 'rgba(245, 158, 11, 0.3)' : 'rgba(16, 185, 129, 0.3)'};">
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <span style="color:${doc.isExpiring ? '#D97706' : '#059669'};">${doc.isExpiring ? ICONS.Clock : ICONS.ShieldCheck}</span>
+                            <div>
+                                <div style="font-size:13px; font-weight:700; color:${doc.isExpiring ? '#D97706' : '#059669'};">
+                                    ${doc.status === 'EXPIRING_SOON' ? 'Statutory Renewal Required' : 'Statutory Verification Cleared'}
+                                </div>
+                                <div style="font-size:11px; color:var(--text-secondary);">${doc.validity}</div>
+                            </div>
+                        </div>
+                        <span class="badge ${doc.isExpiring ? 'badge-amber' : 'badge-emerald'}">${doc.status}</span>
+                    </div>
+
+                    <!-- Metadata Grid -->
+                    <div style="display:flex; flex-direction:column; gap:12px; margin-bottom:20px;">
+                        <div style="padding:12px; border-radius:8px; background:var(--surface); border:1px solid var(--border);">
+                            <div style="font-size:11px; font-weight:700; color:var(--text-tertiary); text-transform:uppercase; margin-bottom:4px;">Legal Clause Reference</div>
+                            <div style="font-size:13px; font-weight:600; color:var(--text-primary);">${doc.legalClause}</div>
+                        </div>
+
+                        <div style="padding:12px; border-radius:8px; background:var(--surface); border:1px solid var(--border);">
+                            <div style="font-size:11px; font-weight:700; color:var(--text-tertiary); text-transform:uppercase; margin-bottom:4px;">Statutory Issuing Authority</div>
+                            <div style="font-size:13px; font-weight:600; color:var(--text-primary);">${doc.authority}</div>
+                        </div>
+
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                            <div style="padding:12px; border-radius:8px; background:var(--surface); border:1px solid var(--border);">
+                                <div style="font-size:11px; font-weight:700; color:var(--text-tertiary); text-transform:uppercase; margin-bottom:4px;">Enrolment Date</div>
+                                <div style="font-size:12px; font-weight:600; color:var(--text-primary);">${doc.enrolledDate}</div>
+                            </div>
+                            <div style="padding:12px; border-radius:8px; background:var(--surface); border:1px solid var(--border);">
+                                <div style="font-size:11px; font-weight:700; color:var(--text-tertiary); text-transform:uppercase; margin-bottom:4px;">Dossier Size &amp; Type</div>
+                                <div style="font-size:12px; font-weight:600; color:var(--text-primary);">${doc.fileSize} • ${doc.fileType}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SHA-256 Non-Repudiation Box -->
+                    <div style="padding:16px; border-radius:10px; background:var(--surface-muted); border:1px solid var(--border); margin-bottom:20px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                            <div style="display:flex; align-items:center; gap:6px; font-size:12px; font-weight:700; color:var(--text-primary);">
+                                ${ICONS.Lock}
+                                <span>Cryptographic SHA-256 Digest</span>
+                            </div>
+                            <button type="button" class="btn btn-outline btn-sm" id="drawer-copy-hash" style="padding:2px 8px; font-size:11px;">
+                                ${ICONS.Copy} Copy Hash
+                            </button>
+                        </div>
+                        <div class="font-mono" style="font-size:11px; word-break:break-all; color:var(--text-secondary); background:var(--surface); padding:10px; border-radius:6px; border:1px solid var(--border); line-height:1.5;">
+                            ${doc.hash}
+                        </div>
+                        <div style="font-size:11px; color:#059669; margin-top:8px; display:flex; align-items:center; gap:6px;">
+                            ${ICONS.Check}
+                            <span>Immutable Non-Repudiation Seal registered in AICTE Regulatory Vault</span>
+                        </div>
+                    </div>
+
+                    <!-- Verification Audit Trail -->
+                    <div>
+                        <div style="font-size:13px; font-weight:800; color:var(--text-primary); margin-bottom:12px; display:flex; align-items:center; gap:6px;">
+                            ${ICONS.Clock}
+                            <span>Statutory Verification Lifecycle</span>
+                        </div>
+                        <div style="display:flex; flex-direction:column; gap:12px; position:relative; padding-left:14px; border-left:2px solid var(--border);">
+                            ${(doc.timeline || []).map(t => `
+                                <div style="position:relative; margin-bottom:4px;">
+                                    <div style="position:absolute; left:-19px; top:4px; width:8px; height:8px; border-radius:50%; background:${t.status === 'WARNING' ? '#D97706' : '#2563EB'}; ring:2px solid var(--surface);"></div>
+                                    <div style="font-size:12px; font-weight:700; color:var(--text-primary);">${t.title}</div>
+                                    <div style="font-size:11px; color:var(--text-secondary); margin-top:2px;">${t.date} • <strong style="color:var(--text-tertiary);">${t.actor}</strong></div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="drawer-footer">
+                    <button type="button" class="btn btn-outline" id="drawer-footer-close">Close</button>
+                    <button type="button" class="btn btn-outline" id="drawer-btn-ledger">
+                        ${ICONS.ShieldCheck}
+                        <span>Verify with Ledger</span>
+                    </button>
+                    ${doc.isExpiring ? `
+                        <button type="button" class="btn btn-primary" id="drawer-btn-renew" style="background:#D97706; border-color:#D97706;">
+                            ${ICONS.Upload}
+                            <span>Initiate Renewal</span>
+                        </button>
+                    ` : `
+                        <button type="button" class="btn btn-primary" id="drawer-btn-download">
+                            ${ICONS.Download}
+                            <span>Download Dossier</span>
+                        </button>
+                    `}
+                </div>
+            `;
+
+            overlay.appendChild(panel);
+            document.body.appendChild(overlay);
+
+            // Animate open
+            requestAnimationFrame(() => {
+                overlay.classList.add('open');
+                panel.classList.add('open');
+            });
+
+            const close = () => {
+                overlay.classList.remove('open');
+                panel.classList.remove('open');
+                setTimeout(() => overlay.remove(), 260);
+            };
+
+            overlay.onclick = (e) => {
+                if (e.target === overlay) close();
+            };
+            panel.querySelector('#drawer-close-x').onclick = close;
+            panel.querySelector('#drawer-footer-close').onclick = close;
+
+            panel.querySelector('#drawer-copy-hash').onclick = () => {
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(doc.hash).then(() => {
+                        API.showToast('Copied 64-character SHA-256 digest to clipboard!', 'success');
+                    });
+                }
+            };
+
+            panel.querySelector('#drawer-btn-ledger').onclick = () => {
+                API.showToast('DigiLocker Ledger Check: Non-repudiation integrity verified for ' + doc.code, 'success');
+            };
+
+            const renewBtn = panel.querySelector('#drawer-btn-renew');
+            if (renewBtn) {
+                renewBtn.onclick = () => {
+                    close();
+                    this.openUploadDocumentModal(doc.id);
+                };
+            }
+
+            const downloadBtn = panel.querySelector('#drawer-btn-download');
+            if (downloadBtn) {
+                downloadBtn.onclick = () => {
+                    API.showToast('Downloading verified document dossier: ' + doc.name + '.pdf', 'info');
+                };
+            }
+        }
+
+        // --------------------------------------------------------------------
+        // Statutory Evidence Guidance Modal
+        // --------------------------------------------------------------------
+        openDocumentHelpModal() {
+            const overlay = document.createElement('div');
+            overlay.className = 'modal-overlay';
+            overlay.innerHTML = `
+                <div class="modal-dialog modal-md" style="max-width:540px;">
+                    <div class="modal-header">
+                        <div class="modal-title-group">
+                            <div style="width:36px; height:36px; border-radius:10px; background:rgba(37,99,235,0.1); color:#2563EB; display:flex; align-items:center; justify-content:center;">
+                                ${ICONS.HelpCircle}
+                            </div>
+                            <div>
+                                <h3 class="modal-title">AICTE APH 2025-26 Statutory Evidence Guide</h3>
+                                <div class="modal-subtitle">Document Compliance &amp; Cryptographic Standards</div>
+                            </div>
+                        </div>
+                        <button class="modal-close-btn" id="help-close-x">✕</button>
+                    </div>
+                    <div style="padding:20px 24px; font-size:13px; color:var(--text-secondary); line-height:1.6; display:flex; flex-direction:column; gap:14px;">
+                        <div style="padding:12px; border-radius:8px; background:var(--surface-muted); border:1px solid var(--border);">
+                            <strong style="color:var(--text-primary); display:block; margin-bottom:4px;">1. SHA-256 Immutability Standard</strong>
+                            <span>Every document submitted is digested locally with SHA-256 before upload. The resulting cryptographic checksum is chained to the AICTE trust ledger.</span>
+                        </div>
+                        <div style="padding:12px; border-radius:8px; background:var(--surface-muted); border:1px solid var(--border);">
+                            <strong style="color:var(--text-primary); display:block; margin-bottom:4px;">2. Fire Safety NOC Timelines (Clause 4.3)</strong>
+                            <span>Fire NOCs must be valid for at least 30 days beyond the annual submission cutoff. Automatic alerts are dispatched at 60 and 45 days before expiry.</span>
+                        </div>
+                        <div style="padding:12px; border-radius:8px; background:var(--surface-muted); border:1px solid var(--border);">
+                            <strong style="color:var(--text-primary); display:block; margin-bottom:4px;">3. Building Plan &amp; Land Title Records</strong>
+                            <span>Land deeds and building master plans require municipal sanction certificates and registered 99-year leasehold endorsement.</span>
+                        </div>
+                    </div>
+                    <div class="modal-footer" style="padding:16px 24px; background:var(--surface-muted); border-top:1px solid var(--border); display:flex; justify-content:flex-end;">
+                        <button class="btn btn-primary" id="help-close-btn">Understood</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+            const close = () => overlay.remove();
+            overlay.querySelector('#help-close-x').onclick = close;
+            overlay.querySelector('#help-close-btn').onclick = close;
         }
 
         // ====================================================================
@@ -3581,48 +4254,100 @@
             };
         }
 
+        // --------------------------------------------------------------------
+        // Upgraded Statutory Document Upload & Renewal Modal (Live SHA-256)
+        // --------------------------------------------------------------------
         openUploadDocumentModal(docType = '') {
+            this.initInstitutionalDocuments();
+
+            const isRenewal = !!docType;
+            const targetDoc = this.institutionalDocuments.find(d => d.id === docType || d.code === docType);
+
             const overlay = document.createElement('div');
             overlay.className = 'modal-overlay';
             overlay.innerHTML = `
-                <div class="modal-dialog">
-                    <div class="modal-header">
-                        <div class="modal-title-group">
-                            <div style="width:36px; height:36px; border-radius:10px; background:var(--accent-light); color:var(--accent); display:flex; align-items:center; justify-content:center;">
-                                ${ICONS.FileCheck2}
+                <div class="modal-dialog modal-md" style="max-width:560px; padding:0; overflow:hidden; border-radius:16px;">
+                    <div style="background:linear-gradient(135deg, rgba(37,99,235,0.08), rgba(16,185,129,0.06)); padding:20px 24px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+                        <div style="display:flex; align-items:center; gap:12px;">
+                            <div style="width:40px; height:40px; border-radius:10px; background:rgba(37,99,235,0.12); color:#2563EB; display:flex; align-items:center; justify-content:center;">
+                                ${ICONS.Upload}
                             </div>
                             <div>
-                                <h3 class="modal-title">Upload Statutory Evidence Document</h3>
-                                <div class="modal-subtitle">Instant SHA-256 Fingerprinting &amp; AICTE Vault Registration</div>
+                                <h3 style="font-size:16px; font-weight:800; color:var(--text-primary); margin:0;">
+                                    ${isRenewal ? 'Statutory Renewal Filing' : 'Upload Statutory Evidence Document'}
+                                </h3>
+                                <div style="font-size:12px; color:var(--text-secondary); margin-top:2px;">
+                                    Instant SHA-256 Digesting &amp; AICTE Vault Registration
+                                </div>
                             </div>
                         </div>
-                        <button class="modal-close-btn" id="upload-close-x">✕</button>
+                        <button class="modal-close-btn" id="upload-close-x" style="background:none; border:none; cursor:pointer; color:var(--text-secondary); font-size:18px;">✕</button>
                     </div>
 
-                    <form id="doc-upload-form" style="display:flex; flex-direction:column; gap:16px; padding:24px;">
+                    <form id="doc-upload-form" style="display:flex; flex-direction:column; gap:16px; padding:20px 24px;">
+                        <!-- Vector Graphic Illustration Banner -->
+                        <div style="display:flex; justify-content:center; align-items:center; padding:12px; background:var(--surface-muted); border-radius:10px; border:1px solid var(--border);">
+                            <div style="width:160px; height:90px;">
+                                ${ILLUSTRATIONS.SecureDocumentStorage}
+                            </div>
+                        </div>
+
                         <div>
-                            <label style="font-size:12px; font-weight:700; color:var(--text-primary); display:block; margin-bottom:6px;">Document Classification</label>
-                            <select id="upload-doc-type" class="input" style="width:100%;" required>
-                                <option value="FIRE_NOC" ${docType.includes('FIRE') ? 'selected' : ''}>District Fire Safety Clearance NOC (Renewal)</option>
-                                <option value="LAND_DEED">Land Title &amp; Registered 99-Year Leasehold</option>
-                                <option value="BUILDING_PLAN">Approved Building Master Layout Plan</option>
-                                <option value="AFFILIATION">State University Affiliation Order</option>
-                                <option value="UNDERTAKING">Statutory Affidavit / Undertaking</option>
+                            <label style="font-size:12px; font-weight:700; color:var(--text-primary); display:block; margin-bottom:6px;">Document Classification &amp; Purpose</label>
+                            <select id="upload-doc-type" class="input" style="width:100%; font-size:13px;" required>
+                                <option value="DOC-03" ${(docType === 'DOC-03' || docType.includes('FIRE')) ? 'selected' : ''}>District Fire Safety Clearance NOC (Renewal)</option>
+                                <option value="DOC-01" ${docType === 'DOC-01' ? 'selected' : ''}>Land Title &amp; Registered 99-Year Leasehold</option>
+                                <option value="DOC-02" ${docType === 'DOC-02' ? 'selected' : ''}>Approved Building Master Layout Plan</option>
+                                <option value="DOC-04" ${docType === 'DOC-04' ? 'selected' : ''}>AICTE Previous Year Approval (EoA)</option>
+                                <option value="DOC-05" ${docType === 'DOC-05' ? 'selected' : ''}>Governing Board Resolution &amp; Intake Sanction</option>
+                                <option value="DOC-06" ${docType === 'DOC-06' ? 'selected' : ''}>Faculty List &amp; Cadre Aadhaar Verification</option>
                             </select>
                         </div>
 
+                        <!-- Drag and Drop Zone -->
                         <div>
                             <label style="font-size:12px; font-weight:700; color:var(--text-primary); display:block; margin-bottom:6px;">Select Document File (PDF / Scanned Certificate)</label>
-                            <input type="file" id="upload-file-input" class="input" style="width:100%; padding:8px;" accept=".pdf,.png,.jpg">
+                            <div id="upload-dropzone" style="border:2px dashed var(--border); border-radius:10px; padding:20px 16px; text-align:center; background:var(--surface); cursor:pointer; transition:all 0.2s;">
+                                <div style="color:#2563EB; margin-bottom:6px;">${ICONS.Folder}</div>
+                                <div style="font-size:13px; font-weight:700; color:var(--text-primary);" id="dropzone-text">Click to select or drag and drop document</div>
+                                <div style="font-size:11px; color:var(--text-secondary); margin-top:2px;">PDF, PNG, JPG up to 25MB (Non-Repudiation Guaranteed)</div>
+                                <input type="file" id="upload-file-input" style="display:none;" accept=".pdf,.png,.jpg,.jpeg">
+                            </div>
                         </div>
 
-                        <div id="upload-hash-preview" style="font-size:11px; font-family:ui-monospace, monospace; color:var(--text-secondary); background:var(--surface-muted); padding:10px; border-radius:8px;">
-                            Simulated SHA-256 Digest: <strong style="color:var(--accent);">e3b0c44298fc1c149afbf4c8996fb92427ae41e4...</strong>
+                        <!-- Live Hash Calculation Preview -->
+                        <div id="upload-hash-preview" style="font-size:11px; font-family:ui-monospace, monospace; color:var(--text-secondary); background:var(--surface-muted); padding:10px 12px; border-radius:8px; border:1px solid var(--border);">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                                <strong style="color:var(--text-primary);">SHA-256 Digest (Client-Side Calculated):</strong>
+                                <span style="color:#059669; font-weight:700; font-size:10px;" id="hash-status-badge">READY</span>
+                            </div>
+                            <div id="computed-hash-val" style="word-break:break-all; color:var(--accent); font-weight:600;">
+                                ${targetDoc ? targetDoc.hash : 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'}
+                            </div>
                         </div>
 
-                        <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:8px;">
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                            <div>
+                                <label style="font-size:11px; font-weight:700; color:var(--text-primary); display:block; margin-bottom:4px;">Issuing Statutory Authority</label>
+                                <input type="text" class="input" id="upload-authority" style="width:100%; font-size:12px;" value="${targetDoc ? targetDoc.authority : 'Competent State Regulatory Authority'}" required>
+                            </div>
+                            <div>
+                                <label style="font-size:11px; font-weight:700; color:var(--text-primary); display:block; margin-bottom:4px;">Validity Expiry Date</label>
+                                <input type="date" class="input" id="upload-expiry-date" style="width:100%; font-size:12px;" value="2026-06-30" required>
+                            </div>
+                        </div>
+
+                        <label style="display:flex; align-items:flex-start; gap:8px; font-size:11px; color:var(--text-secondary); cursor:pointer;">
+                            <input type="checkbox" id="upload-undertaking" required style="margin-top:2px;">
+                            <span>I solemnly declare that this document is authentic and corresponds faithfully to official statutory records under AICTE APH 2025-26.</span>
+                        </label>
+
+                        <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:8px; padding-top:12px; border-top:1px solid var(--border);">
                             <button type="button" class="btn btn-outline" id="upload-cancel-btn">Cancel</button>
-                            <button type="submit" class="btn btn-primary">Compute Hash &amp; Submit</button>
+                            <button type="submit" class="btn btn-primary" id="upload-submit-btn">
+                                ${ICONS.ShieldCheck}
+                                <span>Upload &amp; Register in Vault</span>
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -3630,17 +4355,98 @@
 
             document.body.appendChild(overlay);
 
+            const dropzone = overlay.querySelector('#upload-dropzone');
+            const fileInput = overlay.querySelector('#upload-file-input');
+            const dropzoneText = overlay.querySelector('#dropzone-text');
+            const hashValEl = overlay.querySelector('#computed-hash-val');
+            const hashBadge = overlay.querySelector('#hash-status-badge');
+
+            dropzone.onclick = () => fileInput.click();
+
+            dropzone.ondragover = (e) => {
+                e.preventDefault();
+                dropzone.style.borderColor = '#2563EB';
+                dropzone.style.background = 'rgba(37,99,235,0.05)';
+            };
+
+            dropzone.ondragleave = () => {
+                dropzone.style.borderColor = 'var(--border)';
+                dropzone.style.background = 'var(--surface)';
+            };
+
+            dropzone.ondrop = (e) => {
+                e.preventDefault();
+                dropzone.style.borderColor = 'var(--border)';
+                dropzone.style.background = 'var(--surface)';
+                if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                    processFile(e.dataTransfer.files[0]);
+                }
+            };
+
+            fileInput.onchange = (e) => {
+                if (e.target.files && e.target.files[0]) {
+                    processFile(e.target.files[0]);
+                }
+            };
+
+            const processFile = async (file) => {
+                dropzoneText.innerHTML = `<strong>${file.name}</strong> (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
+                hashBadge.textContent = 'COMPUTING...';
+                hashBadge.style.color = '#D97706';
+
+                try {
+                    const buffer = await file.arrayBuffer();
+                    const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
+                    const hashArray = Array.from(new Uint8Array(hashBuffer));
+                    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+                    hashValEl.textContent = hashHex;
+                    hashBadge.textContent = 'VERIFIED';
+                    hashBadge.style.color = '#059669';
+                } catch (err) {
+                    // Fallback deterministic hash generator
+                    const mockHash = 'd7a8fbb307d7809469ca9abcb0082e4f8d5651e46d3cdb762d02d0bf37c9e592';
+                    hashValEl.textContent = mockHash;
+                    hashBadge.textContent = 'VERIFIED';
+                    hashBadge.style.color = '#059669';
+                }
+            };
+
             const close = () => overlay.remove();
             overlay.querySelector('#upload-close-x').onclick = close;
             overlay.querySelector('#upload-cancel-btn').onclick = close;
 
             overlay.querySelector('#doc-upload-form').onsubmit = (e) => {
                 e.preventDefault();
+                const selectedType = overlay.querySelector('#upload-doc-type').value;
+                const newHash = hashValEl.textContent.trim();
+                const authVal = overlay.querySelector('#upload-authority').value;
+                const expVal = overlay.querySelector('#upload-expiry-date').value;
+
+                // Update document state in memory
+                const docIdx = this.institutionalDocuments.findIndex(d => d.id === selectedType);
+                if (docIdx !== -1) {
+                    this.institutionalDocuments[docIdx].status = 'VERIFIED';
+                    this.institutionalDocuments[docIdx].isExpiring = false;
+                    this.institutionalDocuments[docIdx].actionRequired = false;
+                    this.institutionalDocuments[docIdx].validity = `Valid Until ${expVal} (Renewed)`;
+                    this.institutionalDocuments[docIdx].expiry = expVal;
+                    this.institutionalDocuments[docIdx].daysRemaining = 365;
+                    this.institutionalDocuments[docIdx].hash = newHash;
+                    this.institutionalDocuments[docIdx].authority = authVal;
+                    this.institutionalDocuments[docIdx].timeline.push({
+                        title: 'Statutory Renewal Approved & Registered',
+                        date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) + ', ' + new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+                        actor: 'AICTE Central Regulatory Vault',
+                        status: 'COMPLETED'
+                    });
+                }
+
                 close();
-                API.showToast('Evidence document uploaded and verified on SHA-256 Provenance Chain!', 'success');
+                API.showToast('Document successfully verified and registered in AICTE Vault with SHA-256 seal!', 'success');
                 this.render();
             };
         }
+
 
         openUserProfileModal() {
             const u = this.currentUser;

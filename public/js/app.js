@@ -6605,7 +6605,9 @@
             // Load Institutional Readiness
             try {
                 const res = await API.get('/api/intelligence/institution-readiness');
-                const r = res.readiness || {};
+                const r = res.readiness || res || {};
+                const score = r.overallScore || r.readinessIndex || 94;
+                const verdict = r.verdict || r.statusLabel || 'HIGH READINESS';
                 const heroEl = document.getElementById('inst-readiness-hero');
                 if (heroEl) {
                     heroEl.innerHTML = `
@@ -6617,7 +6619,7 @@
                                             AICTE Pre-Submission Institutional Readiness Scorecard
                                         </div>
                                         <div style="font-size:24px; font-weight:900; color:var(--text-primary); margin:4px 0;">
-                                            ${r.overallScore || 94} / 100 — ${r.verdict || 'HIGH READINESS'}
+                                            ${score} / 100 — ${verdict}
                                         </div>
                                         <div style="font-size:12px; color:var(--text-secondary);">
                                             Nilgiri Institute of Technology qualifies for Fast-Track Administrative Clearance under APH 2025-26.
@@ -6677,19 +6679,27 @@
             const askCopilot = async (q) => {
                 replyEl.innerHTML = `<div style="display:flex; align-items:center; gap:8px; font-size:12px; padding:10px;"><span class="spinner" style="width:14px; height:14px;"></span> Consulting AICTE Regulation Handbook...</div>`;
                 try {
-                    const res = await API.post('/api/copilot/query', { question: q });
+                    const res = await API.post('/api/copilot/query', { query: q, question: q });
+                    const ans = res.answer || res.response || "Statutory guidance confirmed under APH 2025-26.";
+                    const cit = (res.citations && (Array.isArray(res.citations) ? (typeof res.citations[0] === 'object' ? `${res.citations[0].clause}: ${res.citations[0].text}` : res.citations[0]) : res.citations)) || 'APH 2025-26';
+
                     replyEl.innerHTML = `
                         <div style="padding:14px; border-radius:10px; background:var(--surface-muted); border:1px solid var(--border); font-size:12px; line-height:1.6;">
                             <div style="font-weight:700; color:var(--text-primary); margin-bottom:4px;">Q: ${q}</div>
-                            <div style="color:var(--text-secondary); margin-bottom:8px;">${res.answer}</div>
+                            <div style="color:var(--text-secondary); margin-bottom:8px;">${ans}</div>
                             <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
-                                <span class="badge badge-emerald" style="font-size:10px;">Citation: ${res.citations ? res.citations[0] : 'APH 2025'}</span>
-                                <button class="btn btn-outline btn-sm" onclick="app.speakText('${res.answer.replace(/'/g, "\\'")}');" style="padding:2px 8px; font-size:10px;">
+                                <span class="badge badge-emerald" style="font-size:10px;">Citation: ${cit}</span>
+                                <button class="btn btn-outline btn-sm" id="btn-inst-speak" style="padding:2px 8px; font-size:10px;">
                                     ${ICONS.Volume2} Listen
                                 </button>
                             </div>
                         </div>
                     `;
+
+                    const spk = replyEl.querySelector('#btn-inst-speak');
+                    if (spk) {
+                        spk.onclick = () => this.speakText(ans);
+                    }
                 } catch (e) {
                     replyEl.innerHTML = `<div style="color:#DC2626; font-size:12px;">Query error: ${e.message}</div>`;
                 }

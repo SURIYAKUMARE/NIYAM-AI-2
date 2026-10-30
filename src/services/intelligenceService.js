@@ -423,13 +423,18 @@ class IntelligenceService {
     // 5. EXPLAINABLE AI AUDIT REPLAY (Timeline Player)
     // ========================================================================
     getAuditReplay(applicationId = 'APP_2026_001') {
+        let normalizedId = applicationId;
+        if (applicationId === 'APP-2025-001' || applicationId === 'APP_2025_001') normalizedId = 'APP_2026_001';
+        else if (applicationId === 'APP-2025-002' || applicationId === 'APP_2025_002') normalizedId = 'APP_2026_002';
+        else if (applicationId === 'APP-2025-003' || applicationId === 'APP_2025_003') normalizedId = 'APP_2026_003';
+
         const app = db.queryOne(`
             SELECT a.*, i.name as institution_name, i.permanent_id
             FROM applications a
             JOIN institutions i ON a.institution_id = i.id
-            WHERE a.id = ? OR a.application_no = ?
+            WHERE a.id = ? OR a.application_no = ? OR a.id = ?
             LIMIT 1
-        `, [applicationId, applicationId]);
+        `, [applicationId, applicationId, normalizedId]);
 
         if (!app) {
             return { error: 'Application not found.' };

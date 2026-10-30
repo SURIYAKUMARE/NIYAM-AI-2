@@ -92,6 +92,54 @@ test('Role Separation & RBAC Security Enforcement (Section 8 Suite)', async (t) 
         assert.match(res.body.error, /own institution/);
     });
 
+    await t.test('6b. Applicant cannot renew another institutions document (HTTP 403)', async () => {
+        let otherDoc = db.queryOne("SELECT * FROM documents WHERE institution_id != 'INST_001' LIMIT 1");
+        if (!otherDoc) {
+            db.execute(`
+                INSERT INTO documents (id, institution_id, document_type_code, document_title, file_url, current_status)
+                VALUES ('DOC_TEST_002', 'INST_002', 'LAND_LEASE', 'Other Deed', '/doc.pdf', 'VALID')
+            `);
+            otherDoc = db.queryOne("SELECT * FROM documents WHERE id = 'DOC_TEST_002'");
+        }
+
+        const res = await simulateRequest({
+            method: 'POST',
+            url: `/api/documents/${otherDoc.id}/renewal`,
+            headers: { 'x-user-id': 'dr.suresh.chandra' }, // Belongs to INST_001
+            body: { newIssueDate: '2026-05-01', newExpiryDate: '2030-05-01' }
+        });
+        assert.strictEqual(res.statusCode, 403);
+        assert.match(res.body.error, /own institution/);
+    });
+
+    await t.test('6c. Applicant cannot access or submit evidence for another institutions undertaking (HTTP 403)', async () => {
+        let otherUtk = db.queryOne("SELECT * FROM undertakings WHERE institution_id != 'INST_001' LIMIT 1");
+        if (!otherUtk) {
+            db.execute(`
+                INSERT INTO undertakings (id, undertaking_ref, institution_id, condition_title, regulatory_source, obligation_details, issue_date, due_date, responsible_person, status)
+                VALUES ('UTK_TEST_002', 'UTK-TEST-02', 'INST_002', 'Test Condition', 'APH', 'Obligation', '2026-01-01', '2026-12-31', 'Director', 'PENDING')
+            `);
+            otherUtk = db.queryOne("SELECT * FROM undertakings WHERE id = 'UTK_TEST_002'");
+        }
+
+        const resGet = await simulateRequest({
+            method: 'GET',
+            url: `/api/compliance/undertakings/${otherUtk.id}`,
+            headers: { 'x-user-id': 'dr.suresh.chandra' }
+        });
+        assert.strictEqual(resGet.statusCode, 403);
+        assert.match(resGet.body.error, /own institution/);
+
+        const resPost = await simulateRequest({
+            method: 'POST',
+            url: `/api/compliance/undertakings/${otherUtk.id}/evidence`,
+            headers: { 'x-user-id': 'dr.suresh.chandra' },
+            body: { evidenceTitle: 'Illegal Submission' }
+        });
+        assert.strictEqual(resPost.statusCode, 403);
+        assert.match(resPost.body.error, /own institution/);
+    });
+
     await t.test('7. Applicant listing applications only retrieves their own institution records', async () => {
         const res = await simulateRequest({
             method: 'GET',

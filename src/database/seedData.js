@@ -277,6 +277,20 @@ function seedDatabase() {
         )
     `);
 
+    db.execute(`
+        INSERT OR IGNORE INTO undertakings (
+            id, undertaking_ref, institution_id, application_id, condition_title,
+            regulatory_source, obligation_details, issue_date, due_date,
+            responsible_person, status, verification_authority_role
+        ) VALUES (
+            'UTK_002', 'UTK-2026-0002', 'INST_002', 'APP_2026_002',
+            'Building Completion Certificate Submission',
+            'APH-2026 Annexure 8, Cl. 4.2',
+            'Submission of local municipal building safety completion certificate',
+            '2026-04-12', '2026-07-12', 'Principal Zaskar College', 'PENDING', 'COMPLIANCE_OFFICER'
+        )
+    `);
+
     // 12. Seed Expiring Lease Document for Scenario 6
     const expiringDate = new Date();
     expiringDate.setDate(expiringDate.getDate() + 15); // Expiring in 15 days!
@@ -292,6 +306,18 @@ function seedDatabase() {
             '1996-05-12', ?, 'EXPIRING_SOON'
         )
     `, [expiringDate.toISOString().split('T')[0]]);
+
+    db.execute(`
+        INSERT OR IGNORE INTO documents (
+            id, institution_id, application_id, document_type_code, document_title,
+            file_url, file_size_bytes, mime_type, issue_date, expiry_date, current_status
+        ) VALUES (
+            'DOC_LEASE_002', 'INST_002', 'APP_2026_002', 'LAND_LEASE',
+            'Registered Land Lease Deed - Ladakh Campus',
+            '/uploads/documents/zaskar_lease.pdf', 3145728, 'application/pdf',
+            '1998-08-10', '2028-08-10', 'VALID'
+        )
+    `);
 
     // 13. Seed Escalation Rules and Events for Scenario 7
     db.execute(`

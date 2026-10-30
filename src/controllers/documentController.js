@@ -1,4 +1,5 @@
 const documentService = require('../services/documentService');
+const db = require('../database/db');
 
 class DocumentController {
     list(req, res) {
@@ -18,6 +19,13 @@ class DocumentController {
         try {
             const { id } = req.params;
             const { newIssueDate, newExpiryDate, uploadedFileUrl } = req.body;
+
+            if (req.enforcedInstitutionId) {
+                const doc = db.queryOne('SELECT institution_id FROM documents WHERE id = ?', [id]);
+                if (!doc || doc.institution_id !== req.enforcedInstitutionId) {
+                    return res.status(403).json({ error: 'Access Denied: You may only renew documents for your own institution.' });
+                }
+            }
 
             if (!newIssueDate || !newExpiryDate) {
                 return res.status(400).json({ error: 'newIssueDate and newExpiryDate are required.' });

@@ -1,4 +1,5 @@
 const undertakingService = require('../services/undertakingService');
+const db = require('../database/db');
 
 class ComplianceController {
     list(req, res) {
@@ -18,6 +19,12 @@ class ComplianceController {
         try {
             const { id } = req.params;
             const data = undertakingService.getUndertakingDetails(id);
+            if (!data || !data.undertaking) {
+                return res.status(404).json({ error: 'Undertaking not found.' });
+            }
+            if (req.enforcedInstitutionId && data.undertaking.institution_id !== req.enforcedInstitutionId) {
+                return res.status(403).json({ error: 'Access Denied: You may only access undertakings for your own institution.' });
+            }
             return res.json(data);
         } catch (err) {
             return res.status(500).json({ error: err.message });
@@ -53,6 +60,13 @@ class ComplianceController {
         try {
             const { id } = req.params;
             const { evidenceTitle, documentUrl, remarks } = req.body;
+
+            if (req.enforcedInstitutionId) {
+                const und = db.queryOne('SELECT institution_id FROM undertakings WHERE id = ?', [id]);
+                if (!und || und.institution_id !== req.enforcedInstitutionId) {
+                    return res.status(403).json({ error: 'Access Denied: You may only submit evidence for your own institution.' });
+                }
+            }
 
             if (!evidenceTitle) {
                 return res.status(400).json({ error: 'Evidence title is mandatory.' });

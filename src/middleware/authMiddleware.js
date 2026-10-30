@@ -13,7 +13,14 @@ const USERNAME_ALIASES = {
     'shri.rajeshwar.rao': 'auditor1',
     'auditor': 'auditor1',
     'dr.rk.shrivastava': 'superadmin',
-    'admin': 'superadmin'
+    'admin': 'superadmin',
+    'er.manoj.verma': 'ro_northern',
+    'ro_north': 'ro_northern',
+    'regional_officer': 'ro_northern',
+    'shri.vikramaditya.rathore': 'evc_coord1',
+    'evc_coord': 'evc_coord1',
+    'prof.devendra.pathak': 'evc_expert1',
+    'evc_member': 'evc_expert1'
 };
 
 function authMiddleware(req, res, next) {

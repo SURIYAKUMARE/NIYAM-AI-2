@@ -3,14 +3,15 @@ const intelligenceService = require('../services/intelligenceService');
 class IntelligenceController {
     copilotQuery(req, res) {
         try {
-            const { query, context } = req.body;
+            const query = (req.body && (req.body.query || req.body.question)) || '';
+            const context = (req.body && req.body.context) || {};
             if (!query || typeof query !== 'string') {
                 return res.status(400).json({ error: 'Query parameter is mandatory.' });
             }
             const result = intelligenceService.copilotQuery({
                 query,
                 user: req.user,
-                context: context || {}
+                context: context
             });
             return res.json(result);
         } catch (err) {
@@ -36,7 +37,10 @@ class IntelligenceController {
 
     analyzeDocument(req, res) {
         try {
-            const { documentId, docType, mockOcrText } = req.body;
+            const body = req.body || {};
+            const documentId = body.documentId || body.document_id;
+            const docType = body.docType || body.document_type || body.doc_type;
+            const mockOcrText = body.mockOcrText || body.ocr_text || body.ocrText;
             const result = intelligenceService.analyzeDocument({
                 documentId,
                 docType,
@@ -76,11 +80,14 @@ class IntelligenceController {
 
     simulateDigitalTwin(req, res) {
         try {
-            const { volumeIncreasePct, evcCapacityPct, scrutinySlaDays } = req.body || {};
+            const body = req.body || {};
+            const volumeIncreasePct = body.volumeIncreasePct ?? body.volume_surge_pct ?? body.volumeSurgePct ?? 25;
+            const evcCapacityPct = body.evcCapacityPct ?? (body.officer_capacity_pct ? (Number(body.officer_capacity_pct) - 100) : null) ?? -20;
+            const scrutinySlaDays = body.scrutinySlaDays ?? body.sla_days ?? body.targetSlaDays ?? 7;
             const result = intelligenceService.simulateDigitalTwin({
-                volumeIncreasePct: volumeIncreasePct !== undefined ? Number(volumeIncreasePct) : 25,
-                evcCapacityPct: evcCapacityPct !== undefined ? Number(evcCapacityPct) : -20,
-                scrutinySlaDays: scrutinySlaDays !== undefined ? Number(scrutinySlaDays) : 7
+                volumeIncreasePct: Number(volumeIncreasePct),
+                evcCapacityPct: Number(evcCapacityPct),
+                scrutinySlaDays: Number(scrutinySlaDays)
             });
             return res.json(result);
         } catch (err) {

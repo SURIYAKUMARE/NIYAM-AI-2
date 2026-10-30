@@ -18,6 +18,7 @@ const reportController = require('../controllers/reportController');
 const scenarioController = require('../controllers/scenarioController');
 const collegeController = require('../controllers/collegeController');
 const verifyController = require('../controllers/verifyController');
+const intelligenceController = require('../controllers/intelligenceController');
 
 // Lightweight high-performance router compatible with Node.js http
 class SimpleRouter {
@@ -189,5 +190,16 @@ router.post('/api/verify/document', verifyController.verifyDocument.bind(verifyC
 // Demonstrations & Test Scenarios 1-10
 router.get('/api/scenarios', scenarioController.listScenarios.bind(scenarioController));
 router.post('/api/scenarios/:id/run', scenarioController.runScenario.bind(scenarioController));
+
+// NIYAM 2035 — Next-Generation Intelligent Regulatory Operations
+router.post('/api/copilot/query', requireAuth, intelligenceController.copilotQuery.bind(intelligenceController));
+router.get('/api/intelligence/predictive-pendency', requireAuth, intelligenceController.getPredictivePendency.bind(intelligenceController));
+router.post('/api/intelligence/document-analyze', requireAuth, intelligenceController.analyzeDocument.bind(intelligenceController));
+router.get('/api/intelligence/deadlines-calendar', requireAuth, intelligenceController.getDeadlinesCalendar.bind(intelligenceController));
+router.get('/api/intelligence/audit-replay/:applicationId', requireAuth, intelligenceController.getAuditReplay.bind(intelligenceController));
+router.post('/api/intelligence/digital-twin/simulate', requireRole([ROLES.SUPER_ADMIN, ROLES.REGULATION_BUREAU_ADMIN, ROLES.REGIONAL_OFFICER]), intelligenceController.simulateDigitalTwin.bind(intelligenceController));
+router.get('/api/intelligence/knowledge-graph', requireAuth, intelligenceController.getKnowledgeGraph.bind(intelligenceController));
+router.get('/api/intelligence/institution-readiness', requireAuth, intelligenceController.getInstitutionReadiness.bind(intelligenceController));
+router.get('/api/intelligence/workload', requireRole([ROLES.SUPER_ADMIN, ROLES.REGULATION_BUREAU_ADMIN, ROLES.REGIONAL_OFFICER, ROLES.AUDITOR]), intelligenceController.getWorkloadIntelligence.bind(intelligenceController));
 
 module.exports = router;

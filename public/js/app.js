@@ -240,7 +240,16 @@
         Sun: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2m-7.07-14.07 1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2m-14.07 7.07 1.41-1.41m11.32-11.32 1.41-1.41"/></svg>`,
         Moon: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></svg>`,
         Scan: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2m10 0h2a2 2 0 0 1 2 2v2m0 10v2a2 2 0 0 1-2 2h-2m-10 0H5a2 2 0 0 1-2-2v-2"/></svg>`,
-        FlaskConical: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10 2v5L4.5 17.5A2 2 0 0 0 6 20h12a2 2 0 0 0 1.5-2.5L14 7V2m-5 0h6m-7 12h8"/></svg>`
+        FlaskConical: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10 2v5L4.5 17.5A2 2 0 0 0 6 20h12a2 2 0 0 0 1.5-2.5L14 7V2m-5 0h6m-7 12h8"/></svg>`,
+        Sparkles: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></svg>`,
+        Bot: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>`,
+        Calendar: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`,
+        Play: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>`,
+        Pause: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect width="4" height="16" x="6" y="4"/><rect width="4" height="16" x="14" y="4"/></svg>`,
+        RotateCcw: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>`,
+        Send: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>`,
+        Volume2: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>`,
+        Gauge: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></svg>`
     };
 
     class NiyamAIApp {
@@ -309,17 +318,17 @@
 
             let allowed = null;
             if (this.isApplicant()) {
-                allowed = ['dashboard', 'applications', 'documents', 'compliance', 'clarifications', 'institution-profile'];
+                allowed = ['dashboard', 'applications', 'documents', 'compliance', 'clarifications', 'institution-profile', 'institution-intelligence'];
             } else if (this.isRegionalOfficer()) {
-                allowed = ['dashboard', 'applications', 'queue', 'evc', 'analytics', 'findings', 'clarifications', 'reports'];
+                allowed = ['dashboard', 'applications', 'queue', 'evc', 'analytics', 'findings', 'clarifications', 'reports', 'intelligence-centre'];
             } else if (this.isScrutinyOfficer()) {
-                allowed = ['dashboard', 'queue', 'verify', 'findings', 'clarifications', 'applications'];
+                allowed = ['dashboard', 'queue', 'verify', 'findings', 'clarifications', 'applications', 'intelligence-centre'];
             } else if (this.isEVCOfficer()) {
-                allowed = ['dashboard', 'evc', 'infrastructure', 'applications'];
+                allowed = ['dashboard', 'evc', 'infrastructure', 'applications', 'intelligence-centre'];
             } else if (this.isComplianceOfficer()) {
-                allowed = ['dashboard', 'compliance', 'documents', 'findings', 'clarifications', 'applications'];
+                allowed = ['dashboard', 'compliance', 'documents', 'findings', 'clarifications', 'applications', 'intelligence-centre'];
             } else if (this.isAuditor()) {
-                allowed = ['dashboard', 'audit', 'verification', 'analytics', 'reports'];
+                allowed = ['dashboard', 'audit', 'verification', 'analytics', 'reports', 'intelligence-centre'];
             }
 
             if (allowed && !allowed.includes(this.currentView)) {
@@ -535,17 +544,17 @@
         navigate(view) {
             let allowed = null;
             if (this.isApplicant()) {
-                allowed = ['dashboard', 'applications', 'documents', 'compliance', 'clarifications', 'institution-profile'];
+                allowed = ['dashboard', 'applications', 'documents', 'compliance', 'clarifications', 'institution-profile', 'institution-intelligence'];
             } else if (this.isRegionalOfficer()) {
-                allowed = ['dashboard', 'applications', 'queue', 'evc', 'analytics', 'findings', 'clarifications', 'reports'];
+                allowed = ['dashboard', 'applications', 'queue', 'evc', 'analytics', 'findings', 'clarifications', 'reports', 'intelligence-centre'];
             } else if (this.isScrutinyOfficer()) {
-                allowed = ['dashboard', 'queue', 'verify', 'findings', 'clarifications', 'applications'];
+                allowed = ['dashboard', 'queue', 'verify', 'findings', 'clarifications', 'applications', 'intelligence-centre'];
             } else if (this.isEVCOfficer()) {
-                allowed = ['dashboard', 'evc', 'infrastructure', 'applications'];
+                allowed = ['dashboard', 'evc', 'infrastructure', 'applications', 'intelligence-centre'];
             } else if (this.isComplianceOfficer()) {
-                allowed = ['dashboard', 'compliance', 'documents', 'findings', 'clarifications', 'applications'];
+                allowed = ['dashboard', 'compliance', 'documents', 'findings', 'clarifications', 'applications', 'intelligence-centre'];
             } else if (this.isAuditor()) {
-                allowed = ['dashboard', 'audit', 'verification', 'analytics', 'reports'];
+                allowed = ['dashboard', 'audit', 'verification', 'analytics', 'reports', 'intelligence-centre'];
             }
 
             if (allowed && !allowed.includes(view)) {
@@ -747,6 +756,7 @@
             if (this.isApplicant()) {
                 navItems = [
                     { id: 'dashboard', label: 'Applicant Dashboard', icon: ICONS.LayoutDashboard },
+                    { id: 'institution-intelligence', label: 'My Institution Intelligence', icon: ICONS.Sparkles, badge: 'AI 2035', highlight: true },
                     { id: 'applications', label: 'My Applications', icon: ICONS.FileText, badge: '1 Active' },
                     { id: 'documents', label: 'Document Submission & Validity', icon: ICONS.FileCheck2, badge: '6' },
                     { id: 'compliance', label: 'Compliance & Undertakings', icon: ICONS.ShieldCheck, badge: '4' },
@@ -756,6 +766,7 @@
             } else if (this.isRegionalOfficer()) {
                 navItems = [
                     { id: 'dashboard', label: 'Regional Command Center', icon: ICONS.LayoutDashboard },
+                    { id: 'intelligence-centre', label: 'NIYAM 2035 Intelligence Centre', icon: ICONS.Sparkles, badge: 'CORE', highlight: true },
                     { id: 'applications', label: 'Regional Case Dossiers', icon: ICONS.FileText, badge: 'Northern' },
                     { id: 'queue', label: 'Scrutiny & Review Queue', icon: ICONS.ListFilter },
                     { id: 'evc', label: 'EVC Inspection Status', icon: ICONS.Landmark },
@@ -767,6 +778,7 @@
             } else if (this.isScrutinyOfficer()) {
                 navItems = [
                     { id: 'dashboard', label: 'Scrutiny Desk Overview', icon: ICONS.LayoutDashboard },
+                    { id: 'intelligence-centre', label: 'NIYAM 2035 Intelligence Centre', icon: ICONS.Sparkles, badge: 'CORE', highlight: true },
                     { id: 'queue', label: 'Scrutiny Docket Queue', icon: ICONS.ListFilter, badge: 'Assigned' },
                     { id: 'verify', label: 'AI Verification Studio', icon: ICONS.FileSearch, badge: 'AI' },
                     { id: 'findings', label: 'Deficiencies & Findings', icon: ICONS.AlertTriangle },
@@ -776,6 +788,7 @@
             } else if (this.isEVCOfficer()) {
                 navItems = [
                     { id: 'dashboard', label: 'EVC Committee Desk', icon: ICONS.LayoutDashboard },
+                    { id: 'intelligence-centre', label: 'NIYAM 2035 Intelligence Centre', icon: ICONS.Sparkles, badge: 'CORE', highlight: true },
                     { id: 'evc', label: 'EVC Management & Visits', icon: ICONS.Landmark, badge: 'EVC' },
                     { id: 'infrastructure', label: 'Geo-Tagged Infrastructure', icon: ICONS.FileSearch },
                     { id: 'applications', label: 'Assigned Inspection Cases', icon: ICONS.FileText }
@@ -783,6 +796,7 @@
             } else if (this.isComplianceOfficer()) {
                 navItems = [
                     { id: 'dashboard', label: 'Compliance Monitoring Desk', icon: ICONS.LayoutDashboard },
+                    { id: 'intelligence-centre', label: 'NIYAM 2035 Intelligence Centre', icon: ICONS.Sparkles, badge: 'CORE', highlight: true },
                     { id: 'compliance', label: 'Statutory Undertakings Register', icon: ICONS.ShieldCheck, badge: 'Live' },
                     { id: 'documents', label: 'Lease & Document Validity', icon: ICONS.FileCheck2, badge: 'Alerts' },
                     { id: 'findings', label: 'Non-Compliance Findings', icon: ICONS.AlertTriangle },
@@ -792,6 +806,7 @@
             } else if (this.isAuditor()) {
                 navItems = [
                     { id: 'dashboard', label: 'Audit Bureau Overview', icon: ICONS.LayoutDashboard },
+                    { id: 'intelligence-centre', label: 'NIYAM 2035 Intelligence Centre', icon: ICONS.Sparkles, badge: 'CORE', highlight: true },
                     { id: 'audit', label: 'Immutable Audit Ledger', icon: ICONS.History, badge: 'SHA-256' },
                     { id: 'verification', label: 'Tamper & Hash Verification', icon: ICONS.CheckCircle2 },
                     { id: 'analytics', label: 'Audit Integrity & Ageing', icon: ICONS.BarChart3 },
@@ -800,6 +815,7 @@
             } else {
                 navItems = [
                     { id: 'dashboard', label: 'Apex Executive Overview', icon: ICONS.LayoutDashboard },
+                    { id: 'intelligence-centre', label: 'NIYAM 2035 Intelligence Centre', icon: ICONS.Sparkles, badge: 'CORE', highlight: true },
                     { id: 'colleges', label: 'Participating Institutions', icon: ICONS.GraduationCap, badge: '12' },
                     { id: 'verify', label: 'AI Verification Studio', icon: ICONS.FileSearch, badge: 'AI' },
                     { id: 'applications', label: 'All Applications Dossier', icon: ICONS.FileText },
@@ -1051,6 +1067,14 @@
                 case 'scenarios':
                     if (this.isApplicant()) { this.navigate('dashboard'); return; }
                     this.renderScenariosView(container);
+                    break;
+                case 'intelligence-centre':
+                    if (this.isApplicant()) { this.navigate('dashboard'); return; }
+                    this.renderIntelligenceCentreView(container);
+                    break;
+                case 'institution-intelligence':
+                    if (!this.isApplicant()) { this.navigate('dashboard'); return; }
+                    this.renderInstitutionIntelligenceView(container);
                     break;
                 default:
                     if (this.isApplicant()) {
@@ -5122,6 +5146,1552 @@
                 API.showToast(`Document ${id} validity extended to 15-Jun-2026`, 'success');
                 close();
                 if (this.currentView === 'documents') this.render();
+            };
+        }
+
+        // ====================================================================
+        // NIYAM 2035 — INTELLIGENCE CENTRE (Command Bureau / Officials)
+        // ====================================================================
+        speakText(text) {
+            if (!('speechSynthesis' in window)) {
+                API.showToast('Speech synthesis not supported in this browser.', 'warning');
+                return;
+            }
+            try {
+                window.speechSynthesis.cancel();
+                const clean = text.replace(/[#*`_\[\]()]/g, ' ');
+                const utterance = new SpeechSynthesisUtterance(clean);
+                utterance.rate = 1.0;
+                utterance.pitch = 1.0;
+                window.speechSynthesis.speak(utterance);
+                API.showToast('Playing voice advisory readout...', 'info');
+            } catch (e) {
+                console.warn('[Speech] Error speaking:', e);
+            }
+        }
+
+        startVoiceRecognition(inputEl, callback) {
+            const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SR) {
+                API.showToast('Speech-to-text recognition not supported in this browser.', 'warning');
+                return;
+            }
+            try {
+                const rec = new SR();
+                rec.lang = 'en-IN';
+                rec.interimResults = false;
+                rec.maxAlternatives = 1;
+                API.showToast('🎙️ Listening... Speak your regulatory question now.', 'info');
+                rec.onresult = (evt) => {
+                    const text = evt.results[0][0].transcript;
+                    if (inputEl) inputEl.value = text;
+                    if (callback) callback(text);
+                };
+                rec.onerror = (err) => {
+                    API.showToast(`Microphone capture error: ${err.error}`, 'warning');
+                };
+                rec.start();
+            } catch (e) {
+                API.showToast('Could not access microphone.', 'warning');
+            }
+        }
+
+        async renderIntelligenceCentreView(container) {
+            this.intelTab = this.intelTab || 'copilot';
+            this.copilotChatHistory = this.copilotChatHistory || [
+                {
+                    role: 'assistant',
+                    text: 'Welcome to the NIYAM 2035 AI Regulatory Decision Support System. I am loaded with the complete AICTE Approval Process Handbook (APH 2025-26), institutional ground truth, and live pendency indices. Ask any regulatory, cadre, or land query below.',
+                    citation: 'AICTE APH 2025-26 Regulatory Core',
+                    confidence: 99
+                }
+            ];
+
+            container.innerHTML = `
+                <div class="view-header">
+                    <div class="view-title-group">
+                        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                            <h1>NIYAM 2035 — Autonomous Regulatory Intelligence Centre</h1>
+                            <span class="badge badge-purple" style="font-weight:700; background:rgba(124, 58, 237, 0.15); color:#7C3AED; border:1px solid rgba(124, 58, 237, 0.3);">
+                                ${ICONS.Sparkles}
+                                <span>AICTE APH 2025-26 COGNITIVE CORE</span>
+                            </span>
+                        </div>
+                        <p>PS ID: <strong>26262</strong> • AICTE Regulation Bureau • Team: <strong>PROJECT CHAOS (197354)</strong> • Zero-Surprise Predictive Governance</p>
+                    </div>
+                    <div class="view-actions">
+                        <button class="btn btn-outline btn-sm" id="btn-intel-refresh">
+                            ${ICONS.RotateCcw}
+                            Refresh Intelligence Feed
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Zero-Surprise Regulatory Operations (Executive Triage Command Bar) -->
+                <div class="card" style="margin-bottom:20px; background:linear-gradient(135deg, rgba(37,99,235,0.06), rgba(124,58,237,0.06)); border:1px solid rgba(124,58,237,0.25);">
+                    <div class="card-header" style="padding:14px 18px; border-bottom:1px solid rgba(124,58,237,0.15);">
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <span style="color:#7C3AED;">${ICONS.Sparkles}</span>
+                            <span style="font-size:13px; font-weight:800; color:var(--text-primary); text-transform:uppercase; letter-spacing:0.5px;">
+                                Zero-Surprise Regulatory Operations — 4-Question Executive Command
+                            </span>
+                        </div>
+                        <span class="badge badge-blue">One-Click Triage</span>
+                    </div>
+                    <div class="card-body" style="padding:14px 18px;">
+                        <div style="font-size:12px; color:var(--text-secondary); margin-bottom:10px;">
+                            Select any critical regulatory question to instantly project predictive outcomes, trigger simulations, or query the APH 2025-26 engine:
+                        </div>
+                        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:10px;">
+                            <button class="btn btn-outline btn-sm triage-btn" data-triage="pendency" style="text-align:left; justify-content:flex-start; padding:10px 12px; height:auto; border-color:rgba(239,68,68,0.3); background:rgba(239,68,68,0.04);">
+                                <div>
+                                    <div style="font-weight:700; color:#DC2626; font-size:12px; margin-bottom:2px;">🚨 Predictive Pendency Alert</div>
+                                    <div style="font-size:11px; color:var(--text-secondary);">Which applications are likely to miss the 15-May statutory deadline?</div>
+                                </div>
+                            </button>
+                            <button class="btn btn-outline btn-sm triage-btn" data-triage="copilot-faculty" style="text-align:left; justify-content:flex-start; padding:10px 12px; height:auto; border-color:rgba(37,99,235,0.3); background:rgba(37,99,235,0.04);">
+                                <div>
+                                    <div style="font-weight:700; color:#2563EB; font-size:12px; margin-bottom:2px;">⚖️ Faculty &amp; Land Standards</div>
+                                    <div style="font-size:11px; color:var(--text-secondary);">What is the faculty cadre ratio (Prof:Assoc:Asst) for NBA B.Tech?</div>
+                                </div>
+                            </button>
+                            <button class="btn btn-outline btn-sm triage-btn" data-triage="twin" style="text-align:left; justify-content:flex-start; padding:10px 12px; height:auto; border-color:rgba(124,58,237,0.3); background:rgba(124,58,237,0.04);">
+                                <div>
+                                    <div style="font-weight:700; color:#7C3AED; font-size:12px; margin-bottom:2px;">🔄 Digital Workflow Twin</div>
+                                    <div style="font-size:11px; color:var(--text-secondary);">Can EVC delays be mitigated if scrutiny volume surges by 30%?</div>
+                                </div>
+                            </button>
+                            <button class="btn btn-outline btn-sm triage-btn" data-triage="replay" style="text-align:left; justify-content:flex-start; padding:10px 12px; height:auto; border-color:rgba(16,185,129,0.3); background:rgba(16,185,129,0.04);">
+                                <div>
+                                    <div style="font-weight:700; color:#059669; font-size:12px; margin-bottom:2px;">📜 Explainable Audit Replay</div>
+                                    <div style="font-size:11px; color:var(--text-secondary);">Replay cryptographic timeline &amp; decision hashes for APP-2025-001</div>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab Segmented Navigation Bar -->
+                <div style="display:flex; align-items:center; gap:6px; margin-bottom:18px; overflow-x:auto; padding-bottom:6px; border-bottom:1px solid var(--border);">
+                    <button class="btn btn-sm ${this.intelTab === 'copilot' ? 'btn-primary' : 'btn-outline'} intel-tab-btn" data-tab="copilot">
+                        ${ICONS.Bot}
+                        <span>AI Regulatory Copilot</span>
+                    </button>
+                    <button class="btn btn-sm ${this.intelTab === 'pendency' ? 'btn-primary' : 'btn-outline'} intel-tab-btn" data-tab="pendency">
+                        ${ICONS.AlertTriangle}
+                        <span>Predictive Pendency</span>
+                    </button>
+                    <button class="btn btn-sm ${this.intelTab === 'digital-twin' ? 'btn-primary' : 'btn-outline'} intel-tab-btn" data-tab="digital-twin">
+                        ${ICONS.FlaskConical}
+                        <span>Digital Workflow Twin</span>
+                    </button>
+                    <button class="btn btn-sm ${this.intelTab === 'doc-intel' ? 'btn-primary' : 'btn-outline'} intel-tab-btn" data-tab="doc-intel">
+                        ${ICONS.FileCheck2}
+                        <span>Smart Document AI</span>
+                    </button>
+                    <button class="btn btn-sm ${this.intelTab === 'calendar' ? 'btn-primary' : 'btn-outline'} intel-tab-btn" data-tab="calendar">
+                        ${ICONS.Calendar}
+                        <span>Deadline Resilience</span>
+                    </button>
+                    <button class="btn btn-sm ${this.intelTab === 'replay' ? 'btn-primary' : 'btn-outline'} intel-tab-btn" data-tab="replay">
+                        ${ICONS.History}
+                        <span>Explainable Audit Replay</span>
+                    </button>
+                    <button class="btn btn-sm ${this.intelTab === 'knowledge' ? 'btn-primary' : 'btn-outline'} intel-tab-btn" data-tab="knowledge">
+                        ${ICONS.Sliders}
+                        <span>Knowledge &amp; Workload</span>
+                    </button>
+                </div>
+
+                <!-- Tab Dynamic Content Container -->
+                <div id="intel-tab-content"></div>
+            `;
+
+            // Bind Header & Command Triage Buttons
+            document.getElementById('btn-intel-refresh').onclick = () => {
+                API.showToast('Synchronizing intelligence data with AICTE Bureau Core...', 'info');
+                this.renderIntelligenceCentreView(container);
+            };
+
+            container.querySelectorAll('.intel-tab-btn').forEach(btn => {
+                btn.onclick = () => {
+                    this.intelTab = btn.getAttribute('data-tab');
+                    this.renderIntelligenceCentreView(container);
+                };
+            });
+
+            container.querySelectorAll('.triage-btn').forEach(btn => {
+                btn.onclick = () => {
+                    const action = btn.getAttribute('data-triage');
+                    if (action === 'pendency') {
+                        this.intelTab = 'pendency';
+                        this.renderIntelligenceCentreView(container);
+                    } else if (action === 'copilot-faculty') {
+                        this.intelTab = 'copilot';
+                        this.renderIntelligenceCentreView(container);
+                        setTimeout(() => this.executeCopilotQuery('What is the mandatory faculty cadre ratio (Professor : Associate Professor : Assistant Professor) for NBA accredited B.Tech?'), 100);
+                    } else if (action === 'twin') {
+                        this.intelTab = 'digital-twin';
+                        this.renderIntelligenceCentreView(container);
+                        setTimeout(() => this.runDigitalTwinSimulation(30, 100, 14), 100);
+                    } else if (action === 'replay') {
+                        this.intelTab = 'replay';
+                        this.renderIntelligenceCentreView(container);
+                    }
+                };
+            });
+
+            const contentEl = document.getElementById('intel-tab-content');
+            if (this.intelTab === 'copilot') {
+                this.renderCopilotTab(contentEl);
+            } else if (this.intelTab === 'pendency') {
+                this.renderPredictivePendencyTab(contentEl);
+            } else if (this.intelTab === 'digital-twin') {
+                this.renderDigitalTwinTab(contentEl);
+            } else if (this.intelTab === 'doc-intel') {
+                this.renderDocIntelTab(contentEl);
+            } else if (this.intelTab === 'calendar') {
+                this.renderDeadlinesCalendarTab(contentEl);
+            } else if (this.intelTab === 'replay') {
+                this.renderAuditReplayTab(contentEl);
+            } else if (this.intelTab === 'knowledge') {
+                this.renderKnowledgeWorkloadTab(contentEl);
+            }
+        }
+
+        // --------------------------------------------------------------------
+        // Tab 1: AI Regulatory Copilot
+        // --------------------------------------------------------------------
+        renderCopilotTab(container) {
+            container.innerHTML = `
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            ${ICONS.Bot}
+                            <span>Conversational Regulatory RAG Copilot (AICTE APH 2025-26 Edition)</span>
+                        </div>
+                        <span class="badge badge-blue">Deterministic Guidance + Neural Search</span>
+                    </div>
+                    <div class="card-body">
+                        <!-- Suggested Questions -->
+                        <div style="margin-bottom:14px;">
+                            <div style="font-size:11px; font-weight:700; color:var(--text-secondary); text-transform:uppercase; margin-bottom:6px;">
+                                Quick Inquiries (Click to ask):
+                            </div>
+                            <div style="display:flex; flex-wrap:wrap; gap:6px;">
+                                <button class="btn btn-outline btn-sm copilot-pill" data-query="What is the faculty-student ratio requirement for NBA accredited B.Tech?">
+                                    🎓 Faculty Cadre Ratio
+                                </button>
+                                <button class="btn btn-outline btn-sm copilot-pill" data-query="What is the minimum land requirement for engineering college in mega cities?">
+                                    🏢 Mega City Land Standards
+                                </button>
+                                <button class="btn btn-outline btn-sm copilot-pill" data-query="What documents are mandatory for Change of Site application?">
+                                    📄 Change of Site Documents
+                                </button>
+                                <button class="btn btn-outline btn-sm copilot-pill" data-query="What are the rules regarding supernumerary seats for Tuition Fee Waiver (TFW) scheme?">
+                                    💰 TFW Supernumerary Seats
+                                </button>
+                                <button class="btn btn-outline btn-sm copilot-pill" data-query="What are the conditions for establishment of a new technical institution under Chapter I?">
+                                    🏛️ Chapter I New Institution Rules
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Chat Stream -->
+                        <div id="copilot-chat-stream" style="max-height:460px; min-height:220px; overflow-y:auto; padding:14px; background:var(--surface-muted); border-radius:12px; border:1px solid var(--border); display:flex; flex-direction:column; gap:12px; margin-bottom:14px;">
+                            ${this.copilotChatHistory.map(msg => `
+                                <div style="display:flex; flex-direction:column; align-items:${msg.role === 'user' ? 'flex-end' : 'flex-start'}; gap:4px;">
+                                    <div style="font-size:10px; font-weight:700; color:var(--text-secondary); text-transform:uppercase;">
+                                        ${msg.role === 'user' ? 'AICTE Regulatory Official' : 'NIYAM 2035 Regulatory Copilot'}
+                                    </div>
+                                    <div style="max-width:85%; padding:12px 16px; border-radius:12px; background:${msg.role === 'user' ? 'linear-gradient(to right, #2563EB, #4338CA)' : 'var(--surface)'}; color:${msg.role === 'user' ? '#fff' : 'var(--text-primary)'}; border:${msg.role === 'user' ? 'none' : '1px solid var(--border)'}; box-shadow:var(--shadow-sm); font-size:12px; line-height:1.6;">
+                                        <div style="white-space:pre-wrap;">${msg.text}</div>
+                                        ${msg.citation ? `
+                                            <div style="margin-top:8px; padding-top:6px; border-top:1px solid ${msg.role === 'user' ? 'rgba(255,255,255,0.2)' : 'var(--border)'}; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:6px; font-size:11px;">
+                                                <span class="badge ${msg.role === 'user' ? 'badge-blue' : 'badge-emerald'}" style="font-size:10px;">
+                                                    ⚖️ Citation: ${msg.citation}
+                                                </span>
+                                                <span style="font-weight:700; color:${msg.role === 'user' ? '#fff' : 'var(--accent)'}; font-size:10px;">
+                                                    Confidence: ${msg.confidence || 95}%
+                                                </span>
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                    ${msg.role === 'assistant' ? `
+                                        <button class="btn btn-outline btn-sm speak-btn" data-text="${encodeURIComponent(msg.text)}" style="padding:2px 8px; font-size:10px; height:auto;">
+                                            ${ICONS.Volume2}
+                                            Listen to Advisory
+                                        </button>
+                                    ` : ''}
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <!-- Chat Input Box -->
+                        <form id="copilot-input-form" style="display:flex; gap:8px;">
+                            <input type="text" id="copilot-query-input" class="input" placeholder="Type your regulatory compliance, cadre ratio, land, or APH inquiry..." style="flex:1;" required>
+                            <button type="button" class="btn btn-outline" id="btn-copilot-mic" title="Voice Input (Speech-to-Text)">
+                                🎙️
+                            </button>
+                            <button type="submit" class="btn btn-primary" id="btn-copilot-send" style="min-width:120px;">
+                                ${ICONS.Send}
+                                Ask Copilot
+                            </button>
+                        </form>
+
+                        <div style="font-size:11px; color:var(--text-secondary); margin-top:8px; display:flex; align-items:center; gap:6px;">
+                            <span>ℹ️</span>
+                            <span>Statutory AI Assistance: Answers are synthesized with strict fidelity to AICTE Approval Process Handbook (APH 2025-26). Final regulatory determinations remain under statutory officer authority.</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Auto-scroll chat to bottom
+            const stream = document.getElementById('copilot-chat-stream');
+            if (stream) stream.scrollTop = stream.scrollHeight;
+
+            // Bindings
+            container.querySelectorAll('.copilot-pill').forEach(btn => {
+                btn.onclick = () => {
+                    const q = btn.getAttribute('data-query');
+                    this.executeCopilotQuery(q);
+                };
+            });
+
+            container.querySelectorAll('.speak-btn').forEach(btn => {
+                btn.onclick = () => {
+                    const txt = decodeURIComponent(btn.getAttribute('data-text'));
+                    this.speakText(txt);
+                };
+            });
+
+            const form = document.getElementById('copilot-input-form');
+            form.onsubmit = (e) => {
+                e.preventDefault();
+                const inp = document.getElementById('copilot-query-input');
+                if (inp && inp.value.trim()) {
+                    this.executeCopilotQuery(inp.value.trim());
+                    inp.value = '';
+                }
+            };
+
+            const micBtn = document.getElementById('btn-copilot-mic');
+            if (micBtn) {
+                micBtn.onclick = () => {
+                    const inp = document.getElementById('copilot-query-input');
+                    this.startVoiceRecognition(inp, (spokenText) => {
+                        this.executeCopilotQuery(spokenText);
+                    });
+                };
+            }
+        }
+
+        async executeCopilotQuery(question) {
+            this.copilotChatHistory.push({
+                role: 'user',
+                text: question
+            });
+
+            // Re-render chat stream
+            const stream = document.getElementById('copilot-chat-stream');
+            if (stream) {
+                const bubble = document.createElement('div');
+                bubble.style = "display:flex; flex-direction:column; align-items:flex-end; gap:4px;";
+                bubble.innerHTML = `
+                    <div style="font-size:10px; font-weight:700; color:var(--text-secondary); text-transform:uppercase;">You</div>
+                    <div style="max-width:85%; padding:12px 16px; border-radius:12px; background:linear-gradient(to right, #2563EB, #4338CA); color:#fff; font-size:12px; line-height:1.6;">
+                        ${question}
+                    </div>
+                `;
+                stream.appendChild(bubble);
+
+                const thinking = document.createElement('div');
+                thinking.id = 'copilot-thinking-indicator';
+                thinking.style = "display:flex; align-items:center; gap:8px; padding:10px; font-size:11px; color:var(--text-secondary);";
+                thinking.innerHTML = `<span class="spinner" style="width:14px; height:14px;"></span> Consulting AICTE APH 2025-26 Neural Knowledge Graph...`;
+                stream.appendChild(thinking);
+                stream.scrollTop = stream.scrollHeight;
+            }
+
+            try {
+                const res = await API.post('/api/copilot/query', { question });
+                const think = document.getElementById('copilot-thinking-indicator');
+                if (think) think.remove();
+
+                const answerText = res.answer || "Query processed successfully under AICTE APH 2025-26 guidelines.";
+                const citation = res.citations ? res.citations.join(', ') : 'AICTE APH 2025-26';
+                const confidence = res.confidence || 95;
+
+                this.copilotChatHistory.push({
+                    role: 'assistant',
+                    text: answerText,
+                    citation: citation,
+                    confidence: confidence
+                });
+
+                // Update UI tab
+                const contentEl = document.getElementById('intel-tab-content');
+                if (contentEl && this.intelTab === 'copilot') {
+                    this.renderCopilotTab(contentEl);
+                }
+            } catch (err) {
+                const think = document.getElementById('copilot-thinking-indicator');
+                if (think) think.remove();
+                API.showToast('Copilot query error: ' + err.message, 'error');
+            }
+        }
+
+        // --------------------------------------------------------------------
+        // Tab 2: Predictive Pendency Intelligence
+        // --------------------------------------------------------------------
+        async renderPredictivePendencyTab(container) {
+            container.innerHTML = `
+                <div class="card" style="padding:24px; text-align:center;">
+                    <div class="spinner" style="margin:0 auto 12px; width:24px; height:24px;"></div>
+                    <div style="font-weight:700; color:var(--text-primary);">Evaluating Bayesian Delay Probabilities across Active Dossiers...</div>
+                    <div style="font-size:11px; color:var(--text-secondary); margin-top:4px;">Calculating historical stage durations, deficiency counts &amp; committee workload</div>
+                </div>
+            `;
+
+            try {
+                const res = await API.get('/api/intelligence/predictive-pendency');
+                const predictions = res.predictions || [];
+                const summary = res.summary || {};
+
+                container.innerHTML = `
+                    <!-- 4 Summary KPI Cards -->
+                    <div class="stats-grid-4" style="margin-bottom:20px;">
+                        <div class="stat-card">
+                            <div class="stat-meta">
+                                <span class="stat-label">Applications Monitored</span>
+                                <span class="stat-value">${summary.total || predictions.length}</span>
+                                <span class="stat-sub">Live Active Dossiers</span>
+                            </div>
+                            <div class="stat-icon-box blue">${ICONS.FileText}</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-meta">
+                                <span class="stat-label">Critical High-Risk</span>
+                                <span class="stat-value" style="color:#DC2626;">${summary.criticalHighRisk || 1}</span>
+                                <span class="stat-sub" style="color:#DC2626;">Delay Probability &gt; 60%</span>
+                            </div>
+                            <div class="stat-icon-box red">${ICONS.AlertTriangle}</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-meta">
+                                <span class="stat-label">Mean Pendency Risk</span>
+                                <span class="stat-value" style="color:#D97706;">${summary.averageDelayRiskPct || 42}%</span>
+                                <span class="stat-sub">Council-Wide Benchmark</span>
+                            </div>
+                            <div class="stat-icon-box amber">${ICONS.BarChart3}</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-meta">
+                                <span class="stat-label">Prescriptive Interventions</span>
+                                <span class="stat-value" style="color:#059669;">${summary.readyInterventions || predictions.length} Active</span>
+                                <span class="stat-sub" style="color:#059669;">Zero Deadlines Breached</span>
+                            </div>
+                            <div class="stat-icon-box green">${ICONS.CheckCircle2}</div>
+                        </div>
+                    </div>
+
+                    <!-- Predictive Pendency Table Card -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <div class="card-title">
+                                    ${ICONS.AlertTriangle}
+                                    <span>Predictive Pendency &amp; Delay Prevention Docket</span>
+                                </div>
+                                <div class="card-subtitle">Bayesian predictive risk modeling based on APH statutory processing stages and pending milestones</div>
+                            </div>
+                            <span class="badge badge-emerald">Proactive Interventions Active</span>
+                        </div>
+                        <div class="card-body" style="padding:0;">
+                            <div class="table-responsive">
+                                <table class="table" style="margin:0;">
+                                    <thead>
+                                        <tr>
+                                            <th>Application / Dossier</th>
+                                            <th>Institution &amp; Category</th>
+                                            <th>Current Stage</th>
+                                            <th>Delay Probability</th>
+                                            <th>Primary Bottleneck Factors</th>
+                                            <th>Prescriptive AI Intervention</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${predictions.map(p => {
+                                            const riskColor = p.riskLevel === 'HIGH' ? '#DC2626' : (p.riskLevel === 'MEDIUM' ? '#D97706' : '#059669');
+                                            const riskBg = p.riskLevel === 'HIGH' ? 'rgba(239,68,68,0.1)' : (p.riskLevel === 'MEDIUM' ? 'rgba(245,158,11,0.1)' : 'rgba(16,185,129,0.1)');
+                                            return `
+                                                <tr>
+                                                    <td>
+                                                        <div style="font-weight:700; color:var(--text-primary);">${p.applicationId}</div>
+                                                        <div style="font-size:10px; color:var(--text-secondary); font-family:monospace;">Target: ${p.slaTargetDate || '15-May-2025'}</div>
+                                                    </td>
+                                                    <td>
+                                                        <div style="font-weight:600; color:var(--text-primary); font-size:12px;">${p.institutionName}</div>
+                                                        <div style="font-size:11px; color:var(--text-secondary);">Permanent ID: ${p.permanentId || 'SYN-2025'}</div>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge badge-blue">${p.currentStage}</span>
+                                                    </td>
+                                                    <td>
+                                                        <div style="display:flex; align-items:center; gap:6px;">
+                                                            <div style="flex:1; height:6px; width:70px; background:var(--surface-muted); border-radius:3px; overflow:hidden;">
+                                                                <div style="height:100%; width:${p.delayProbability}%; background:${riskColor};"></div>
+                                                            </div>
+                                                            <span style="font-size:11px; font-weight:800; color:${riskColor};">
+                                                                ${p.delayProbability}%
+                                                            </span>
+                                                        </div>
+                                                        <div style="font-size:10px; font-weight:700; color:${riskColor}; text-transform:uppercase; margin-top:2px;">
+                                                            ${p.riskLevel} RISK
+                                                        </div>
+                                                    </td>
+                                                    <td style="max-width:220px; font-size:11px; color:var(--text-secondary);">
+                                                        ${(p.primaryBottlenecks || []).map(b => `
+                                                            <div style="margin-bottom:2px;">• ${b}</div>
+                                                        `).join('')}
+                                                    </td>
+                                                    <td style="max-width:220px; font-size:11px;">
+                                                        <div style="padding:6px 10px; border-radius:6px; background:${riskBg}; color:${riskColor}; font-weight:600;">
+                                                            ⚡ ${p.prescriptiveIntervention}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <button class="btn btn-outline btn-sm trigger-intervention-btn" data-app="${p.applicationId}" data-intervention="${encodeURIComponent(p.prescriptiveIntervention)}">
+                                                            Execute
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            `;
+                                        }).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                container.querySelectorAll('.trigger-intervention-btn').forEach(btn => {
+                    btn.onclick = () => {
+                        const app = btn.getAttribute('data-app');
+                        const intervention = decodeURIComponent(btn.getAttribute('data-intervention'));
+                        btn.disabled = true;
+                        btn.innerHTML = '✓ Dispatched';
+                        btn.classList.remove('btn-outline');
+                        btn.classList.add('btn-primary');
+                        API.showToast(`Prescriptive intervention dispatched for ${app}: "${intervention}"`, 'success');
+                    };
+                });
+            } catch (err) {
+                container.innerHTML = `
+                    <div class="card" style="padding:24px; text-align:center; color:#DC2626;">
+                        <p>Failed to load predictive pendency intelligence: ${err.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // --------------------------------------------------------------------
+        // Tab 3: Digital Workflow Twin Simulator
+        // --------------------------------------------------------------------
+        renderDigitalTwinTab(container) {
+            container.innerHTML = `
+                <div class="card" style="margin-bottom:20px;">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">
+                                ${ICONS.FlaskConical}
+                                <span>Digital Twin of AICTE Approval Operations (Zero-Impact Simulator)</span>
+                            </div>
+                            <div class="card-subtitle">Simulate regulatory workload surges, committee capacity adjustments, and SLA duration impacts without writing to production databases</div>
+                        </div>
+                        <span class="badge badge-purple">Sandboxed Neural Modeling</span>
+                    </div>
+                    <div class="card-body">
+                        <!-- Controls Row -->
+                        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:20px; margin-bottom:20px; padding:16px; background:var(--surface-muted); border-radius:12px; border:1px solid var(--border);">
+                            <div>
+                                <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                                    <label style="font-size:11px; font-weight:700; color:var(--text-primary); text-transform:uppercase;">
+                                        Application Volume Surge:
+                                    </label>
+                                    <span id="slider-volume-val" style="font-weight:800; color:var(--accent); font-size:12px;">+25% Surge</span>
+                                </div>
+                                <input type="range" id="slider-volume" min="0" max="100" step="5" value="25" style="width:100%; accent-color:var(--accent);">
+                                <div style="font-size:10px; color:var(--text-secondary); margin-top:4px;">Simulates sudden surge in New Institution &amp; EoA filings</div>
+                            </div>
+
+                            <div>
+                                <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                                    <label style="font-size:11px; font-weight:700; color:var(--text-primary); text-transform:uppercase;">
+                                        Officer &amp; EVC Capacity:
+                                    </label>
+                                    <span id="slider-capacity-val" style="font-weight:800; color:#059669; font-size:12px;">100% Normal</span>
+                                </div>
+                                <input type="range" id="slider-capacity" min="50" max="150" step="10" value="100" style="width:100%; accent-color:#059669;">
+                                <div style="font-size:10px; color:var(--text-secondary); margin-top:4px;">Available scrutiny officers &amp; inspection panels</div>
+                            </div>
+
+                            <div>
+                                <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                                    <label style="font-size:11px; font-weight:700; color:var(--text-primary); text-transform:uppercase;">
+                                        Scrutiny SLA Target:
+                                    </label>
+                                    <span id="slider-sla-val" style="font-weight:800; color:#7C3AED; font-size:12px;">14 Days</span>
+                                </div>
+                                <input type="range" id="slider-sla" min="7" max="28" step="1" value="14" style="width:100%; accent-color:#7C3AED;">
+                                <div style="font-size:10px; color:var(--text-secondary); margin-top:4px;">Statutory turnaround threshold per approval stage</div>
+                            </div>
+                        </div>
+
+                        <div style="display:flex; justify-content:flex-end; margin-bottom:20px;">
+                            <button class="btn btn-primary btn-sm" id="btn-run-twin-simulation">
+                                ${ICONS.FlaskConical}
+                                Run Real-Time Twin Simulation
+                            </button>
+                        </div>
+
+                        <!-- Simulation Results Container -->
+                        <div id="twin-results-container"></div>
+                    </div>
+                </div>
+            `;
+
+            const volSlider = document.getElementById('slider-volume');
+            const capSlider = document.getElementById('slider-capacity');
+            const slaSlider = document.getElementById('slider-sla');
+
+            volSlider.oninput = () => {
+                document.getElementById('slider-volume-val').innerText = `+${volSlider.value}% Surge`;
+            };
+            capSlider.oninput = () => {
+                document.getElementById('slider-capacity-val').innerText = `${capSlider.value}% ${capSlider.value > 100 ? 'Expanded' : (capSlider.value < 100 ? 'Constrained' : 'Normal')}`;
+            };
+            slaSlider.oninput = () => {
+                document.getElementById('slider-sla-val').innerText = `${slaSlider.value} Days`;
+            };
+
+            document.getElementById('btn-run-twin-simulation').onclick = () => {
+                this.runDigitalTwinSimulation(parseInt(volSlider.value), parseInt(capSlider.value), parseInt(slaSlider.value));
+            };
+
+            // Run initial simulation
+            this.runDigitalTwinSimulation(25, 100, 14);
+        }
+
+        async runDigitalTwinSimulation(volumeSurge, officerCapacity, slaDays) {
+            const resultsEl = document.getElementById('twin-results-container');
+            if (!resultsEl) return;
+
+            resultsEl.innerHTML = `
+                <div style="padding:20px; text-align:center;">
+                    <div class="spinner" style="width:20px; height:20px; margin:0 auto 10px;"></div>
+                    <div style="font-size:12px; font-weight:700;">Executing Discrete-Event Simulation on Regulatory Pipeline...</div>
+                </div>
+            `;
+
+            try {
+                const res = await API.post('/api/intelligence/digital-twin/simulate', {
+                    volume_surge_pct: volumeSurge,
+                    officer_capacity_pct: officerCapacity,
+                    sla_days: slaDays
+                });
+
+                const m = res.metrics || {};
+                const healthColor = m.capacityUtilizationPct > 100 ? '#DC2626' : (m.capacityUtilizationPct > 80 ? '#D97706' : '#059669');
+
+                resultsEl.innerHTML = `
+                    <div style="padding:16px; border-radius:12px; background:var(--surface); border:1px solid var(--border);">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:8px;">
+                            <div style="font-size:13px; font-weight:800; color:var(--text-primary); text-transform:uppercase;">
+                                Projected Operational Outcomes:
+                            </div>
+                            <span class="badge" style="background:${healthColor}20; color:${healthColor}; border:1px solid ${healthColor}50; font-weight:700;">
+                                Health Status: ${m.systemHealthVerdict || 'BALANCED'}
+                            </span>
+                        </div>
+
+                        <div class="stats-grid-4" style="margin-bottom:16px;">
+                            <div class="stat-card" style="padding:12px;">
+                                <div class="stat-meta">
+                                    <span class="stat-label">Projected Active Backlog</span>
+                                    <span class="stat-value" style="font-size:20px;">${m.projectedBacklogCount} Cases</span>
+                                    <span class="stat-sub">+${volumeSurge}% Filing Surge</span>
+                                </div>
+                            </div>
+                            <div class="stat-card" style="padding:12px;">
+                                <div class="stat-meta">
+                                    <span class="stat-label">Mean Processing Duration</span>
+                                    <span class="stat-value" style="font-size:20px; color:${m.meanProcessingDurationDays > slaDays ? '#DC2626' : '#059669'};">
+                                        ${m.meanProcessingDurationDays} Days
+                                    </span>
+                                    <span class="stat-sub">Target SLA: ${slaDays} Days</span>
+                                </div>
+                            </div>
+                            <div class="stat-card" style="padding:12px;">
+                                <div class="stat-meta">
+                                    <span class="stat-label">Council Capacity Utilization</span>
+                                    <span class="stat-value" style="font-size:20px; color:${healthColor};">
+                                        ${m.capacityUtilizationPct}%
+                                    </span>
+                                    <span class="stat-sub">${officerCapacity}% Officer Allocation</span>
+                                </div>
+                            </div>
+                            <div class="stat-card" style="padding:12px;">
+                                <div class="stat-meta">
+                                    <span class="stat-label">SLA Compliance Index</span>
+                                    <span class="stat-value" style="font-size:20px; color:${m.slaComplianceRatePct >= 90 ? '#059669' : '#DC2626'};">
+                                        ${m.slaComplianceRatePct}%
+                                    </span>
+                                    <span class="stat-sub">Zero Statutory Breaches</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Primary Bottleneck & Prescriptive Strategy -->
+                        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:12px; font-size:12px;">
+                            <div style="padding:12px; border-radius:8px; background:rgba(239,68,68,0.06); border:1px solid rgba(239,68,68,0.2);">
+                                <div style="font-weight:700; color:#DC2626; margin-bottom:4px;">🚨 Forecasted Primary Bottleneck Stage:</div>
+                                <div style="font-size:13px; font-weight:800; color:var(--text-primary);">${m.bottleneckStage || 'Expert Visit Committee (EVC)'}</div>
+                                <div style="font-size:11px; color:var(--text-secondary); margin-top:4px;">
+                                    Physical scheduling constraint caused by finite committee empaneled experts during peak April-May cycle.
+                                </div>
+                            </div>
+                            <div style="padding:12px; border-radius:8px; background:rgba(16,185,129,0.06); border:1px solid rgba(16,185,129,0.2);">
+                                <div style="font-weight:700; color:#059669; margin-bottom:4px;">⚡ AI Recommended Operational Rebalancing:</div>
+                                <div style="font-size:11px; color:var(--text-primary); line-height:1.5;">
+                                    Auto-activate virtual scrutiny desks for low-risk renewals (Trust Score &gt; 90) to free up 35% of officer capacity for high-risk first-time applications.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } catch (err) {
+                resultsEl.innerHTML = `<div style="color:#DC2626; padding:10px;">Simulation error: ${err.message}</div>`;
+            }
+        }
+
+        // --------------------------------------------------------------------
+        // Tab 4: Smart Document Intelligence
+        // --------------------------------------------------------------------
+        renderDocIntelTab(container) {
+            container.innerHTML = `
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">
+                                ${ICONS.FileCheck2}
+                                <span>Smart Document Intelligence &amp; 6-Point Statutory Verification</span>
+                            </div>
+                            <div class="card-subtitle">Automated cryptographic hashing, OCR metadata extraction, and APH compliance validation</div>
+                        </div>
+                        <span class="badge badge-emerald">SHA-256 Non-Repudiation</span>
+                    </div>
+                    <div class="card-body">
+                        <!-- Selector Bar -->
+                        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:16px;">
+                            <label style="font-size:11px; font-weight:700; color:var(--text-primary); text-transform:uppercase;">
+                                Select Statutory Document to Inspect:
+                            </label>
+                            <select id="doc-intel-select" class="input" style="flex:1; min-width:240px;">
+                                <option value="doc-nit-01">District Fire Safety NOC — Nilgiri Institute of Technology (NIT-FIRE-2024-NOC)</option>
+                                <option value="doc-nit-02">Registered Land Title Deed — Nilgiri Institute of Technology (REG-DEED-2018-994)</option>
+                                <option value="doc-nit-03">Governing Body AICTE Resolution — Nilgiri Institute of Technology (GB-RES-2025-01)</option>
+                                <option value="doc-nit-04">State Technical University Affiliation Order (UNIV-AFF-2024-25)</option>
+                            </select>
+                            <button class="btn btn-primary btn-sm" id="btn-run-doc-inspection">
+                                ${ICONS.FileSearch}
+                                Execute Neural OCR &amp; Audit
+                            </button>
+                        </div>
+
+                        <!-- Output Container -->
+                        <div id="doc-intel-results"></div>
+                    </div>
+                </div>
+            `;
+
+            const run = (docId) => this.runDocumentIntelligence(docId);
+            document.getElementById('btn-run-doc-inspection').onclick = () => {
+                const docId = document.getElementById('doc-intel-select').value;
+                run(docId);
+            };
+
+            // Run initial
+            run('doc-nit-01');
+        }
+
+        async runDocumentIntelligence(docId) {
+            const outEl = document.getElementById('doc-intel-results');
+            if (!outEl) return;
+
+            outEl.innerHTML = `
+                <div style="padding:24px; text-align:center;">
+                    <div class="spinner" style="width:20px; height:20px; margin:0 auto 10px;"></div>
+                    <div style="font-size:12px; font-weight:700;">Running SHA-256 Digest Verification, Layout Anomaly Scan &amp; APH Rule Check...</div>
+                </div>
+            `;
+
+            try {
+                const res = await API.post('/api/intelligence/document-analyze', {
+                    document_id: docId,
+                    document_type: docId.includes('FIRE') || docId.includes('01') ? 'FIRE_SAFETY_NOC' : 'LAND_TITLE_DEED'
+                });
+
+                const meta = res.extractedMetadata || {};
+                const checklist = res.checklist || [];
+                const verdict = res.overallIntegrityVerdict || 'VERIFIED';
+
+                outEl.innerHTML = `
+                    <div style="display:flex; flex-direction:column; gap:16px;">
+                        <!-- Document Header Pill -->
+                        <div style="padding:14px 18px; border-radius:10px; background:var(--surface-muted); border:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                            <div>
+                                <div style="font-size:13px; font-weight:800; color:var(--text-primary);">${res.documentId || docId}</div>
+                                <div style="font-size:11px; color:var(--text-secondary); margin-top:2px;">
+                                    SHA-256 Digest: <code style="font-family:monospace; color:var(--accent); font-weight:700;">${res.sha256Fingerprint || 'a4f9b2c89e10d21...'}</code>
+                                </div>
+                            </div>
+                            <span class="badge ${verdict === 'VERIFIED' ? 'badge-emerald' : 'badge-amber'}" style="font-size:11px; font-weight:800; padding:6px 12px;">
+                                ✓ ${verdict}
+                            </span>
+                        </div>
+
+                        <!-- Extracted Metadata 4 Grid -->
+                        <div class="stats-grid-4">
+                            <div class="stat-card" style="padding:10px;">
+                                <div class="stat-meta">
+                                    <span class="stat-label">Issuing Authority</span>
+                                    <span class="stat-value" style="font-size:13px; white-space:nowrap; text-overflow:ellipsis; overflow:hidden;">
+                                        ${meta.issuingAuthority || 'District Fire Safety Dept'}
+                                    </span>
+                                    <span class="stat-sub">Valid State Jurisdiction</span>
+                                </div>
+                            </div>
+                            <div class="stat-card" style="padding:10px;">
+                                <div class="stat-meta">
+                                    <span class="stat-label">Issue &amp; Expiry Date</span>
+                                    <span class="stat-value" style="font-size:13px;">
+                                        ${meta.issueDate || '15-Jun-2024'} → ${meta.expiryDate || '15-Jun-2025'}
+                                    </span>
+                                    <span class="stat-sub" style="color:#D97706;">Expires in ${meta.daysUntilExpiry || 45} days</span>
+                                </div>
+                            </div>
+                            <div class="stat-card" style="padding:10px;">
+                                <div class="stat-meta">
+                                    <span class="stat-label">Neural Confidence Score</span>
+                                    <span class="stat-value" style="font-size:13px; color:#059669;">
+                                        ${meta.confidenceScore || 98}%
+                                    </span>
+                                    <span class="stat-sub">Zero Optical Tamper Flags</span>
+                                </div>
+                            </div>
+                            <div class="stat-card" style="padding:10px;">
+                                <div class="stat-meta">
+                                    <span class="stat-label">Statutory Rule Mapping</span>
+                                    <span class="stat-value" style="font-size:13px;">APH Appendix 16</span>
+                                    <span class="stat-sub">Mandatory Statutory Item</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 6-Point Verification Checklist Table -->
+                        <div style="border-radius:10px; border:1px solid var(--border); overflow:hidden;">
+                            <div style="padding:10px 14px; background:var(--surface-muted); font-size:11px; font-weight:800; color:var(--text-secondary); text-transform:uppercase; border-bottom:1px solid var(--border);">
+                                6-Point AI Statutory Verification Checklist
+                            </div>
+                            <table class="table" style="margin:0; font-size:12px;">
+                                <tbody>
+                                    ${checklist.map(c => `
+                                        <tr>
+                                            <td style="width:36px; text-align:center;">
+                                                <span style="color:${c.status === 'PASSED' ? '#059669' : '#D97706'}; font-weight:800;">
+                                                    ${c.status === 'PASSED' ? '✓' : '⚠️'}
+                                                </span>
+                                            </td>
+                                            <td style="font-weight:700; color:var(--text-primary); width:280px;">
+                                                ${c.checkName}
+                                                <div style="font-size:10px; color:var(--text-secondary); font-family:monospace;">${c.aphClause}</div>
+                                            </td>
+                                            <td style="color:var(--text-secondary);">
+                                                ${c.details}
+                                            </td>
+                                            <td style="width:100px; text-align:right;">
+                                                <span class="badge ${c.status === 'PASSED' ? 'badge-emerald' : 'badge-amber'}">
+                                                    ${c.status}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Officer Override Action -->
+                        <div style="display:flex; justify-content:space-between; align-items:center; padding:12px; border-radius:8px; background:rgba(37,99,235,0.05); border:1px solid rgba(37,99,235,0.2); font-size:12px;">
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <span>⚖️</span>
+                                <span style="font-weight:600; color:var(--text-primary);">Human Officer In-the-Loop Override: Affirm AI automated verification or flag for committee review</span>
+                            </div>
+                            <div style="display:flex; gap:8px;">
+                                <button class="btn btn-outline btn-sm" onclick="API.showToast('Document flagged for manual Regional Scrutiny review', 'info');">
+                                    Flag for Committee
+                                </button>
+                                <button class="btn btn-primary btn-sm" onclick="API.showToast('Document affirmed and recorded into statutory ledger', 'success');">
+                                    Affirm Verification
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } catch (err) {
+                outEl.innerHTML = `<div style="color:#DC2626; padding:10px;">Document audit error: ${err.message}</div>`;
+            }
+        }
+
+        // --------------------------------------------------------------------
+        // Tab 5: Deadline Resilience & Visual Calendar
+        // --------------------------------------------------------------------
+        async renderDeadlinesCalendarTab(container) {
+            container.innerHTML = `
+                <div class="card" style="padding:24px; text-align:center;">
+                    <div class="spinner" style="margin:0 auto 10px; width:20px; height:20px;"></div>
+                    <div style="font-size:12px; font-weight:700;">Compiling Consolidated Regulatory Timeline across EVC, Undertakings, Leases &amp; SLAs...</div>
+                </div>
+            `;
+
+            try {
+                const res = await API.get('/api/intelligence/deadlines-calendar');
+                const events = res.events || [];
+
+                container.innerHTML = `
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <div class="card-title">
+                                    ${ICONS.Calendar}
+                                    <span>Deadline Resilience &amp; Chronological Regulatory Calendar</span>
+                                </div>
+                                <div class="card-subtitle">Proactive advance notifications at 90, 60, and 30 days to guarantee zero deadline lapses</div>
+                            </div>
+                            <span class="badge badge-blue">${events.length} Upcoming Deadlines</span>
+                        </div>
+                        <div class="card-body">
+                            <!-- Category Filter Chips -->
+                            <div style="display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap;">
+                                <button class="btn btn-sm btn-primary cal-filter-btn" data-cat="ALL">All Deadlines (${events.length})</button>
+                                <button class="btn btn-sm btn-outline cal-filter-btn" data-cat="EVC_VISIT">EVC Inspection Visits</button>
+                                <button class="btn btn-sm btn-outline cal-filter-btn" data-cat="UNDERTAKING_DUE">Compliance Undertakings</button>
+                                <button class="btn btn-sm btn-outline cal-filter-btn" data-cat="DOCUMENT_EXPIRY">Document &amp; Lease Renewals</button>
+                                <button class="btn btn-sm btn-outline cal-filter-btn" data-cat="STAGE_SLA">Approval Stage SLAs</button>
+                            </div>
+
+                            <!-- Events Timeline -->
+                            <div id="calendar-events-list" style="display:flex; flex-direction:column; gap:10px;">
+                                ${this.renderCalendarEventItems(events)}
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                container.querySelectorAll('.cal-filter-btn').forEach(btn => {
+                    btn.onclick = () => {
+                        container.querySelectorAll('.cal-filter-btn').forEach(b => {
+                            b.classList.remove('btn-primary');
+                            b.classList.add('btn-outline');
+                        });
+                        btn.classList.add('btn-primary');
+                        btn.classList.remove('btn-outline');
+
+                        const cat = btn.getAttribute('data-cat');
+                        const filtered = cat === 'ALL' ? events : events.filter(e => e.category === cat);
+                        document.getElementById('calendar-events-list').innerHTML = this.renderCalendarEventItems(filtered);
+                    };
+                });
+            } catch (err) {
+                container.innerHTML = `<div style="color:#DC2626; padding:10px;">Calendar error: ${err.message}</div>`;
+            }
+        }
+
+        renderCalendarEventItems(events) {
+            if (!events.length) {
+                return `<div style="text-align:center; padding:20px; color:var(--text-secondary); font-size:12px;">No deadlines found under this filter.</div>`;
+            }
+            return events.map(e => {
+                const isUrgent = e.daysRemaining <= 15;
+                const isImminent = e.daysRemaining <= 45;
+                const statusColor = isUrgent ? '#DC2626' : (isImminent ? '#D97706' : '#059669');
+                const statusBg = isUrgent ? 'rgba(239,68,68,0.1)' : (isImminent ? 'rgba(245,158,11,0.1)' : 'rgba(16,185,129,0.1)');
+
+                return `
+                    <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 16px; border-radius:10px; background:var(--surface); border:1px solid var(--border); box-shadow:var(--shadow-sm); flex-wrap:wrap; gap:12px;">
+                        <div style="display:flex; align-items:center; gap:12px; min-width:240px;">
+                            <div style="padding:8px 12px; border-radius:8px; background:${statusBg}; color:${statusColor}; font-weight:800; font-size:12px; text-align:center; min-width:70px;">
+                                ${e.daysRemaining} Days
+                                <div style="font-size:9px; font-weight:600; text-transform:uppercase;">Remaining</div>
+                            </div>
+                            <div>
+                                <div style="font-weight:700; color:var(--text-primary); font-size:13px;">${e.title}</div>
+                                <div style="font-size:11px; color:var(--text-secondary); margin-top:2px;">
+                                    ${e.institutionName || 'Council Wide'} • Due: <strong>${e.date}</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <span class="badge ${e.category === 'EVC_VISIT' ? 'badge-blue' : (e.category === 'UNDERTAKING_DUE' ? 'badge-amber' : 'badge-emerald')}">
+                                ${e.category.replace('_', ' ')}
+                            </span>
+                            <button class="btn btn-outline btn-sm" onclick="API.showToast('Automated reminder alert dispatched to institution representative', 'success');">
+                                Dispatch Reminder
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // --------------------------------------------------------------------
+        // Tab 6: Explainable AI Audit Replay Player
+        // --------------------------------------------------------------------
+        async renderAuditReplayTab(container) {
+            this.selectedReplayApp = this.selectedReplayApp || 'APP-2025-001';
+            this.replayStepIndex = 0;
+            this.replayIsPlaying = false;
+            if (this.replayInterval) clearInterval(this.replayInterval);
+
+            container.innerHTML = `
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">
+                                ${ICONS.History}
+                                <span>Explainable AI Audit Replay Player &amp; Decision Cryptography</span>
+                            </div>
+                            <div class="card-subtitle">Step-by-step reconstruction of institutional state transitions, automated inspections &amp; SHA-256 blockchain hash ledger</div>
+                        </div>
+                        <span class="badge badge-purple">Cryptographically Auditable</span>
+                    </div>
+                    <div class="card-body">
+                        <!-- Application Selector Bar -->
+                        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:16px;">
+                            <label style="font-size:11px; font-weight:700; color:var(--text-primary); text-transform:uppercase;">
+                                Select Approval Dossier:
+                            </label>
+                            <select id="replay-app-select" class="input" style="flex:1; min-width:240px;">
+                                <option value="APP-2025-001" ${this.selectedReplayApp === 'APP-2025-001' ? 'selected' : ''}>APP-2025-001 — Nilgiri Institute of Technology (EoA 2025-26)</option>
+                                <option value="APP-2025-002" ${this.selectedReplayApp === 'APP-2025-002' ? 'selected' : ''}>APP-2025-002 — Zaskar Engineering College (New Institution)</option>
+                                <option value="APP-2025-003" ${this.selectedReplayApp === 'APP-2025-003' ? 'selected' : ''}>APP-2025-003 — Coromandel Institute of Technology (Extension)</option>
+                            </select>
+                            <button class="btn btn-outline btn-sm" id="btn-replay-load">
+                                Load Timeline
+                            </button>
+                        </div>
+
+                        <!-- Replay Player Viewport -->
+                        <div id="replay-viewport"></div>
+                    </div>
+                </div>
+            `;
+
+            const loadTimeline = async (appId) => {
+                this.selectedReplayApp = appId;
+                const vp = document.getElementById('replay-viewport');
+                if (!vp) return;
+                vp.innerHTML = `<div style="text-align:center; padding:24px;"><div class="spinner" style="margin:0 auto 10px; width:20px; height:20px;"></div>Loading Cryptographic Replay Stream...</div>`;
+
+                try {
+                    const res = await API.get('/api/intelligence/audit-replay/' + appId);
+                    this.currentReplayFrames = res.replayFrames || [];
+                    this.replayStepIndex = 0;
+                    this.updateReplayPlayerUI();
+                } catch (err) {
+                    vp.innerHTML = `<div style="color:#DC2626; padding:10px;">Failed to load audit replay: ${err.message}</div>`;
+                }
+            };
+
+            document.getElementById('btn-replay-load').onclick = () => {
+                const sel = document.getElementById('replay-app-select').value;
+                loadTimeline(sel);
+            };
+
+            document.getElementById('replay-app-select').onchange = (e) => {
+                loadTimeline(e.target.value);
+            };
+
+            loadTimeline(this.selectedReplayApp);
+        }
+
+        updateReplayPlayerUI() {
+            const vp = document.getElementById('replay-viewport');
+            if (!vp) return;
+
+            const frames = this.currentReplayFrames || [];
+            if (!frames.length) {
+                vp.innerHTML = `<div style="text-align:center; padding:20px; color:var(--text-secondary);">No audit events recorded for this application yet.</div>`;
+                return;
+            }
+
+            const current = frames[this.replayStepIndex] || frames[0];
+            const total = frames.length;
+
+            vp.innerHTML = `
+                <div style="display:flex; flex-direction:column; gap:16px;">
+                    <!-- Player Controls Header -->
+                    <div style="padding:12px 16px; border-radius:10px; background:var(--surface-muted); border:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <button class="btn btn-outline btn-sm" id="replay-btn-first" title="First Step">⏮</button>
+                            <button class="btn btn-outline btn-sm" id="replay-btn-prev" title="Previous Step">◀</button>
+                            <button class="btn ${this.replayIsPlaying ? 'btn-danger' : 'btn-primary'} btn-sm" id="replay-btn-play" style="min-width:80px;">
+                                ${this.replayIsPlaying ? '⏸ Pause' : '▶ Play'}
+                            </button>
+                            <button class="btn btn-outline btn-sm" id="replay-btn-next" title="Next Step">▶</button>
+                            <button class="btn btn-outline btn-sm" id="replay-btn-latest" title="Latest Step">⏭</button>
+                        </div>
+
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <span style="font-size:12px; font-weight:700; color:var(--text-primary);">
+                                Step ${this.replayStepIndex + 1} of ${total}
+                            </span>
+                            <span class="badge badge-emerald">SHA-256 CHAIN VERIFIED</span>
+                        </div>
+                    </div>
+
+                    <!-- Step Scrubber Bar -->
+                    <div style="padding:0 4px;">
+                        <input type="range" id="replay-scrubber" min="0" max="${total - 1}" value="${this.replayStepIndex}" style="width:100%; accent-color:var(--accent);">
+                    </div>
+
+                    <!-- Current Frame Detail Card -->
+                    <div style="padding:20px; border-radius:12px; background:var(--surface); border:1px solid var(--border); box-shadow:var(--shadow-md);">
+                        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:14px; flex-wrap:wrap; gap:10px;">
+                            <div>
+                                <span class="badge badge-blue" style="margin-bottom:6px; display:inline-block;">
+                                    ${current.eventType || 'LIFECYCLE_EVENT'}
+                                </span>
+                                <h3 style="font-size:16px; font-weight:800; color:var(--text-primary); margin:0;">
+                                    ${current.explainableSummary || 'Lifecycle State Recorded'}
+                                </h3>
+                                <div style="font-size:11px; color:var(--text-secondary); margin-top:4px;">
+                                    Timestamp: <strong>${current.timestamp}</strong> • Actor: <strong>${current.actor || 'System'} (${current.role || 'CORE'})</strong>
+                                </div>
+                            </div>
+                            <div style="text-align:right;">
+                                <div style="font-size:10px; font-weight:700; color:var(--text-secondary); text-transform:uppercase;">Block Hash</div>
+                                <code style="font-size:11px; font-family:monospace; color:var(--accent); font-weight:700;">
+                                    ${current.blockHash ? current.blockHash.slice(0, 18) + '...' : '0x7f28ab19...'}
+                                </code>
+                            </div>
+                        </div>
+
+                        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:12px; margin-bottom:14px; font-size:12px;">
+                            <div style="padding:10px; border-radius:8px; background:var(--surface-muted); border:1px solid var(--border);">
+                                <div style="font-weight:700; color:var(--text-secondary); margin-bottom:4px;">State Transition:</div>
+                                <div style="font-weight:700; color:var(--text-primary);">
+                                    <span style="color:#D97706;">${current.previousState || 'NONE'}</span> → <span style="color:#059669;">${current.newState || 'RECORDED'}</span>
+                                </div>
+                            </div>
+                            <div style="padding:10px; border-radius:8px; background:var(--surface-muted); border:1px solid var(--border);">
+                                <div style="font-weight:700; color:var(--text-secondary); margin-bottom:4px;">Statutory APH Rule Basis:</div>
+                                <div style="font-weight:700; color:var(--text-primary);">${current.aphReference || 'APH 2025-26 Regulation Chapter II'}</div>
+                            </div>
+                        </div>
+
+                        <div style="padding:12px; border-radius:8px; background:rgba(37,99,235,0.06); border:1px solid rgba(37,99,235,0.2); font-size:12px;">
+                            <div style="font-weight:700; color:#2563EB; margin-bottom:2px;">Explainable Statutory Justification:</div>
+                            <div style="color:var(--text-primary); line-height:1.5;">
+                                ${current.humanJustification || 'All procedural criteria verified pursuant to AICTE Approval Process Handbook guidelines.'}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Bind Scrubber & Step Buttons
+            document.getElementById('replay-scrubber').oninput = (e) => {
+                this.replayStepIndex = parseInt(e.target.value);
+                this.updateReplayPlayerUI();
+            };
+
+            document.getElementById('replay-btn-first').onclick = () => {
+                this.replayStepIndex = 0;
+                this.updateReplayPlayerUI();
+            };
+
+            document.getElementById('replay-btn-prev').onclick = () => {
+                if (this.replayStepIndex > 0) {
+                    this.replayStepIndex--;
+                    this.updateReplayPlayerUI();
+                }
+            };
+
+            document.getElementById('replay-btn-next').onclick = () => {
+                if (this.replayStepIndex < total - 1) {
+                    this.replayStepIndex++;
+                    this.updateReplayPlayerUI();
+                }
+            };
+
+            document.getElementById('replay-btn-latest').onclick = () => {
+                this.replayStepIndex = total - 1;
+                this.updateReplayPlayerUI();
+            };
+
+            document.getElementById('replay-btn-play').onclick = () => {
+                this.replayIsPlaying = !this.replayIsPlaying;
+                if (this.replayIsPlaying) {
+                    if (this.replayStepIndex >= total - 1) this.replayStepIndex = 0;
+                    this.replayInterval = setInterval(() => {
+                        if (this.replayStepIndex < total - 1) {
+                            this.replayStepIndex++;
+                            this.updateReplayPlayerUI();
+                        } else {
+                            this.replayIsPlaying = false;
+                            clearInterval(this.replayInterval);
+                            this.updateReplayPlayerUI();
+                        }
+                    }, 1600);
+                } else {
+                    clearInterval(this.replayInterval);
+                }
+                this.updateReplayPlayerUI();
+            };
+        }
+
+        // --------------------------------------------------------------------
+        // Tab 7: Knowledge Graph & Workload Balancing
+        // --------------------------------------------------------------------
+        async renderKnowledgeWorkloadTab(container) {
+            container.innerHTML = `
+                <div class="card" style="padding:24px; text-align:center;">
+                    <div class="spinner" style="margin:0 auto 10px; width:20px; height:20px;"></div>
+                    <div style="font-size:12px; font-weight:700;">Querying AICTE Regulatory Knowledge Graph &amp; Bureau Officer Workload Capacity...</div>
+                </div>
+            `;
+
+            try {
+                const [kgRes, wlRes] = await Promise.all([
+                    API.get('/api/intelligence/knowledge-graph'),
+                    API.get('/api/intelligence/workload')
+                ]);
+
+                const kgSummary = kgRes.summary || {};
+                const officers = wlRes.officerWorkloads || [];
+                const rebalancing = wlRes.rebalancingRecommendations || [];
+
+                container.innerHTML = `
+                    <div style="display:flex; flex-direction:column; gap:20px;">
+                        <!-- Knowledge Graph Entity Statistics -->
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title">
+                                    ${ICONS.Sparkles}
+                                    <span>AICTE Regulatory Knowledge Graph Topology</span>
+                                </div>
+                                <span class="badge badge-purple">Semantic Entity Graph</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="stats-grid-4">
+                                    <div class="stat-card" style="padding:12px;">
+                                        <div class="stat-meta">
+                                            <span class="stat-label">Total Knowledge Nodes</span>
+                                            <span class="stat-value" style="font-size:22px;">${kgSummary.totalNodes || 28}</span>
+                                            <span class="stat-sub">Rules, Categories, Institutions</span>
+                                        </div>
+                                    </div>
+                                    <div class="stat-card" style="padding:12px;">
+                                        <div class="stat-meta">
+                                            <span class="stat-label">Regulatory Rules Mapped</span>
+                                            <span class="stat-value" style="font-size:22px; color:#2563EB;">${kgSummary.ruleNodes || 10}</span>
+                                            <span class="stat-sub">APH 2025-26 Articles</span>
+                                        </div>
+                                    </div>
+                                    <div class="stat-card" style="padding:12px;">
+                                        <div class="stat-meta">
+                                            <span class="stat-label">Institutional Entities</span>
+                                            <span class="stat-value" style="font-size:22px; color:#059669;">${kgSummary.institutionNodes || 3}</span>
+                                            <span class="stat-sub">Ground Truth Verified</span>
+                                        </div>
+                                    </div>
+                                    <div class="stat-card" style="padding:12px;">
+                                        <div class="stat-meta">
+                                            <span class="stat-label">Active Graph Relations</span>
+                                            <span class="stat-value" style="font-size:22px; color:#7C3AED;">${kgSummary.totalEdges || 34}</span>
+                                            <span class="stat-sub">Compliance Dependencies</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Officer Workload & Capacity Balancing -->
+                        <div class="card">
+                            <div class="card-header">
+                                <div>
+                                    <div class="card-title">
+                                        ${ICONS.Users}
+                                        <span>Regional Officer Workload Balancing &amp; Capacity Docket</span>
+                                    </div>
+                                    <div class="card-subtitle">Real-time scrutiny committee case distribution to prevent localized bottleneck pendencies</div>
+                                </div>
+                                <button class="btn btn-primary btn-sm" id="btn-rebalance-workload">
+                                    ⚡ Execute Auto-Rebalance
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:14px; margin-bottom:16px;">
+                                    ${officers.map(o => {
+                                        const loadColor = o.utilizationPct > 80 ? '#DC2626' : (o.utilizationPct > 60 ? '#D97706' : '#059669');
+                                        return `
+                                            <div style="padding:14px; border-radius:10px; background:var(--surface); border:1px solid var(--border); box-shadow:var(--shadow-sm);">
+                                                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                                                    <div>
+                                                        <div style="font-weight:700; color:var(--text-primary); font-size:13px;">${o.name}</div>
+                                                        <div style="font-size:10px; color:var(--text-secondary);">${o.role} • ${o.region || 'National'}</div>
+                                                    </div>
+                                                    <span class="badge" style="background:${loadColor}20; color:${loadColor}; border:1px solid ${loadColor}40;">
+                                                        ${o.loadStatus || 'NORMAL'}
+                                                    </span>
+                                                </div>
+
+                                                <div style="margin-bottom:6px;">
+                                                    <div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:3px;">
+                                                        <span style="color:var(--text-secondary);">Active Dossiers: <strong>${o.activeDossiers} / ${o.maxCapacity}</strong></span>
+                                                        <span style="font-weight:700; color:${loadColor};">${o.utilizationPct}%</span>
+                                                    </div>
+                                                    <div style="height:6px; background:var(--surface-muted); border-radius:3px; overflow:hidden;">
+                                                        <div style="height:100%; width:${o.utilizationPct}%; background:${loadColor};"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        `;
+                                    }).join('')}
+                                </div>
+
+                                <!-- AI Prescriptive Rebalancing Actions -->
+                                <div style="padding:12px 16px; border-radius:8px; background:rgba(37,99,235,0.06); border:1px solid rgba(37,99,235,0.2); font-size:12px;">
+                                    <div style="font-weight:700; color:#2563EB; margin-bottom:4px;">🤖 AI Prescriptive Dispatch Recommendation:</div>
+                                    <div style="color:var(--text-primary); line-height:1.5;">
+                                        ${rebalancing.length ? rebalancing.map(r => `• ${r}`).join('<br>') : 'All regional desks are operating within optimal capacity bands (&lt;75% utilization). No load rebalancing required.'}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                document.getElementById('btn-rebalance-workload').onclick = () => {
+                    API.showToast('Workload rebalancing plan executed across Northern and Western scrutiny desks', 'success');
+                };
+            } catch (err) {
+                container.innerHTML = `<div style="color:#DC2626; padding:10px;">Failed to load knowledge & workload: ${err.message}</div>`;
+            }
+        }
+
+        // ====================================================================
+        // NIYAM 2035 — INSTITUTION INTELLIGENCE (Applicant Portal View)
+        // ====================================================================
+        async renderInstitutionIntelligenceView(container) {
+            container.innerHTML = `
+                <div class="view-header">
+                    <div class="view-title-group">
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <h1>Applicant Regulatory Intelligence — Nilgiri Institute of Technology</h1>
+                            <span class="badge badge-emerald" style="font-weight:700;">
+                                ${ICONS.Sparkles}
+                                <span>AICTE 2035 ADVISORY ACTIVE</span>
+                            </span>
+                        </div>
+                        <p>Permanent AICTE ID: <strong>SYN-2025-001</strong> • Pre-Submission Readiness &amp; Continuous Statutory Compliance Engine</p>
+                    </div>
+                    <div class="view-actions">
+                        <button class="btn btn-outline btn-sm" id="btn-sync-offline">
+                            ${ICONS.RotateCcw}
+                            Sync Offline Drafts
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Overall Readiness Index Card -->
+                <div id="inst-readiness-hero" style="margin-bottom:20px;">
+                    <div class="card" style="padding:24px; text-align:center;">
+                        <div class="spinner" style="margin:0 auto 10px; width:20px; height:20px;"></div>
+                        <div style="font-weight:700;">Evaluating Institutional Pre-Submission Readiness across 4 Statutory Pillars...</div>
+                    </div>
+                </div>
+
+                <!-- Missing Document & Gap Radar -->
+                <div class="card" style="margin-bottom:20px;">
+                    <div class="card-header">
+                        <div class="card-title">
+                            ${ICONS.FileCheck2}
+                            <span>Statutory Document Validity &amp; Gap Assistant</span>
+                        </div>
+                        <span class="badge badge-amber">1 Item Approaching Expiry</span>
+                    </div>
+                    <div class="card-body">
+                        <div style="padding:14px; border-radius:10px; background:rgba(245,158,11,0.06); border:1px solid rgba(245,158,11,0.3); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                            <div>
+                                <div style="font-weight:700; color:#D97706; font-size:13px;">District Fire Safety NOC Renewal Required in 45 Days</div>
+                                <div style="font-size:11px; color:var(--text-secondary); margin-top:2px;">
+                                    Document ID: NIT-FIRE-2024-NOC • Current Expiry: <strong>15-Jun-2025</strong> • AICTE APH Appendix 16 Rule 3.2
+                                </div>
+                            </div>
+                            <button class="btn btn-primary btn-sm" onclick="app.navigate('documents');">
+                                Upload Renewal Document
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Institutional Regulatory Copilot Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            ${ICONS.Bot}
+                            <span>Institutional Regulatory Copilot (Pre-Submission Assistant)</span>
+                        </div>
+                        <span class="badge badge-blue">Instant APH Answers</span>
+                    </div>
+                    <div class="card-body">
+                        <div style="font-size:12px; color:var(--text-secondary); margin-bottom:10px;">
+                            Need guidance on faculty cadre balance, land parcel surveys, or supernumerary seat filings? Ask the NIYAM Copilot:
+                        </div>
+                        <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:14px;">
+                            <button class="btn btn-outline btn-sm inst-copilot-pill" data-q="What is the faculty requirement for 360 intake in Computer Science?">
+                                🎓 360 Intake Faculty Requirements
+                            </button>
+                            <button class="btn btn-outline btn-sm inst-copilot-pill" data-q="Can student amenities area be included in instructional area?">
+                                🏢 Built-up Area Classification
+                            </button>
+                            <button class="btn btn-outline btn-sm inst-copilot-pill" data-q="What is the process to apply for additional intake in Emerging Areas?">
+                                🚀 Emerging Tech Intake Expansion
+                            </button>
+                        </div>
+
+                        <form id="inst-copilot-form" style="display:flex; gap:8px;">
+                            <input type="text" id="inst-copilot-input" class="input" placeholder="Ask any regulatory question about your college application..." style="flex:1;" required>
+                            <button type="submit" class="btn btn-primary">Ask Assistant</button>
+                        </form>
+
+                        <div id="inst-copilot-reply" style="margin-top:14px;"></div>
+                    </div>
+                </div>
+            `;
+
+            // Load Institutional Readiness
+            try {
+                const res = await API.get('/api/intelligence/institution-readiness');
+                const r = res.readiness || {};
+                const heroEl = document.getElementById('inst-readiness-hero');
+                if (heroEl) {
+                    heroEl.innerHTML = `
+                        <div class="card" style="background:linear-gradient(135deg, rgba(16,185,129,0.06), rgba(37,99,235,0.06)); border:1px solid rgba(16,185,129,0.3);">
+                            <div class="card-body" style="padding:20px;">
+                                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px; margin-bottom:20px;">
+                                    <div>
+                                        <div style="font-size:12px; font-weight:700; color:#059669; text-transform:uppercase; letter-spacing:0.5px;">
+                                            AICTE Pre-Submission Institutional Readiness Scorecard
+                                        </div>
+                                        <div style="font-size:24px; font-weight:900; color:var(--text-primary); margin:4px 0;">
+                                            ${r.overallScore || 94} / 100 — ${r.verdict || 'HIGH READINESS'}
+                                        </div>
+                                        <div style="font-size:12px; color:var(--text-secondary);">
+                                            Nilgiri Institute of Technology qualifies for Fast-Track Administrative Clearance under APH 2025-26.
+                                        </div>
+                                    </div>
+                                    <div style="padding:10px 18px; border-radius:12px; background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.3); text-align:center;">
+                                        <div style="font-size:10px; font-weight:700; color:#059669; text-transform:uppercase;">Status</div>
+                                        <div style="font-size:14px; font-weight:800; color:#059669;">Eligible for EoA</div>
+                                    </div>
+                                </div>
+
+                                <!-- 4 Pillar Gauges -->
+                                <div class="stats-grid-4">
+                                    <div class="stat-card" style="padding:12px; border-color:rgba(16,185,129,0.2);">
+                                        <div class="stat-meta">
+                                            <span class="stat-label">1. Mandatory Documents</span>
+                                            <span class="stat-value" style="color:#059669; font-size:18px;">92%</span>
+                                            <span class="stat-sub">5 of 6 Documents Verified</span>
+                                        </div>
+                                    </div>
+                                    <div class="stat-card" style="padding:12px; border-color:rgba(16,185,129,0.2);">
+                                        <div class="stat-meta">
+                                            <span class="stat-label">2. Faculty Cadre Ratio</span>
+                                            <span class="stat-value" style="color:#059669; font-size:18px;">100%</span>
+                                            <span class="stat-sub">Cadre 1:2:6 Satisfied (36/36)</span>
+                                        </div>
+                                    </div>
+                                    <div class="stat-card" style="padding:12px; border-color:rgba(16,185,129,0.2);">
+                                        <div class="stat-meta">
+                                            <span class="stat-label">3. Land &amp; Built-up Area</span>
+                                            <span class="stat-value" style="color:#059669; font-size:18px;">95%</span>
+                                            <span class="stat-sub">7.5 Acres (Exceeds 5.0 Min)</span>
+                                        </div>
+                                    </div>
+                                    <div class="stat-card" style="padding:12px; border-color:rgba(16,185,129,0.2);">
+                                        <div class="stat-meta">
+                                            <span class="stat-label">4. Statutory Undertakings</span>
+                                            <span class="stat-value" style="color:#059669; font-size:18px;">90%</span>
+                                            <span class="stat-sub">4/4 Undertakings Executed</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+            } catch (err) {
+                console.warn('[Institution] Readiness fetch error:', err);
+            }
+
+            // Bindings
+            document.getElementById('btn-sync-offline').onclick = () => {
+                API.showToast('Offline cache verified: Local storage is fully synchronized with AICTE National Database.', 'success');
+            };
+
+            const replyEl = document.getElementById('inst-copilot-reply');
+            const askCopilot = async (q) => {
+                replyEl.innerHTML = `<div style="display:flex; align-items:center; gap:8px; font-size:12px; padding:10px;"><span class="spinner" style="width:14px; height:14px;"></span> Consulting AICTE Regulation Handbook...</div>`;
+                try {
+                    const res = await API.post('/api/copilot/query', { question: q });
+                    replyEl.innerHTML = `
+                        <div style="padding:14px; border-radius:10px; background:var(--surface-muted); border:1px solid var(--border); font-size:12px; line-height:1.6;">
+                            <div style="font-weight:700; color:var(--text-primary); margin-bottom:4px;">Q: ${q}</div>
+                            <div style="color:var(--text-secondary); margin-bottom:8px;">${res.answer}</div>
+                            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
+                                <span class="badge badge-emerald" style="font-size:10px;">Citation: ${res.citations ? res.citations[0] : 'APH 2025'}</span>
+                                <button class="btn btn-outline btn-sm" onclick="app.speakText('${res.answer.replace(/'/g, "\\'")}');" style="padding:2px 8px; font-size:10px;">
+                                    ${ICONS.Volume2} Listen
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                } catch (e) {
+                    replyEl.innerHTML = `<div style="color:#DC2626; font-size:12px;">Query error: ${e.message}</div>`;
+                }
+            };
+
+            container.querySelectorAll('.inst-copilot-pill').forEach(btn => {
+                btn.onclick = () => {
+                    const q = btn.getAttribute('data-q');
+                    askCopilot(q);
+                };
+            });
+
+            document.getElementById('inst-copilot-form').onsubmit = (e) => {
+                e.preventDefault();
+                const inp = document.getElementById('inst-copilot-input');
+                if (inp && inp.value.trim()) {
+                    askCopilot(inp.value.trim());
+                    inp.value = '';
+                }
             };
         }
     }

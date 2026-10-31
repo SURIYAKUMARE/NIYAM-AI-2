@@ -2669,7 +2669,7 @@ button svg,
   color: var(--accent);
 }
 
-.demo-access-panel {
+.personnel-access-panel {
   margin-top: 8px;
   padding-top: 12px;
   border-top: 1px dashed var(--border);
@@ -2678,7 +2678,7 @@ button svg,
   gap: 6px;
 }
 
-.demo-access-header {
+.personnel-access-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -2686,7 +2686,7 @@ button svg,
   color: var(--text-secondary);
 }
 
-.demo-badge {
+.directory-badge {
   font-size: 10px;
   font-weight: 700;
   padding: 2px 6px;
@@ -2695,7 +2695,7 @@ button svg,
   color: var(--accent);
 }
 
-.demo-role-dropdown {
+.personnel-role-dropdown {
   width: 100%;
   padding: 6px 10px;
   border-radius: var(--radius-sm);

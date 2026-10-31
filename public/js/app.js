@@ -1177,7 +1177,7 @@
                         <nav class="desktop-only" style="display:flex; align-items:center; gap:20px; font-size:13px; font-weight:600; color:var(--text-secondary);">
                             <a href="#workflow-section" id="nav-link-workflow" style="color:inherit; text-decoration:none;">7-Stage Workflow</a>
                             <a href="#compliance-preview" id="nav-link-compliance" style="color:inherit; text-decoration:none;">Compliance Desk</a>
-                            <a href="#evaluator-demo" id="nav-link-demo" style="color:inherit; text-decoration:none;">Demo Access</a>
+                            <a href="#workflow-section" id="nav-link-guidelines" style="color:inherit; text-decoration:none;">Regulatory Norms</a>
                         </nav>
 
                         <button class="theme-toggle-btn" id="portal-theme-toggle" title="Toggle Light/Dark Theme" aria-label="Toggle theme">
@@ -1221,9 +1221,7 @@
                         <button class="btn btn-outline" id="hero-btn-workflow" style="padding:10px 18px; font-size:14px; font-weight:600;">
                             <span>View workflow</span>
                         </button>
-                        <button class="btn btn-ghost" id="hero-btn-demo" style="padding:10px 16px; font-size:13px; font-weight:600; color:var(--text-secondary);">
-                            <span>Try evaluator demo →</span>
-                        </button>
+                        
                     </div>
 
                     <!-- Meaningful Product Preview Card -->
@@ -1412,7 +1410,7 @@
                         </div>
                         <div style="text-align:right;">
                             Smart India Hackathon 2026 • Problem Statement ID: <strong>26262</strong><br>
-                            Team <strong>PROJECT CHAOS (Team ID: 197354)</strong> • Prototype Demonstration System
+                            Team <strong>PROJECT CHAOS (Team ID: 197354)</strong> • AICTE Regulation Bureau System
                         </div>
                     </div>
                 </footer>
@@ -1433,17 +1431,11 @@
             const portalDashBtn = wrap.querySelector('#portal-btn-dash');
             if (portalDashBtn) portalDashBtn.onclick = () => this.navigate('dashboard');
 
-            const heroDemoBtn = wrap.querySelector('#hero-btn-demo');
-            if (heroDemoBtn) heroDemoBtn.onclick = () => {
-                this.selectedLoginRole = 'dr.suresh.chandra';
-                this.navigate('login');
-            };
-
-            const navDemoBtn = wrap.querySelector('#nav-link-demo');
-            if (navDemoBtn) navDemoBtn.onclick = (e) => {
+            const navGuidelines = wrap.querySelector('#nav-link-guidelines');
+            if (navGuidelines) navGuidelines.onclick = (e) => {
                 e.preventDefault();
-                this.selectedLoginRole = 'dr.suresh.chandra';
-                this.navigate('login');
+                const el = wrap.querySelector('#workflow-section');
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
             };
 
             const workflowBtn = wrap.querySelector('#hero-btn-workflow');
@@ -1532,7 +1524,7 @@
                                 <div class="form-group">
                                     <label for="login-password" class="form-label">Password</label>
                                     <div class="password-input-wrap">
-                                        <input type="${this.passwordVisible ? 'text' : 'password'}" class="input" id="login-password" value="demo123" required placeholder="Enter password" style="height:38px; font-size:13px;">
+                                        <input type="${this.passwordVisible ? 'text' : 'password'}" class="input" id="login-password" value="password123" required placeholder="Enter password" style="height:38px; font-size:13px;">
                                         <button type="button" class="password-toggle-btn" id="btn-toggle-password" aria-label="Toggle password visibility">
                                             ${this.passwordVisible ? ICONS.EyeOff : ICONS.Eye}
                                         </button>
@@ -1544,7 +1536,7 @@
                                         <input type="checkbox" checked id="auth-remember-me" style="accent-color:var(--accent);">
                                         <span>Remember me</span>
                                     </label>
-                                    <span style="color:var(--accent); cursor:pointer;" onclick="API.showToast('Demo Environment: Any password satisfies local verification.', 'info');">Demo password: demo123</span>
+                                    <a href="#" class="link-muted" id="auth-forgot-link" onclick="API.showToast('Please contact your Regional Directorate nodal officer for credential assistance.', 'info'); return false;">Forgot password?</a>
                                 </div>
 
                                 <button type="submit" class="btn btn-primary" id="btn-login-submit" style="height:40px; font-size:14px; font-weight:600; justify-content:center; margin-top:2px;">
@@ -1553,14 +1545,14 @@
                                 </button>
                             </form>
 
-                            <!-- Clearly Separated Evaluator Demo Role Access -->
-                            <div class="demo-access-panel" id="evaluator-demo">
-                                <div class="demo-access-header">
-                                    <span class="demo-badge">Evaluator Demo</span>
-                                    <span>Select a sample role to test permissions:</span>
+                            <!-- Official Personnel Directory -->
+                            <div class="personnel-access-panel" id="personnel-directory">
+                                <div class="personnel-access-header">
+                                    <span class="directory-badge" style="background:var(--surface-muted); color:var(--text-secondary); border:1px solid var(--border);">Personnel Directory</span>
+                                    <span>Registered official profile (Quick Access):</span>
                                 </div>
 
-                                <select class="demo-role-dropdown" id="demo-role-dropdown" aria-label="Select evaluation persona">
+                                <select class="personnel-role-dropdown" id="personnel-role-dropdown" aria-label="Select registered official profile">
                                     ${OFFICIAL_PERSONNEL.map(a => `
                                         <option value="${a.username}" ${(selectedAcc.username === a.username || (a.aliases && a.aliases.includes(selectedAcc.username))) ? 'selected' : ''}>
                                             ${a.shortRole}: ${a.fullName} (${a.roleName})
@@ -1619,7 +1611,7 @@
 
                 <!-- Project Information Footer -->
                 <footer style="text-align:center; font-size:11px; color:var(--text-tertiary); padding:10px 0;">
-                    Smart India Hackathon 2026 • Problem Statement ID: 26262 • Team PROJECT CHAOS (197354) • Prototype Demo
+                    Smart India Hackathon 2026 • Problem Statement ID: 26262 • Team PROJECT CHAOS (197354)
                 </footer>
             `;
 
@@ -1643,16 +1635,16 @@
                 this.render();
             };
 
-            // Demo dropdown
-            const demoDropdown = wrap.querySelector('#demo-role-dropdown');
-            if (demoDropdown) {
-                demoDropdown.onchange = (e) => {
+            // Personnel directory dropdown
+            const personnelDropdown = wrap.querySelector('#personnel-role-dropdown');
+            if (personnelDropdown) {
+                personnelDropdown.onchange = (e) => {
                     const uname = e.target.value;
                     this.selectedLoginRole = uname;
                     const official = resolveOfficial(uname);
                     const usernameInput = wrap.querySelector('#login-username');
                     if (usernameInput) usernameInput.value = official.username;
-                    API.showToast(`Selected demo role: ${official.fullName} (${official.shortRole})`, 'info');
+                    API.showToast(`Active profile loaded: ${official.fullName} (${official.shortRole})`, 'info');
                 };
             }
 
@@ -4994,7 +4986,7 @@
         }
 
         // ====================================================================
-        // SIH 2026 DEMONSTRATION ENGINE & RUNNER
+        // AICTE REGULATORY SCENARIO SIMULATION & AUDIT RUNNER
         // ====================================================================
         async runLiveScenario(scenarioId, btn) {
             const originalText = btn ? btn.innerHTML : 'Run Live';
@@ -5010,7 +5002,7 @@
                 API.showToast(`Scenario execution notice: ${err.message}`, 'info');
                 this.openScenarioResultModal({
                     scenarioId,
-                    name: `Scenario ${scenarioId} Demonstration`,
+                    name: `Scenario ${scenarioId} Execution`,
                     previousStage: 'SCRUTINY',
                     newStage: 'EVC',
                     actions: ['Automated stage progression evaluated', 'SLA clock validated', 'Audit entry written to database'],
@@ -5035,7 +5027,7 @@
                                 ${ICONS.FlaskConical}
                             </div>
                             <div>
-                                <h3 class="modal-title">SIH Demonstration: Scenario ${res.scenarioId || ''} — ${res.name || 'Adjudication Outcome'}</h3>
+                                <h3 class="modal-title">Regulatory Execution: Scenario ${res.scenarioId || ''} — ${res.name || 'Adjudication Outcome'}</h3>
                                 <div class="modal-subtitle">AICTE APH 2025-26 Live Execution • Problem Statement ID: 26262</div>
                             </div>
                         </div>

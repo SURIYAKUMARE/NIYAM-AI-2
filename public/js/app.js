@@ -1818,7 +1818,7 @@
                 </main>
 
                 <!-- Project Information Footer -->
-                <footer style="text-align:center; font-size:11px; color:var(--text-tertiary); padding:10px 0;">
+                <footer class="auth-footer">
                     Smart India Hackathon 2026 • Problem Statement ID: 26262 • Team PROJECT CHAOS (197354)
                 </footer>
             `;

@@ -1150,229 +1150,319 @@
         // ====================================================================
         // NATIONAL GOVTECH LANDING PAGE & INSTITUTIONAL PORTAL
         // ====================================================================
+        // ====================================================================
+        // PUBLIC REGULATORY PORTAL & FOCUSED AUTHENTICATION
+        // ====================================================================
         renderLandingView() {
             const wrap = document.createElement('div');
-            wrap.className = 'landing-page-wrap';
+            wrap.className = 'portal-page-wrap';
 
             wrap.innerHTML = `
-                <!-- Top National Regulatory Header -->
-                <header class="landing-nav">
-                    <div class="landing-nav-brand">
-                        <div class="brand-emblem-wrap">
+                <!-- Concise Header -->
+                <header class="portal-nav">
+                    <div class="portal-nav-brand">
+                        <div class="brand-emblem-wrap" style="width:34px; height:34px;">
                             <img src="/images/aicte-logo.png" alt="AICTE Official Emblem">
-                            <span class="live-indicator-dot"></span>
                         </div>
                         <div>
-                            <div style="font-size:16px; font-weight:800; color:var(--text-primary); letter-spacing:-0.02em; display:flex; align-items:center; gap:8px;">
+                            <div style="font-size:16px; font-weight:700; color:var(--text-primary); letter-spacing:-0.015em; display:flex; align-items:center; gap:8px;">
                                 <span>NIYAM AI</span>
-                                <span class="badge badge-primary" style="font-size:10px; padding:2px 8px;">APH 2025-26</span>
+                                <span class="badge" style="background:var(--accent-light); color:var(--accent); font-size:10px; padding:2px 7px;">Regulatory Portal</span>
                             </div>
-                            <div style="font-size:11px; color:var(--text-secondary);">अखिल भारतीय तकनीकी शिक्षा परिषद् • All India Council for Technical Education</div>
+                            <div style="font-size:11px; color:var(--text-secondary);">All India Council for Technical Education • Ministry of Education</div>
                         </div>
                     </div>
 
-                    <div style="display:flex; align-items:center; gap:12px;">
-                        <div class="desktop-only" style="display:inline-flex; align-items:center; gap:6px; padding:5px 12px; background:rgba(245, 158, 11, 0.12); border:1px solid rgba(245, 158, 11, 0.35); border-radius:16px; font-size:11px; font-weight:700; color:#d97706;">
-                            <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#d97706;"></span>
-                            <span>PS ID: 26262 • Team PROJECT CHAOS (197354)</span>
-                        </div>
+                    <div style="display:flex; align-items:center; gap:16px;">
+                        <nav class="desktop-only" style="display:flex; align-items:center; gap:20px; font-size:13px; font-weight:600; color:var(--text-secondary);">
+                            <a href="#workflow-section" id="nav-link-workflow" style="color:inherit; text-decoration:none;">7-Stage Workflow</a>
+                            <a href="#compliance-preview" id="nav-link-compliance" style="color:inherit; text-decoration:none;">Compliance Desk</a>
+                            <a href="#evaluator-demo" id="nav-link-demo" style="color:inherit; text-decoration:none;">Demo Access</a>
+                        </nav>
 
-                        <button class="theme-toggle-btn" id="landing-theme-toggle" title="Toggle Light/Dark Theme">
+                        <button class="theme-toggle-btn" id="portal-theme-toggle" title="Toggle Light/Dark Theme" aria-label="Toggle theme">
                             ${this.theme === 'dark' ? ICONS.Sun : ICONS.Moon}
                         </button>
 
                         ${this.isAuthenticated ? `
-                            <button class="btn btn-primary btn-sm" id="landing-btn-dashboard" style="font-weight:700; display:inline-flex; align-items:center; gap:6px;">
-                                <span>Return to Dashboard</span>
+                            <button class="btn btn-primary btn-sm" id="portal-btn-dash" style="font-weight:600;">
+                                <span>Return to Workspace</span>
                                 ${ICONS.ArrowRight}
                             </button>
                         ` : `
-                            <button class="btn btn-primary btn-sm" id="landing-btn-login" style="font-weight:700; display:inline-flex; align-items:center; gap:6px;">
-                                <span>Access Regulatory Portal</span>
+                            <button class="btn btn-primary btn-sm" id="portal-btn-login" style="font-weight:600;">
+                                <span>Access portal</span>
                                 ${ICONS.ArrowRight}
                             </button>
                         `}
                     </div>
                 </header>
 
-                <!-- Hero Section -->
-                <section class="landing-hero">
-                    <div class="landing-pill">
-                        <span style="width:8px; height:8px; border-radius:50%; background:currentColor;"></span>
-                        <span>OFFICIAL GOVTECH TRUST ENGINE • MINISTRY OF EDUCATION</span>
+                <!-- Hero Section: Clear value proposition within 5 seconds -->
+                <section class="portal-hero">
+                    <div class="portal-pill">
+                        <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--accent);"></span>
+                        <span>AICTE Approval Process Handbook (APH 2025–26) Digital Desk</span>
                     </div>
 
-                    <h1 class="landing-title">
-                        Next-Generation AICTE Approval Workflow &amp; Statutory Compliance Governance
+                    <h1 class="portal-headline">
+                        Clearer approvals. Stronger compliance.
                     </h1>
 
-                    <p class="landing-subtitle">
-                        NIYAM integrates the AICTE Approval Process Handbook (APH 2025–26) with deterministic workflow automation, SHA-256 cryptographic document chaining, and autonomous statutory expiry tracking for 10,480+ technical institutions across India.
+                    <p class="portal-supporting">
+                        Manage institutional applications, document reviews, inspections, and compliance tracking in one place.
                     </p>
 
-                    <div class="landing-cta-group">
-                        <button class="btn btn-primary" id="hero-btn-primary" style="padding:12px 24px; font-size:14px; font-weight:700; display:inline-flex; align-items:center; gap:8px;">
-                            <span>Access Regulatory Portal</span>
+                    <div class="portal-actions-row">
+                        <button class="btn btn-primary" id="hero-btn-access" style="padding:10px 22px; font-size:14px; font-weight:600; display:inline-flex; align-items:center; gap:8px;">
+                            <span>Access portal</span>
                             ${ICONS.ArrowRight}
                         </button>
-                        <button class="btn btn-outline" id="hero-btn-workflow" style="padding:12px 20px; font-size:14px; font-weight:700; display:inline-flex; align-items:center; gap:8px;">
-                            ${ICONS.ListFilter}
-                            <span>Explore 7-Stage Workflow</span>
+                        <button class="btn btn-outline" id="hero-btn-workflow" style="padding:10px 18px; font-size:14px; font-weight:600;">
+                            <span>View workflow</span>
                         </button>
-                        <button class="btn btn-outline" id="hero-btn-demo" style="padding:12px 20px; font-size:14px; font-weight:700; display:inline-flex; align-items:center; gap:8px;">
-                            ${ICONS.ShieldCheck}
-                            <span>Evaluator Demo Access</span>
+                        <button class="btn btn-ghost" id="hero-btn-demo" style="padding:10px 16px; font-size:13px; font-weight:600; color:var(--text-secondary);">
+                            <span>Try evaluator demo →</span>
                         </button>
                     </div>
 
-                    <!-- Live KPI Stats Grid -->
-                    <div class="landing-stats-grid">
-                        <div class="landing-stat-card">
-                            <div class="landing-stat-val">10,480+</div>
-                            <div class="landing-stat-lbl">Approved Institutions</div>
-                            <div class="landing-stat-desc">Engineering, Polytechnic &amp; Management</div>
+                    <!-- Meaningful Product Preview Card -->
+                    <div class="portal-preview-wrap" id="compliance-preview">
+                        <div class="portal-preview-topbar">
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#10B981;"></span>
+                                <span>Institutional Compliance Workspace Preview — Nilgiri Institute of Technology (SYN-2025-001)</span>
+                            </div>
+                            <span class="badge badge-primary" style="font-size:10px;">AY 2025–26 Active Docket</span>
                         </div>
 
-                        <div class="landing-stat-card">
-                            <div class="landing-stat-val">8 Directorates</div>
-                            <div class="landing-stat-lbl">Regional Scrutiny Hubs</div>
-                            <div class="landing-stat-desc">Centralized policy with regional execution</div>
-                        </div>
+                        <div class="portal-preview-body">
+                            <!-- Visual Stage Tracker -->
+                            <div style="margin-bottom:24px; background:var(--surface-muted); padding:16px 20px; border-radius:8px; border:1px solid var(--border);">
+                                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                                    <div style="font-size:13px; font-weight:700; color:var(--text-primary);">
+                                        Application APP-2025-001 • Extension of Approval
+                                    </div>
+                                    <span class="badge badge-amber" style="font-size:11px;">Stage 2 of 7: Initial Document Scrutiny</span>
+                                </div>
+                                <div style="display:grid; grid-template-columns:repeat(7, 1fr); gap:6px; font-size:10px; font-weight:600; text-align:center;">
+                                    <div style="padding:6px; border-radius:4px; background:var(--success-light); color:var(--success-text); border:1px solid #A7F3D0;">1. Intake ✓</div>
+                                    <div style="padding:6px; border-radius:4px; background:var(--accent-light); color:var(--accent); border:1px solid #BFDBFE; font-weight:700;">2. Scrutiny ⟳</div>
+                                    <div style="padding:6px; border-radius:4px; background:var(--surface); color:var(--text-secondary); border:1px solid var(--border);">3. Rectify</div>
+                                    <div style="padding:6px; border-radius:4px; background:var(--surface); color:var(--text-secondary); border:1px solid var(--border);">4. EVC Visit</div>
+                                    <div style="padding:6px; border-radius:4px; background:var(--surface); color:var(--text-secondary); border:1px solid var(--border);">5. SAC Review</div>
+                                    <div style="padding:6px; border-radius:4px; background:var(--surface); color:var(--text-secondary); border:1px solid var(--border);">6. Sanction</div>
+                                    <div style="padding:6px; border-radius:4px; background:var(--surface); color:var(--text-secondary); border:1px solid var(--border);">7. Validity</div>
+                                </div>
+                            </div>
 
-                        <div class="landing-stat-card">
-                            <div class="landing-stat-val">7-Stage</div>
-                            <div class="landing-stat-lbl">Finite State Machine</div>
-                            <div class="landing-stat-desc">Mathematical deficiency gating &amp; zero discretion</div>
-                        </div>
-
-                        <div class="landing-stat-card">
-                            <div class="landing-stat-val">100% SHA-256</div>
-                            <div class="landing-stat-lbl">Cryptographic Chaining</div>
-                            <div class="landing-stat-desc">Tamper-evident DigiLocker trust provenance</div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Interactive 7-Stage Workflow Pipeline -->
-                <section class="landing-section-wrap" id="landing-workflow-section" style="background:var(--surface-muted); border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
-                    <div class="landing-section-header">
-                        <h2>Deterministic 7-Stage Regulatory Pipeline</h2>
-                        <p>Strictly governed by the AICTE Approval Process Handbook (APH 2025–26) with automated deficiency verification.</p>
-                    </div>
-
-                    <div class="landing-workflow-grid">
-                        <div class="landing-workflow-card">
-                            <div class="landing-workflow-step">Step 01 • Application Filing</div>
-                            <div class="landing-workflow-title">Institutional Dossier Intake</div>
-                            <div class="landing-workflow-desc">Institution uploads statutory proofs (Land Title, Building Plan, Fire NOC, Cadre Ratio). Client-side SHA-256 digest is generated instantly.</div>
-                        </div>
-
-                        <div class="landing-workflow-card">
-                            <div class="landing-workflow-step">Step 02 • Automated Scrutiny</div>
-                            <div class="landing-workflow-title">Deficiency Gating &amp; OCR</div>
-                            <div class="landing-workflow-desc">Regional Scrutiny Cell reviews documents against APH rules. Missing evidence triggers structured deficiency notices; illegal forward transitions are blocked.</div>
-                        </div>
-
-                        <div class="landing-workflow-card">
-                            <div class="landing-workflow-step">Step 03 • Field Inspection</div>
-                            <div class="landing-workflow-title">Expert Visit Committee (EVC)</div>
-                            <div class="landing-workflow-desc">EVC experts inspect physical infrastructure on-site. Field docket supports 100% offline mobile operation with geotagged cryptographic checksum sync.</div>
-                        </div>
-
-                        <div class="landing-workflow-card">
-                            <div class="landing-workflow-step">Step 04 • Executive Sanction</div>
-                            <div class="landing-workflow-title">Council Approval &amp; EoA</div>
-                            <div class="landing-workflow-desc">Standing Appellate Committee (SAC) and Executive Committee review recommendations, issuing digitally signed Extension of Approval (EoA).</div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Core Architectural Features Grid -->
-                <section class="landing-section-wrap">
-                    <div class="landing-section-header">
-                        <h2>Architectural Innovations &amp; Trust Infrastructure</h2>
-                        <p>Enterprise technologies engineered specifically to solve AICTE Problem Statement 26262.</p>
-                    </div>
-
-                    <div class="landing-features-grid">
-                        <div class="landing-feature-card">
-                            <div class="landing-feature-icon">${ICONS.ShieldCheck}</div>
-                            <div class="landing-feature-title">Finite State Machine Engine</div>
-                            <div class="landing-feature-desc">Eliminates subjective human discretion. Transitions between DRAFT, SCRUTINY, EVC, SAC, and EC_APPROVED are verified against strict statutory criteria.</div>
-                        </div>
-
-                        <div class="landing-feature-card">
-                            <div class="landing-feature-icon">${ICONS.Clock}</div>
-                            <div class="landing-feature-title">Statutory Validity Watchdog</div>
-                            <div class="landing-feature-desc">Continuous monitoring of time-sensitive institutional compliances (Fire Safety NOCs, Land Leases) with automated 60, 45, and 30-day early-warning countdown radars.</div>
-                        </div>
-
-                        <div class="landing-feature-card">
-                            <div class="landing-feature-icon">${ICONS.Lock}</div>
-                            <div class="landing-feature-title">SHA-256 Cryptographic Vault</div>
-                            <div class="landing-feature-desc">Immutable non-repudiation ledger chaining all submitted evidence. Once certified, documents cannot be altered or substituted without invalidating the audit chain.</div>
-                        </div>
-
-                        <div class="landing-feature-card">
-                            <div class="landing-feature-icon">${ICONS.Folder}</div>
-                            <div class="landing-feature-title">Offline EVC Field Inspection</div>
-                            <div class="landing-feature-desc">Inspection teams visiting remote campuses work completely offline. Data is stored in tamper-evident local dockets and cryptographically synchronized upon reconnection.</div>
-                        </div>
-
-                        <div class="landing-feature-card">
-                            <div class="landing-feature-icon">${ICONS.HelpCircle}</div>
-                            <div class="landing-feature-title">Grounded APH Regulatory AI Copilot</div>
-                            <div class="landing-feature-desc">Context-aware regulatory AI grounded strictly in the AICTE Approval Process Handbook (APH 2025–26), delivering verifiable chapter-and-clause legal citations.</div>
-                        </div>
-
-                        <div class="landing-feature-card">
-                            <div class="landing-feature-icon">${ICONS.Users}</div>
-                            <div class="landing-feature-title">Strict Least-Privilege RBAC</div>
-                            <div class="landing-feature-desc">Zero privilege leakage. Applicants only view their own institutional filings; administrative officers and vigilance auditors operate in strictly isolated permission domains.</div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- National GovTech Footer -->
-                <footer class="landing-footer">
-                    <div style="max-width:1200px; margin:0 auto; display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:20px;">
-                        <div style="display:flex; align-items:center; gap:12px;">
-                            <img src="/images/aicte-logo.png" alt="AICTE" style="width:36px; height:36px; object-fit:contain;">
-                            <div>
-                                <div style="font-size:13px; font-weight:800; color:var(--text-primary);">All India Council for Technical Education (AICTE)</div>
-                                <div style="font-size:11px; color:var(--text-secondary);">Regulation Bureau • Nelson Mandela Marg, Vasant Kunj, New Delhi - 110070</div>
+                            <!-- Statutory Documents Table Preview -->
+                            <div style="text-align:left;">
+                                <div style="font-size:13px; font-weight:700; color:var(--text-primary); margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;">
+                                    <span>Mandatory Evidence Verification Status</span>
+                                    <span style="font-size:11px; color:var(--text-secondary); font-weight:normal;">Continuous 365-day statutory validity tracking</span>
+                                </div>
+                                <table class="data-table" style="font-size:12px; margin:0;">
+                                    <thead>
+                                        <tr>
+                                            <th>Evidence Type</th>
+                                            <th>APH Clause Reference</th>
+                                            <th>Verification Status</th>
+                                            <th>Validity Horizon</th>
+                                            <th style="text-align:right;">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>District Fire Safety Clearance NOC</strong></td>
+                                            <td>APH Ch. II Clause 4.3</td>
+                                            <td><span class="badge badge-amber">EXPIRING SOON</span></td>
+                                            <td><span style="color:#D97706; font-weight:600;">15-Jun-2025 (45 Days Remaining)</span></td>
+                                            <td style="text-align:right;"><button class="btn btn-outline btn-sm" onclick="app.navigate('login');">Upload Renewal</button></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Land Title &amp; Registered 99-Year Leasehold</strong></td>
+                                            <td>APH Ch. II Clause 4.1</td>
+                                            <td><span class="badge badge-emerald">VERIFIED</span></td>
+                                            <td>Perpetual Leasehold</td>
+                                            <td style="text-align:right;"><button class="btn btn-outline btn-sm" onclick="app.navigate('login');">View Certificate</button></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Approved Building Master Layout Plan</strong></td>
+                                            <td>APH Ch. II Clause 4.2</td>
+                                            <td><span class="badge badge-emerald">VERIFIED</span></td>
+                                            <td>Permanent DTCP Approval</td>
+                                            <td style="text-align:right;"><button class="btn btn-outline btn-sm" onclick="app.navigate('login');">Inspect Blueprint</button></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
+                    </div>
+                </section>
 
-                        <div style="font-size:11px; color:var(--text-secondary); text-align:right;">
-                            <div>Smart India Hackathon 2026 • <strong>Problem Statement ID: 26262</strong></div>
-                            <div style="margin-top:2px;">Developed by <strong>Team PROJECT CHAOS (197354)</strong> • Category: Software</div>
+                <!-- Full 7-Stage Workflow Explanation Section -->
+                <section class="workflow-section" id="workflow-section">
+                    <div class="workflow-container">
+                        <div class="section-title-box">
+                            <h2>The 7-Stage AICTE Approval &amp; Compliance Workflow</h2>
+                            <p>Structured, predictable progress from initial institutional filing to continuous statutory monitoring.</p>
+                        </div>
+
+                        <div class="workflow-grid-7">
+                            <!-- Stage 1 -->
+                            <div class="workflow-stage-card">
+                                <span class="stage-num-badge">Stage 01</span>
+                                <div class="stage-title">Application Intake</div>
+                                <div class="stage-role-meta">Responsible: Institution Representative</div>
+                                <div class="stage-desc">Institution files academic program details, faculty matrices, and uploads mandatory statutory evidence into the institutional desk.</div>
+                                <div class="stage-outcome-pill"><strong>Outcome:</strong> Registered dossier with tamper-evident fingerprint.</div>
+                            </div>
+
+                            <!-- Stage 2 -->
+                            <div class="workflow-stage-card">
+                                <span class="stage-num-badge">Stage 02</span>
+                                <div class="stage-title">Document Scrutiny</div>
+                                <div class="stage-role-meta">Responsible: Scrutiny Committee</div>
+                                <div class="stage-desc">Committee members verify land titles, municipal plans, fire clearances, and teacher-student ratios against APH statutory standards.</div>
+                                <div class="stage-outcome-pill"><strong>Outcome:</strong> Scrutiny clearance or clause-referenced deficiency brief.</div>
+                            </div>
+
+                            <!-- Stage 3 -->
+                            <div class="workflow-stage-card">
+                                <span class="stage-num-badge">Stage 03</span>
+                                <div class="stage-title">Deficiency Rectification</div>
+                                <div class="stage-role-meta">Responsible: Institution &amp; Scrutiny Chair</div>
+                                <div class="stage-desc">Institutions review specific observations, upload missing evidence, or submit conditional undertakings within a prescribed timeline.</div>
+                                <div class="stage-outcome-pill"><strong>Outcome:</strong> Verified resolution before field visit scheduling.</div>
+                            </div>
+
+                            <!-- Stage 4 -->
+                            <div class="workflow-stage-card">
+                                <span class="stage-num-badge">Stage 04</span>
+                                <div class="stage-title">Expert Visit Inspection</div>
+                                <div class="stage-role-meta">Responsible: Inspection Committee (EVC)</div>
+                                <div class="stage-desc">On-site or hybrid validation of physical labs, instructional infrastructure, safety readiness, and student amenities using offline dockets.</div>
+                                <div class="stage-outcome-pill"><strong>Outcome:</strong> Geotagged inspection report with checksum sync.</div>
+                            </div>
+
+                            <!-- Stage 5 -->
+                            <div class="workflow-stage-card">
+                                <span class="stage-num-badge">Stage 05</span>
+                                <div class="stage-title">Standing Appellate Review</div>
+                                <div class="stage-role-meta">Responsible: Standing Appellate Committee (SAC)</div>
+                                <div class="stage-desc">Independent hearing committee evaluates contested deficiencies, appeals, and legal representations filed by institutions.</div>
+                                <div class="stage-outcome-pill"><strong>Outcome:</strong> Impartial appellate finding submitted to Council.</div>
+                            </div>
+
+                            <!-- Stage 6 -->
+                            <div class="workflow-stage-card">
+                                <span class="stage-num-badge">Stage 06</span>
+                                <div class="stage-title">Council Sanction</div>
+                                <div class="stage-role-meta">Responsible: AICTE Executive Committee</div>
+                                <div class="stage-desc">Statutory leadership reviews regional summaries and sanctions annual intake, program approvals, or program closures.</div>
+                                <div class="stage-outcome-pill"><strong>Outcome:</strong> Formal approval sanction order.</div>
+                            </div>
+
+                            <!-- Stage 7 -->
+                            <div class="workflow-stage-card" style="grid-column: 1 / -1; max-width: 680px; margin: 0 auto; width: 100%;">
+                                <span class="stage-num-badge" style="color:#059669;">Stage 07 • Continuous</span>
+                                <div class="stage-title">Statutory Validity &amp; Compliance Monitoring</div>
+                                <div class="stage-role-meta">Responsible: Compliance Officer &amp; Automated Watchdog</div>
+                                <div class="stage-desc">Digital Extension of Approval (EoA) is issued. The autonomous watchdog continuously monitors 365-day certificate validity (Fire NOCs, leaseholds), alerting institutions 60, 45, and 30 days prior to expiry.</div>
+                                <div class="stage-outcome-pill"><strong>Outcome:</strong> Zero mid-academic year compliance lapses.</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Core User Benefits -->
+                <section style="padding: 48px 24px; max-width: 1080px; margin: 0 auto; width: 100%;">
+                    <div class="section-title-box" style="margin-bottom: 28px;">
+                        <h2>Built for Institutional Efficiency and Regulatory Precision</h2>
+                        <p>Eliminating administrative friction while maintaining strict statutory compliance.</p>
+                    </div>
+
+                    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:16px;">
+                        <div style="background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:20px;">
+                            <div style="font-weight:700; color:var(--text-primary); margin-bottom:6px; font-size:14px;">Faster Review Cycles</div>
+                            <div style="font-size:13px; color:var(--text-secondary); line-height:1.5;">Automated deficiency checks highlight missing items upfront, preventing prolonged back-and-forth communications.</div>
+                        </div>
+                        <div style="background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:20px;">
+                            <div style="font-weight:700; color:var(--text-primary); margin-bottom:6px; font-size:14px;">Continuous Safety Tracking</div>
+                            <div style="font-size:13px; color:var(--text-secondary); line-height:1.5;">Fire safety and structural certificates are monitored year-round with automated renewal alerts before statutory lapse.</div>
+                        </div>
+                        <div style="background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:20px;">
+                            <div style="font-weight:700; color:var(--text-primary); margin-bottom:6px; font-size:14px;">Verifiable Authenticity</div>
+                            <div style="font-size:13px; color:var(--text-secondary); line-height:1.5;">Client-side cryptographic checksums ensure submitted evidence cannot be altered or substituted post-submission.</div>
+                        </div>
+                        <div style="background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:20px;">
+                            <div style="font-weight:700; color:var(--text-primary); margin-bottom:6px; font-size:14px;">Reliable Field Inspections</div>
+                            <div style="font-size:13px; color:var(--text-secondary); line-height:1.5;">Offline-resilient mobile inspection dockets ensure inspection records are captured even without internet coverage.</div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Project Information Footer -->
+                <footer class="portal-footer">
+                    <div style="max-width:1080px; margin:0 auto; display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:16px; font-size:12px; color:var(--text-secondary);">
+                        <div>
+                            <strong style="color:var(--text-primary);">All India Council for Technical Education</strong> • Regulation Bureau<br>
+                            Nelson Mandela Marg, Vasant Kunj, New Delhi - 110070
+                        </div>
+                        <div style="text-align:right;">
+                            Smart India Hackathon 2026 • Problem Statement ID: <strong>26262</strong><br>
+                            Team <strong>PROJECT CHAOS (Team ID: 197354)</strong> • Prototype Demonstration System
                         </div>
                     </div>
                 </footer>
             `;
 
-            // Event bindings
-            wrap.querySelector('#landing-theme-toggle').onclick = () => {
+            // Event Bindings
+            wrap.querySelector('#portal-theme-toggle').onclick = () => {
                 this.toggleTheme();
                 this.render();
             };
 
-            const loginBtn = wrap.querySelector('#landing-btn-login');
-            if (loginBtn) loginBtn.onclick = () => this.navigate('login');
+            const accessBtn = wrap.querySelector('#hero-btn-access');
+            if (accessBtn) accessBtn.onclick = () => this.navigate('login');
 
-            const dashBtn = wrap.querySelector('#landing-btn-dashboard');
-            if (dashBtn) dashBtn.onclick = () => this.navigate('dashboard');
+            const portalLoginBtn = wrap.querySelector('#portal-btn-login');
+            if (portalLoginBtn) portalLoginBtn.onclick = () => this.navigate('login');
 
-            wrap.querySelector('#hero-btn-primary').onclick = () => {
-                if (this.isAuthenticated) this.navigate('dashboard');
-                else this.navigate('login');
+            const portalDashBtn = wrap.querySelector('#portal-btn-dash');
+            if (portalDashBtn) portalDashBtn.onclick = () => this.navigate('dashboard');
+
+            const heroDemoBtn = wrap.querySelector('#hero-btn-demo');
+            if (heroDemoBtn) heroDemoBtn.onclick = () => {
+                this.selectedLoginRole = 'dr.suresh.chandra';
+                this.navigate('login');
             };
 
-            wrap.querySelector('#hero-btn-demo').onclick = () => this.navigate('login');
+            const navDemoBtn = wrap.querySelector('#nav-link-demo');
+            if (navDemoBtn) navDemoBtn.onclick = (e) => {
+                e.preventDefault();
+                this.selectedLoginRole = 'dr.suresh.chandra';
+                this.navigate('login');
+            };
 
-            wrap.querySelector('#hero-btn-workflow').onclick = () => {
-                const el = wrap.querySelector('#landing-workflow-section');
+            const workflowBtn = wrap.querySelector('#hero-btn-workflow');
+            if (workflowBtn) workflowBtn.onclick = () => {
+                const el = wrap.querySelector('#workflow-section');
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+            };
+
+            const navWorkflow = wrap.querySelector('#nav-link-workflow');
+            if (navWorkflow) navWorkflow.onclick = (e) => {
+                e.preventDefault();
+                const el = wrap.querySelector('#workflow-section');
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+            };
+
+            const navCompliance = wrap.querySelector('#nav-link-compliance');
+            if (navCompliance) navCompliance.onclick = (e) => {
+                e.preventDefault();
+                const el = wrap.querySelector('#compliance-preview');
                 if (el) el.scrollIntoView({ behavior: 'smooth' });
             };
 
@@ -1380,114 +1470,70 @@
         }
 
         // ====================================================================
-        // MODERNIZED ENTERPRISE AUTHENTICATION & LOGIN VIEW
+        // FOCUSED & COMPACT AUTHENTICATION VIEW (FITS ON LAPTOP VIEWPORT)
         // ====================================================================
         renderLoginView() {
             const wrap = document.createElement('div');
-            wrap.className = 'login-page-container';
+            wrap.className = 'auth-page-container';
 
             const selectedAcc = resolveOfficial(this.selectedLoginRole);
 
             wrap.innerHTML = `
-                <!-- Background Media -->
-                <div class="login-bg-media">
-                    <img src="/images/aicte-hq.png" alt="AICTE Headquarters Campus, New Delhi" class="login-bg-img">
-                    <div class="login-bg-vignette"></div>
-                    <div class="login-bg-radial"></div>
-                </div>
-
-                <!-- Top Floating Regulatory Bar -->
-                <header class="login-top-bar">
-                    <button class="login-top-pill" id="btn-login-back-landing" title="Return to Public Portal Overview" style="cursor:pointer; border:1px solid rgba(255,255,255,0.2);">
+                <!-- Minimal Top Bar -->
+                <header class="auth-nav-bar">
+                    <button class="btn btn-outline btn-sm" id="btn-auth-back-home" title="Return to public portal overview" style="font-weight:600; display:inline-flex; align-items:center; gap:6px;">
                         ${ICONS.ArrowRight}
-                        <span style="font-weight:700;">← Back to Public Portal</span>
+                        <span>← Back to public portal</span>
                     </button>
 
-                    <div class="login-top-pill">
-                        <div style="width:20px; height:20px; border-radius:50%; background:#fff; padding:2px; display:flex; align-items:center; justify-content:center;">
-                            <img src="/images/aicte-logo.png" alt="AICTE" style="width:100%; height:100%; object-fit:contain;">
-                        </div>
-                        <span style="font-weight:700;">All India Council for Technical Education</span>
-                        <span class="live-indicator-dot" style="position:static; display:inline-block; margin:0 2px;"></span>
-                        <span style="color:#6EE7B7; font-weight:600;">Live Regulatory Portal</span>
-                    </div>
-
-                    <div class="login-top-pill desktop-only">
-                        ${ICONS.ShieldCheck}
-                        <span>Nelson Mandela Marg, New Delhi</span>
-                        <span style="font-family:ui-monospace, monospace; padding:1px 5px; border-radius:4px; background:#2563EB; font-weight:700;">MoE</span>
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <span class="badge" style="background:var(--surface); border:1px solid var(--border); color:var(--text-secondary); font-size:11px;">
+                            AICTE Regulatory Portal (APH 2025–26)
+                        </span>
+                        <button class="theme-toggle-btn" id="auth-theme-toggle" title="Toggle Light/Dark Theme" aria-label="Toggle theme">
+                            ${this.theme === 'dark' ? ICONS.Sun : ICONS.Moon}
+                        </button>
                     </div>
                 </header>
 
-                <!-- Modern Authentication Card -->
-                <div class="login-card-container">
-                    <div class="login-glass-card" style="max-width:540px; padding:32px 36px;">
+                <!-- Focused Sign-In Card -->
+                <main class="auth-card-wrap">
+                    <div class="auth-card">
                         
-                        <div class="login-brand-header" style="margin-bottom:20px;">
-                            <div class="login-emblem-box">
-                                <img src="/images/aicte-logo.png" alt="AICTE">
-                                <span class="live-indicator-dot"></span>
+                        <!-- Header -->
+                        <div class="auth-header">
+                            <div class="auth-logo-row">
+                                <img src="/images/aicte-logo.png" alt="AICTE" class="auth-emblem">
+                                <span style="font-size:13px; font-weight:700; color:var(--text-secondary);">AICTE REGULATORY DESK</span>
                             </div>
-                            <div class="login-hindi-title">अखिल भारतीय तकनीकी शिक्षा परिषद्</div>
-                            <h1 class="login-main-title">NIYAM Regulatory Portal</h1>
-                            <p class="login-desc">AICTE Application Review &amp; Compliance Verification (APH 2025-26)</p>
+                            <h1 class="auth-title">Sign in to NIYAM</h1>
+                            <div class="auth-subtitle">Institutional Approval &amp; Compliance Management Portal</div>
                         </div>
 
-                        <!-- Tab Switcher: Sign In vs Registration -->
-                        <div class="auth-mode-tabs">
-                            <div class="auth-mode-tab ${this.authMode === 'signin' ? 'active' : ''}" id="tab-auth-signin">
-                                Authorized Sign In
-                            </div>
-                            <div class="auth-mode-tab ${this.authMode === 'register' ? 'active' : ''}" id="tab-auth-register">
-                                Institutional Enrolment
-                            </div>
+                        <!-- Sign In vs Registration Tabs -->
+                        <div class="auth-tabs-row" role="tablist">
+                            <button type="button" class="auth-tab-btn ${this.authMode === 'signin' ? 'active' : ''}" id="tab-auth-signin" role="tab" aria-selected="${this.authMode === 'signin'}">
+                                Portal Sign In
+                            </button>
+                            <button type="button" class="auth-tab-btn ${this.authMode === 'register' ? 'active' : ''}" id="tab-auth-register" role="tab" aria-selected="${this.authMode === 'register'}">
+                                New Institutional Enrolment
+                            </button>
                         </div>
 
                         ${this.authMode === 'signin' ? `
-                            <!-- Quick Role / Persona Selector for Evaluators -->
-                            <div class="login-role-selector-box" style="margin-bottom:20px;">
-                                <div class="login-role-top-row">
-                                    <span style="font-weight:700; color:var(--text-primary); display:flex; align-items:center; gap:5px; font-size:12px;">
-                                        ${ICONS.Users}
-                                        Select Authorized Official (SIH Demo Evaluator Access)
-                                    </span>
+                            <!-- Primary Sign In Form -->
+                            <form id="auth-signin-form" style="display:flex; flex-direction:column; gap:14px;" novalidate>
+                                
+                                <div class="form-group">
+                                    <label for="login-username" class="form-label">Official Username or Institutional ID</label>
+                                    <input type="text" class="input" id="login-username" value="${selectedAcc.username}" required placeholder="e.g. dr.suresh.chandra or SYN-2025-001" style="height:38px; font-size:13px;">
                                 </div>
 
-                                <div class="login-role-grid" style="grid-template-columns: repeat(3, 1fr); gap:6px;">
-                                    ${OFFICIAL_PERSONNEL.map(a => `
-                                        <button type="button" class="role-pill-btn ${(selectedAcc.username === a.username || (a.aliases && a.aliases.includes(selectedAcc.username))) ? 'active' : ''}" data-role-btn="${a.username}" style="padding:6px 4px; font-size:11px;">
-                                            ${a.shortRole}
-                                        </button>
-                                    `).join('')}
-                                </div>
-
-                                <div class="login-role-active-detail" style="margin-top:10px;">
-                                    <div style="display:flex; align-items:center; gap:6px;">
-                                        <span style="width:6px; height:6px; border-radius:50%; background:var(--accent);"></span>
-                                        <span style="font-weight:700; color:var(--text-primary);">${selectedAcc.fullName}</span>
-                                        <span class="font-mono" style="font-size:11px; color:var(--text-tertiary);">(${selectedAcc.badge})</span>
-                                    </div>
-                                    <span class="font-mono" style="font-size:10px; font-weight:700; padding:2px 6px; border-radius:4px; background:rgba(37,99,235,0.1); color:var(--accent);">
-                                        ${selectedAcc.cadreId}
-                                    </span>
-                                </div>
-                            </div>
-
-                            <!-- Credentials Form -->
-                            <form id="login-form" style="display:flex; flex-direction:column; gap:16px;">
-                                <div>
-                                    <label style="font-size:12px; font-weight:700; color:var(--text-primary); display:block; margin-bottom:6px;">Official Username / AICTE ID</label>
-                                    <input type="text" class="input" id="login-username" value="${selectedAcc.username}" required style="width:100%; font-size:13px;">
-                                </div>
-
-                                <div>
-                                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-                                        <label style="font-size:12px; font-weight:700; color:var(--text-primary);">Cryptographic Credential / Password</label>
-                                        <span style="font-size:11px; color:var(--accent); cursor:pointer;" onclick="API.showToast('Demo Environment: Any password clears sandbox check.', 'info');">Default: demo123</span>
-                                    </div>
+                                <div class="form-group">
+                                    <label for="login-password" class="form-label">Password</label>
                                     <div class="password-input-wrap">
-                                        <input type="${this.passwordVisible ? 'text' : 'password'}" class="input" id="login-password" value="demo123" required style="width:100%; font-size:13px;">
-                                        <button type="button" class="password-toggle-btn" id="btn-toggle-password" title="Toggle password visibility">
+                                        <input type="${this.passwordVisible ? 'text' : 'password'}" class="input" id="login-password" value="demo123" required placeholder="Enter password" style="height:38px; font-size:13px;">
+                                        <button type="button" class="password-toggle-btn" id="btn-toggle-password" aria-label="Toggle password visibility">
                                             ${this.passwordVisible ? ICONS.EyeOff : ICONS.Eye}
                                         </button>
                                     </div>
@@ -1495,69 +1541,95 @@
 
                                 <div style="display:flex; justify-content:space-between; align-items:center; font-size:12px; color:var(--text-secondary);">
                                     <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
-                                        <input type="checkbox" checked style="accent-color:var(--accent);">
-                                        <span>Maintain hardware session</span>
+                                        <input type="checkbox" checked id="auth-remember-me" style="accent-color:var(--accent);">
+                                        <span>Remember me</span>
                                     </label>
-                                    <span style="color:var(--accent); cursor:pointer;" onclick="API.showToast('Contact Regional Office liaison for password resets.', 'info');">Need assistance?</span>
+                                    <span style="color:var(--accent); cursor:pointer;" onclick="API.showToast('Demo Environment: Any password satisfies local verification.', 'info');">Demo password: demo123</span>
                                 </div>
 
-                                <button type="submit" class="btn btn-primary" id="btn-login-submit" style="padding:12px; font-size:14px; font-weight:700; justify-content:center; margin-top:4px;">
+                                <button type="submit" class="btn btn-primary" id="btn-login-submit" style="height:40px; font-size:14px; font-weight:600; justify-content:center; margin-top:2px;">
                                     ${ICONS.Lock}
-                                    <span>Sign In &amp; Authenticate Session</span>
+                                    <span>Sign in to portal</span>
                                 </button>
                             </form>
-                        ` : `
-                            <!-- Institutional Registration Form -->
-                            <form id="register-form" style="display:flex; flex-direction:column; gap:14px;">
-                                <div>
-                                    <label style="font-size:12px; font-weight:700; color:var(--text-primary); display:block; margin-bottom:4px;">AICTE Permanent Institute ID (PID)</label>
-                                    <input type="text" class="input" id="reg-pid" placeholder="e.g. 1-3324901821" required style="width:100%; font-size:13px;">
+
+                            <!-- Clearly Separated Evaluator Demo Role Access -->
+                            <div class="demo-access-panel" id="evaluator-demo">
+                                <div class="demo-access-header">
+                                    <span class="demo-badge">Evaluator Demo</span>
+                                    <span>Select a sample role to test permissions:</span>
                                 </div>
 
-                                <div>
-                                    <label style="font-size:12px; font-weight:700; color:var(--text-primary); display:block; margin-bottom:4px;">Official Institution Name</label>
-                                    <input type="text" class="input" id="reg-name" placeholder="Full legal name of university / college" required style="width:100%; font-size:13px;">
+                                <select class="demo-role-dropdown" id="demo-role-dropdown" aria-label="Select evaluation persona">
+                                    ${OFFICIAL_PERSONNEL.map(a => `
+                                        <option value="${a.username}" ${(selectedAcc.username === a.username || (a.aliases && a.aliases.includes(selectedAcc.username))) ? 'selected' : ''}>
+                                            ${a.shortRole}: ${a.fullName} (${a.roleName})
+                                        </option>
+                                    `).join('')}
+                                </select>
+                            </div>
+                        ` : `
+                            <!-- Institutional Registration Form -->
+                            <form id="auth-register-form" style="display:flex; flex-direction:column; gap:12px;" novalidate>
+                                <div class="form-group">
+                                    <label for="reg-pid" class="form-label">AICTE Permanent Institute ID (PID)</label>
+                                    <input type="text" class="input" id="reg-pid" placeholder="e.g. 1-3324901821" required style="height:36px; font-size:13px;">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="reg-name" class="form-label">Official Institution Name</label>
+                                    <input type="text" class="input" id="reg-name" placeholder="Full legal name of institution" required style="height:36px; font-size:13px;">
                                 </div>
 
                                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-                                    <div>
-                                        <label style="font-size:12px; font-weight:700; color:var(--text-primary); display:block; margin-bottom:4px;">State / UT</label>
-                                        <select class="input" id="reg-state" style="width:100%; font-size:12px;" required>
+                                    <div class="form-group">
+                                        <label for="reg-state" class="form-label">State / UT</label>
+                                        <select class="input" id="reg-state" style="height:36px; font-size:12px;" required>
                                             <option value="Tamil Nadu">Tamil Nadu</option>
                                             <option value="Karnataka">Karnataka</option>
                                             <option value="Maharashtra">Maharashtra</option>
-                                            <option value="Delhi">Delhi NCR</option>
+                                            <option value="Delhi NCR">Delhi NCR</option>
                                             <option value="Uttar Pradesh">Uttar Pradesh</option>
                                         </select>
                                     </div>
-                                    <div>
-                                        <label style="font-size:12px; font-weight:700; color:var(--text-primary); display:block; margin-bottom:4px;">Regional Directorate</label>
-                                        <select class="input" id="reg-region" style="width:100%; font-size:12px;" required>
-                                            <option value="Southern">Southern Regional Office</option>
-                                            <option value="Western">Western Regional Office</option>
-                                            <option value="Northern">Northern Regional Office</option>
-                                            <option value="South-Western">South-Western Regional Office</option>
+                                    <div class="form-group">
+                                        <label for="reg-region" class="form-label">Regional Office</label>
+                                        <select class="input" id="reg-region" style="height:36px; font-size:12px;" required>
+                                            <option value="Southern">Southern (Chennai)</option>
+                                            <option value="Northern">Northern (Kanpur)</option>
+                                            <option value="Western">Western (Mumbai)</option>
+                                            <option value="South-Western">South-Western (Bangalore)</option>
                                         </select>
                                     </div>
                                 </div>
 
-                                <div>
-                                    <label style="font-size:12px; font-weight:700; color:var(--text-primary); display:block; margin-bottom:4px;">Registrar / Principal Email Address</label>
-                                    <input type="email" class="input" id="reg-email" placeholder="registrar@institution.edu.in" required style="width:100%; font-size:13px;">
+                                <div class="form-group">
+                                    <label for="reg-email" class="form-label">Registrar / Liaison Email</label>
+                                    <input type="email" class="input" id="reg-email" placeholder="registrar@institution.edu.in" required style="height:36px; font-size:13px;">
                                 </div>
 
-                                <button type="submit" class="btn btn-primary" style="padding:12px; font-size:14px; font-weight:700; justify-content:center; margin-top:8px;">
+                                <button type="submit" class="btn btn-primary" style="height:40px; font-size:14px; font-weight:600; justify-content:center; margin-top:4px;">
                                     ${ICONS.ShieldCheck}
-                                    <span>Submit Enrolment Application</span>
+                                    <span>Submit registration request</span>
                                 </button>
                             </form>
                         `}
                     </div>
-                </div>
+                </main>
+
+                <!-- Project Information Footer -->
+                <footer style="text-align:center; font-size:11px; color:var(--text-tertiary); padding:10px 0;">
+                    Smart India Hackathon 2026 • Problem Statement ID: 26262 • Team PROJECT CHAOS (197354) • Prototype Demo
+                </footer>
             `;
 
             // Event Bindings
-            wrap.querySelector('#btn-login-back-landing').onclick = () => this.navigate('landing');
+            wrap.querySelector('#btn-auth-back-home').onclick = () => this.navigate('landing');
+
+            wrap.querySelector('#auth-theme-toggle').onclick = () => {
+                this.toggleTheme();
+                this.render();
+            };
 
             const tabSignin = wrap.querySelector('#tab-auth-signin');
             if (tabSignin) tabSignin.onclick = () => {
@@ -1571,16 +1643,20 @@
                 this.render();
             };
 
-            // Persona pills
-            wrap.querySelectorAll('[data-role-btn]').forEach(btn => {
-                btn.onclick = () => {
-                    const uname = btn.getAttribute('data-role-btn');
+            // Demo dropdown
+            const demoDropdown = wrap.querySelector('#demo-role-dropdown');
+            if (demoDropdown) {
+                demoDropdown.onchange = (e) => {
+                    const uname = e.target.value;
                     this.selectedLoginRole = uname;
-                    this.render();
+                    const official = resolveOfficial(uname);
+                    const usernameInput = wrap.querySelector('#login-username');
+                    if (usernameInput) usernameInput.value = official.username;
+                    API.showToast(`Selected demo role: ${official.fullName} (${official.shortRole})`, 'info');
                 };
-            });
+            }
 
-            // Password visibility toggle
+            // Password toggle
             const pwdToggle = wrap.querySelector('#btn-toggle-password');
             if (pwdToggle) {
                 pwdToggle.onclick = () => {
@@ -1591,14 +1667,18 @@
                 };
             }
 
-            // Sign In form submission
-            const loginForm = wrap.querySelector('#login-form');
-            if (loginForm) {
-                loginForm.onsubmit = async (e) => {
+            // Sign In form submit
+            const signinForm = wrap.querySelector('#auth-signin-form');
+            if (signinForm) {
+                signinForm.onsubmit = async (e) => {
                     e.preventDefault();
                     const uname = wrap.querySelector('#login-username').value.trim();
-                    const official = resolveOfficial(uname);
+                    if (!uname) {
+                        API.showToast('Please enter an official username or institutional ID.', 'error');
+                        return;
+                    }
 
+                    const official = resolveOfficial(uname);
                     this.currentUser = official;
                     this.isAuthenticated = true;
                     localStorage.setItem('niyam_auth', 'true');
@@ -1606,7 +1686,7 @@
 
                     const submitBtn = wrap.querySelector('#btn-login-submit');
                     if (submitBtn) {
-                        submitBtn.innerHTML = '<span>Verifying cryptographic signature...</span>';
+                        submitBtn.innerHTML = '<span>Verifying credentials...</span>';
                         submitBtn.disabled = true;
                     }
 
@@ -1618,18 +1698,18 @@
                         this.currentView = 'dashboard';
                         localStorage.setItem('niyam_view', 'dashboard');
                         this.render();
-                        API.showToast(`Authenticated as ${official.fullName} (${official.shortRole})`, 'success');
-                    }, 350);
+                        API.showToast(`Signed in as ${official.fullName} (${official.shortRole})`, 'success');
+                    }, 300);
                 };
             }
 
-            // Registration form submission
-            const regForm = wrap.querySelector('#register-form');
+            // Registration form submit
+            const regForm = wrap.querySelector('#auth-register-form');
             if (regForm) {
                 regForm.onsubmit = (e) => {
                     e.preventDefault();
                     const name = wrap.querySelector('#reg-name').value;
-                    API.showToast(`Enrolment request submitted for ${name}. Verification token dispatched.`, 'success');
+                    API.showToast(`Registration request submitted for ${name}. Verification token dispatched.`, 'success');
                     this.authMode = 'signin';
                     this.render();
                 };

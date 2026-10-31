@@ -286,6 +286,170 @@
         SecureInstitutionalIdentity: `<svg viewBox="0 0 200 160" fill="none" xmlns="http://www.w3.org/2000/svg" class="ill-svg"><rect x="35" y="25" width="130" height="110" rx="12" fill="#FFFFFF" stroke="#2563EB" stroke-width="1.5"/><rect x="35" y="25" width="130" height="28" rx="12" fill="#1E3A8A"/><rect x="35" y="42" width="130" height="11" fill="#1E3A8A"/><rect x="48" y="65" width="32" height="38" rx="6" fill="#F1F5F9" stroke="#CBD5E1"/><circle cx="64" cy="78" r="8" fill="#94A3B8"/><path d="M52 98a12 12 0 0 1 24 0" fill="#94A3B8"/><rect x="90" y="66" width="60" height="5" rx="2.5" fill="#1E293B"/><rect x="90" y="76" width="45" height="4" rx="2" fill="#64748B"/><rect x="90" y="86" width="55" height="4" rx="2" fill="#CBD5E1"/><circle cx="145" cy="118" r="10" fill="#059669"/><path d="M142 118l2 2 4-4" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`
     };
 
+    // ------------------------------------------------------------------------
+    // Authoritative Role Configuration & Workspace Directory (9 Official Roles)
+    // ------------------------------------------------------------------------
+    const ROLE_CONFIG = {
+        INSTITUTION_REP: {
+            roleCode: 'INSTITUTION_REP',
+            roleTitle: 'Institution Representative',
+            shortRole: 'Institution Rep',
+            workspaceTitle: 'Institutional Filing Portal',
+            jurisdiction: 'Nilgiri Institute of Technology (SYN-2025-001)',
+            overviewTitle: 'Institution Overview',
+            overviewSubtitle: 'Institutional Approval Applications & Compliance Desk (APH 2025-26)',
+            nav: [
+                { id: 'dashboard', label: 'Overview', icon: ICONS.LayoutDashboard },
+                { id: 'applications', label: 'My applications', icon: ICONS.FileText, badge: '1 Active' },
+                { id: 'documents', label: 'Document submission & validity', icon: ICONS.FileCheck2, badge: '6' },
+                { id: 'compliance', label: 'Compliance & undertakings', icon: ICONS.ShieldCheck, badge: '4' },
+                { id: 'clarifications', label: 'Clarifications & notices', icon: ICONS.MessageSquare, badge: '1' },
+                { id: 'institution-profile', label: 'Institution profile', icon: ICONS.Building2 },
+                { id: 'rules', label: 'APH Regulatory guide', icon: ICONS.Sliders }
+            ]
+        },
+        REGIONAL_OFFICER: {
+            roleCode: 'REGIONAL_OFFICER',
+            roleTitle: 'Regional Officer',
+            shortRole: 'Regional Officer',
+            workspaceTitle: 'Regional Jurisdiction Workspace',
+            jurisdiction: 'Northern Regional Office (RO-NORTH), Kanpur',
+            overviewTitle: 'Regional Overview',
+            overviewSubtitle: 'Northern Regional Jurisdiction Dossiers & Review Desk (APH 2025-26)',
+            nav: [
+                { id: 'dashboard', label: 'Overview', icon: ICONS.LayoutDashboard },
+                { id: 'applications', label: 'Regional applications', icon: ICONS.FileText, badge: '4 Active' },
+                { id: 'queue', label: 'Review queue', icon: ICONS.ListFilter, badge: '48' },
+                { id: 'evc', label: 'Inspection logistics', icon: ICONS.Landmark },
+                { id: 'compliance', label: 'Regional compliance', icon: ICONS.ShieldCheck },
+                { id: 'findings', label: 'Deficiencies & directives', icon: ICONS.AlertTriangle, badge: '38' },
+                { id: 'reports', label: 'Regional reports', icon: ICONS.FileText },
+                { id: 'rules', label: 'APH Regulatory rules', icon: ICONS.Sliders }
+            ]
+        },
+        SCRUTINY_MEMBER: {
+            roleCode: 'SCRUTINY_MEMBER',
+            roleTitle: 'Scrutiny Chair',
+            shortRole: 'Scrutiny Chair',
+            workspaceTitle: 'National Scrutiny Directorate',
+            jurisdiction: 'National Scrutiny Committee (Northern Region)',
+            overviewTitle: 'Scrutiny overview',
+            overviewSubtitle: 'National Scrutiny Committee · Northern Region (AICTE APH 2025-26)',
+            nav: [
+                { id: 'dashboard', label: 'Overview', icon: ICONS.LayoutDashboard },
+                { id: 'queue', label: 'Review queue', icon: ICONS.ListFilter, badge: '48' },
+                { id: 'verify', label: 'Document verification', icon: ICONS.FileSearch },
+                { id: 'findings', label: 'Deficiencies & findings', icon: ICONS.AlertTriangle, badge: '38' },
+                { id: 'clarifications', label: 'Clarifications & notices', icon: ICONS.MessageSquare },
+                { id: 'applications', label: 'Committee applications', icon: ICONS.FileText },
+                { id: 'rules', label: 'APH Regulatory rules', icon: ICONS.Sliders }
+            ]
+        },
+        EVC_COORDINATOR: {
+            roleCode: 'EVC_COORDINATOR',
+            roleTitle: 'EVC Coordinator',
+            shortRole: 'EVC Coordinator',
+            workspaceTitle: 'Inspection Scheduling Directorate',
+            jurisdiction: 'National Inspection & Accreditation Bureau',
+            overviewTitle: 'Inspection scheduling overview',
+            overviewSubtitle: 'Expert Visit Committee Logistics & Scheduling Desk (APH 2025-26)',
+            nav: [
+                { id: 'dashboard', label: 'Overview', icon: ICONS.LayoutDashboard },
+                { id: 'evc', label: 'Inspection scheduling', icon: ICONS.Landmark, badge: '12 Scheduled' },
+                { id: 'infrastructure', label: 'Evidence & infrastructure', icon: ICONS.FileSearch },
+                { id: 'applications', label: 'Inspection dossiers', icon: ICONS.FileText },
+                { id: 'findings', label: 'Inspection findings', icon: ICONS.AlertTriangle },
+                { id: 'rules', label: 'APH Regulatory rules', icon: ICONS.Sliders }
+            ]
+        },
+        EVC_MEMBER: {
+            roleCode: 'EVC_MEMBER',
+            roleTitle: 'EVC Committee Member',
+            shortRole: 'EVC Member',
+            workspaceTitle: 'Assigned Inspections Desk',
+            jurisdiction: 'AICTE National Expert Inspection Panel',
+            overviewTitle: 'Assigned inspections overview',
+            overviewSubtitle: 'Expert Visit Committee On-Site Verification Desk (APH 2025-26)',
+            nav: [
+                { id: 'dashboard', label: 'Overview', icon: ICONS.LayoutDashboard },
+                { id: 'evc', label: 'Assigned inspections', icon: ICONS.Landmark, badge: '2 Active' },
+                { id: 'infrastructure', label: 'On-site evidence', icon: ICONS.FileSearch },
+                { id: 'reports', label: 'Inspection reports', icon: ICONS.FileText },
+                { id: 'rules', label: 'APH Regulatory rules', icon: ICONS.Sliders }
+            ]
+        },
+        COMPLIANCE_OFFICER: {
+            roleCode: 'COMPLIANCE_OFFICER',
+            roleTitle: 'Compliance Officer',
+            shortRole: 'Compliance Officer',
+            workspaceTitle: 'Statutory Compliance Directorate',
+            jurisdiction: 'Legal & Institutional Undertakings Cell',
+            overviewTitle: 'Compliance monitoring overview',
+            overviewSubtitle: 'Statutory Validity & Institutional Undertakings Desk (APH 2025-26)',
+            nav: [
+                { id: 'dashboard', label: 'Overview', icon: ICONS.LayoutDashboard },
+                { id: 'compliance', label: 'Compliance monitoring', icon: ICONS.ShieldCheck, badge: '6 Due' },
+                { id: 'documents', label: 'Document validity desk', icon: ICONS.FileCheck2 },
+                { id: 'findings', label: 'Deficiencies & undertakings', icon: ICONS.AlertTriangle },
+                { id: 'clarifications', label: 'Clarifications & notices', icon: ICONS.MessageSquare },
+                { id: 'applications', label: 'Regulatory dossiers', icon: ICONS.FileText },
+                { id: 'rules', label: 'APH Regulatory rules', icon: ICONS.Sliders }
+            ]
+        },
+        AUDITOR: {
+            roleCode: 'AUDITOR',
+            roleTitle: 'Audit Director',
+            shortRole: 'Audit Director',
+            workspaceTitle: 'Vigilance & Cryptographic Audit',
+            jurisdiction: 'Comptroller & Auditor General (CAG) Deputation',
+            overviewTitle: 'Audit workspace overview',
+            overviewSubtitle: 'Independent Cryptographic SHA-256 Ledger & Non-Repudiation Audit (APH 2025-26)',
+            nav: [
+                { id: 'dashboard', label: 'Overview', icon: ICONS.LayoutDashboard },
+                { id: 'audit', label: 'Statutory audit ledger', icon: ICONS.History, badge: 'SHA-256' },
+                { id: 'verify', label: 'Evidence provenance', icon: ICONS.FileSearch },
+                { id: 'analytics', label: 'Audit analytics', icon: ICONS.BarChart3 },
+                { id: 'reports', label: 'Statutory reports', icon: ICONS.FileText },
+                { id: 'rules', label: 'APH Regulatory rules', icon: ICONS.Sliders }
+            ]
+        },
+        REGULATION_BUREAU_ADMIN: {
+            roleCode: 'REGULATION_BUREAU_ADMIN',
+            roleTitle: 'Bureau Head',
+            shortRole: 'Bureau Head',
+            workspaceTitle: 'Approval Bureau Directorate',
+            jurisdiction: 'AICTE Apex Regulatory Directorate, New Delhi',
+            overviewTitle: 'Bureau oversight overview',
+            overviewSubtitle: 'Competent Authority Approval Determinations & Escalations (APH 2025-26)',
+            nav: [
+                { id: 'dashboard', label: 'Overview', icon: ICONS.LayoutDashboard },
+                { id: 'applications', label: 'Executive dossiers', icon: ICONS.FileText, badge: '14 Pending' },
+                { id: 'queue', label: 'Review escalations', icon: ICONS.ListFilter },
+                { id: 'findings', label: 'Regulatory decisions', icon: ICONS.AlertTriangle },
+                { id: 'rules', label: 'APH Rule management', icon: ICONS.Sliders },
+                { id: 'analytics', label: 'Bureau analytics', icon: ICONS.BarChart3 },
+                { id: 'reports', label: 'Statutory reports', icon: ICONS.FileText }
+            ]
+        },
+        SUPER_ADMIN: {
+            roleCode: 'SUPER_ADMIN',
+            roleTitle: 'System Administrator',
+            shortRole: 'System Admin',
+            workspaceTitle: 'Platform Administration Desk',
+            jurisdiction: 'AICTE e-Governance & Systems Division',
+            overviewTitle: 'Administration overview',
+            overviewSubtitle: 'Platform Security, Role-Based Access, & Rules Engine Administration',
+            nav: [
+                { id: 'dashboard', label: 'Overview', icon: ICONS.LayoutDashboard },
+                { id: 'users', label: 'User & role management', icon: ICONS.Users, badge: '9 Active' },
+                { id: 'rules', label: 'Rules & configuration', icon: ICONS.Sliders },
+                { id: 'audit', label: 'Statutory audit ledger', icon: ICONS.History, badge: 'SHA-256' },
+                { id: 'analytics', label: 'System analytics', icon: ICONS.BarChart3 },
+                { id: 'scenarios', label: 'Evaluation scenarios', icon: ICONS.FlaskConical }
+            ]
+        }
+    };
+
     class NiyamAIApp {
         isApplicant() {
             if (!this.currentUser) return false;
@@ -319,6 +483,20 @@
             return r.includes('evc') || rc.includes('EVC') || u.includes('evc') || u === 'shri.vikramaditya.rathore' || u === 'prof.devendra.pathak';
         }
 
+        isEVCCoordinator() {
+            if (!this.currentUser) return false;
+            const rc = (this.currentUser.roleCode || '').toUpperCase();
+            const u = (this.currentUser.username || '').toLowerCase();
+            return rc === 'EVC_COORDINATOR' || u === 'shri.vikramaditya.rathore' || u === 'evc_coord1' || u === 'evc_coord';
+        }
+
+        isEVCMember() {
+            if (!this.currentUser) return false;
+            const rc = (this.currentUser.roleCode || '').toUpperCase();
+            const u = (this.currentUser.username || '').toLowerCase();
+            return rc === 'EVC_MEMBER' || u === 'prof.devendra.pathak' || u === 'evc_expert1' || u === 'evc_member';
+        }
+
         isComplianceOfficer() {
             if (!this.currentUser) return false;
             const r = (this.currentUser.role || '').toLowerCase();
@@ -335,12 +513,47 @@
             return r === 'auditor' || rc === 'AUDITOR' || u === 'shri.rajeshwar.rao' || u === 'auditor1';
         }
 
+        isBureauHead() {
+            if (!this.currentUser) return false;
+            const rc = (this.currentUser.roleCode || '').toUpperCase();
+            const u = (this.currentUser.username || '').toLowerCase();
+            return rc === 'REGULATION_BUREAU_ADMIN' || u === 'prof.anil.sahasrabudhe' || u === 'bureauadmin' || u === 'competent_auth1';
+        }
+
+        isSystemAdmin() {
+            if (!this.currentUser) return false;
+            const rc = (this.currentUser.roleCode || '').toUpperCase();
+            const u = (this.currentUser.username || '').toLowerCase();
+            return rc === 'SUPER_ADMIN' || u === 'dr.rk.shrivastava' || u === 'superadmin';
+        }
+
         isAdmin() {
             if (!this.currentUser) return true;
             const r = (this.currentUser.role || '').toLowerCase();
             const rc = (this.currentUser.roleCode || '').toUpperCase();
             const u = (this.currentUser.username || '').toLowerCase();
             return r === 'admin' || r === 'supervising_authority' || rc === 'SUPER_ADMIN' || rc === 'REGULATION_BUREAU_ADMIN' || u === 'prof.anil.sahasrabudhe' || u === 'dr.rk.shrivastava' || u === 'bureauadmin' || u === 'superadmin';
+        }
+
+        getRoleConfig() {
+            if (!this.currentUser) return ROLE_CONFIG.SCRUTINY_MEMBER;
+            const rc = (this.currentUser.roleCode || '').toUpperCase();
+            if (ROLE_CONFIG[rc]) return ROLE_CONFIG[rc];
+            if (this.isApplicant()) return ROLE_CONFIG.INSTITUTION_REP;
+            if (this.isRegionalOfficer()) return ROLE_CONFIG.REGIONAL_OFFICER;
+            if (this.isScrutinyOfficer()) return ROLE_CONFIG.SCRUTINY_MEMBER;
+            if (this.isEVCCoordinator()) return ROLE_CONFIG.EVC_COORDINATOR;
+            if (this.isEVCMember()) return ROLE_CONFIG.EVC_MEMBER;
+            if (this.isComplianceOfficer()) return ROLE_CONFIG.COMPLIANCE_OFFICER;
+            if (this.isAuditor()) return ROLE_CONFIG.AUDITOR;
+            if (this.isBureauHead()) return ROLE_CONFIG.REGULATION_BUREAU_ADMIN;
+            if (this.isSystemAdmin()) return ROLE_CONFIG.SUPER_ADMIN;
+            return ROLE_CONFIG.SCRUTINY_MEMBER;
+        }
+
+        getAuthoritativeRoleTitle() {
+            const cfg = this.getRoleConfig();
+            return cfg ? cfg.roleTitle : (this.currentUser.roleName || 'Authorized Official');
         }
 
         constructor() {
@@ -352,20 +565,8 @@
             const rawUser = JSON.parse(localStorage.getItem('niyam_user') || 'null');
             this.currentUser = resolveOfficial(rawUser);
 
-            let allowed = null;
-            if (this.isApplicant()) {
-                allowed = ['dashboard', 'applications', 'documents', 'compliance', 'clarifications', 'institution-profile', 'institution-intelligence'];
-            } else if (this.isRegionalOfficer()) {
-                allowed = ['dashboard', 'applications', 'queue', 'evc', 'analytics', 'findings', 'clarifications', 'reports', 'intelligence-centre'];
-            } else if (this.isScrutinyOfficer()) {
-                allowed = ['dashboard', 'queue', 'verify', 'findings', 'clarifications', 'applications', 'intelligence-centre'];
-            } else if (this.isEVCOfficer()) {
-                allowed = ['dashboard', 'evc', 'infrastructure', 'applications', 'intelligence-centre'];
-            } else if (this.isComplianceOfficer()) {
-                allowed = ['dashboard', 'compliance', 'documents', 'findings', 'clarifications', 'applications', 'intelligence-centre'];
-            } else if (this.isAuditor()) {
-                allowed = ['dashboard', 'audit', 'verification', 'analytics', 'reports', 'intelligence-centre'];
-            }
+            const roleCfg = this.getRoleConfig();
+            const allowed = roleCfg ? roleCfg.nav.map(n => n.id).concat(['dashboard', 'rules', 'notifications', 'verify', 'findings', 'clarifications', 'applications', 'intelligence-centre']) : null;
 
             if (allowed && !allowed.includes(this.currentView)) {
                 this.currentView = 'dashboard';
@@ -672,9 +873,11 @@
             if (!header) return;
 
             const isApp = this.isApplicant();
+            const roleCfg = this.getRoleConfig();
+            const authoritativeRole = this.getAuthoritativeRoleTitle();
             const displayName = isApp
                 ? (this.currentUser.fullName || 'Nilgiri Institute of Technology')
-                : (this.currentUser.fullName || this.currentUser.roleName || this.currentUser.username || 'Authorized Official');
+                : (this.currentUser.fullName || authoritativeRole);
             const cleanName = displayName.replace(/^Dr\.\s*|^Er\.\s*|^Prof\.\s*|^Shri\.\s*|^Smt\.\s*/i, '');
             const initials = cleanName
                 .split(/\s+/)
@@ -699,20 +902,15 @@
                                 <span class="brand-title">NIYAM</span>
                                 <span class="brand-tag">APH 2025-26</span>
                             </div>
-                            <span class="brand-subtitle">${isApp ? 'Institutional Approval &amp; Compliance Filing Portal' : 'Regulatory Decision-Support &amp; Document Authentication'}</span>
+                            <span class="brand-subtitle">${roleCfg.workspaceTitle}</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="header-center">
-                    <div class="sih-meta-pill">
-                        <span class="pill-dot amber"></span>
-                        <span>PS ID: 26262 • Team PROJECT CHAOS (197354)</span>
-                    </div>
-
-                    <div class="sync-status-pill">
-                        <span class="pill-dot emerald"></span>
-                        <span>${isApp ? 'LIVE CENTRAL SYNC' : 'REGULATORY CORE ACTIVE'}</span>
+                    <div class="header-context-pill">
+                        <span class="context-dot"></span>
+                        <span>${roleCfg.jurisdiction}</span>
                     </div>
                 </div>
 
@@ -727,7 +925,7 @@
                     </button>
 
                     <div class="notification-bell-wrap" style="position:relative;">
-                        <button class="notif-btn" id="notif-toggle-btn" title="Institutional Notices">
+                        <button class="notif-btn" id="notif-toggle-btn" title="Official Notices">
                             ${ICONS.Bell}
                             <span class="notif-badge-count">2</span>
                         </button>
@@ -764,24 +962,51 @@
                         </div>
                     </div>
 
-                    <div class="user-header-profile" style="cursor:pointer;" onclick="app.openUserProfileModal();" title="View Official Credentials">
-                        <div class="user-header-avatar">${initials}</div>
-                        <div class="user-header-info">
-                            <div class="user-header-name">${displayName}</div>
-                            <div class="user-header-role">${this.currentUser.badge || (isApp ? 'Authorized Liaison' : 'Regulatory Officer')}</div>
+                    <!-- Single Clean Account Menu -->
+                    <div class="account-menu-wrap" id="account-menu-wrap">
+                        <button class="account-menu-btn" id="account-menu-trigger" title="Account &amp; Persona Options">
+                            <div class="user-header-avatar">${initials}</div>
+                            <div class="user-header-info desktop-only">
+                                <div class="user-header-name">${displayName}</div>
+                                <div class="user-header-role">${authoritativeRole}</div>
+                            </div>
+                            <svg class="chevron-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+                        </button>
+                        <div class="account-dropdown" id="account-menu-dropdown">
+                            <div class="account-dropdown-header">
+                                <div class="account-dropdown-name">
+                                    <span>${displayName}</span>
+                                    <span class="badge badge-blue" style="font-size:10px;">${authoritativeRole}</span>
+                                </div>
+                                <div class="account-dropdown-meta">${this.currentUser.department || roleCfg.jurisdiction}</div>
+                                <div class="account-dropdown-meta font-mono" style="font-size:10px; color:var(--text-tertiary);">${this.currentUser.email || ''}</div>
+                            </div>
+                            <div class="account-dropdown-actions">
+                                <button class="account-dropdown-item" id="menu-switch-persona">
+                                    ${ICONS.Users}
+                                    <span>Switch Persona (9 Roles)</span>
+                                </button>
+                                <button class="account-dropdown-item" id="menu-about-niyam">
+                                    ${ICONS.Award}
+                                    <span>About NIYAM (PS 26262)</span>
+                                </button>
+                                <button class="account-dropdown-item" id="menu-view-profile">
+                                    ${ICONS.ShieldCheck}
+                                    <span>View Official Credentials</span>
+                                </button>
+                                <div class="account-dropdown-divider"></div>
+                                <button class="account-dropdown-item danger" id="menu-sign-out">
+                                    ${ICONS.LogOut}
+                                    <span>Sign Out</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
-
-                    <button class="btn-signout" id="header-logout-btn" title="Sign Out of Portal" style="display:flex; align-items:center; gap:6px; padding:6px 12px; border-radius:8px; border:1px solid rgba(239,68,68,0.3); background:rgba(239,68,68,0.08); color:#DC2626; font-size:12px; font-weight:700; cursor:pointer;">
-                        ${ICONS.LogOut}
-                        <span class="hidden sm:inline">Sign Out</span>
-                    </button>
                 </div>
             `;
 
             document.getElementById('brand-home-btn').onclick = () => this.navigate('dashboard');
             document.getElementById('theme-toggle-btn').onclick = () => this.toggleTheme();
-            document.getElementById('header-logout-btn').onclick = () => this.confirmSignOut();
 
             const mobileBtn = document.getElementById('mobile-menu-btn');
             if (mobileBtn) {
@@ -796,7 +1021,66 @@
                 e.stopPropagation();
                 this.notifOpen = !this.notifOpen;
                 document.getElementById('notif-popup').style.display = this.notifOpen ? 'block' : 'none';
+                const accMenu = document.getElementById('account-menu-dropdown');
+                if (accMenu) accMenu.classList.remove('show');
             };
+
+            // Single Account Menu Click Handler
+            const accTrigger = document.getElementById('account-menu-trigger');
+            const accDropdown = document.getElementById('account-menu-dropdown');
+            const accWrap = document.getElementById('account-menu-wrap');
+            if (accTrigger && accDropdown) {
+                accTrigger.onclick = (e) => {
+                    e.stopPropagation();
+                    const isOpen = accDropdown.classList.contains('show');
+                    accDropdown.classList.toggle('show', !isOpen);
+                    if (accWrap) accWrap.classList.toggle('open', !isOpen);
+                    if (this.notifOpen) {
+                        this.notifOpen = false;
+                        const notifPop = document.getElementById('notif-popup');
+                        if (notifPop) notifPop.style.display = 'none';
+                    }
+                };
+            }
+
+            const menuSwitch = document.getElementById('menu-switch-persona');
+            if (menuSwitch) {
+                menuSwitch.onclick = () => {
+                    if (accDropdown) accDropdown.classList.remove('show');
+                    if (accWrap) accWrap.classList.remove('open');
+                    this.openEmergencyAccessModal();
+                };
+            }
+
+            const menuAbout = document.getElementById('menu-about-niyam');
+            if (menuAbout) {
+                menuAbout.onclick = () => {
+                    if (accDropdown) accDropdown.classList.remove('show');
+                    if (accWrap) accWrap.classList.remove('open');
+                    this.openAboutNiyamModal();
+                };
+            }
+
+            const menuProfile = document.getElementById('menu-view-profile');
+            if (menuProfile) {
+                menuProfile.onclick = () => {
+                    if (accDropdown) accDropdown.classList.remove('show');
+                    if (accWrap) accWrap.classList.remove('open');
+                    this.openUserProfileModal();
+                };
+            }
+
+            const menuSignout = document.getElementById('menu-sign-out');
+            if (menuSignout) {
+                menuSignout.onclick = () => {
+                    if (accDropdown) accDropdown.classList.remove('show');
+                    if (accWrap) accWrap.classList.remove('open');
+                    this.confirmSignOut();
+                };
+            }
+
+            const pubBtn = document.getElementById('btn-header-public-portal');
+            if (pubBtn) pubBtn.onclick = () => this.navigate('landing');
 
             document.addEventListener('click', (e) => {
                 if (this.notifOpen && !e.target.closest('.notification-bell-wrap')) {
@@ -804,67 +1088,24 @@
                     const pop = document.getElementById('notif-popup');
                     if (pop) pop.style.display = 'none';
                 }
+                if (accDropdown && accDropdown.classList.contains('show') && !e.target.closest('#account-menu-wrap')) {
+                    accDropdown.classList.remove('show');
+                    if (accWrap) accWrap.classList.remove('open');
+                }
             });
         }
 
         // --------------------------------------------------------------------
-        // Authenticated Sidebar (With Strict Role Separation & No Switcher)
+        // Authenticated Sidebar (With Strict Role Separation & Clean Tasks)
         // --------------------------------------------------------------------
         renderSidebar() {
             const sidebar = document.getElementById('app-sidebar');
             if (!sidebar) return;
 
             const isApp = this.isApplicant();
-
-            let navItems = [];
-            let supportItems = [];
-
-            if (this.isApplicant()) {
-                navItems = [
-                    { id: 'dashboard', label: 'Applicant Overview', icon: ICONS.LayoutDashboard },
-                    { id: 'applications', label: 'My Applications', icon: ICONS.FileText, badge: '1 Active' },
-                    { id: 'documents', label: 'Document Submission & Validity', icon: ICONS.FileCheck2, badge: '6' },
-                    { id: 'compliance', label: 'Compliance & Undertakings', icon: ICONS.ShieldCheck, badge: '4' },
-                    { id: 'clarifications', label: 'Clarifications & Notices', icon: ICONS.MessageSquare, badge: '1' },
-                    { id: 'institution-profile', label: 'Institution Profile', icon: ICONS.Building2 },
-                    { id: 'institution-intelligence', label: 'Regulatory Intelligence 2035', icon: ICONS.Sparkles, badge: 'AI 2035', highlight: true }
-                ];
-                supportItems = [
-                    { id: 'notifications', label: 'Notices & Reminders', icon: ICONS.Bell, badge: '2' },
-                    { id: 'rules', label: 'APH Regulatory Guide', icon: ICONS.Sliders }
-                ];
-            } else {
-                navItems = [
-                    { id: 'dashboard', label: 'Command Overview', icon: ICONS.LayoutDashboard },
-                    { id: 'intelligence-centre', label: 'NIYAM 2035 Intelligence Centre', icon: ICONS.Sparkles, badge: 'CORE', highlight: true },
-                    { id: 'applications', label: 'Regulatory Dossiers', icon: ICONS.FileText },
-                    { id: 'queue', label: 'Scrutiny & Review Queue', icon: ICONS.ListFilter, badge: 'Active' },
-                    { id: 'evc', label: 'EVC Committee Visits', icon: ICONS.Landmark },
-                    { id: 'compliance', label: 'Compliance & Undertakings', icon: ICONS.ShieldCheck },
-                    { id: 'documents', label: 'Document Validity Desk', icon: ICONS.FileCheck2 },
-                    { id: 'findings', label: 'Deficiencies & Findings', icon: ICONS.AlertTriangle },
-                    { id: 'clarifications', label: 'Clarifications & Directives', icon: ICONS.MessageSquare },
-                    { id: 'audit', label: 'Statutory Audit Ledger', icon: ICONS.History, badge: 'SHA-256' },
-                    { id: 'rules', label: 'Regulatory Rules (APH)', icon: ICONS.Sliders }
-                ];
-                supportItems = [
-                    { id: 'reports', label: 'Statutory Reports Bureau', icon: ICONS.FileText },
-                    { id: 'users', label: 'Authorized Officials', icon: ICONS.Users },
-                    { id: 'scenarios', label: 'SIH Evaluation Scenarios', icon: ICONS.FlaskConical, highlight: true }
-                ];
-            }
-
-            const sidebarDisplayName = isApp
-                ? (this.currentUser.fullName || 'Nilgiri Institute of Technology')
-                : (this.currentUser.fullName || this.currentUser.roleName || this.currentUser.username || 'Authorized Official');
-            const sidebarInitials = sidebarDisplayName
-                .replace(/^Dr\.\s*|^Er\.\s*|^Prof\.\s*|^Shri\.\s*|^Smt\.\s*/i, '')
-                .split(/\s+/)
-                .filter(Boolean)
-                .map(n => n[0])
-                .slice(0, 2)
-                .join('')
-                .toUpperCase() || 'NY';
+            const roleCfg = this.getRoleConfig();
+            const authoritativeRole = this.getAuthoritativeRoleTitle();
+            const navItems = roleCfg.nav || [];
 
             sidebar.innerHTML = `
                 <div class="sidebar-header-card">
@@ -872,44 +1113,18 @@
                         <img src="/images/aicte-logo.png" alt="AICTE">
                     </div>
                     <div class="sidebar-header-meta">
-                        <div class="sidebar-meta-top">${isApp ? 'Nilgiri Tech Portal' : 'AICTE Regulatory Bureau'}</div>
+                        <div class="sidebar-meta-top">${isApp ? 'Institution Desk' : 'AICTE Regulatory Bureau'}</div>
                         <div class="sidebar-meta-role">
                             <span class="sidebar-role-dot" ${isApp ? 'style="background:#10B981;"' : ''}></span>
-                            <span>${this.currentUser.badge || (isApp ? 'Institution Rep' : 'Scrutiny Officer')}</span>
+                            <span>${authoritativeRole}</span>
                         </div>
                     </div>
-                    <span class="sidebar-aph-tag" ${isApp ? 'style="background:rgba(16,185,129,0.15); color:#059669; border-color:rgba(16,185,129,0.3); font-size:10px;"' : ''}>${isApp ? 'SYN-2025-001' : 'APH 2025'}</span>
-                </div>
-
-                <!-- Read-Only Authenticated Identity Card (Zero Client-Side Switching) -->
-                <div class="sidebar-identity-card">
-                    <div class="sidebar-identity-title">
-                        <span>Authenticated Identity</span>
-                        <span class="sidebar-identity-pill">${isApp ? 'Level 1 Portal' : (this.currentUser.roleCode || 'LEVEL 3')}</span>
-                    </div>
-                    <div class="sidebar-identity-name">${isApp ? 'Nilgiri Institute of Technology' : (this.currentUser.fullName || this.currentUser.username)}</div>
-                    <div class="sidebar-identity-meta">
-                        <span style="font-weight:700; color:var(--accent);">${isApp ? 'Permanent ID: SYN-2025-001' : (this.currentUser.department || 'Regulatory Directorate')}</span>
-                    </div>
-                    <div style="font-size:10px; color:var(--text-tertiary); margin-top:2px;">
-                        ${isApp ? 'Liaison: Dr. Suresh Chandra (Registrar)' : 'Designation: ' + (this.currentUser.designation || 'Regulatory Officer')}
-                    </div>
+                    <span class="sidebar-aph-tag">${isApp ? 'SYN-2025-001' : 'APH 2025'}</span>
                 </div>
 
                 <nav class="sidebar-nav-container">
-                    <div class="sidebar-section-title">${isApp ? 'INSTITUTIONAL PORTAL' : 'CORE DIRECTIVES'}</div>
+                    <div class="sidebar-section-title">${isApp ? 'INSTITUTION WORKSPACES' : 'TASKS &amp; WORKSPACES'}</div>
                     ${navItems.map(item => `
-                        <div class="sidebar-nav-item ${this.currentView === item.id ? 'active' : ''}" data-nav="${item.id}" ${item.highlight ? 'style="color:#F59E0B; font-weight:700;"' : ''}>
-                            <div class="sidebar-nav-left">
-                                ${item.icon}
-                                <span>${item.label}</span>
-                            </div>
-                            ${item.badge ? `<span class="sidebar-nav-badge">${item.badge}</span>` : ''}
-                        </div>
-                    `).join('')}
-
-                    <div class="sidebar-section-title" style="margin-top:16px;">${isApp ? 'SYSTEM &amp; SUPPORT' : 'OPERATIONAL SUPPORT'}</div>
-                    ${supportItems.map(item => `
                         <div class="sidebar-nav-item ${this.currentView === item.id ? 'active' : ''}" data-nav="${item.id}" ${item.highlight ? 'style="color:#F59E0B; font-weight:700;"' : ''}>
                             <div class="sidebar-nav-left">
                                 ${item.icon}
@@ -921,32 +1136,11 @@
                 </nav>
 
                 <div class="sidebar-footer">
-                    <div class="sidebar-user-card" style="cursor:pointer;" onclick="app.openUserProfileModal();" title="Click to view Official Credential Dossier">
-                        <div style="display:flex; align-items:center; gap:8px; min-width:0;">
-                            <div style="width:28px; height:28px; border-radius:8px; background:var(--accent); color:#fff; font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-                                ${sidebarInitials}
-                            </div>
-                            <div style="min-width:0;">
-                                <div style="font-size:12px; font-weight:700; color:var(--text-primary); text-overflow:ellipsis; overflow:hidden; white-space:nowrap;">
-                                    ${this.currentUser.fullName || this.currentUser.username}
-                                </div>
-                                <div style="font-size:10px; color:var(--text-secondary); text-overflow:ellipsis; overflow:hidden; white-space:nowrap;">${this.currentUser.badge || (isApp ? 'Applicant Liaison' : 'Official')}</div>
-                            </div>
-                        </div>
-                        <button class="btn-signout" id="sidebar-logout-btn" title="Sign Out">
-                            ${ICONS.LogOut}
-                        </button>
-                    </div>
-
-                    <div class="sidebar-statutory-card">
-                        <div class="sidebar-statutory-title">
-                            ${ICONS.ShieldCheck}
-                            <span>${isApp ? 'Statutory Filing Seal' : 'Statutory Decision Support'}</span>
-                        </div>
-                        <div class="sidebar-statutory-desc">
-                            ${isApp ? 'All submissions are hashed with SHA-256 for non-repudiation and timestamped under AICTE APH 2025.' : 'AI advisory findings assist review. Final statutory approval decisions remain with competent AICTE authorities.'}
-                        </div>
-                    </div>
+                    <button class="sidebar-about-btn" id="sidebar-about-btn" title="About NIYAM (Problem Statement 26262)">
+                        ${ICONS.Award}
+                        <span>About NIYAM (PS 26262)</span>
+                    </button>
+                    <div class="sidebar-version-tag">AICTE APH 2025–26 · v2.4</div>
                 </div>
             `;
 
@@ -961,9 +1155,10 @@
                 };
             });
 
-            const pubBtn = document.getElementById('btn-header-public-portal');
-            if (pubBtn) pubBtn.onclick = () => this.navigate('landing');
-            document.getElementById('sidebar-logout-btn').onclick = () => this.confirmSignOut();
+            const aboutBtn = sidebar.querySelector('#sidebar-about-btn');
+            if (aboutBtn) {
+                aboutBtn.onclick = () => this.openAboutNiyamModal();
+            }
         }
 
         // --------------------------------------------------------------------
@@ -4362,6 +4557,80 @@
         // ====================================================================
         // MODALS & DIALOGS (100% Functional & RBAC-Protected)
         // ====================================================================
+        openAboutNiyamModal() {
+            const overlay = document.createElement('div');
+            overlay.className = 'modal-overlay';
+            overlay.id = 'about-niyam-modal';
+            overlay.innerHTML = `
+                <div class="modal-dialog modal-md">
+                    <div class="modal-header">
+                        <div class="modal-title-group">
+                            <div style="width:36px; height:36px; border-radius:10px; background:var(--accent-light); color:var(--accent); display:flex; align-items:center; justify-content:center;">
+                                <img src="/images/aicte-logo.png" alt="AICTE" style="width:24px; height:24px; object-fit:contain;">
+                            </div>
+                            <div>
+                                <h3 class="modal-title">About NIYAM AICTE</h3>
+                                <div class="modal-subtitle">AICTE Approval Workflow Automation &amp; Compliance Monitoring Platform</div>
+                            </div>
+                        </div>
+                        <button class="modal-close-btn" id="about-close-x">✕</button>
+                    </div>
+
+                    <div style="padding:20px; display:flex; flex-direction:column; gap:16px; font-size:13px; line-height:1.6; color:var(--text-primary);">
+                        <!-- Hackathon Badges -->
+                        <div style="display:flex; flex-wrap:wrap; gap:8px;">
+                            <div style="display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border-radius:20px; background:rgba(245,158,11,0.12); color:#D97706; font-size:11px; font-weight:700; border:1px solid rgba(245,158,11,0.3);">
+                                <span>Problem Statement ID: 26262</span>
+                            </div>
+                            <div style="display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border-radius:20px; background:rgba(37,99,235,0.1); color:#2563EB; font-size:11px; font-weight:700; border:1px solid rgba(37,99,235,0.3);">
+                                <span>Team PROJECT CHAOS (Team ID: 197354)</span>
+                            </div>
+                            <div style="display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border-radius:20px; background:rgba(16,185,129,0.1); color:#059669; font-size:11px; font-weight:700; border:1px solid rgba(16,185,129,0.3);">
+                                <span>AICTE APH 2025–26 Compliant</span>
+                            </div>
+                        </div>
+
+                        <p style="margin:0; color:var(--text-secondary);">
+                            <strong>NIYAM</strong> is an enterprise-grade institutional approval and regulatory compliance platform engineered for the All India Council for Technical Education (AICTE), Ministry of Education, Government of India.
+                        </p>
+
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+                            <div style="padding:12px; border-radius:10px; background:var(--surface-muted); border:1px solid var(--border);">
+                                <div style="font-weight:700; font-size:12px; margin-bottom:4px; color:var(--accent);">Deterministic State Machine</div>
+                                <div style="font-size:11px; color:var(--text-secondary);">Enforces 7 strictly sequential approval stages with mathematical deficiency gating.</div>
+                            </div>
+                            <div style="padding:12px; border-radius:10px; background:var(--surface-muted); border:1px solid var(--border);">
+                                <div style="font-weight:700; font-size:12px; margin-bottom:4px; color:#059669;">Cryptographic Provenance</div>
+                                <div style="font-size:11px; color:var(--text-secondary);">Native SHA-256 forward-chained hash ledger preventing post-submission tampering.</div>
+                            </div>
+                            <div style="padding:12px; border-radius:10px; background:var(--surface-muted); border:1px solid var(--border);">
+                                <div style="font-weight:700; font-size:12px; margin-bottom:4px; color:#D97706;">Least-Privilege RBAC</div>
+                                <div style="font-size:11px; color:var(--text-secondary);">9 segregated institutional and regulatory roles with zero client-side privilege escalation.</div>
+                            </div>
+                            <div style="padding:12px; border-radius:10px; background:var(--surface-muted); border:1px solid var(--border);">
+                                <div style="font-weight:700; font-size:12px; margin-bottom:4px; color:#DC2626;">Statutory Validity Radar</div>
+                                <div style="font-size:11px; color:var(--text-secondary);">Continuous early-warning tracking for Land, Building Safety, Fire NOC, and Affiliations.</div>
+                            </div>
+                        </div>
+
+                        <div style="padding:12px; border-radius:10px; background:var(--surface-muted); border:1px solid var(--border); font-size:11px; color:var(--text-secondary);">
+                            <div><strong>Production Deployment:</strong> <a href="https://niyam-ai-2-nu.vercel.app/" target="_blank" style="color:var(--accent); text-decoration:none; font-weight:600;">https://niyam-ai-2-nu.vercel.app/</a></div>
+                            <div style="margin-top:4px;"><strong>Regulatory Authority:</strong> Regulation Bureau, AICTE Nelson Mandela Marg, New Delhi 110070.</div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer" style="justify-content:flex-end;">
+                        <button class="btn btn-primary btn-sm" id="about-close-btn">Close</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+            const close = () => overlay.remove();
+            overlay.querySelector('#about-close-x').onclick = close;
+            overlay.querySelector('#about-close-btn').onclick = close;
+            overlay.onclick = (e) => { if (e.target === overlay) close(); };
+        }
+
         openApplicationModal(appId) {
             const app = this.applications.find(a => a.id === appId) || {
                 id: appId,
@@ -4449,27 +4718,87 @@
                 if (!tabContent) return;
 
                 if (tabName === 'tab-overview') {
+                    const isDeficient = app.deficienciesCount > 0 || app.status === 'DEFICIENCY_FLAGGED';
                     tabContent.innerHTML = `
-                        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:16px;">
-                            <div style="padding:14px; border-radius:12px; background:var(--surface-muted); border:1px solid var(--border);">
-                                <span style="font-size:11px; color:var(--text-secondary);">Application Type:</span>
-                                <div style="font-weight:700; color:var(--text-primary); margin-top:2px;">${app.appType}</div>
+                        <div style="display:flex; flex-direction:column; gap:16px;">
+                            <!-- 7-Stage Horizontal Step Flow -->
+                            <div class="workflow-steps-horizontal">
+                                <div class="step-item completed">
+                                    <span class="step-num">1</span>
+                                    <span class="step-name">Draft</span>
+                                </div>
+                                <div class="step-line completed"></div>
+                                <div class="step-item completed">
+                                    <span class="step-num">2</span>
+                                    <span class="step-name">Submitted</span>
+                                </div>
+                                <div class="step-line active"></div>
+                                <div class="step-item active">
+                                    <span class="step-num">3</span>
+                                    <span class="step-name">Scrutiny</span>
+                                </div>
+                                <div class="step-line"></div>
+                                <div class="step-item">
+                                    <span class="step-num">4</span>
+                                    <span class="step-name">EVC Visit</span>
+                                </div>
+                                <div class="step-line"></div>
+                                <div class="step-item">
+                                    <span class="step-num">5</span>
+                                    <span class="step-name">SAC Appeal</span>
+                                </div>
+                                <div class="step-line"></div>
+                                <div class="step-item">
+                                    <span class="step-num">6</span>
+                                    <span class="step-name">EC Approved</span>
+                                </div>
                             </div>
-                            <div style="padding:14px; border-radius:12px; background:var(--surface-muted); border:1px solid var(--border);">
-                                <span style="font-size:11px; color:var(--text-secondary);">Current Workflow Stage:</span>
-                                <div style="font-weight:700; color:var(--accent); margin-top:2px;">${app.stage}</div>
+
+                            <!-- 5 Core Explanatory Cards from Requirements -->
+                            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:12px;">
+                                <!-- 1. Current Stage -->
+                                <div style="padding:14px; border-radius:10px; background:var(--surface-muted); border:1px solid var(--border);">
+                                    <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--text-secondary); letter-spacing:0.5px; margin-bottom:4px;">1. Current Stage</div>
+                                    <div style="font-size:14px; font-weight:800; color:var(--accent);">Stage 3: Committee Technical Scrutiny</div>
+                                    <div style="font-size:11px; color:var(--text-secondary); margin-top:2px;">Under review by Northern Regional Scrutiny Committee (APH 2025-26).</div>
+                                </div>
+
+                                <!-- 2. What Needs Attention -->
+                                <div style="padding:14px; border-radius:10px; background:var(--surface-muted); border:1px solid var(--border);">
+                                    <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:${isDeficient ? '#D97706' : '#059669'}; letter-spacing:0.5px; margin-bottom:4px;">2. What Needs Attention</div>
+                                    <div style="font-size:13px; font-weight:700; color:var(--text-primary);">${isDeficient ? 'Faculty Cadre & NOC Verification' : 'Document Completeness Verified'}</div>
+                                    <div style="font-size:11px; color:var(--text-secondary); margin-top:2px;">${isDeficient ? 'Faculty cadre ratio verification and Fire NOC renewal confirmation pending.' : 'All mandatory statutory documents uploaded and SHA-256 verified.'}</div>
+                                </div>
+
+                                <!-- 3. Who is Responsible -->
+                                <div style="padding:14px; border-radius:10px; background:var(--surface-muted); border:1px solid var(--border);">
+                                    <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--text-secondary); letter-spacing:0.5px; margin-bottom:4px;">3. Who is Responsible</div>
+                                    <div style="font-size:13px; font-weight:700; color:var(--text-primary);">Dr. Vandana Rao (Scrutiny Chair)</div>
+                                    <div style="font-size:11px; color:var(--text-secondary); margin-top:2px;">Northern Regional Scrutiny Directorate, Nelson Mandela Marg, New Delhi.</div>
+                                </div>
+
+                                <!-- 4. What Happens Next -->
+                                <div style="padding:14px; border-radius:10px; background:var(--surface-muted); border:1px solid var(--border);">
+                                    <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:#059669; letter-spacing:0.5px; margin-bottom:4px;">4. What Happens Next</div>
+                                    <div style="font-size:13px; font-weight:700; color:var(--text-primary);">EVC On-Site Visit Scheduling</div>
+                                    <div style="font-size:11px; color:var(--text-secondary); margin-top:2px;">Upon scrutiny clearance, dossier routes to Stage 4 for Expert Visit Committee formation.</div>
+                                </div>
                             </div>
-                            <div style="padding:14px; border-radius:12px; background:var(--surface-muted); border:1px solid var(--border);">
-                                <span style="font-size:11px; color:var(--text-secondary);">Statutory SLA Target:</span>
-                                <div class="font-mono" style="font-weight:700; margin-top:2px;">${app.slaTarget}</div>
+
+                            <!-- 5. Available Actions -->
+                            <div style="padding:14px; border-radius:10px; background:var(--surface-muted); border:1px solid var(--border);">
+                                <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--text-secondary); letter-spacing:0.5px; margin-bottom:8px;">5. Available Actions for Current Role</div>
+                                <div style="display:flex; flex-wrap:wrap; gap:8px;">
+                                    ${isApp ? `
+                                        <button class="btn btn-primary btn-sm" onclick="app.navigate('documents'); document.getElementById('modal-close-x').click();">Upload Clarification</button>
+                                        <button class="btn btn-outline btn-sm" onclick="API.showToast('Application Docket PDF generated', 'info');">Download Docket</button>
+                                    ` : `
+                                        <button class="btn btn-primary btn-sm" onclick="API.showToast('Application recommended for EVC Physical Visit', 'success'); document.getElementById('modal-close-x').click();">Recommend for EVC Visit</button>
+                                        <button class="btn btn-outline btn-sm" onclick="app.navigate('verify'); document.getElementById('modal-close-x').click();">AI Verification Studio</button>
+                                        <button class="btn btn-outline btn-sm" style="color:#DC2626; border-color:rgba(220,38,38,0.3);" onclick="API.showToast('Deficiency notice issued to institution', 'warning');">Flag Deficiency Notice</button>
+                                    `}
+                                </div>
                             </div>
-                            <div style="padding:14px; border-radius:12px; background:var(--surface-muted); border:1px solid var(--border);">
-                                <span style="font-size:11px; color:var(--text-secondary);">Trust Score Baseline:</span>
-                                <div style="font-weight:800; color:#059669; margin-top:2px;">${app.trustScore || 98} / 100</div>
-                            </div>
-                        </div>
-                        <div style="padding:14px; border-radius:12px; background:var(--accent-light); border:1px solid var(--accent-muted); font-size:12px; line-height:1.5;">
-                            <strong>AI Pre-Screening Summary:</strong> Optical recognition verified 100% of text tokens against regional land records and Bharatkosh fee receipts. No critical discrepancies or tampering indicators flagged.
                         </div>
                     `;
                 } else if (tabName === 'tab-stages') {
@@ -5284,121 +5613,330 @@
         }
 
         renderScrutinyDashboardView(container) {
+            // Docket dataset for Scrutiny Review Queue
+            const dockets = [
+                {
+                    id: "APP-2026-001",
+                    institution: "Apex Institute of Technology",
+                    city: "Greater Noida, UP",
+                    stage: "Deficiency review",
+                    stageBadge: "badge-amber",
+                    deficiency: "Faculty Cadre Ratio Verification Pending (APH Ch. II R3.1)",
+                    hasDeficiency: true,
+                    dueDate: "4d remaining",
+                    isUrgent: true,
+                    priority: "urgent",
+                    status: "awaiting"
+                },
+                {
+                    id: "APP-2026-002",
+                    institution: "Zaskar Engineering College",
+                    city: "Kargil, UT Ladakh",
+                    stage: "Statutory scrutiny",
+                    stageBadge: "badge-rose",
+                    deficiency: "Sanctioned Intake Discrepancy in CAD/CAM Lab (APH R4.2)",
+                    hasDeficiency: true,
+                    dueDate: "8d remaining",
+                    isUrgent: false,
+                    priority: "high",
+                    status: "active"
+                },
+                {
+                    id: "APP-2025-003",
+                    institution: "Coromandel Institute of Technology",
+                    city: "Chennai, Tamil Nadu",
+                    stage: "Awaiting response",
+                    stageBadge: "badge-amber",
+                    deficiency: "Affiliation clearance renewal pending from state university",
+                    hasDeficiency: true,
+                    dueDate: "3d remaining",
+                    isUrgent: true,
+                    priority: "urgent",
+                    status: "awaiting"
+                },
+                {
+                    id: "APP-2025-001",
+                    institution: "Nilgiri Institute of Technology",
+                    city: "Ooty, Tamil Nadu",
+                    stage: "Completeness check",
+                    stageBadge: "badge-emerald",
+                    deficiency: "Land Title Deed & Lease Deed Verification Cleared",
+                    hasDeficiency: false,
+                    dueDate: "12d remaining",
+                    isUrgent: false,
+                    priority: "standard",
+                    status: "active"
+                },
+                {
+                    id: "APP-2025-004",
+                    institution: "Kaveri College of Engineering",
+                    city: "Tiruchirappalli, TN",
+                    stage: "Initial scrutiny",
+                    stageBadge: "badge-blue",
+                    deficiency: "Building safety certificate renewal under verification",
+                    hasDeficiency: false,
+                    dueDate: "14d remaining",
+                    isUrgent: false,
+                    priority: "high",
+                    status: "active"
+                },
+                {
+                    id: "APP-2026-005",
+                    institution: "Himalayan Institute of Technology",
+                    city: "Dehradun, Uttarakhand",
+                    stage: "Deficiency review",
+                    stageBadge: "badge-amber",
+                    deficiency: "Computer Center terminal density shortfall (6 units pending)",
+                    hasDeficiency: true,
+                    dueDate: "6d remaining",
+                    isUrgent: false,
+                    priority: "high",
+                    status: "awaiting"
+                }
+            ];
+
             container.innerHTML = `
+                <!-- Tier 1: Scrutiny Overview Header with Committee/Region Context -->
                 <div class="view-header">
                     <div class="view-title-group">
                         <div style="display:flex; align-items:center; gap:8px;">
-                            <h1>National Scrutiny Desk — Dr. Vandana Rao</h1>
-                            <span class="badge badge-emerald">Scrutiny Bureau Chair</span>
+                            <h1>Scrutiny overview</h1>
+                            <span class="badge badge-emerald">Northern Scrutiny Committee</span>
                         </div>
-                        <p>AICTE Approval Process Handbook (APH 2025-26) Scrutiny Committee &amp; Document AI Desk</p>
+                        <p>National Scrutiny Committee · Northern Region (AICTE APH 2025–26)</p>
                     </div>
                     <div class="view-actions">
-                        <button class="btn btn-outline btn-sm" onclick="app.navigate('queue');">
-                            ${ICONS.ListFilter}
-                            Scrutiny Queue
-                        </button>
-                        <button class="btn btn-primary btn-sm" onclick="app.navigate('verify');">
+                        <button class="btn btn-outline btn-sm" onclick="app.navigate('verify');">
                             ${ICONS.FileSearch}
-                            AI Verification Studio
+                            <span>Document verification</span>
+                        </button>
+                        <button class="btn btn-outline btn-sm" onclick="app.navigate('findings');">
+                            ${ICONS.AlertTriangle}
+                            <span>Deficiencies &amp; findings</span>
                         </button>
                     </div>
                 </div>
 
+                <!-- Tier 2: Compact Summary KPI Strip (4 Cards) -->
                 <div class="stats-grid-4">
                     <div class="stat-card">
                         <div class="stat-meta">
-                            <span class="stat-label">Assigned Dossiers</span>
+                            <span class="stat-label">Assigned reviews</span>
                             <span class="stat-value">48</span>
-                            <span class="stat-sub" style="color:#2563EB;">Active on Committee Roster</span>
+                            <span class="stat-sub" style="color:var(--accent);">Northern Committee roster</span>
                         </div>
                         <div class="stat-icon-box blue">${ICONS.FileText}</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-meta">
-                            <span class="stat-label">Scrutiny Cleared</span>
+                            <span class="stat-label">Awaiting responses</span>
+                            <span class="stat-value" style="color:#D97706;">38</span>
+                            <span class="stat-sub" style="color:#D97706;">Clarification responses awaited</span>
+                        </div>
+                        <div class="stat-icon-box amber">${ICONS.Clock}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-meta">
+                            <span class="stat-label">Upcoming deadlines</span>
+                            <span class="stat-value" style="color:#DC2626;">12</span>
+                            <span class="stat-sub" style="color:#DC2626;">Due within 7 days (APH SLA)</span>
+                        </div>
+                        <div class="stat-icon-box rose">${ICONS.AlertTriangle}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-meta">
+                            <span class="stat-label">Scrutiny cleared</span>
                             <span class="stat-value" style="color:#059669;">312</span>
-                            <span class="stat-sub" style="color:#059669;">Recommended for EVC / Approval</span>
+                            <span class="stat-sub" style="color:#059669;">Recommended for EVC / approval</span>
                         </div>
                         <div class="stat-icon-box green">${ICONS.CheckCircle2}</div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-meta">
-                            <span class="stat-label">Open Deficiencies</span>
-                            <span class="stat-value" style="color:#F59E0B;">38</span>
-                            <span class="stat-sub" style="color:#F59E0B;">Clarification Responses Awaited</span>
-                        </div>
-                        <div class="stat-icon-box amber">${ICONS.AlertTriangle}</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-meta">
-                            <span class="stat-label">AI OCR Confidence Index</span>
-                            <span class="stat-value">96.8%</span>
-                            <span class="stat-sub" style="color:#059669;">LayoutLMv3 Model Consensus</span>
-                        </div>
-                        <div class="stat-icon-box emerald">${ICONS.ShieldCheck}</div>
-                    </div>
                 </div>
 
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">
-                            ${ICONS.ListFilter}
-                            <span>Pending Scrutiny Docket Queue</span>
+                <!-- Tier 3: Review Queue as Dominant Content with Compact Toolbar -->
+                <div class="card" style="margin-top:20px;">
+                    <div class="queue-toolbar">
+                        <div class="queue-toolbar-left">
+                            <div class="queue-title-block">
+                                <span class="queue-heading">Review queue</span>
+                                <span class="queue-count-badge" id="scrutiny-count-badge">48 active</span>
+                            </div>
+                            <div class="queue-filter-group" id="scrutiny-filters">
+                                <button class="queue-filter-btn active" data-filter="all">All (48)</button>
+                                <button class="queue-filter-btn" data-filter="urgent">Urgent (8)</button>
+                                <button class="queue-filter-btn" data-filter="awaiting">Awaiting response (38)</button>
+                                <button class="queue-filter-btn" data-filter="high">High priority (14)</button>
+                            </div>
                         </div>
-                        <div style="display:flex; align-items:center; gap:8px;">
-                            <span class="badge badge-blue">Real-Time Sync</span>
-                            <button class="btn btn-outline btn-sm" onclick="app.renderMainContent();" title="Refresh Scrutiny Queue">
+                        <div class="queue-toolbar-right">
+                            <div class="queue-search-wrap">
+                                <span class="queue-search-icon">${ICONS.Search}</span>
+                                <input type="text" class="queue-search-input" id="scrutiny-search-input" placeholder="Search institution or application ID...">
+                            </div>
+                            <button class="btn btn-outline btn-sm" id="scrutiny-refresh-btn" title="Refresh Scrutiny Queue">
                                 ${ICONS.Refresh}
                                 <span>Refresh</span>
                             </button>
                         </div>
                     </div>
 
+                    <!-- Table Directly Beneath Title and Filters -->
                     <div class="table-responsive">
-                        <table class="data-table">
+                        <table class="data-table" id="scrutiny-queue-table">
                             <thead>
                                 <tr>
-                                    <th>Priority</th>
-                                    <th>App ID</th>
-                                    <th>Institution</th>
-                                    <th>Deficiency Notes</th>
-                                    <th>SLA Target</th>
-                                    <th style="text-align:right;">Committee Action</th>
+                                    <th style="min-width:200px;">Institution</th>
+                                    <th style="min-width:140px;">Application ID</th>
+                                    <th style="min-width:140px;">Review stage</th>
+                                    <th style="min-width:250px;">Deficiency summary</th>
+                                    <th style="min-width:120px;">Due date</th>
+                                    <th style="min-width:180px; text-align:right;">Action</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr>
-                                    <td><span class="badge badge-rose">URGENT</span></td>
-                                    <td class="font-mono">APP_2026_001</td>
-                                    <td><strong>Apex Institute of Technology</strong></td>
-                                    <td>Faculty Cadre Ratio Verification Pending</td>
-                                    <td><span class="font-mono" style="color:#DC2626; font-weight:700;">4d Remaining</span></td>
-                                    <td style="text-align:right;">
-                                        <div style="display:inline-flex; gap:6px; justify-content:flex-end;">
-                                            <button class="btn btn-outline btn-sm" onclick="app.openApplicationModal('APP_2026_001');">Inspect</button>
-                                            <button class="btn btn-primary btn-sm" onclick="app.navigate('verify');">AI Check</button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><span class="badge badge-amber">HIGH</span></td>
-                                    <td class="font-mono">APP_2026_002</td>
-                                    <td><strong>Zaskar Engineering College</strong></td>
-                                    <td>Sanctioned Intake Discrepancy (APH R4.2)</td>
-                                    <td><span class="font-mono" style="color:#D97706; font-weight:700;">8d Remaining</span></td>
-                                    <td style="text-align:right;">
-                                        <div style="display:inline-flex; gap:6px; justify-content:flex-end;">
-                                            <button class="btn btn-outline btn-sm" onclick="app.openApplicationModal('APP_2026_002');">Inspect</button>
-                                            <button class="btn btn-outline btn-sm" onclick="app.navigate('findings');">Deficiencies</button>
-                                        </div>
-                                    </td>
-                                </tr>
+                            <tbody id="scrutiny-queue-tbody">
+                                <!-- Populated dynamically -->
                             </tbody>
                         </table>
                     </div>
                 </div>
+
+                <!-- Tier 4: Supporting Committee Advisory / Roster Notes -->
+                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap:16px; margin-top:20px;">
+                    <div style="padding:16px; border-radius:12px; background:var(--surface); border:1px solid var(--border);">
+                        <div style="display:flex; align-items:center; gap:8px; font-weight:700; color:var(--text-primary); margin-bottom:8px;">
+                            ${ICONS.Users}
+                            <span>Committee Composition &amp; Quorum</span>
+                        </div>
+                        <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0 0 10px;">
+                            Northern Region Technical Scrutiny Committee quorum confirmed (3/3 members active). Digital consensus signatures recorded under AICTE APH Chapter II.
+                        </p>
+                        <div style="font-size:11px; color:var(--text-tertiary);">
+                            Chair: <strong>Dr. Vandana Rao</strong> • Expert 1: <strong>Dr. K. Ramanathan</strong> • Expert 2: <strong>Prof. S. Sen</strong>
+                        </div>
+                    </div>
+                    <div style="padding:16px; border-radius:12px; background:var(--surface); border:1px solid var(--border);">
+                        <div style="display:flex; align-items:center; gap:8px; font-weight:700; color:var(--text-primary); margin-bottom:8px;">
+                            ${ICONS.ShieldCheck}
+                            <span>Statutory Scrutiny SLA Directives</span>
+                        </div>
+                        <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0 0 10px;">
+                            Dossiers exhibiting statutory deficiencies are provided a 10-day rectification window before committee determination. Deficiencies not clarified route automatically to SAC appeal.
+                        </p>
+                        <div style="font-size:11px; color:var(--text-tertiary);">
+                            Reference: AICTE Approval Process Handbook (APH 2025–26) Clause 4.8 &amp; 4.9.
+                        </div>
+                    </div>
+                </div>
             `;
+
+            // Function to render table rows based on filter & search
+            const tbody = container.querySelector('#scrutiny-queue-tbody');
+            let currentFilter = 'all';
+            let searchQuery = '';
+
+            const renderRows = () => {
+                if (!tbody) return;
+                const filtered = dockets.filter(d => {
+                    const matchesFilter = 
+                        currentFilter === 'all' ||
+                        (currentFilter === 'urgent' && d.isUrgent) ||
+                        (currentFilter === 'awaiting' && d.status === 'awaiting') ||
+                        (currentFilter === 'high' && (d.priority === 'high' || d.priority === 'urgent'));
+
+                    const q = searchQuery.toLowerCase().trim();
+                    const matchesSearch = !q || 
+                        d.institution.toLowerCase().includes(q) || 
+                        d.id.toLowerCase().includes(q) ||
+                        d.deficiency.toLowerCase().includes(q);
+
+                    return matchesFilter && matchesSearch;
+                });
+
+                if (filtered.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="6" style="text-align:center; padding:32px; color:var(--text-secondary);">
+                                No applications match the selected criteria.
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                tbody.innerHTML = filtered.map(d => `
+                    <tr>
+                        <td>
+                            <div style="font-weight:700; color:var(--text-primary); font-size:13px;">${d.institution}</div>
+                            <div style="font-size:11px; color:var(--text-secondary);">${d.city}</div>
+                        </td>
+                        <td>
+                            <span class="font-mono" style="font-weight:600; color:var(--text-primary);">${d.id}</span>
+                        </td>
+                        <td>
+                            <span class="badge ${d.stageBadge}">${d.stage}</span>
+                        </td>
+                        <td>
+                            <div style="font-size:12px; color:var(--text-primary); display:flex; align-items:center; gap:6px;">
+                                ${d.hasDeficiency ? `<span style="color:#D97706;">${ICONS.AlertTriangle}</span>` : `<span style="color:#059669;">${ICONS.Check}</span>`}
+                                <span>${d.deficiency}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="font-mono" style="font-weight:700; color:${d.isUrgent ? '#DC2626' : 'var(--text-secondary)'};">
+                                ${d.dueDate}
+                            </span>
+                        </td>
+                        <td style="text-align:right;">
+                            <div style="display:inline-flex; gap:6px; justify-content:flex-end;">
+                                <button class="btn btn-primary btn-sm btn-review-app" data-appid="${d.id}" title="Review complete application docket">
+                                    Review application
+                                </button>
+                                <button class="btn btn-outline btn-sm btn-inspect-app" data-appid="${d.id}" title="Inspect dossier details">
+                                    Inspect
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+
+                // Bind click events on buttons
+                tbody.querySelectorAll('.btn-review-app, .btn-inspect-app').forEach(btn => {
+                    btn.onclick = () => {
+                        const appId = btn.getAttribute('data-appid');
+                        if (appId) this.openApplicationModal(appId);
+                    };
+                });
+            };
+
+            renderRows();
+
+            // Filter button listeners
+            container.querySelectorAll('#scrutiny-filters .queue-filter-btn').forEach(btn => {
+                btn.onclick = () => {
+                    container.querySelectorAll('#scrutiny-filters .queue-filter-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentFilter = btn.getAttribute('data-filter') || 'all';
+                    renderRows();
+                };
+            });
+
+            // Search input listener
+            const searchInput = container.querySelector('#scrutiny-search-input');
+            if (searchInput) {
+                searchInput.oninput = (e) => {
+                    searchQuery = e.target.value;
+                    renderRows();
+                };
+            }
+
+            // Refresh button listener
+            const refreshBtn = container.querySelector('#scrutiny-refresh-btn');
+            if (refreshBtn) {
+                refreshBtn.onclick = () => {
+                    API.showToast('Scrutiny queue refreshed with live AICTE sync', 'info');
+                    renderRows();
+                };
+            }
         }
 
         renderEVCDashboardView(container) {

@@ -2957,24 +2957,167 @@
         }
 
         // ====================================================================
-        // 5. SCRUTINY QUEUE
+        // 5. SCRUTINY QUEUE (RICH INTERACTIVE WORKSPACE)
         // ====================================================================
         renderQueueView(container) {
+            this.queueSearch = this.queueSearch || '';
+            this.queuePriority = this.queuePriority || 'ALL';
+
+            const queueItems = [
+                {
+                    id: "APP-2025-003",
+                    institution: "Coastal Institute of Management",
+                    region: "Western Region",
+                    priority: "URGENT",
+                    priorityBadge: "badge-rose",
+                    deficiency: "Building Fire NOC Lapsed (Expired 2024-11-30)",
+                    clause: "APH-2025-RULE-02",
+                    clauseText: "APH Ch. II R5.1 (Safety)",
+                    slaClock: "1d 14h Remaining",
+                    slaDate: "02-Nov-2026, 17:00 IST",
+                    slaUrgent: true,
+                    status: "DEFICIENCY_FLAGGED"
+                },
+                {
+                    id: "APP-2025-002",
+                    institution: "Zaskar Engineering College",
+                    region: "Northern Region",
+                    priority: "URGENT",
+                    priorityBadge: "badge-rose",
+                    deficiency: "Sanctioned Intake Discrepancy (Requested 180, Sanctioned 60)",
+                    clause: "APH-2025-RULE-01",
+                    clauseText: "APH Ch. I R4.2 (Intake)",
+                    slaClock: "2d 06h Remaining",
+                    slaDate: "03-Nov-2026, 17:00 IST",
+                    slaUrgent: true,
+                    status: "RE_SCRUTINY"
+                },
+                {
+                    id: "APP-2025-001",
+                    institution: "Apex Institute of Technology",
+                    region: "Northern Region",
+                    priority: "HIGH",
+                    priorityBadge: "badge-amber",
+                    deficiency: "Faculty Cadre Ratio 1:18 (Statutory Requirement 1:15)",
+                    clause: "APH-2025-RULE-03",
+                    clauseText: "APH Ch. II R2.14 (Cadre)",
+                    slaClock: "4d 08h Remaining",
+                    slaDate: "05-Nov-2026, 17:00 IST",
+                    slaUrgent: false,
+                    status: "UNDER_SCRUTINY"
+                },
+                {
+                    id: "APP-2025-006",
+                    institution: "Chilika Institute of Technology",
+                    region: "Eastern Region",
+                    priority: "HIGH",
+                    priorityBadge: "badge-amber",
+                    deficiency: "Land Conversion Order Missing Tehsildar Gazette Seal",
+                    clause: "APH-2025-RULE-01",
+                    clauseText: "APH Ch. I R1.2 (Land)",
+                    slaClock: "5d 12h Remaining",
+                    slaDate: "06-Nov-2026, 17:00 IST",
+                    slaUrgent: false,
+                    status: "MISSING_DOCUMENTS"
+                },
+                {
+                    id: "APP-2025-004",
+                    institution: "Kaveri College of Engineering",
+                    region: "Southern Region",
+                    priority: "NORMAL",
+                    priorityBadge: "badge-blue",
+                    deficiency: "Initial Scrutiny Cleared — Awaiting Committee Concurrence",
+                    clause: "APH-2025-RULE-02",
+                    clauseText: "APH Ch. II R1.1 (EoA)",
+                    slaClock: "8d 04h Remaining",
+                    slaDate: "09-Nov-2026, 17:00 IST",
+                    slaUrgent: false,
+                    status: "SCRUTINY_PASSED"
+                },
+                {
+                    id: "APP-2025-005",
+                    institution: "Aravali Institute of Technology & Research",
+                    region: "North-Western Region",
+                    priority: "NORMAL",
+                    priorityBadge: "badge-blue",
+                    deficiency: "New Institution Establishment Dossier — Ready for Evaluation",
+                    clause: "APH-2025-RULE-01",
+                    clauseText: "APH Ch. I R2.0 (New)",
+                    slaClock: "11d 02h Remaining",
+                    slaDate: "12-Nov-2026, 17:00 IST",
+                    slaUrgent: false,
+                    status: "UNDER_SCRUTINY"
+                }
+            ];
+
+            const urgentCount = queueItems.filter(i => i.priority === 'URGENT').length;
+            const highCount = queueItems.filter(i => i.priority === 'HIGH').length;
+            const normalCount = queueItems.filter(i => i.priority === 'NORMAL').length;
+
+            const filtered = queueItems.filter(item => {
+                const q = this.queueSearch.toLowerCase().trim();
+                const matchesSearch = !q ||
+                    item.id.toLowerCase().includes(q) ||
+                    item.institution.toLowerCase().includes(q) ||
+                    item.deficiency.toLowerCase().includes(q) ||
+                    item.region.toLowerCase().includes(q);
+
+                const matchesPriority = this.queuePriority === 'ALL' || item.priority === this.queuePriority;
+                return matchesSearch && matchesPriority;
+            });
+
             container.innerHTML = `
                 <div class="view-header">
                     <div class="view-title-group">
-                        <h1>Technical Scrutiny Desk — Review Queue</h1>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <h1>Technical Scrutiny Desk — Review Queue</h1>
+                            <span class="badge badge-primary">APH 2025-26 Committee Desk</span>
+                        </div>
                         <p>Examine institutional evidence dossiers, evaluate extracted bounding boxes, and confirm compliance observations.</p>
+                    </div>
+                    <div class="view-actions">
+                        <button class="btn btn-primary btn-sm" onclick="app.openVerifyStudioView('APP-2025-001');">
+                            ${ICONS.ShieldCheck}
+                            <span>Launch AI Verification Studio</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Filter & Search Toolbar -->
+                <div class="doc-filter-bar" style="margin-bottom:16px;">
+                    <div class="doc-search-wrap" style="flex:1;">
+                        <span style="color:var(--text-tertiary); display:flex; align-items:center;">${ICONS.Search}</span>
+                        <input type="text" class="doc-search-input" id="queue-search-input" placeholder="Search by App ID (APP-2025-001), Institution, or Deficiency..." value="${this.queueSearch}">
+                        ${this.queueSearch ? `<button type="button" id="queue-clear-search" style="background:none; border:none; cursor:pointer; color:var(--text-tertiary); display:flex; align-items:center;">${ICONS.X}</button>` : ''}
+                    </div>
+
+                    <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
+                        <button class="queue-filter-btn ${this.queuePriority === 'ALL' ? 'active' : ''}" data-priority="ALL">
+                            All (${queueItems.length})
+                        </button>
+                        <button class="queue-filter-btn ${this.queuePriority === 'URGENT' ? 'active' : ''}" data-priority="URGENT">
+                            <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#DC2626; margin-right:4px;"></span>
+                            Urgent (${urgentCount})
+                        </button>
+                        <button class="queue-filter-btn ${this.queuePriority === 'HIGH' ? 'active' : ''}" data-priority="HIGH">
+                            <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#D97706; margin-right:4px;"></span>
+                            High Priority (${highCount})
+                        </button>
+                        <button class="queue-filter-btn ${this.queuePriority === 'NORMAL' ? 'active' : ''}" data-priority="NORMAL">
+                            Normal (${normalCount})
+                        </button>
                     </div>
                 </div>
 
                 <div class="card">
-                    <div class="card-header">
+                    <div class="card-header" style="display:flex; justify-content:space-between; align-items:center;">
                         <div class="card-title">
                             ${ICONS.ListFilter}
                             <span>Prioritized Scrutiny Queue</span>
                         </div>
-                        <span class="badge badge-blue">14 Applications Pending</span>
+                        <span class="badge badge-outline" style="font-size:11px; font-weight:700;">
+                            Showing ${filtered.length} of ${queueItems.length} Assigned Dossiers
+                        </span>
                     </div>
 
                     <div class="table-responsive">
@@ -2983,49 +3126,236 @@
                                 <tr>
                                     <th>Priority</th>
                                     <th>App ID</th>
-                                    <th>Institution</th>
-                                    <th>Deficiencies</th>
-                                    <th>SLA Clock</th>
-                                    <th>Action</th>
+                                    <th>Institution &amp; Region</th>
+                                    <th>Deficiency Notes &amp; Clause</th>
+                                    <th>SLA Target &amp; Deadline</th>
+                                    <th style="text-align:right;">Committee Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td><span class="badge badge-rose">URGENT</span></td>
-                                    <td class="font-mono">APP-2025-003</td>
-                                    <td>Coastal Institute of Management</td>
-                                    <td>Building Fire NOC Lapsed</td>
-                                    <td class="font-mono" style="color:#DC2626; font-weight:700;">1d 14h Remaining</td>
-                                    <td><button class="btn btn-primary btn-sm" onclick="app.openApplicationModal('APP-2025-003');">Inspect Dossier</button></td>
-                                </tr>
-                                <tr>
-                                    <td><span class="badge badge-amber">HIGH</span></td>
-                                    <td class="font-mono">APP-2025-001</td>
-                                    <td>Apex Institute of Technology</td>
-                                    <td>Faculty Cadre Ratio 1:18 (Req 1:15)</td>
-                                    <td class="font-mono">4d 08h Remaining</td>
-                                    <td><button class="btn btn-outline btn-sm" onclick="app.openApplicationModal('APP-2025-001');">Inspect Dossier</button></td>
-                                </tr>
+                                ${filtered.length === 0 ? `
+                                    <tr>
+                                        <td colspan="6" style="text-align:center; padding:32px; color:var(--text-secondary);">
+                                            No dossiers match your current filter criteria. Try clearing the search or switching priority filters.
+                                        </td>
+                                    </tr>
+                                ` : filtered.map(item => `
+                                    <tr>
+                                        <td><span class="badge ${item.priorityBadge}">${item.priority}</span></td>
+                                        <td>
+                                            <div class="font-mono" style="font-weight:700; color:var(--text-primary); font-size:12px;">${item.id}</div>
+                                            <span style="font-size:10px; color:var(--text-tertiary);">${item.status}</span>
+                                        </td>
+                                        <td>
+                                            <div style="font-weight:700; color:var(--text-primary); font-size:13px;">${item.institution}</div>
+                                            <span style="font-size:11px; color:var(--text-secondary);">${item.region}</span>
+                                        </td>
+                                        <td>
+                                            <div style="font-size:12px; font-weight:600; color:${item.priority === 'URGENT' ? '#DC2626' : 'var(--text-primary)'};">${item.deficiency}</div>
+                                            <button type="button" class="citation-link" onclick="app.openCitationModal('${item.clause}');" style="background:none; border:none; padding:0; cursor:pointer; font-size:11px; color:var(--accent); text-decoration:underline; font-family:var(--font-mono); margin-top:2px; display:inline-block;">
+                                                ${item.clauseText}
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <div class="font-mono" style="font-weight:700; font-size:12px; color:${item.slaUrgent ? '#DC2626' : 'var(--text-primary)'};">
+                                                ${item.slaClock}
+                                            </div>
+                                            <span style="font-size:10px; color:var(--text-secondary);">Target: ${item.slaDate}</span>
+                                        </td>
+                                        <td style="text-align:right;">
+                                            <div style="display:inline-flex; gap:6px;">
+                                                <button class="btn btn-outline btn-sm" onclick="app.openApplicationModal('${item.id}');">
+                                                    Inspect Dossier
+                                                </button>
+                                                <button class="btn btn-primary btn-sm" onclick="app.openVerifyStudioView('${item.id}');">
+                                                    AI Verify
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                `).join('')}
                             </tbody>
                         </table>
                     </div>
                 </div>
             `;
+
+            // Event bindings
+            const searchInput = container.querySelector('#queue-search-input');
+            if (searchInput) {
+                searchInput.oninput = (e) => {
+                    this.queueSearch = e.target.value;
+                    this.renderQueueView(container);
+                };
+            }
+
+            const clearBtn = container.querySelector('#queue-clear-search');
+            if (clearBtn) {
+                clearBtn.onclick = () => {
+                    this.queueSearch = '';
+                    this.renderQueueView(container);
+                };
+            }
+
+            container.querySelectorAll('.queue-filter-btn').forEach(btn => {
+                btn.onclick = () => {
+                    this.queuePriority = btn.getAttribute('data-priority') || 'ALL';
+                    this.renderQueueView(container);
+                };
+            });
         }
 
         // ====================================================================
-        // 6. FINDINGS & DISPOSITIONS
+        // 6. FINDINGS & DISPOSITIONS (INTERACTIVE REGULATORY DISPOSITIONS)
         // ====================================================================
         renderFindingsView(container) {
+            this.findingsSearch = this.findingsSearch || '';
+            this.findingsSeverity = this.findingsSeverity || 'ALL';
+
+            const findingsList = [
+                {
+                    id: "FND-2025-001",
+                    appId: "APP-2025-002",
+                    institution: "Zaskar Engineering College",
+                    region: "Northern Region",
+                    severity: "CRITICAL",
+                    severityBadge: "badge-rose",
+                    clauseId: "APH-2025-RULE-01",
+                    clauseName: "APH 2025 Ch. I R4.2 (Sanctioned Intake)",
+                    details: "Submitted intake altered to 180 seats; sanctioned statutory intake is 60 seats. Cross-verification with state portal failed.",
+                    disposition: "DEFICIENCY_CONFIRMED",
+                    dispositionBadge: "badge-rose",
+                    loggedDate: "28-Oct-2026",
+                    officer: "Dr. Vandana Rao (Scrutiny Chair)"
+                },
+                {
+                    id: "FND-2025-002",
+                    appId: "APP-2025-003",
+                    institution: "Coastal Institute of Management",
+                    region: "Western Region",
+                    severity: "CRITICAL",
+                    severityBadge: "badge-rose",
+                    clauseId: "APH-2025-RULE-02",
+                    clauseName: "APH 2025 Ch. II R5.1 (Fire Safety NOC)",
+                    details: "State Fire Services NOC expired on 2024-11-30. Submitted renewal receipt lacks official dispatch number.",
+                    disposition: "SHOW_CAUSE_ISSUED",
+                    dispositionBadge: "badge-rose",
+                    loggedDate: "29-Oct-2026",
+                    officer: "Er. Arvind Kejriwal (Regional Officer)"
+                },
+                {
+                    id: "FND-2025-003",
+                    appId: "APP-2025-001",
+                    institution: "Apex Institute of Technology",
+                    region: "Northern Region",
+                    severity: "MAJOR",
+                    severityBadge: "badge-amber",
+                    clauseId: "APH-2025-RULE-03",
+                    clauseName: "APH 2025 Ch. II R2.14 (Cadre Ratio)",
+                    details: "Professor to Assistant Professor ratio is 1:18. Regulatory mandate requires minimum 1:15 cadre ratio for accreditation.",
+                    disposition: "CLARIFICATION_AWAITED",
+                    dispositionBadge: "badge-amber",
+                    loggedDate: "30-Oct-2026",
+                    officer: "Dr. Vandana Rao (Scrutiny Chair)"
+                },
+                {
+                    id: "FND-2025-004",
+                    appId: "APP-2025-006",
+                    institution: "Chilika Institute of Technology",
+                    region: "Eastern Region",
+                    severity: "MAJOR",
+                    severityBadge: "badge-amber",
+                    clauseId: "APH-2025-RULE-01",
+                    clauseName: "APH 2025 Ch. I R1.2 (Land Classification)",
+                    details: "Land conversion certificate issued by Revenue Inspector instead of competent District Collector / SDM authority.",
+                    disposition: "RE_SCRUTINY_REQUIRED",
+                    dispositionBadge: "badge-amber",
+                    loggedDate: "30-Oct-2026",
+                    officer: "Dr. Suniti Sharma (Scrutiny Member)"
+                },
+                {
+                    id: "FND-2025-005",
+                    appId: "APP-2025-005",
+                    institution: "Aravali Institute of Tech & Research",
+                    region: "North-Western Region",
+                    severity: "MODERATE",
+                    severityBadge: "badge-blue",
+                    clauseId: "APH-2025-RULE-02",
+                    clauseName: "APH 2025 Ch. II R3.4 (Digital Library)",
+                    details: "IEEE / Springer digital subscription agreement validity expires in 15 days; institution needs to furnish payment proof.",
+                    disposition: "RESOLVED",
+                    dispositionBadge: "badge-emerald",
+                    loggedDate: "31-Oct-2026",
+                    officer: "Dr. Rajesh Verma (Compliance Officer)"
+                }
+            ];
+
+            const criticalCount = findingsList.filter(f => f.severity === 'CRITICAL').length;
+            const majorCount = findingsList.filter(f => f.severity === 'MAJOR').length;
+            const moderateCount = findingsList.filter(f => f.severity === 'MODERATE').length;
+
+            const filtered = findingsList.filter(item => {
+                const q = this.findingsSearch.toLowerCase().trim();
+                const matchesSearch = !q ||
+                    item.id.toLowerCase().includes(q) ||
+                    item.appId.toLowerCase().includes(q) ||
+                    item.institution.toLowerCase().includes(q) ||
+                    item.details.toLowerCase().includes(q) ||
+                    item.clauseName.toLowerCase().includes(q);
+
+                const matchesSeverity = this.findingsSeverity === 'ALL' || item.severity === this.findingsSeverity;
+                return matchesSearch && matchesSeverity;
+            });
+
             container.innerHTML = `
                 <div class="view-header">
                     <div class="view-title-group">
-                        <h1>Compliance Findings &amp; Regulatory Dispositions</h1>
-                        <p>Audit discrepancies flagged by rule engine and officer scrutiny desks.</p>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <h1>Compliance Findings &amp; Regulatory Dispositions</h1>
+                            <span class="badge badge-primary">Statutory Audit Register</span>
+                        </div>
+                        <p>Audit discrepancies flagged by AI rule engine and confirmed by Scrutiny Committee chairs (APH 2025-26)</p>
+                    </div>
+                </div>
+
+                <!-- Filter & Search Toolbar -->
+                <div class="doc-filter-bar" style="margin-bottom:16px;">
+                    <div class="doc-search-wrap" style="flex:1;">
+                        <span style="color:var(--text-tertiary); display:flex; align-items:center;">${ICONS.Search}</span>
+                        <input type="text" class="doc-search-input" id="findings-search-input" placeholder="Search by finding ref (FND-2025-001), institution, or clause..." value="${this.findingsSearch}">
+                        ${this.findingsSearch ? `<button type="button" id="findings-clear-search" style="background:none; border:none; cursor:pointer; color:var(--text-tertiary); display:flex; align-items:center;">${ICONS.X}</button>` : ''}
+                    </div>
+
+                    <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
+                        <button class="queue-filter-btn ${this.findingsSeverity === 'ALL' ? 'active' : ''}" data-sev="ALL">
+                            All (${findingsList.length})
+                        </button>
+                        <button class="queue-filter-btn ${this.findingsSeverity === 'CRITICAL' ? 'active' : ''}" data-sev="CRITICAL">
+                            <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#DC2626; margin-right:4px;"></span>
+                            Critical (${criticalCount})
+                        </button>
+                        <button class="queue-filter-btn ${this.findingsSeverity === 'MAJOR' ? 'active' : ''}" data-sev="MAJOR">
+                            <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#D97706; margin-right:4px;"></span>
+                            Major (${majorCount})
+                        </button>
+                        <button class="queue-filter-btn ${this.findingsSeverity === 'MODERATE' ? 'active' : ''}" data-sev="MODERATE">
+                            <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#2563EB; margin-right:4px;"></span>
+                            Moderate (${moderateCount})
+                        </button>
                     </div>
                 </div>
 
                 <div class="card">
+                    <div class="card-header" style="display:flex; justify-content:space-between; align-items:center;">
+                        <div class="card-title">
+                            ${ICONS.AlertTriangle}
+                            <span>Registered Deficiency Findings</span>
+                        </div>
+                        <span class="badge badge-outline" style="font-size:11px; font-weight:700;">
+                            Showing ${filtered.length} of ${findingsList.length} Findings
+                        </span>
+                    </div>
+
                     <div class="table-responsive">
                         <table class="data-table">
                             <thead>
@@ -3033,33 +3363,80 @@
                                     <th>Finding Ref</th>
                                     <th>Institution</th>
                                     <th>Severity</th>
-                                    <th>Regulatory Clause</th>
-                                    <th>Finding Details</th>
+                                    <th>Statutory Clause</th>
+                                    <th style="min-width:280px;">Deficiency Finding Details</th>
                                     <th>Disposition Status</th>
+                                    <th style="text-align:right;">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td class="font-mono">FND-2025-001</td>
-                                    <td>Zaskar Engineering College</td>
-                                    <td><span class="badge badge-rose">CRITICAL</span></td>
-                                    <td class="font-mono">APH 2025 Ch. I R4.2</td>
-                                    <td>Submitted intake altered to 180 seats; sanctioned capacity is 60 seats.</td>
-                                    <td><span class="badge badge-rose">DEFICIENCY_CONFIRMED</span></td>
-                                </tr>
-                                <tr>
-                                    <td class="font-mono">FND-2025-002</td>
-                                    <td>Coromandel Institute of Technology</td>
-                                    <td><span class="badge badge-amber">MAJOR</span></td>
-                                    <td class="font-mono">APH 2025 Ch. II R3.1</td>
-                                    <td>State technological university affiliation order expired on 2024-06-30.</td>
-                                    <td><span class="badge badge-amber">AWAITING_REPLY</span></td>
-                                </tr>
+                                ${filtered.length === 0 ? `
+                                    <tr>
+                                        <td colspan="7" style="text-align:center; padding:32px; color:var(--text-secondary);">
+                                            No findings match your search or severity filter.
+                                        </td>
+                                    </tr>
+                                ` : filtered.map(item => `
+                                    <tr>
+                                        <td>
+                                            <div class="font-mono" style="font-weight:700; color:var(--text-primary); font-size:12px;">${item.id}</div>
+                                            <span class="font-mono" style="font-size:10px; color:var(--accent); cursor:pointer;" onclick="app.openApplicationModal('${item.appId}');">${item.appId}</span>
+                                        </td>
+                                        <td>
+                                            <div style="font-weight:700; color:var(--text-primary); font-size:13px;">${item.institution}</div>
+                                            <span style="font-size:11px; color:var(--text-secondary);">${item.region}</span>
+                                        </td>
+                                        <td>
+                                            <span class="badge ${item.severityBadge}">${item.severity}</span>
+                                        </td>
+                                        <td>
+                                            <button type="button" class="citation-link" onclick="app.openCitationModal('${item.clauseId}');" style="background:none; border:none; padding:0; cursor:pointer; font-size:12px; font-weight:600; color:var(--accent); text-decoration:underline; font-family:var(--font-mono); text-align:left;">
+                                                ${item.clauseName}
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <div style="font-size:12px; color:var(--text-primary); line-height:1.4;">${item.details}</div>
+                                            <div style="font-size:10px; color:var(--text-tertiary); margin-top:3px;">Logged on ${item.loggedDate} by ${item.officer}</div>
+                                        </td>
+                                        <td>
+                                            <span class="badge ${item.dispositionBadge}">${item.disposition}</span>
+                                        </td>
+                                        <td style="text-align:right;">
+                                            <button class="btn btn-outline btn-sm" onclick="app.openApplicationModal('${item.appId}');">
+                                                Inspect
+                                            </button>
+                                        </td>
+                                    </tr>
+                                `).join('')}
                             </tbody>
                         </table>
                     </div>
                 </div>
             `;
+
+            // Event bindings
+            const searchInput = container.querySelector('#findings-search-input');
+            if (searchInput) {
+                searchInput.oninput = (e) => {
+                    this.findingsSearch = e.target.value;
+                    this.renderFindingsView(container);
+                };
+            }
+
+            const clearBtn = container.querySelector('#findings-clear-search');
+            if (clearBtn) {
+                clearBtn.onclick = () => {
+                    this.findingsSearch = '';
+                    this.renderFindingsView(container);
+                };
+            }
+
+            container.querySelectorAll('.queue-filter-btn').forEach(btn => {
+                btn.onclick = () => {
+                    this.findingsSeverity = btn.getAttribute('data-sev') || 'ALL';
+                    this.renderFindingsView(container);
+                };
+            });
         }
 
         // ====================================================================
@@ -3999,7 +4376,8 @@
 
             const totalCount = this.institutionalDocuments.length;
             const verifiedCount = this.institutionalDocuments.filter(d => d.status === 'VERIFIED').length;
-            const expiringCount = this.institutionalDocuments.filter(d => d.isExpiring).length;
+            const awaitingCount = this.institutionalDocuments.filter(d => d.status === 'AWAITING_VERIFICATION').length;
+            const expiringCount = this.institutionalDocuments.filter(d => d.isExpiring || d.status === 'EXPIRING_SOON').length;
             const actionCount = this.institutionalDocuments.filter(d => d.actionRequired).length;
 
             // Filter logic
@@ -4064,21 +4442,21 @@
                         </div>
 
                         <div class="doc-overview-card">
-                            <div class="doc-overview-icon" style="background:rgba(245, 158, 11, 0.12); color:#D97706;">
+                            <div class="doc-overview-icon" style="background:rgba(37, 99, 235, 0.1); color:#2563EB;">
                                 ${ICONS.Clock}
                             </div>
-                            <div class="doc-overview-val" style="color:#D97706;">${expiringCount}</div>
-                            <div class="doc-overview-lbl">Expiring Soon</div>
-                            <div class="doc-overview-sub">Requires renewal within 60 days</div>
+                            <div class="doc-overview-val" style="color:#2563EB;">${awaitingCount}</div>
+                            <div class="doc-overview-lbl">Awaiting Verification</div>
+                            <div class="doc-overview-sub">Officer scrutiny &amp; sign-off pending</div>
                         </div>
 
                         <div class="doc-overview-card">
-                            <div class="doc-overview-icon" style="background:rgba(239, 68, 68, 0.1); color:#DC2626;">
+                            <div class="doc-overview-icon" style="background:rgba(245, 158, 11, 0.12); color:#D97706;">
                                 ${ICONS.AlertTriangle}
                             </div>
-                            <div class="doc-overview-val" style="color:#DC2626;">${actionCount}</div>
-                            <div class="doc-overview-lbl">Action Required</div>
-                            <div class="doc-overview-sub">Fire Safety NOC renewal pending</div>
+                            <div class="doc-overview-val" style="color:#D97706;">${expiringCount}</div>
+                            <div class="doc-overview-lbl">Expiring / Renewal</div>
+                            <div class="doc-overview-sub">Requires update within 60 days</div>
                         </div>
                     </div>
 
@@ -4104,6 +4482,7 @@
                             <select class="doc-select" id="doc-filter-status" title="Filter by Status">
                                 <option value="ALL" ${this.docDeskStatus === 'ALL' ? 'selected' : ''}>All Statuses</option>
                                 <option value="VERIFIED" ${this.docDeskStatus === 'VERIFIED' ? 'selected' : ''}>Verified (${verifiedCount})</option>
+                                <option value="AWAITING_VERIFICATION" ${this.docDeskStatus === 'AWAITING_VERIFICATION' ? 'selected' : ''}>Awaiting Verification (${awaitingCount})</option>
                                 <option value="EXPIRING_SOON" ${this.docDeskStatus === 'EXPIRING_SOON' ? 'selected' : ''}>Expiring Soon (${expiringCount})</option>
                             </select>
 
@@ -4168,10 +4547,22 @@
                                                     </span>
                                                 </td>
                                                 <td>
-                                                    <span class="badge ${doc.isExpiring ? 'badge-amber' : 'badge-emerald'}" style="display:inline-flex; align-items:center; gap:5px; font-weight:700;">
-                                                        <span style="width:6px; height:6px; border-radius:50%; background:currentColor;"></span>
-                                                        ${doc.status === 'EXPIRING_SOON' ? 'EXPIRING SOON' : 'VERIFIED'}
-                                                    </span>
+                                                    ${doc.status === 'AWAITING_VERIFICATION' ? `
+                                                        <span class="badge badge-blue" style="display:inline-flex; align-items:center; gap:5px; font-weight:700;">
+                                                            <span style="width:6px; height:6px; border-radius:50%; background:currentColor;"></span>
+                                                            AWAITING VERIFICATION
+                                                        </span>
+                                                    ` : doc.isExpiring || doc.status === 'EXPIRING_SOON' ? `
+                                                        <span class="badge badge-amber" style="display:inline-flex; align-items:center; gap:5px; font-weight:700;">
+                                                            <span style="width:6px; height:6px; border-radius:50%; background:currentColor;"></span>
+                                                            EXPIRING SOON
+                                                        </span>
+                                                    ` : `
+                                                        <span class="badge badge-emerald" style="display:inline-flex; align-items:center; gap:5px; font-weight:700;">
+                                                            <span style="width:6px; height:6px; border-radius:50%; background:currentColor;"></span>
+                                                            VERIFIED
+                                                        </span>
+                                                    `}
                                                 </td>
                                                 <td>
                                                     <div style="font-size:12px; font-weight:600; color:var(--text-primary);">${doc.expiry}</div>
@@ -4846,11 +5237,22 @@
         }
 
         openApplicationModal(appId) {
-            const app = this.applications.find(a => a.id === appId) || {
+            const cleanTarget = (appId || '').replace(/[-_]/g, '').toLowerCase();
+            const app = this.applications.find(a => (a.id || '').replace(/[-_]/g, '').toLowerCase() === cleanTarget) || {
                 id: appId,
-                collegeName: "Nilgiri Institute of Technology",
-                permanentId: "SYN-2025-001",
-                appType: "Extension of Approval (EoA)",
+                collegeName: appId && appId.includes('002') ? "Zaskar Engineering College" :
+                             appId && appId.includes('003') ? "Coastal Institute of Management" :
+                             appId && appId.includes('004') ? "Kaveri College of Engineering" :
+                             appId && appId.includes('005') ? "Aravali Institute of Technology & Research" :
+                             appId && appId.includes('006') ? "Chilika Institute of Technology" :
+                             "Nilgiri Institute of Technology",
+                permanentId: appId && appId.includes('002') ? "SYN-2025-009" :
+                             appId && appId.includes('003') ? "SYN-2025-008" :
+                             appId && appId.includes('004') ? "SYN-2025-002" :
+                             "SYN-2025-001",
+                appType: appId && appId.includes('002') ? "Increase in Intake (+60 Seats)" :
+                         appId && appId.includes('003') ? "New Program Approval (MCA)" :
+                         "Extension of Approval (EoA)",
                 stage: "SCRUTINY",
                 slaTarget: "15-May-2025",
                 status: "UNDER_SCRUTINY",
@@ -5130,13 +5532,14 @@
                             <input type="text" id="new-app-challan" class="input" placeholder="e.g. BK-2025-TN-9982" value="BK-2025-TN-9982" required style="width:100%;">
                         </div>
 
-                        <div style="font-size:11px; color:var(--text-secondary); background:var(--surface-muted); padding:10px; border-radius:8px;">
-                            By submitting, you certify under penalty of perjury that all attached institutional declarations and land boundaries are bona fide.
+                        <div style="font-size:11px; color:var(--text-secondary); background:var(--surface-muted); padding:12px; border-radius:8px; border:1px solid var(--border); line-height:1.4;">
+                            <strong style="color:var(--text-primary); display:block; margin-bottom:4px;">Statutory Legal Consequence Notice (AICTE Act 1987)</strong>
+                            By submitting this application, the head of the institution affirms under penalty of law that all attached spatial metrics, land ownership deeds, and faculty rosters are bona fide. Submitting fraudulent declarations will lead to immediate cancellation of approval, forfeiture of performance deposits, and penal proceedings under Indian Penal Code and AICTE Regulations.
                         </div>
 
                         <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:8px;">
                             <button type="button" class="btn btn-outline" id="new-app-cancel-btn">Cancel</button>
-                            <button type="submit" class="btn btn-primary">Submit Application</button>
+                            <button type="submit" class="btn btn-primary" id="new-app-submit-btn">Submit Application</button>
                         </div>
                     </form>
                 </div>
@@ -5150,28 +5553,36 @@
 
             overlay.querySelector('#new-app-form').onsubmit = (e) => {
                 e.preventDefault();
+                const submitBtn = overlay.querySelector('#new-app-submit-btn');
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.textContent = 'Submitting Application...';
+                }
+
                 const type = overlay.querySelector('#new-app-type').value;
                 const newId = `APP-2025-${String(this.applications.length + 1).padStart(3, '0')}`;
                 
-                this.applications.unshift({
-                    id: newId,
-                    collegeId: "nit-nilgiri",
-                    collegeName: "Nilgiri Institute of Technology",
-                    trustName: "Nilgiri Educational Trust",
-                    permanentId: "SYN-2025-001",
-                    appType: type,
-                    stage: "SUBMITTED",
-                    slaTarget: "15-Jun-2025",
-                    status: "SUBMITTED_SUCCESS",
-                    statusBadge: "badge-blue",
-                    trustScore: 98,
-                    deficienciesCount: 0,
-                    submissionDate: new Date().toLocaleDateString('en-GB')
-                });
+                setTimeout(() => {
+                    this.applications.unshift({
+                        id: newId,
+                        collegeId: "nit-nilgiri",
+                        collegeName: "Nilgiri Institute of Technology",
+                        trustName: "Nilgiri Educational Trust",
+                        permanentId: "SYN-2025-001",
+                        appType: type,
+                        stage: "SUBMITTED",
+                        slaTarget: "15-Jun-2025",
+                        status: "SUBMITTED_SUCCESS",
+                        statusBadge: "badge-blue",
+                        trustScore: 98,
+                        deficienciesCount: 0,
+                        submissionDate: new Date().toLocaleDateString('en-GB')
+                    });
 
-                close();
-                API.showToast(`Application ${newId} submitted successfully and assigned to Scrutiny Desk!`, 'success');
-                this.render();
+                    close();
+                    API.showToast(`Application ${newId} submitted successfully and assigned to Scrutiny Desk!`, 'success');
+                    this.render();
+                }, 350);
             };
         }
 
@@ -5343,27 +5754,27 @@
                 const authVal = overlay.querySelector('#upload-authority').value;
                 const expVal = overlay.querySelector('#upload-expiry-date').value;
 
-                // Update document state in memory
+                // Update document state in memory (Uploading does NOT auto-verify)
                 const docIdx = this.institutionalDocuments.findIndex(d => d.id === selectedType);
                 if (docIdx !== -1) {
-                    this.institutionalDocuments[docIdx].status = 'VERIFIED';
+                    this.institutionalDocuments[docIdx].status = 'AWAITING_VERIFICATION';
                     this.institutionalDocuments[docIdx].isExpiring = false;
                     this.institutionalDocuments[docIdx].actionRequired = false;
-                    this.institutionalDocuments[docIdx].validity = `Valid Until ${expVal} (Renewed)`;
+                    this.institutionalDocuments[docIdx].validity = `Uploaded on ${new Date().toLocaleDateString('en-GB')} — Awaiting Compliance Verification`;
                     this.institutionalDocuments[docIdx].expiry = expVal;
                     this.institutionalDocuments[docIdx].daysRemaining = 365;
                     this.institutionalDocuments[docIdx].hash = newHash;
                     this.institutionalDocuments[docIdx].authority = authVal;
                     this.institutionalDocuments[docIdx].timeline.push({
-                        title: 'Statutory Renewal Approved & Registered',
+                        title: 'Renewal Evidence Uploaded & Digest Registered',
                         date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) + ', ' + new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
-                        actor: 'AICTE Central Regulatory Vault',
-                        status: 'COMPLETED'
+                        actor: this.currentUser ? this.currentUser.fullName : 'Institution Representative',
+                        status: 'AWAITING_VERIFICATION'
                     });
                 }
 
                 close();
-                API.showToast('Document successfully verified and registered in AICTE Vault with SHA-256 seal!', 'success');
+                API.showToast('Renewal evidence uploaded and registered in Vault with SHA-256 digest. Status: Awaiting Verification by Compliance Officer.', 'info');
                 this.render();
             };
         }

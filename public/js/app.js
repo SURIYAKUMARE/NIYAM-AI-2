@@ -1772,13 +1772,6 @@
 
                     <div class="auth-card-wrap">
                         <div class="auth-card">
-                            
-                            <!-- AICTE Headquarters Visual Banner -->
-                            <div class="auth-building-preview">
-                                <img src="/images/aicte-building-bg.png" alt="AICTE Headquarters, Nelson Mandela Marg, New Delhi">
-                                <div class="auth-building-badge">AICTE Headquarters • New Delhi</div>
-                            </div>
-
                             <!-- Header -->
                             <div class="auth-header">
                             <div class="auth-logo-row">

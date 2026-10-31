@@ -1429,7 +1429,15 @@
                         <button class="btn btn-outline" id="hero-btn-workflow" style="padding:10px 18px; font-size:14px; font-weight:600;">
                             <span>View workflow</span>
                         </button>
-                        
+                    </div>
+
+                    <!-- AICTE Headquarters Visual Feature -->
+                    <div style="margin-top:28px; margin-bottom:20px; border-radius:14px; overflow:hidden; border:1px solid var(--border); box-shadow:var(--shadow-md); max-width:860px; width:100%; position:relative;">
+                        <img src="/images/aicte-building-bg.png" alt="AICTE Headquarters, Nelson Mandela Marg, New Delhi" style="width:100%; height:240px; object-fit:cover; object-position:center 30%; display:block;">
+                        <div style="position:absolute; bottom:12px; left:16px; background:rgba(15,23,42,0.82); backdrop-filter:blur(8px); padding:6px 14px; border-radius:8px; border:1px solid rgba(255,255,255,0.2); color:#fff; display:flex; align-items:center; gap:8px;">
+                            <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#10B981;"></span>
+                            <span style="font-size:12px; font-weight:700;">AICTE Headquarters • Nelson Mandela Marg, Vasant Kunj, New Delhi</span>
+                        </div>
                     </div>
 
                     <!-- Meaningful Product Preview Card -->
@@ -1700,6 +1708,12 @@
                 <main class="auth-card-wrap">
                     <div class="auth-card">
                         
+                        <!-- AICTE Headquarters Visual Banner -->
+                        <div class="auth-building-preview">
+                            <img src="/images/aicte-building-bg.png" alt="AICTE Headquarters, Nelson Mandela Marg, New Delhi">
+                            <div class="auth-building-badge">AICTE Headquarters • New Delhi</div>
+                        </div>
+
                         <!-- Header -->
                         <div class="auth-header">
                             <div class="auth-logo-row">

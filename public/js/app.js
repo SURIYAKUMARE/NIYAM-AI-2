@@ -1704,18 +1704,32 @@
                     </div>
                 </header>
 
-                <!-- Focused Sign-In Card -->
-                <main class="auth-card-wrap">
-                    <div class="auth-card">
-                        
-                        <!-- AICTE Headquarters Visual Banner -->
-                        <div class="auth-building-preview">
-                            <img src="/images/aicte-building-bg.png" alt="AICTE Headquarters, Nelson Mandela Marg, New Delhi">
-                            <div class="auth-building-badge">AICTE Headquarters • New Delhi</div>
+                <!-- Focused Sign-In Layout -->
+                <main class="auth-main-layout">
+                    <div class="auth-hero-caption desktop-only">
+                        <div class="auth-hero-badge">
+                            <span class="auth-badge-dot"></span>
+                            <span>All India Council for Technical Education</span>
                         </div>
+                        <h1 class="auth-hero-title">National Institutional Approval &amp; Compliance Portal</h1>
+                        <p class="auth-hero-subtitle">Integrated approval automation, digital scrutiny, and continuous statutory validity monitoring under AICTE APH 2025–26.</p>
+                        <div class="auth-hero-tags">
+                            <span class="auth-tag-pill">AICTE HQ • Nelson Mandela Marg, New Delhi</span>
+                            <span class="auth-tag-pill">Smart India Hackathon 2026 • PS 26262</span>
+                        </div>
+                    </div>
 
-                        <!-- Header -->
-                        <div class="auth-header">
+                    <div class="auth-card-wrap">
+                        <div class="auth-card">
+                            
+                            <!-- AICTE Headquarters Visual Banner -->
+                            <div class="auth-building-preview">
+                                <img src="/images/aicte-building-bg.png" alt="AICTE Headquarters, Nelson Mandela Marg, New Delhi">
+                                <div class="auth-building-badge">AICTE Headquarters • New Delhi</div>
+                            </div>
+
+                            <!-- Header -->
+                            <div class="auth-header">
                             <div class="auth-logo-row">
                                 <img src="/images/aicte-logo.png" alt="AICTE" class="auth-emblem">
                                 <span style="font-size:13px; font-weight:700; color:var(--text-secondary);">AICTE REGULATORY DESK</span>
@@ -1829,7 +1843,8 @@
                             </form>
                         `}
                     </div>
-                </main>
+                </div>
+            </main>
 
                 <!-- Project Information Footer -->
                 <footer class="auth-footer">

@@ -2783,6 +2783,32 @@
             }
         }
 
+        openVerifyStudioView(appId) {
+            if (appId) {
+                const clean = appId.toLowerCase().replace(/[-_]/g, '');
+                if (clean.includes('002') || clean.includes('zaskar')) {
+                    this.selectedStudioCollegeId = 'zec-zaskar';
+                } else if (clean.includes('003') || clean.includes('coromandel') || clean.includes('coastal')) {
+                    this.selectedStudioCollegeId = 'cit-coromandel';
+                } else {
+                    this.selectedStudioCollegeId = 'nit-nilgiri';
+                }
+            }
+            this.navigate('verify');
+        }
+
+        resolveDeficiency(appId) {
+            const cleanTarget = (appId || '').replace(/[-_]/g, '').toLowerCase();
+            const app = this.applications.find(a => (a.id || '').replace(/[-_]/g, '').toLowerCase() === cleanTarget);
+            if (app) {
+                app.deficienciesCount = 0;
+                app.status = 'UNDER_SCRUTINY';
+                app.statusBadge = 'badge-blue';
+            }
+            API.showToast(`Deficiency on ${appId} resolved. Dossier cleared for EVC scheduling.`, 'success');
+            this.render();
+        }
+
         openCitationModal(ruleCitation) {
             const citations = {
                 'APH-2025-RULE-01': {
@@ -3777,46 +3803,111 @@
         }
 
         // ====================================================================
-        // 13. USER MANAGEMENT
+        // 13. USER MANAGEMENT & RBAC MATRIX
         // ====================================================================
         renderUsersView(container) {
+            this.userSearch = this.userSearch || '';
+            this.userRoleFilter = this.userRoleFilter || 'ALL';
+
+            const filtered = OFFICIAL_PERSONNEL.filter(u => {
+                const q = this.userSearch.toLowerCase().trim();
+                const matchesQ = !q || u.username.toLowerCase().includes(q) || u.fullName.toLowerCase().includes(q) || (u.department && u.department.toLowerCase().includes(q));
+                let matchesR = true;
+                if (this.userRoleFilter === 'OFFICER') matchesR = u.role !== 'applicant' && u.role !== 'auditor';
+                else if (this.userRoleFilter === 'APPLICANT') matchesR = u.role === 'applicant' || u.shortRole === 'Institution Rep';
+                else if (this.userRoleFilter === 'AUDITOR') matchesR = u.role === 'auditor';
+                return matchesQ && matchesR;
+            });
+
             container.innerHTML = `
                 <div class="view-header">
                     <div class="view-title-group">
-                        <h1>Authorized Personnel &amp; RBAC Matrix</h1>
-                        <p>Manage scrutiny officers, regional directors, institutional representatives, and MFA status.</p>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <h1>Authorized Personnel &amp; RBAC Directory</h1>
+                            <span class="badge badge-primary">Administrative Directory</span>
+                        </div>
+                        <p>Manage personnel provisioning, MFA status, security clearance levels, and cadre designations without conflating admin access with decision authority.</p>
+                    </div>
+                </div>
+
+                <!-- Filter & Search Toolbar -->
+                <div class="doc-filter-bar" style="margin-bottom:16px;">
+                    <div class="doc-search-wrap" style="flex:1;">
+                        <span style="color:var(--text-tertiary); display:flex; align-items:center;">${ICONS.Search}</span>
+                        <input type="text" class="doc-search-input" id="user-search-input" placeholder="Search by username, full name, or department..." value="${this.userSearch}">
+                        ${this.userSearch ? `<button type="button" id="user-clear-search" style="background:none; border:none; cursor:pointer; color:var(--text-tertiary); display:flex; align-items:center;">${ICONS.X}</button>` : ''}
+                    </div>
+
+                    <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
+                        <button class="queue-filter-btn ${this.userRoleFilter === 'ALL' ? 'active' : ''}" data-ufilter="ALL">
+                            All Personnel (${OFFICIAL_PERSONNEL.length})
+                        </button>
+                        <button class="queue-filter-btn ${this.userRoleFilter === 'OFFICER' ? 'active' : ''}" data-ufilter="OFFICER">
+                            Regulatory Officers (${OFFICIAL_PERSONNEL.filter(u => u.role !== 'applicant' && u.role !== 'auditor').length})
+                        </button>
+                        <button class="queue-filter-btn ${this.userRoleFilter === 'APPLICANT' ? 'active' : ''}" data-ufilter="APPLICANT">
+                            Applicants (${OFFICIAL_PERSONNEL.filter(u => u.role === 'applicant' || u.shortRole === 'Institution Rep').length})
+                        </button>
+                        <button class="queue-filter-btn ${this.userRoleFilter === 'AUDITOR' ? 'active' : ''}" data-ufilter="AUDITOR">
+                            Auditors (${OFFICIAL_PERSONNEL.filter(u => u.role === 'auditor').length})
+                        </button>
                     </div>
                 </div>
 
                 <div class="card">
+                    <div class="card-header" style="display:flex; justify-content:space-between; align-items:center;">
+                        <div class="card-title">
+                            ${ICONS.Users}
+                            <span>Personnel Credentials &amp; Provisioning Matrix</span>
+                        </div>
+                        <span class="badge badge-outline" style="font-size:11px; font-weight:700;">Showing ${filtered.length} of ${OFFICIAL_PERSONNEL.length} Accounts</span>
+                    </div>
+
                     <div class="table-responsive">
                         <table class="data-table">
                             <thead>
                                 <tr>
-                                    <th>User ID</th>
-                                    <th>Full Name</th>
+                                    <th>Cadre ID &amp; User</th>
+                                    <th>Full Name &amp; Designation</th>
+                                    <th>Department</th>
                                     <th>Assigned Role</th>
+                                    <th>Security Level</th>
                                     <th>MFA Security</th>
-                                    <th>Direct Login</th>
+                                    <th style="text-align:right;">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                ${OFFICIAL_PERSONNEL.map(a => `
+                                ${filtered.length === 0 ? `
                                     <tr>
-                                        <td class="font-mono">${a.username}</td>
+                                        <td colspan="7" style="text-align:center; padding:32px; color:var(--text-secondary);">
+                                            No personnel match current search. Try resetting filters.
+                                        </td>
+                                    </tr>
+                                ` : filtered.map(a => `
+                                    <tr>
                                         <td>
-                                            <div style="font-weight:700; color:var(--text-primary);">${a.fullName}</div>
+                                            <div class="font-mono" style="font-weight:700; color:var(--text-primary); font-size:12px;">${a.username}</div>
+                                            <span class="font-mono" style="font-size:10px; color:var(--text-tertiary);">${a.cadreId || 'AICTE/OFF-2025'}</span>
+                                        </td>
+                                        <td>
+                                            <div style="font-weight:700; color:var(--text-primary); font-size:13px;">${a.fullName}</div>
                                             <span style="font-size:11px; color:var(--text-secondary);">${a.designation}</span>
+                                        </td>
+                                        <td>
+                                            <span style="font-size:12px; color:var(--text-primary);">${a.department}</span>
                                         </td>
                                         <td><span class="badge badge-blue">${a.badge}</span></td>
                                         <td>
-                                            <span class="badge ${a.hasMfa ? 'badge-amber' : 'badge-emerald'}">
-                                                ${a.hasMfa ? 'TOTP 2FA Protected' : 'Direct Sign-On'}
-                                            </span>
+                                            <span class="badge badge-emerald" style="font-size:10px;">${a.securityClearance || 'LEVEL 1'}</span>
                                         </td>
                                         <td>
-                                            <button class="btn btn-outline btn-sm switch-user-btn" data-user="${a.username}">
-                                                Assume Identity
+                                            <span class="badge ${a.hasMfa ? 'badge-amber' : 'badge-emerald'}">
+                                                ${a.hasMfa ? 'TOTP 2FA' : 'PKI Verified'}
+                                            </span>
+                                        </td>
+                                        <td style="text-align:right;">
+                                            <button class="btn btn-outline btn-sm" onclick="app.openUserProfileModal('${a.username}');">
+                                                Inspect Credentials
                                             </button>
                                         </td>
                                     </tr>
@@ -3827,17 +3918,26 @@
                 </div>
             `;
 
-            container.querySelectorAll('.switch-user-btn').forEach(btn => {
+            const searchInput = container.querySelector('#user-search-input');
+            if (searchInput) {
+                searchInput.oninput = (e) => {
+                    this.userSearch = e.target.value;
+                    this.renderUsersView(container);
+                };
+            }
+
+            const clearBtn = container.querySelector('#user-clear-search');
+            if (clearBtn) {
+                clearBtn.onclick = () => {
+                    this.userSearch = '';
+                    this.renderUsersView(container);
+                };
+            }
+
+            container.querySelectorAll('.queue-filter-btn').forEach(btn => {
                 btn.onclick = () => {
-                    const u = btn.getAttribute('data-user');
-                    const acc = resolveOfficial(u);
-                    if (acc) {
-                        this.currentUser = acc;
-                        localStorage.setItem('niyam_user', JSON.stringify(acc));
-                        API.setSimulatedUser(acc.username);
-                        API.showToast(`Active session switched to ${acc.roleName}`, 'info');
-                        this.render();
-                    }
+                    this.userRoleFilter = btn.getAttribute('data-ufilter') || 'ALL';
+                    this.renderUsersView(container);
                 };
             });
         }
@@ -5465,15 +5565,141 @@
                         </div>
                     `;
                 } else if (tabName === 'tab-scrutiny') {
-                    tabContent.innerHTML = `
-                        <div style="padding:20px; text-align:center; color:var(--text-secondary); font-size:13px;">
-                            <div style="width:40px; height:40px; border-radius:50%; background:rgba(16,185,129,0.1); color:#059669; display:flex; align-items:center; justify-content:center; margin:0 auto 10px;">
-                                ${ICONS.CheckCircle2}
+                    const isDeficient = (app.deficienciesCount > 0) || 
+                        app.status === 'DEFICIENCY_FLAGGED' || 
+                        app.status === 'RE_SCRUTINY' || 
+                        app.status === 'MISSING_DOCUMENTS' ||
+                        app.status === 'EXPIRED_LEASE_HOLD' ||
+                        (app.id && (app.id.includes('002') || app.id.includes('003') || app.id.includes('006')));
+
+                    if (isDeficient) {
+                        const deficiencyList = [
+                            {
+                                code: 'DEF-01',
+                                title: app.id && app.id.includes('002') ? 'Sanctioned Intake Discrepancy (Requested 180 vs 60)' :
+                                       app.id && app.id.includes('003') ? 'State University Affiliation Order Expired' :
+                                       app.id && app.id.includes('006') ? 'Land Conversion Missing Tehsildar Gazette Seal' :
+                                       'Faculty Cadre Ratio Non-Compliance (Found 1:18, Req 1:15)',
+                                clause: 'APH-2025-RULE-01',
+                                clauseText: 'APH 2025-26 Ch. I Clause 4.2',
+                                severity: 'CRITICAL',
+                                flaggedBy: 'Dr. Vandana Rao (Scrutiny Chair)',
+                                flaggedDate: '28-Oct-2026',
+                                status: app.clarificationSubmitted ? 'CLARIFICATION_SUBMITTED' : 'ACTION_REQUIRED',
+                                details: app.id && app.id.includes('002') ?
+                                    'Submitted division capacity specifies 180 seats without requisite NBA Tier-1 accreditation approval. Authorized sanction is capped at 60 seats.' :
+                                    app.id && app.id.includes('003') ?
+                                    'State Technological University affiliation certificate expired on 30-Jun-2024. Current academic session renewal not submitted.' :
+                                    'Land conversion certificate submitted lacks official Tehsildar Gazette Dispatch number. Chapter I Clause 1.2 requires revenue magistrate verification.',
+                                deadline: '05-Nov-2026, 17:00 IST'
+                            }
+                        ];
+
+                        tabContent.innerHTML = `
+                            <div style="display:flex; flex-direction:column; gap:16px;">
+                                <div style="padding:12px 16px; border-radius:8px; background:rgba(239,68,68,0.08); border-left:4px solid #DC2626; display:flex; justify-content:space-between; align-items:center;">
+                                    <div>
+                                        <div style="font-weight:700; color:#DC2626; font-size:13px;">Deficiency Notice Pending Resolution</div>
+                                        <div style="font-size:11px; color:var(--text-secondary); margin-top:2px;">Statutory Response Deadline: <strong>05-Nov-2026, 17:00 IST</strong></div>
+                                    </div>
+                                    <span class="badge ${app.clarificationSubmitted ? 'badge-blue' : 'badge-rose'}">
+                                        ${app.clarificationSubmitted ? 'CLARIFICATION SUBMITTED' : 'ACTION REQUIRED'}
+                                    </span>
+                                </div>
+
+                                ${deficiencyList.map(def => `
+                                    <div style="padding:16px; border-radius:10px; background:var(--surface-muted); border:1px solid var(--border);">
+                                        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;">
+                                            <div>
+                                                <div style="font-weight:700; color:var(--text-primary); font-size:14px;">${def.title}</div>
+                                                <div style="font-size:11px; color:var(--text-secondary); margin-top:2px;">
+                                                    Flagged by <strong>${def.flaggedBy}</strong> on ${def.flaggedDate}
+                                                </div>
+                                            </div>
+                                            <span class="badge badge-rose">${def.severity}</span>
+                                        </div>
+
+                                        <p style="font-size:12px; color:var(--text-primary); line-height:1.5; background:var(--surface); padding:10px; border-radius:6px; border:1px solid var(--border); margin:8px 0;">
+                                            ${def.details}
+                                        </p>
+
+                                        <div style="display:flex; justify-content:space-between; align-items:center; font-size:11px; color:var(--text-secondary); margin-top:8px;">
+                                            <div>
+                                                <span>Statutory Rule: </span>
+                                                <button type="button" class="citation-link" onclick="app.openCitationModal('${def.clause}');" style="background:none; border:none; padding:0; cursor:pointer; color:var(--accent); font-weight:700; text-decoration:underline; font-family:var(--font-mono);">
+                                                    ${def.clauseText}
+                                                </button>
+                                            </div>
+                                            <span class="font-mono" style="color:#DC2626; font-weight:700;">Target: ${def.deadline}</span>
+                                        </div>
+                                    </div>
+                                `).join('')}
+
+                                ${isApp ? `
+                                    <!-- Institutional Clarification & Evidence Submission Box -->
+                                    <div style="padding:16px; border-radius:10px; background:var(--surface); border:1px solid var(--accent); margin-top:4px;">
+                                        <div style="font-weight:700; color:var(--text-primary); font-size:13px; margin-bottom:4px;">Submit Institutional Clarification &amp; Supporting Rectification Proof</div>
+                                        <p style="font-size:11px; color:var(--text-secondary); margin:0 0 10px;">Provide detailed statutory justification and attach signed governing body resolution or gazette orders.</p>
+
+                                        <form id="deficiency-reply-form" style="display:flex; flex-direction:column; gap:10px;">
+                                            <div>
+                                                <label style="font-size:11px; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:4px;">Institution Written Clarification</label>
+                                                <textarea class="textarea" id="def-reply-text" rows="3" style="width:100%; font-size:12px;" placeholder="State the factual position, corrective steps taken, and reference attached documentation..." required>${app.clarificationText || ''}</textarea>
+                                            </div>
+                                            <div>
+                                                <label style="font-size:11px; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:4px;">Upload Rectification Evidence (PDF, max 15MB)</label>
+                                                <input type="file" id="def-reply-file" class="input" accept=".pdf" style="width:100%; font-size:11px;">
+                                            </div>
+                                            <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:4px;">
+                                                <button type="submit" class="btn btn-primary btn-sm" id="btn-submit-def-reply">
+                                                    ${app.clarificationSubmitted ? 'Update Clarification' : 'Submit Response to Scrutiny Desk'}
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                ` : `
+                                    <!-- Scrutiny Officer Action Box -->
+                                    <div style="padding:14px; border-radius:10px; background:var(--surface-muted); border:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+                                        <div>
+                                            <div style="font-weight:700; color:var(--text-primary); font-size:12px;">Scrutiny Committee Disposition Controls</div>
+                                            <div style="font-size:11px; color:var(--text-secondary);">Resolve deficiency upon satisfactory review or issue second deficiency memo.</div>
+                                        </div>
+                                        <div style="display:flex; gap:8px;">
+                                            <button class="btn btn-outline btn-sm" onclick="API.showToast('Second statutory notice dispatched with 48h deadline', 'warning');">
+                                                Re-Issue Notice
+                                            </button>
+                                            <button class="btn btn-primary btn-sm" onclick="app.resolveDeficiency('${app.id}'); document.getElementById('modal-close-x').click();">
+                                                Resolve &amp; Clear Deficiency
+                                            </button>
+                                        </div>
+                                    </div>
+                                `}
                             </div>
-                            <strong style="color:var(--text-primary); display:block; margin-bottom:4px;">Zero Deficiencies Flagged</strong>
-                            All uploaded documentation meets AICTE Approval Process Handbook (APH 2025-26) Chapter II norms.
-                        </div>
-                    `;
+                        `;
+
+                        const replyForm = tabContent.querySelector('#deficiency-reply-form');
+                        if (replyForm) {
+                            replyForm.onsubmit = (e) => {
+                                e.preventDefault();
+                                const text = tabContent.querySelector('#def-reply-text').value;
+                                app.clarificationSubmitted = true;
+                                app.clarificationText = text;
+                                app.status = 'CLARIFICATION_SUBMITTED';
+                                API.showToast('Institutional clarification submitted successfully and forwarded to Scrutiny Committee Chair!', 'success');
+                                renderTab('tab-scrutiny');
+                            };
+                        }
+                    } else {
+                        tabContent.innerHTML = `
+                            <div style="padding:32px 20px; text-align:center; color:var(--text-secondary); font-size:13px;">
+                                <div style="width:44px; height:44px; border-radius:50%; background:rgba(16,185,129,0.1); color:#059669; display:flex; align-items:center; justify-content:center; margin:0 auto 12px;">
+                                    ${ICONS.CheckCircle2}
+                                </div>
+                                <strong style="color:var(--text-primary); font-size:14px; display:block; margin-bottom:4px;">Zero Deficiencies Flagged</strong>
+                                All uploaded documentation meets AICTE Approval Process Handbook (APH 2025-26) Chapter II statutory norms.
+                            </div>
+                        `;
+                    }
                 }
             };
 
@@ -5529,7 +5755,8 @@
 
                         <div>
                             <label style="font-size:12px; font-weight:700; color:var(--text-primary); display:block; margin-bottom:6px;">Bharatkosh Transaction Reference</label>
-                            <input type="text" id="new-app-challan" class="input" placeholder="e.g. BK-2025-TN-9982" value="BK-2025-TN-9982" required style="width:100%;">
+                            <input type="text" id="new-app-challan" class="input" placeholder="e.g. BK-2025-TN-9982" pattern="^BK-[0-9]{4}-[A-Z]{2}-[0-9]{4,6}$" title="Format: BK-YYYY-ST-XXXX (e.g. BK-2025-TN-9982)" value="BK-2025-TN-9982" required style="width:100%;">
+                            <span style="font-size:11px; color:var(--text-secondary); margin-top:4px; display:block;">Format: <code>BK-YYYY-ST-XXXX</code> (Bharatkosh Non-Tax Receipt Portal transaction receipt ID)</span>
                         </div>
 
                         <div style="font-size:11px; color:var(--text-secondary); background:var(--surface-muted); padding:12px; border-radius:8px; border:1px solid var(--border); line-height:1.4;">
@@ -5537,9 +5764,12 @@
                             By submitting this application, the head of the institution affirms under penalty of law that all attached spatial metrics, land ownership deeds, and faculty rosters are bona fide. Submitting fraudulent declarations will lead to immediate cancellation of approval, forfeiture of performance deposits, and penal proceedings under Indian Penal Code and AICTE Regulations.
                         </div>
 
-                        <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:8px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-top:8px;">
                             <button type="button" class="btn btn-outline" id="new-app-cancel-btn">Cancel</button>
-                            <button type="submit" class="btn btn-primary" id="new-app-submit-btn">Submit Application</button>
+                            <div style="display:flex; gap:8px;">
+                                <button type="button" class="btn btn-outline" id="new-app-draft-btn">Save as Draft</button>
+                                <button type="submit" class="btn btn-primary" id="new-app-submit-btn">Submit Application</button>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -5550,6 +5780,32 @@
             const close = () => overlay.remove();
             overlay.querySelector('#new-app-close-x').onclick = close;
             overlay.querySelector('#new-app-cancel-btn').onclick = close;
+
+            const draftBtn = overlay.querySelector('#new-app-draft-btn');
+            if (draftBtn) {
+                draftBtn.onclick = () => {
+                    const type = overlay.querySelector('#new-app-type').value;
+                    const newId = `APP-2025-${String(this.applications.length + 1).padStart(3, '0')}`;
+                    this.applications.unshift({
+                        id: newId,
+                        collegeId: "nit-nilgiri",
+                        collegeName: "Nilgiri Institute of Technology",
+                        trustName: "Nilgiri Educational Trust",
+                        permanentId: "SYN-2025-001",
+                        appType: type,
+                        stage: "DRAFT",
+                        slaTarget: "30-May-2025",
+                        status: "DRAFT",
+                        statusBadge: "badge-amber",
+                        trustScore: 85,
+                        deficienciesCount: 0,
+                        submissionDate: new Date().toLocaleDateString('en-GB')
+                    });
+                    close();
+                    API.showToast(`Application draft ${newId} saved. You can upload required documents before final submission.`, 'info');
+                    this.render();
+                };
+            }
 
             overlay.querySelector('#new-app-form').onsubmit = (e) => {
                 e.preventDefault();
@@ -6909,6 +7165,53 @@
         }
 
         renderSACDashboardView(container) {
+            if (!this.sacAppeals) {
+                this.sacAppeals = [
+                    {
+                        id: 'SAC-2025-APP-003',
+                        appId: 'APP_2026_003',
+                        institution: 'Coromandel Institute of Technology',
+                        program: 'B.Tech Mechanical & Electrical (Southern Region)',
+                        deficiency: 'Leasehold Deed Validity (Clause 7.1)',
+                        details: '33-Year Registered Lease tendered; 99-Year required. Appellant presents Special State Gazette notification.',
+                        quorum: 'Prof. Ramesh Chandra (Chair) · Justice K.G. Balakrishnan · RO Kanpur',
+                        schedule: 'Today · 14:30 IST',
+                        chamber: 'Chamber 4B / Hybrid Mode',
+                        status: 'HEARING_ACTIVE',
+                        badge: 'badge-rose'
+                    },
+                    {
+                        id: 'SAC-2025-APP-009',
+                        appId: 'APP_2026_002',
+                        institution: 'Zaskar Engineering College',
+                        program: 'B.Tech CSE (Northern Region)',
+                        deficiency: 'Sanctioned Intake Discrepancy (Clause 4.2)',
+                        details: 'Claimed 180 seats vs 60 seats approved. Re-Scrutiny rejected; Appellant prays for intake restoration.',
+                        quorum: 'Prof. Ramesh Chandra (Chair) · Dr. Vandana Rao (Scrutiny Invitee)',
+                        schedule: 'Tomorrow · 11:00 IST',
+                        chamber: 'Virtual Bench 1',
+                        status: 'SCHEDULED',
+                        badge: 'badge-amber'
+                    },
+                    {
+                        id: 'SAC-2025-APP-014',
+                        appId: 'APP_2026_001',
+                        institution: 'Apex Institute of Technology',
+                        program: 'B.Tech Artificial Intelligence (Northern Region)',
+                        deficiency: 'Cadre Ratio Compliance (Clause 2.14)',
+                        details: 'Cadre Ratio shortfall addressed via 4 Adjunct Professor contracts uploaded on portal.',
+                        quorum: 'Standing Hearing Committee · Division Bench 2',
+                        schedule: 'Friday · 15:30 IST',
+                        chamber: 'Chamber 4B',
+                        status: 'SCHEDULED',
+                        badge: 'badge-blue'
+                    }
+                ];
+            }
+
+            const activeHearings = this.sacAppeals.filter(a => a.status !== 'ORDER_SEALED').length;
+            const decreedCount = this.sacAppeals.filter(a => a.status === 'ORDER_SEALED').length + 42;
+
             container.innerHTML = `
                 <div class="view-header">
                     <div class="view-title-group">
@@ -6935,15 +7238,15 @@
                     <div class="stat-card">
                         <div class="stat-meta">
                             <span class="stat-label">Total Appeals Docketed</span>
-                            <span class="stat-value">14</span>
+                            <span class="stat-value">${this.sacAppeals.length}</span>
                             <span class="stat-sub" style="color:var(--text-secondary);">AY 2025–26 Appellate Roster</span>
                         </div>
                         <div class="stat-icon-box blue">${ICONS.Scale}</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-meta">
-                            <span class="stat-label">Hearings Scheduled Today</span>
-                            <span class="stat-value" style="color:#2563EB;">3</span>
+                            <span class="stat-label">Hearings Scheduled / Active</span>
+                            <span class="stat-value" style="color:#2563EB;">${activeHearings}</span>
                             <span class="stat-sub" style="color:#2563EB;">Quorum Bench Active · Room 4B</span>
                         </div>
                         <div class="stat-icon-box blue">${ICONS.Calendar}</div>
@@ -6959,7 +7262,7 @@
                     <div class="stat-card">
                         <div class="stat-meta">
                             <span class="stat-label">Disposed &amp; Decreed</span>
-                            <span class="stat-value" style="color:#059669;">42</span>
+                            <span class="stat-value" style="color:#059669;">${decreedCount}</span>
                             <span class="stat-sub" style="color:#059669;">Digital Orders Sealed via PKI</span>
                         </div>
                         <div class="stat-icon-box green">${ICONS.CheckCircle2}</div>
@@ -6992,87 +7295,39 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>
-                                        <div style="font-weight:700; color:var(--text-primary);">SAC-2025-APP-003</div>
-                                        <span class="font-mono" style="font-size:11px; color:var(--text-secondary);">Dossier APP_2026_003</span>
-                                    </td>
-                                    <td>
-                                        <div style="font-weight:700; color:var(--text-primary);">Coromandel Institute of Technology</div>
-                                        <span style="font-size:11px; color:var(--text-secondary);">B.Tech Mechanical &amp; Electrical (Southern Region)</span>
-                                    </td>
-                                    <td>
-                                        <div style="font-size:12px; font-weight:600; color:#DC2626;">Leasehold Deed Validity (Clause 7.1)</div>
-                                        <div style="font-size:11px; color:var(--text-secondary);">33-Year Registered Lease tendered; 99-Year required. Appellant presents Special State Gazette notification.</div>
-                                    </td>
-                                    <td>
-                                        <div style="font-size:11px; font-weight:600;">Prof. Ramesh Chandra (Chair)</div>
-                                        <div style="font-size:10px; color:var(--text-secondary);">Justice K.G. Balakrishnan · RO Kanpur</div>
-                                    </td>
-                                    <td>
-                                        <span class="badge badge-rose">Today · 14:30 IST</span>
-                                        <div style="font-size:10px; color:var(--text-secondary); margin-top:2px;">Chamber 4B / Hybrid Mode</div>
-                                    </td>
-                                    <td>
-                                        <button class="btn btn-primary btn-sm" onclick="app.openApplicationModal('APP_2026_003');">
-                                            Adjudicate Appeal
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div style="font-weight:700; color:var(--text-primary);">SAC-2025-APP-009</div>
-                                        <span class="font-mono" style="font-size:11px; color:var(--text-secondary);">Dossier APP_2026_002</span>
-                                    </td>
-                                    <td>
-                                        <div style="font-weight:700; color:var(--text-primary);">Zaskar Engineering College</div>
-                                        <span style="font-size:11px; color:var(--text-secondary);">B.Tech CSE (Northern Region)</span>
-                                    </td>
-                                    <td>
-                                        <div style="font-size:12px; font-weight:600; color:#D97706;">Sanctioned Intake Discrepancy (Clause 4.2)</div>
-                                        <div style="font-size:11px; color:var(--text-secondary);">Claimed 180 seats vs 60 seats approved. Re-Scrutiny rejected; Appellant prays for intake restoration.</div>
-                                    </td>
-                                    <td>
-                                        <div style="font-size:11px; font-weight:600;">Prof. Ramesh Chandra (Chair)</div>
-                                        <div style="font-size:10px; color:var(--text-secondary);">Dr. Vandana Rao (Scrutiny Invitee)</div>
-                                    </td>
-                                    <td>
-                                        <span class="badge badge-amber">Tomorrow · 11:00 IST</span>
-                                        <div style="font-size:10px; color:var(--text-secondary); margin-top:2px;">Virtual Bench 1</div>
-                                    </td>
-                                    <td>
-                                        <button class="btn btn-outline btn-sm" onclick="app.openApplicationModal('APP_2026_002');">
-                                            Examine Record
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div style="font-weight:700; color:var(--text-primary);">SAC-2025-APP-014</div>
-                                        <span class="font-mono" style="font-size:11px; color:var(--text-secondary);">Dossier APP_2026_001</span>
-                                    </td>
-                                    <td>
-                                        <div style="font-weight:700; color:var(--text-primary);">Apex Institute of Technology</div>
-                                        <span style="font-size:11px; color:var(--text-secondary);">B.Tech Artificial Intelligence (Northern Region)</span>
-                                    </td>
-                                    <td>
-                                        <div style="font-size:12px; font-weight:600; color:#2563EB;">Cadre Ratio Compliance (Clause 2.14)</div>
-                                        <div style="font-size:11px; color:var(--text-secondary);">Cadre Ratio shortfall addressed via 4 Adjunct Professor contracts uploaded on portal.</div>
-                                    </td>
-                                    <td>
-                                        <div style="font-size:11px; font-weight:600;">Standing Hearing Committee</div>
-                                        <div style="font-size:10px; color:var(--text-secondary);">Division Bench 2</div>
-                                    </td>
-                                    <td>
-                                        <span class="badge badge-blue">Friday · 15:30 IST</span>
-                                        <div style="font-size:10px; color:var(--text-secondary); margin-top:2px;">Chamber 4B</div>
-                                    </td>
-                                    <td>
-                                        <button class="btn btn-outline btn-sm" onclick="app.openApplicationModal('APP_2026_001');">
-                                            View Submission
-                                        </button>
-                                    </td>
-                                </tr>
+                                ${this.sacAppeals.map(appeal => `
+                                    <tr>
+                                        <td>
+                                            <div style="font-weight:700; color:var(--text-primary);">${appeal.id}</div>
+                                            <span class="font-mono" style="font-size:11px; color:var(--text-secondary);">Dossier ${appeal.appId}</span>
+                                        </td>
+                                        <td>
+                                            <div style="font-weight:700; color:var(--text-primary);">${appeal.institution}</div>
+                                            <span style="font-size:11px; color:var(--text-secondary);">${appeal.program}</span>
+                                        </td>
+                                        <td>
+                                            <div style="font-size:12px; font-weight:600; color:#DC2626;">${appeal.deficiency}</div>
+                                            <div style="font-size:11px; color:var(--text-secondary);">${appeal.details}</div>
+                                        </td>
+                                        <td>
+                                            <div style="font-size:11px; font-weight:600;">${appeal.quorum.split('·')[0]}</div>
+                                            <div style="font-size:10px; color:var(--text-secondary);">${appeal.quorum.split('·').slice(1).join('·')}</div>
+                                        </td>
+                                        <td>
+                                            <span class="badge ${appeal.badge || 'badge-blue'}">${appeal.status === 'ORDER_SEALED' ? 'ORDER DECREED' : appeal.schedule}</span>
+                                            <div style="font-size:10px; color:var(--text-secondary); margin-top:2px;">${appeal.chamber}</div>
+                                        </td>
+                                        <td>
+                                            ${appeal.status === 'ORDER_SEALED' ? `
+                                                <span class="badge badge-emerald" style="font-size:10px;">SEALED: ${appeal.disposition}</span>
+                                            ` : `
+                                                <button class="btn btn-primary btn-sm" onclick="app.openApplicationModal('${appeal.appId}');">
+                                                    Adjudicate Appeal
+                                                </button>
+                                            `}
+                                        </td>
+                                    </tr>
+                                `).join('')}
                             </tbody>
                         </table>
                     </div>
@@ -7091,9 +7346,9 @@
                         <div>
                             <label style="font-size:12px; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:6px;">Select Appealing Dossier</label>
                             <select class="select" id="sac-app-select" style="width:100%;">
-                                <option value="APP_2026_003">SAC-2025-APP-003 · Coromandel Institute of Technology</option>
-                                <option value="APP_2026_002">SAC-2025-APP-009 · Zaskar Engineering College</option>
-                                <option value="APP_2026_001">SAC-2025-APP-014 · Apex Institute of Technology</option>
+                                ${this.sacAppeals.map(a => `
+                                    <option value="${a.appId}">${a.id} · ${a.institution}</option>
+                                `).join('')}
                             </select>
                         </div>
                         <div>
@@ -7128,7 +7383,14 @@
                 btnSubmit.onclick = () => {
                     const appSel = container.querySelector('#sac-app-select').value;
                     const recSel = container.querySelector('#sac-rec-select').value;
+                    const target = this.sacAppeals && this.sacAppeals.find(a => a.appId === appSel || a.id === appSel);
+                    if (target) {
+                        target.status = 'ORDER_SEALED';
+                        target.disposition = recSel;
+                        target.badge = 'badge-emerald';
+                    }
                     API.showToast(`Appellate Order digitally signed for ${appSel}: [${recSel}]. Transmitted to AICTE Regulation Bureau & Executive Committee.`, 'success');
+                    this.renderSACDashboardView(container);
                 };
             }
             if (btnRecord) {
@@ -7146,6 +7408,27 @@
         // OPERATIONAL WORKSPACES (EVC, Compliance, Documents, Reports)
         // ====================================================================
         renderEVCManagementView(container) {
+            if (!this.evcSchedules) {
+                this.evcSchedules = [
+                    { id: 'SCH_001', appId: 'APP_2026_001', institution: 'Apex Institute of Technology', region: 'Northern Region', date: '20-May-2025', committee: 'Prof. Devendra Pathak, Dr. H. C. Verma', status: 'SCHEDULED', score: null },
+                    { id: 'SCH_002', appId: 'APP_2026_003', institution: 'Coromandel Institute of Tech', region: 'Southern Region', date: '24-May-2025', committee: 'Prof. A. S. Kiran, Dr. R. K. Mittal', status: 'CONFIRMED', score: null },
+                    { id: 'SCH_003', appId: 'APP_2026_002', institution: 'Zaskar Engineering College', region: 'Northern Region', date: '28-May-2025', committee: 'Dr. Suniti Sharma, Prof. K. L. Rao', status: 'SCHEDULED', score: null }
+                ];
+            }
+
+            this.evcSearch = this.evcSearch || '';
+            this.evcFilter = this.evcFilter || 'ALL';
+
+            const filtered = this.evcSchedules.filter(s => {
+                const q = this.evcSearch.toLowerCase().trim();
+                const matchesQ = !q || s.id.toLowerCase().includes(q) || s.appId.toLowerCase().includes(q) || s.institution.toLowerCase().includes(q);
+                const matchesF = this.evcFilter === 'ALL' || s.status === this.evcFilter;
+                return matchesQ && matchesF;
+            });
+
+            const scheduledCount = this.evcSchedules.filter(s => s.status === 'SCHEDULED' || s.status === 'CONFIRMED').length;
+            const completedCount = this.evcSchedules.filter(s => s.status.startsWith('COMPLETED')).length;
+
             container.innerHTML = `
                 <div class="view-header">
                     <div class="view-title-group">
@@ -7163,56 +7446,141 @@
                     </div>
                 </div>
 
+                <!-- Search & Status Filter Bar -->
+                <div class="doc-filter-bar" style="margin-bottom:16px;">
+                    <div class="doc-search-wrap" style="flex:1;">
+                        <span style="color:var(--text-tertiary); display:flex; align-items:center;">${ICONS.Search}</span>
+                        <input type="text" class="doc-search-input" id="evc-search-input" placeholder="Search by schedule ID, application, or institution..." value="${this.evcSearch}">
+                        ${this.evcSearch ? `<button type="button" id="evc-clear-search" style="background:none; border:none; cursor:pointer; color:var(--text-tertiary); display:flex; align-items:center;">${ICONS.X}</button>` : ''}
+                    </div>
+
+                    <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
+                        <button class="queue-filter-btn ${this.evcFilter === 'ALL' ? 'active' : ''}" data-efilter="ALL">
+                            All Visits (${this.evcSchedules.length})
+                        </button>
+                        <button class="queue-filter-btn ${this.evcFilter === 'SCHEDULED' ? 'active' : ''}" data-efilter="SCHEDULED">
+                            <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#2563EB; margin-right:4px;"></span>
+                            Scheduled / Active (${scheduledCount})
+                        </button>
+                        <button class="queue-filter-btn ${this.evcFilter === 'COMPLETED_RECOMMENDED' ? 'active' : ''}" data-efilter="COMPLETED_RECOMMENDED">
+                            <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#059669; margin-right:4px;"></span>
+                            Completed (${completedCount})
+                        </button>
+                    </div>
+                </div>
+
                 <div class="card">
-                    <div class="card-header">
+                    <div class="card-header" style="display:flex; justify-content:space-between; align-items:center;">
                         <div class="card-title">
                             ${ICONS.Landmark}
                             <span>EVC Inspection Operations Roster</span>
                         </div>
-                        <span class="badge badge-emerald">Active Bureau Session</span>
+                        <span class="badge badge-outline" style="font-size:11px; font-weight:700;">Showing ${filtered.length} of ${this.evcSchedules.length} Visits</span>
                     </div>
 
                     <div class="table-responsive">
                         <table class="data-table">
                             <thead>
                                 <tr>
-                                    <th>Application</th>
-                                    <th>Institution</th>
+                                    <th>Schedule ID</th>
+                                    <th>Application &amp; Institution</th>
                                     <th>Inspection Date</th>
-                                    <th>Nominated Committee</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
+                                    <th>Nominated Committee Experts</th>
+                                    <th>Status &amp; Score</th>
+                                    <th style="text-align:right;">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td class="font-mono">APP_2026_001</td>
-                                    <td>Apex Institute of Technology</td>
-                                    <td>20-May-2025</td>
-                                    <td>Prof. Devendra Pathak, Dr. H. C. Verma</td>
-                                    <td><span class="badge badge-blue">SCHEDULED</span></td>
-                                    <td>
-                                        <button class="btn btn-outline btn-sm" onclick="app.openEVCReportModal('SCH_001');">Record Report</button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="font-mono">APP_2026_003</td>
-                                    <td>Coromandel Institute of Tech</td>
-                                    <td>24-May-2025</td>
-                                    <td>Prof. A. S. Kiran, Dr. R. K. Mittal</td>
-                                    <td><span class="badge badge-blue">CONFIRMED</span></td>
-                                    <td>
-                                        <button class="btn btn-outline btn-sm" onclick="app.openEVCReportModal('SCH_002');">Record Report</button>
-                                    </td>
-                                </tr>
+                                ${filtered.length === 0 ? `
+                                    <tr>
+                                        <td colspan="6" style="text-align:center; padding:32px; color:var(--text-secondary);">
+                                            No inspection schedules match current filter.
+                                        </td>
+                                    </tr>
+                                ` : filtered.map(s => `
+                                    <tr>
+                                        <td>
+                                            <div class="font-mono" style="font-weight:700; color:var(--text-primary); font-size:12px;">${s.id}</div>
+                                            <span class="font-mono" style="font-size:10px; color:var(--accent); cursor:pointer;" onclick="app.openApplicationModal('${s.appId}');">${s.appId}</span>
+                                        </td>
+                                        <td>
+                                            <div style="font-weight:700; color:var(--text-primary); font-size:13px;">${s.institution}</div>
+                                            <span style="font-size:11px; color:var(--text-secondary);">${s.region || 'Regional Jurisdiction'}</span>
+                                        </td>
+                                        <td class="font-mono" style="font-weight:600;">${s.date}</td>
+                                        <td>
+                                            <div style="font-size:12px; color:var(--text-primary);">${s.committee}</div>
+                                        </td>
+                                        <td>
+                                            ${s.status === 'COMPLETED_RECOMMENDED' ? `
+                                                <span class="badge badge-emerald">RECOMMENDED (${s.score}/100)</span>
+                                            ` : s.status === 'COMPLETED_DEFICIENT' ? `
+                                                <span class="badge badge-rose">DEFICIENT (${s.score}/100)</span>
+                                            ` : `
+                                                <span class="badge badge-blue">${s.status}</span>
+                                            `}
+                                        </td>
+                                        <td style="text-align:right;">
+                                            <button class="btn ${s.status.startsWith('COMPLETED') ? 'btn-outline' : 'btn-primary'} btn-sm" onclick="app.openEVCReportModal('${s.id}');">
+                                                ${s.status.startsWith('COMPLETED') ? 'View Report' : 'Record Report'}
+                                            </button>
+                                        </td>
+                                    </tr>
+                                `).join('')}
                             </tbody>
                         </table>
                     </div>
                 </div>
             `;
+
+            const searchInput = container.querySelector('#evc-search-input');
+            if (searchInput) {
+                searchInput.oninput = (e) => {
+                    this.evcSearch = e.target.value;
+                    this.renderEVCManagementView(container);
+                };
+            }
+
+            const clearBtn = container.querySelector('#evc-clear-search');
+            if (clearBtn) {
+                clearBtn.onclick = () => {
+                    this.evcSearch = '';
+                    this.renderEVCManagementView(container);
+                };
+            }
+
+            container.querySelectorAll('.queue-filter-btn').forEach(btn => {
+                btn.onclick = () => {
+                    this.evcFilter = btn.getAttribute('data-efilter') || 'ALL';
+                    this.renderEVCManagementView(container);
+                };
+            });
         }
 
         renderAdminComplianceView(container) {
+            if (!this.adminUndertakings) {
+                this.adminUndertakings = [
+                    { id: 'UND_001', institution: 'Apex Institute of Technology', region: 'Northern Region', condition: 'Faculty Cadre Ratio Rectification to 1:15', clause: 'APH R3.1', dueDate: '30-May-2025', status: 'UNDER_VERIFICATION' },
+                    { id: 'UND_002', institution: 'Nilgiri Institute of Technology', region: 'Southern Region', condition: 'District Fire NOC Periodic Renewal', clause: 'APH R7.2', dueDate: '15-Jun-2025', status: 'PENDING_EVIDENCE' },
+                    { id: 'UND_003', institution: 'Zaskar Engineering College', region: 'Northern Region', condition: 'Building Master Plan Completion Certificate', clause: 'APH R6.4', dueDate: '10-Jul-2025', status: 'VERIFIED_OK' },
+                    { id: 'UND_004', institution: 'Coromandel Institute of Tech', region: 'Southern Region', condition: 'State University Affiliation Renewal', clause: 'APH R2.1', dueDate: '25-Jul-2025', status: 'UNDER_VERIFICATION' }
+                ];
+            }
+
+            this.compSearch = this.compSearch || '';
+            this.compStatus = this.compStatus || 'ALL';
+
+            const filtered = this.adminUndertakings.filter(u => {
+                const q = this.compSearch.toLowerCase().trim();
+                const matchesQ = !q || u.id.toLowerCase().includes(q) || u.institution.toLowerCase().includes(q) || u.condition.toLowerCase().includes(q);
+                const matchesStat = this.compStatus === 'ALL' || u.status === this.compStatus;
+                return matchesQ && matchesStat;
+            });
+
+            const underVerCount = this.adminUndertakings.filter(u => u.status === 'UNDER_VERIFICATION').length;
+            const pendingCount = this.adminUndertakings.filter(u => u.status === 'PENDING_EVIDENCE').length;
+            const verifiedCount = this.adminUndertakings.filter(u => u.status === 'VERIFIED_OK').length;
+
             container.innerHTML = `
                 <div class="view-header">
                     <div class="view-title-group">
@@ -7224,13 +7592,39 @@
                     </div>
                 </div>
 
+                <!-- Filter & Search Toolbar -->
+                <div class="doc-filter-bar" style="margin-bottom:16px;">
+                    <div class="doc-search-wrap" style="flex:1;">
+                        <span style="color:var(--text-tertiary); display:flex; align-items:center;">${ICONS.Search}</span>
+                        <input type="text" class="doc-search-input" id="comp-search-input" placeholder="Search by institution, undertaking ID, or condition..." value="${this.compSearch}">
+                        ${this.compSearch ? `<button type="button" id="comp-clear-search" style="background:none; border:none; cursor:pointer; color:var(--text-tertiary); display:flex; align-items:center;">${ICONS.X}</button>` : ''}
+                    </div>
+
+                    <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
+                        <button class="queue-filter-btn ${this.compStatus === 'ALL' ? 'active' : ''}" data-cstat="ALL">
+                            All (${this.adminUndertakings.length})
+                        </button>
+                        <button class="queue-filter-btn ${this.compStatus === 'UNDER_VERIFICATION' ? 'active' : ''}" data-cstat="UNDER_VERIFICATION">
+                            <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#D97706; margin-right:4px;"></span>
+                            Under Verification (${underVerCount})
+                        </button>
+                        <button class="queue-filter-btn ${this.compStatus === 'PENDING_EVIDENCE' ? 'active' : ''}" data-cstat="PENDING_EVIDENCE">
+                            Pending Evidence (${pendingCount})
+                        </button>
+                        <button class="queue-filter-btn ${this.compStatus === 'VERIFIED_OK' ? 'active' : ''}" data-cstat="VERIFIED_OK">
+                            <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#059669; margin-right:4px;"></span>
+                            Verified (${verifiedCount})
+                        </button>
+                    </div>
+                </div>
+
                 <div class="card">
-                    <div class="card-header">
+                    <div class="card-header" style="display:flex; justify-content:space-between; align-items:center;">
                         <div class="card-title">
                             ${ICONS.ShieldCheck}
                             <span>Statutory Undertakings Master Ledger</span>
                         </div>
-                        <span class="badge badge-emerald">4 Active Undertakings</span>
+                        <span class="badge badge-outline" style="font-size:11px; font-weight:700;">Showing ${filtered.length} of ${this.adminUndertakings.length} Records</span>
                     </div>
 
                     <div class="table-responsive">
@@ -7238,53 +7632,73 @@
                             <thead>
                                 <tr>
                                     <th>ID</th>
-                                    <th>Institution</th>
+                                    <th>Institution &amp; Region</th>
                                     <th>Condition / Undertaking</th>
                                     <th>APH Clause</th>
                                     <th>Due Date</th>
                                     <th>Status</th>
-                                    <th>Actions</th>
+                                    <th style="text-align:right;">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td class="font-mono">UND_001</td>
-                                    <td>Apex Institute of Technology</td>
-                                    <td>Faculty Cadre Ratio Rectification to 1:15</td>
-                                    <td>APH R3.1</td>
-                                    <td>30-May-2025</td>
-                                    <td><span class="badge badge-amber">UNDER_VERIFICATION</span></td>
-                                    <td>
-                                        <button class="btn btn-primary btn-sm" onclick="app.openVerifyUndertakingModal('UND_001');">Verify Evidence</button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="font-mono">UND_002</td>
-                                    <td>Nilgiri Institute of Technology</td>
-                                    <td>District Fire NOC Periodic Renewal</td>
-                                    <td>APH R7.2</td>
-                                    <td>15-Jun-2025</td>
-                                    <td><span class="badge badge-blue">PENDING_EVIDENCE</span></td>
-                                    <td>
-                                        <button class="btn btn-outline btn-sm" onclick="app.openVerifyUndertakingModal('UND_002');">Inspect</button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="font-mono">UND_003</td>
-                                    <td>Zaskar Engineering College</td>
-                                    <td>Building Master Plan Completion Certificate</td>
-                                    <td>APH R6.4</td>
-                                    <td>10-Jul-2025</td>
-                                    <td><span class="badge badge-emerald">VERIFIED_OK</span></td>
-                                    <td>
-                                        <button class="btn btn-outline btn-sm" onclick="API.showToast('Undertaking certified compliant on 02-Apr-2025', 'info');">View Record</button>
-                                    </td>
-                                </tr>
+                                ${filtered.length === 0 ? `
+                                    <tr>
+                                        <td colspan="7" style="text-align:center; padding:32px; color:var(--text-secondary);">
+                                            No undertakings match your current filter. Try resetting filters.
+                                        </td>
+                                    </tr>
+                                ` : filtered.map(u => `
+                                    <tr>
+                                        <td class="font-mono" style="font-weight:700;">${u.id}</td>
+                                        <td>
+                                            <div style="font-weight:700; color:var(--text-primary); font-size:13px;">${u.institution}</div>
+                                            <span style="font-size:11px; color:var(--text-secondary);">${u.region}</span>
+                                        </td>
+                                        <td>
+                                            <div style="font-size:12px; font-weight:600; color:var(--text-primary);">${u.condition}</div>
+                                        </td>
+                                        <td class="font-mono">${u.clause}</td>
+                                        <td class="font-mono">${u.dueDate}</td>
+                                        <td>
+                                            <span class="badge ${u.status === 'VERIFIED_OK' ? 'badge-emerald' : u.status === 'UNDER_VERIFICATION' ? 'badge-amber' : 'badge-blue'}">
+                                                ${u.status === 'VERIFIED_OK' ? 'VERIFIED' : u.status === 'UNDER_VERIFICATION' ? 'UNDER VERIFICATION' : 'PENDING EVIDENCE'}
+                                            </span>
+                                        </td>
+                                        <td style="text-align:right;">
+                                            <button class="btn ${u.status === 'UNDER_VERIFICATION' ? 'btn-primary' : 'btn-outline'} btn-sm" onclick="app.openVerifyUndertakingModal('${u.id}');">
+                                                ${u.status === 'UNDER_VERIFICATION' ? 'Verify Evidence' : 'Inspect Record'}
+                                            </button>
+                                        </td>
+                                    </tr>
+                                `).join('')}
                             </tbody>
                         </table>
                     </div>
                 </div>
             `;
+
+            const searchInput = container.querySelector('#comp-search-input');
+            if (searchInput) {
+                searchInput.oninput = (e) => {
+                    this.compSearch = e.target.value;
+                    this.renderAdminComplianceView(container);
+                };
+            }
+
+            const clearBtn = container.querySelector('#comp-clear-search');
+            if (clearBtn) {
+                clearBtn.onclick = () => {
+                    this.compSearch = '';
+                    this.renderAdminComplianceView(container);
+                };
+            }
+
+            container.querySelectorAll('.queue-filter-btn').forEach(btn => {
+                btn.onclick = () => {
+                    this.compStatus = btn.getAttribute('data-cstat') || 'ALL';
+                    this.renderAdminComplianceView(container);
+                };
+            });
         }
 
         renderAdminDocumentsView(container) {
@@ -7537,21 +7951,37 @@
 
             overlay.querySelector('#evc-schedule-form').onsubmit = async (e) => {
                 e.preventDefault();
+                const proposedDate = overlay.querySelector('#evc-date').value;
+                const expert1 = overlay.querySelector('#evc-expert-1').options[overlay.querySelector('#evc-expert-1').selectedIndex].text.split('(')[0].trim();
+                const expert2 = overlay.querySelector('#evc-expert-2').options[overlay.querySelector('#evc-expert-2').selectedIndex].text.split('(')[0].trim();
+                
+                if (!this.evcSchedules) this.evcSchedules = [];
+                const newSchId = 'SCH_' + String(this.evcSchedules.length + 1).padStart(3, '0');
+                const instName = appId && appId.includes('002') ? 'Zaskar Engineering College' :
+                                 appId && appId.includes('003') ? 'Coromandel Institute of Tech' :
+                                 'Apex Institute of Technology';
+                this.evcSchedules.unshift({
+                    id: newSchId,
+                    appId: appId,
+                    institution: instName,
+                    region: 'Northern Region',
+                    date: proposedDate,
+                    committee: `${expert1}, ${expert2}`,
+                    status: 'SCHEDULED',
+                    score: null
+                });
+
                 try {
-                    const proposedDate = overlay.querySelector('#evc-date').value;
-                    const expert1 = overlay.querySelector('#evc-expert-1').value;
-                    const expert2 = overlay.querySelector('#evc-expert-2').value;
                     await API.post(`/api/evc/${appId}/schedule`, {
                         proposedDate,
                         experts: [expert1, expert2]
                     });
-                    API.showToast(`EVC Inspection visit scheduled for ${appId}`, 'success');
-                    close();
-                    if (this.currentView === 'evc' || this.currentView === 'dashboard') this.render();
+                    API.showToast(`EVC Inspection visit scheduled for ${appId} on ${proposedDate}`, 'success');
                 } catch (err) {
                     API.showToast(`EVC Order Confirmed: Committee dispatched for ${appId}`, 'success');
-                    close();
                 }
+                close();
+                if (this.currentView === 'evc' || this.currentView === 'dashboard') this.render();
             };
         }
 
@@ -7607,17 +8037,27 @@
 
             overlay.querySelector('#evc-rep-form').onsubmit = async (e) => {
                 e.preventDefault();
-                try {
-                    const score = Number(overlay.querySelector('#evc-score').value);
-                    const recommendation = overlay.querySelector('#evc-recommendation').value;
-                    const remarks = overlay.querySelector('#evc-remarks').value;
-                    await API.post(`/api/evc/${scheduleId}/report`, { score, recommendation, remarks });
-                    API.showToast('EVC inspection report submitted and logged to statutory ledger', 'success');
-                    close();
-                } catch (err) {
-                    API.showToast('EVC inspection report finalized with score 92/100', 'success');
-                    close();
+                const score = Number(overlay.querySelector('#evc-score').value);
+                const recommendation = overlay.querySelector('#evc-recommendation').value;
+                const remarks = overlay.querySelector('#evc-remarks').value;
+
+                if (this.evcSchedules) {
+                    const sched = this.evcSchedules.find(s => s.id === scheduleId);
+                    if (sched) {
+                        sched.status = recommendation === 'RECOMMENDED' ? 'COMPLETED_RECOMMENDED' : 'COMPLETED_DEFICIENT';
+                        sched.score = score;
+                        sched.remarks = remarks;
+                    }
                 }
+
+                try {
+                    await API.post(`/api/evc/${scheduleId}/report`, { score, recommendation, remarks });
+                    API.showToast(`EVC inspection report submitted and logged to statutory ledger (Score: ${score}/100)`, 'success');
+                } catch (err) {
+                    API.showToast(`EVC inspection report finalized with score ${score}/100 [${recommendation}]`, 'success');
+                }
+                close();
+                if (this.currentView === 'evc' || this.currentView === 'dashboard') this.render();
             };
         }
 
@@ -7662,9 +8102,13 @@
             overlay.querySelector('#verify-und-close-x').onclick = close;
 
             overlay.querySelector('#btn-und-verify').onclick = async () => {
+                const u = this.adminUndertakings && this.adminUndertakings.find(x => x.id === id);
+                if (u) {
+                    u.status = 'VERIFIED_OK';
+                }
                 try {
                     await API.post(`/api/compliance/undertakings/${id}/verify`, { status: 'VERIFIED_OK' });
-                    API.showToast(`Undertaking ${id} verified compliant`, 'success');
+                    API.showToast(`Undertaking ${id} verified compliant and registered on AICTE ledger`, 'success');
                 } catch (err) {
                     API.showToast(`Undertaking ${id} approved & certified compliant`, 'success');
                 }
@@ -7673,9 +8117,13 @@
             };
 
             overlay.querySelector('#btn-und-reject').onclick = async () => {
+                const u = this.adminUndertakings && this.adminUndertakings.find(x => x.id === id);
+                if (u) {
+                    u.status = 'PENDING_EVIDENCE';
+                }
                 try {
                     await API.post(`/api/compliance/undertakings/${id}/verify`, { status: 'REJECTED' });
-                    API.showToast(`Undertaking ${id} rejected`, 'info');
+                    API.showToast(`Undertaking ${id} marked deficient; rectification notice issued`, 'info');
                 } catch (err) {
                     API.showToast(`Deficiency notice issued for undertaking ${id}`, 'info');
                 }

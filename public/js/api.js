@@ -17,14 +17,24 @@ const API = {
 
         try {
             const res = await fetch(url, { ...options, headers });
-            const data = await res.json();
+            const data = await res.json().catch(() => ({}));
             if (!res.ok) {
-                throw new Error(data.error || 'Server request failed');
+                const errorMsg = data.error || (
+                    res.status === 403 ? 'Access Denied: You do not possess the authorized regulatory clearance for this operation.' :
+                    res.status === 401 ? 'Session Expired: Please re-authenticate your official credentials.' :
+                    res.status === 404 ? 'Record Not Found: The specified statutory dossier or entity was not located.' :
+                    `Request Failed (${res.status}): AICTE Central gateway could not complete operation.`
+                );
+                throw new Error(errorMsg);
             }
             return data;
         } catch (err) {
-            console.error(`API Error [${url}]:`, err.message);
-            API.showToast(err.message, 'error');
+            let displayMsg = err.message;
+            if (err.name === 'TypeError' && err.message.toLowerCase().includes('fetch')) {
+                displayMsg = 'Network Connectivity Issue: Could not connect to the AICTE central gateway. Please verify network status and retry.';
+            }
+            console.error(`API Error [${url}]:`, displayMsg);
+            API.showToast(displayMsg, 'error');
             throw err;
         }
     },

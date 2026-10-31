@@ -982,25 +982,25 @@
                             </div>
                             <div class="notif-list">
                                 ${isApp ? `
-                                    <div class="notif-item unread">
+                                    <div class="notif-item unread" style="cursor:pointer;" onclick="app.openApplicationModal('APP-2025-001'); app.notifOpen = false; app.render();">
                                         <div class="notif-title">Completeness Check Cleared</div>
-                                        <div class="notif-msg">Preliminary scrutiny completed for APP-2026-001 with 94% statutory compliance index.</div>
+                                        <div class="notif-msg">Preliminary scrutiny completed for APP-2025-001 with 94% compliance index. Click to view dossier.</div>
                                         <div class="notif-time">Today • AICTE Scrutiny Desk</div>
                                     </div>
-                                    <div class="notif-item unread">
+                                    <div class="notif-item unread" style="cursor:pointer;" onclick="app.navigate('documents'); app.notifOpen = false;">
                                         <div class="notif-title">Statutory Renewal Reminder</div>
-                                        <div class="notif-msg">District Fire Safety NOC due for periodic renewal in 45 days (15-Jun-2025).</div>
+                                        <div class="notif-msg">District Fire Safety NOC due for renewal in 45 days (15-Jun-2025). Click to upload evidence.</div>
                                         <div class="notif-time">2 days ago • Statutory Advisory</div>
                                     </div>
                                 ` : `
-                                    <div class="notif-item unread">
-                                        <div class="notif-title">High Risk Deficiencies Flagged</div>
-                                        <div class="notif-msg">Zaskar Engineering College dossier exhibits intake discrepancy in CAD/CAM Lab.</div>
-                                        <div class="notif-time">Just now • APH Ch. I R4.2</div>
+                                    <div class="notif-item unread" style="cursor:pointer;" onclick="app.openApplicationModal('APP-2025-002'); app.notifOpen = false; app.render();">
+                                        <div class="notif-title">High Risk Deficiency Flagged</div>
+                                        <div class="notif-msg">Zaskar Engineering College dossier exhibits intake discrepancy (APH Ch. I R4.2). Click to inspect.</div>
+                                        <div class="notif-time">Just now • Scrutiny Alert</div>
                                     </div>
-                                    <div class="notif-item unread">
+                                    <div class="notif-item unread" style="cursor:pointer;" onclick="app.openApplicationModal('APP-2025-003'); app.notifOpen = false; app.render();">
                                         <div class="notif-title">Affiliation Expiration Warning</div>
-                                        <div class="notif-msg">Coromandel Institute of Technology university clearance renewal active.</div>
+                                        <div class="notif-msg">Coromandel Institute of Technology university affiliation renewal pending. Click to open docket.</div>
                                         <div class="notif-time">12 mins ago • SLA Watch</div>
                                     </div>
                                 `}
@@ -3682,21 +3682,74 @@
         // 11. STATUTORY AUDIT LEDGER
         // ====================================================================
         renderAuditView(container) {
+            const auditEvents = [
+                { block: '#00941', time: '29-Oct-2026 14:15:22', action: 'EVALUATE_ANOMALY', target: 'Zaskar Engineering College', actor: 'AICTE_AI_ENGINE (v2.4)', hash: '8f43a9b1c20e58d781b49911e0...', cat: 'EVALUATION', status: 'VERIFIED' },
+                { block: '#00940', time: '29-Oct-2026 12:44:01', action: 'ISSUE_DEFICIENCY_ORDER', target: 'ZEC-01 Intake Mismatch', actor: 'Dr. Vandana Rao (Scrutiny Chair)', hash: '4e98f02ba983cd1017efaa3421...', cat: 'DEFICIENCY', status: 'VERIFIED' },
+                { block: '#00939', time: '29-Oct-2026 10:20:18', action: 'UPLOAD_DOSSIER', target: 'Nilgiri Institute of Tech', actor: 'Dean Academics (nit.principal)', hash: '3c7104b901aef394239bcde881...', cat: 'DOSSIER', status: 'VERIFIED' },
+                { block: '#00938', time: '28-Oct-2026 17:05:44', action: 'EVC_INSPECTION_SCHEDULED', target: 'Apex Institute of Technology', actor: 'Er. Arvind Kejriwal (RO)', hash: '6a11b98cf02410a884e1b89912...', cat: 'EVALUATION', status: 'VERIFIED' },
+                { block: '#00937', time: '28-Oct-2026 09:30:10', action: 'UNDERTAKING_VERIFIED', target: 'Fire NOC Undertaking UND_001', actor: 'Dr. Rajesh Verma (Compliance)', hash: 'd90214aa8e1001bc9942a0014b...', cat: 'DEFICIENCY', status: 'VERIFIED' }
+            ];
+
+            this.auditSearch = this.auditSearch || '';
+            this.auditCat = this.auditCat || 'ALL';
+
+            const filtered = auditEvents.filter(ev => {
+                const q = this.auditSearch.toLowerCase().trim();
+                const matchesQ = !q || ev.block.toLowerCase().includes(q) || ev.action.toLowerCase().includes(q) || ev.target.toLowerCase().includes(q) || ev.actor.toLowerCase().includes(q);
+                const matchesC = this.auditCat === 'ALL' || ev.cat === this.auditCat;
+                return matchesQ && matchesC;
+            });
+
             container.innerHTML = `
                 <div class="view-header">
                     <div class="view-title-group">
-                        <h1>Tamper-Evident SHA-256 Statutory Audit Ledger</h1>
-                        <p>Cryptographic Merkle tree provenance chain for non-repudiation and oversight.</p>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <h1>Tamper-Evident SHA-256 Statutory Audit Ledger</h1>
+                            <span class="badge badge-emerald">Chained Merkle Tree</span>
+                        </div>
+                        <p>Cryptographic Merkle tree provenance chain providing ISO 27001 non-repudiation for regulatory oversight.</p>
                     </div>
                     <div class="view-actions">
-                        <button class="btn btn-outline btn-sm" id="btn-verify-chain">
+                        <button class="btn btn-primary btn-sm" id="btn-verify-chain">
                             ${ICONS.ShieldCheck}
-                            Verify Cryptographic Chain
+                            Verify Cryptographic Ledger
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Search & Category Filter Toolbar -->
+                <div class="doc-filter-bar" style="margin-bottom:16px;">
+                    <div class="doc-search-wrap" style="flex:1;">
+                        <span style="color:var(--text-tertiary); display:flex; align-items:center;">${ICONS.Search}</span>
+                        <input type="text" class="doc-search-input" id="audit-search-input" placeholder="Search by Block #, Action, Target Institution, or Actor..." value="${this.auditSearch}">
+                        ${this.auditSearch ? `<button type="button" id="audit-clear-search" style="background:none; border:none; cursor:pointer; color:var(--text-tertiary); display:flex; align-items:center;">${ICONS.X}</button>` : ''}
+                    </div>
+
+                    <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
+                        <button class="queue-filter-btn ${this.auditCat === 'ALL' ? 'active' : ''}" data-acat="ALL">
+                            All Events (${auditEvents.length})
+                        </button>
+                        <button class="queue-filter-btn ${this.auditCat === 'DEFICIENCY' ? 'active' : ''}" data-acat="DEFICIENCY">
+                            Deficiencies &amp; Orders
+                        </button>
+                        <button class="queue-filter-btn ${this.auditCat === 'EVALUATION' ? 'active' : ''}" data-acat="EVALUATION">
+                            Evaluations &amp; Visits
+                        </button>
+                        <button class="queue-filter-btn ${this.auditCat === 'DOSSIER' ? 'active' : ''}" data-acat="DOSSIER">
+                            Dossiers &amp; Uploads
                         </button>
                     </div>
                 </div>
 
                 <div class="card">
+                    <div class="card-header" style="display:flex; justify-content:space-between; align-items:center;">
+                        <div class="card-title">
+                            ${ICONS.FileSearch}
+                            <span>Audited Cryptographic Event Blocks</span>
+                        </div>
+                        <span class="badge badge-outline" style="font-size:11px; font-weight:700;">Showing ${filtered.length} of ${auditEvents.length} Blocks</span>
+                    </div>
+
                     <div class="table-responsive">
                         <table class="data-table">
                             <thead>
@@ -3710,35 +3763,57 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td class="font-mono">#00941</td>
-                                    <td class="font-mono">29-Oct-2026 14:15:22</td>
-                                    <td>EVALUATE_ANOMALY (Zaskar Engg)</td>
-                                    <td>AICTE_AI_ENGINE (v2.4)</td>
-                                    <td class="font-mono" style="font-size:10px;">8f43a9b1c20e58d781b49911e0...</td>
-                                    <td><span class="badge badge-emerald">VERIFIED</span></td>
-                                </tr>
-                                <tr>
-                                    <td class="font-mono">#00940</td>
-                                    <td class="font-mono">29-Oct-2026 12:44:01</td>
-                                    <td>ISSUE_DEFICIENCY_ORDER (ZEC-01)</td>
-                                    <td>officer (Dr. R. K. Shrivastava)</td>
-                                    <td class="font-mono" style="font-size:10px;">4e98f02ba983cd1017efaa3421...</td>
-                                    <td><span class="badge badge-emerald">VERIFIED</span></td>
-                                </tr>
-                                <tr>
-                                    <td class="font-mono">#00939</td>
-                                    <td class="font-mono">29-Oct-2026 10:20:18</td>
-                                    <td>UPLOAD_DOSSIER (Nilgiri Tech)</td>
-                                    <td>applicant (Dean Academics)</td>
-                                    <td class="font-mono" style="font-size:10px;">3c7104b901aef394239bcde881...</td>
-                                    <td><span class="badge badge-emerald">VERIFIED</span></td>
-                                </tr>
+                                ${filtered.length === 0 ? `
+                                    <tr>
+                                        <td colspan="6" style="text-align:center; padding:32px; color:var(--text-secondary);">
+                                            No audit events match your search query.
+                                        </td>
+                                    </tr>
+                                ` : filtered.map(ev => `
+                                    <tr>
+                                        <td class="font-mono" style="font-weight:700;">${ev.block}</td>
+                                        <td class="font-mono" style="font-size:11px;">${ev.time}</td>
+                                        <td>
+                                            <div style="font-weight:700; color:var(--text-primary); font-size:13px;">${ev.action}</div>
+                                            <span style="font-size:11px; color:var(--text-secondary);">${ev.target}</span>
+                                        </td>
+                                        <td>
+                                            <div style="font-size:12px; font-weight:600;">${ev.actor}</div>
+                                        </td>
+                                        <td>
+                                            <span class="font-mono" style="font-size:10px; color:var(--accent);">${ev.hash}</span>
+                                        </td>
+                                        <td><span class="badge badge-emerald">${ev.status}</span></td>
+                                    </tr>
+                                `).join('')}
                             </tbody>
                         </table>
                     </div>
                 </div>
             `;
+
+            const searchInput = container.querySelector('#audit-search-input');
+            if (searchInput) {
+                searchInput.oninput = (e) => {
+                    this.auditSearch = e.target.value;
+                    this.renderAuditView(container);
+                };
+            }
+
+            const clearBtn = container.querySelector('#audit-clear-search');
+            if (clearBtn) {
+                clearBtn.onclick = () => {
+                    this.auditSearch = '';
+                    this.renderAuditView(container);
+                };
+            }
+
+            container.querySelectorAll('.queue-filter-btn').forEach(btn => {
+                btn.onclick = () => {
+                    this.auditCat = btn.getAttribute('data-acat') || 'ALL';
+                    this.renderAuditView(container);
+                };
+            });
 
             document.getElementById('btn-verify-chain').onclick = () => {
                 API.showToast('Cryptographic audit ledger verified: 941 consecutive blocks sealed with zero hash collisions.', 'success');
@@ -4236,16 +4311,84 @@
             if (btnNew) btnNew.onclick = () => this.openNewApplicationModal();
         }
 
+        submitDraft(appId) {
+            const cleanTarget = (appId || '').replace(/[-_]/g, '').toLowerCase();
+            const app = this.applications.find(a => (a.id || '').replace(/[-_]/g, '').toLowerCase() === cleanTarget);
+            if (app) {
+                app.stage = 'SUBMITTED';
+                app.status = 'SUBMITTED_SUCCESS';
+                app.statusBadge = 'badge-blue';
+                app.slaTarget = '15-Jun-2025';
+                API.showToast(`Draft application ${app.id} successfully submitted and forwarded to Northern Scrutiny Desk!`, 'success');
+                this.render();
+            }
+        }
+
         // ====================================================================
         // 16. MY APPLICATIONS (Applicant Isolated View)
         // ====================================================================
         renderMyApplicationsView(container) {
-            const myApps = this.applications.filter(a => a.collegeId === 'nit-nilgiri' || a.id === 'APP-2025-001');
+            const myApps = this.applications.filter(a => a.collegeId === 'nit-nilgiri' || a.id.startsWith('APP-2025-001') || a.collegeName === 'Nilgiri Institute of Technology');
+
+            const renderTableRows = (appsToRender) => {
+                const tbody = container.querySelector('#my-apps-table-body');
+                if (!tbody) return;
+                if (appsToRender.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:32px; color:var(--text-secondary);">No applications match your search.</td></tr>`;
+                    return;
+                }
+                tbody.innerHTML = appsToRender.map(app => `
+                    <tr>
+                        <td class="font-mono"><strong>${app.id}</strong></td>
+                        <td>
+                            <div style="font-weight:700; color:var(--text-primary);">${app.appType}</div>
+                            <span style="font-size:11px; color:var(--text-secondary);">480 Seats Approved</span>
+                        </td>
+                        <td>2025-26</td>
+                        <td>
+                            <span class="badge ${app.stage === 'DRAFT' ? 'badge-amber' : 'badge-blue'}">${app.stage}</span>
+                        </td>
+                        <td class="font-mono">${app.slaTarget}</td>
+                        <td>
+                            <span class="badge ${app.statusBadge}">${app.status}</span>
+                        </td>
+                        <td>
+                            <div style="display:flex; align-items:center; gap:6px;">
+                                ${app.stage === 'DRAFT' ? `
+                                    <button class="btn btn-primary btn-sm" onclick="app.submitDraft('${app.id}');">
+                                        Submit Dossier
+                                    </button>
+                                    <button class="btn btn-outline btn-sm inspect-my-app-btn" data-app-id="${app.id}">
+                                        Edit
+                                    </button>
+                                ` : `
+                                    <button class="btn btn-outline btn-sm inspect-my-app-btn" data-app-id="${app.id}">
+                                        Inspect Dossier
+                                    </button>
+                                    <button class="btn btn-outline btn-sm" onclick="API.showToast('Generating official AICTE Case Docket (PDF)...', 'info');">
+                                        Docket PDF
+                                    </button>
+                                `}
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+
+                tbody.querySelectorAll('.inspect-my-app-btn').forEach(btn => {
+                    btn.onclick = () => {
+                        const appId = btn.getAttribute('data-app-id');
+                        this.openApplicationModal(appId);
+                    };
+                });
+            };
 
             container.innerHTML = `
                 <div class="view-header">
                     <div class="view-title-group">
-                        <h1>My Submitted Applications &amp; Approval Dossiers</h1>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <h1>My Submitted Applications &amp; Approval Dossiers</h1>
+                            <span class="badge badge-primary">Institutional Self-Service</span>
+                        </div>
                         <p>Nilgiri Institute of Technology (Permanent ID: SYN-2025-001) • Track approval status &amp; inspect case files</p>
                     </div>
                     <div class="view-actions">
@@ -4257,12 +4400,12 @@
                 </div>
 
                 <div class="card">
-                    <div class="card-header">
+                    <div class="card-header" style="display:flex; justify-content:space-between; align-items:center;">
                         <div class="card-title">
                             ${ICONS.FileText}
-                            <span>Submitted Institutional Dossiers (${myApps.length})</span>
+                            <span>Institutional Dossiers &amp; Filings (${myApps.length})</span>
                         </div>
-                        <input type="text" id="my-apps-search" class="input" placeholder="Search my applications..." style="max-width:240px;">
+                        <input type="text" id="my-apps-search" class="input" placeholder="Search my applications by ID or scheme..." style="max-width:280px;">
                     </div>
 
                     <div class="table-responsive">
@@ -4279,44 +4422,30 @@
                                 </tr>
                             </thead>
                             <tbody id="my-apps-table-body">
-                                ${myApps.map(app => `
-                                    <tr>
-                                        <td class="font-mono"><strong>${app.id}</strong></td>
-                                        <td>
-                                            <div style="font-weight:700; color:var(--text-primary);">${app.appType}</div>
-                                            <span style="font-size:11px; color:var(--text-secondary);">480 Seats Approved</span>
-                                        </td>
-                                        <td>2025-26</td>
-                                        <td><span class="badge badge-blue">${app.stage}</span></td>
-                                        <td class="font-mono">${app.slaTarget}</td>
-                                        <td><span class="badge ${app.statusBadge}">${app.status}</span></td>
-                                        <td>
-                                            <div style="display:flex; align-items:center; gap:8px;">
-                                                <button class="btn btn-outline btn-sm inspect-my-app-btn" data-app-id="${app.id}">
-                                                    Inspect Dossier
-                                                </button>
-                                                <button class="btn btn-outline btn-sm" onclick="API.showToast('Generating official AICTE Case Docket (PDF)...', 'info');">
-                                                    Docket PDF
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                `).join('')}
                             </tbody>
                         </table>
                     </div>
                 </div>
             `;
 
+            renderTableRows(myApps);
+
+            const searchInput = container.querySelector('#my-apps-search');
+            if (searchInput) {
+                searchInput.oninput = (e) => {
+                    const q = e.target.value.toLowerCase().trim();
+                    const filtered = myApps.filter(a => 
+                        a.id.toLowerCase().includes(q) || 
+                        a.appType.toLowerCase().includes(q) || 
+                        a.stage.toLowerCase().includes(q) || 
+                        a.status.toLowerCase().includes(q)
+                    );
+                    renderTableRows(filtered);
+                };
+            }
+
             const btnNew = container.querySelector('#btn-my-apps-file-new');
             if (btnNew) btnNew.onclick = () => this.openNewApplicationModal();
-
-            container.querySelectorAll('.inspect-my-app-btn').forEach(btn => {
-                btn.onclick = () => {
-                    const appId = btn.getAttribute('data-app-id');
-                    this.openApplicationModal(appId);
-                };
-            });
         }
 
         // ====================================================================

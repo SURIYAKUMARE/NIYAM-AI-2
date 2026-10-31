@@ -2763,6 +2763,25 @@
             if (btnAccept) {
                 btnAccept.onclick = () => {
                     const notes = document.getElementById('reviewer-adjudication-notes').value;
+                    const targetApp = (this.applications || []).find(a => 
+                        (this.selectedStudioCollegeId === 'zec-zaskar' && a.id === 'APP-2025-002') ||
+                        (this.selectedStudioCollegeId === 'cit-coromandel' && a.id === 'APP-2025-003') ||
+                        (a.id === 'APP-2025-001')
+                    );
+                    if (targetApp) {
+                        targetApp.status = 'DEFICIENCY_FLAGGED';
+                        targetApp.deficienciesCount = Math.max(1, (targetApp.deficienciesCount || 0) + 1);
+                    }
+                    if (this.auditLedger) {
+                        this.auditLedger.unshift({
+                            block: '#' + (104400 + Math.floor(Math.random() * 900)),
+                            action: 'SCRUTINY_DEFICIENCY_CONFIRMED',
+                            actor: this.getAuthoritativeRoleTitle() + ' (' + (this.currentUser ? this.currentUser.fullName : 'Officer') + ')',
+                            target: targetApp ? targetApp.id : 'STUDIO-DOC',
+                            hash: '0x' + Array.from(crypto.getRandomValues(new Uint8Array(8))).map(b => b.toString(16).padStart(2,'0')).join(''),
+                            timestamp: 'Just now'
+                        });
+                    }
                     API.showToast(`AI finding accepted by ${this.getAuthoritativeRoleTitle()}. Deficiency recorded: "${notes.slice(0, 40)}..."`, 'warning');
                 };
             }
@@ -2771,6 +2790,25 @@
             if (btnOverride) {
                 btnOverride.onclick = () => {
                     const notes = document.getElementById('reviewer-adjudication-notes').value;
+                    const targetApp = (this.applications || []).find(a => 
+                        (this.selectedStudioCollegeId === 'zec-zaskar' && a.id === 'APP-2025-002') ||
+                        (this.selectedStudioCollegeId === 'cit-coromandel' && a.id === 'APP-2025-003') ||
+                        (a.id === 'APP-2025-001')
+                    );
+                    if (targetApp) {
+                        targetApp.status = 'UNDER_SCRUTINY';
+                        targetApp.deficienciesCount = 0;
+                    }
+                    if (this.auditLedger) {
+                        this.auditLedger.unshift({
+                            block: '#' + (104400 + Math.floor(Math.random() * 900)),
+                            action: 'SCRUTINY_OVERRIDE_COMPLIANT',
+                            actor: this.getAuthoritativeRoleTitle() + ' (' + (this.currentUser ? this.currentUser.fullName : 'Officer') + ')',
+                            target: targetApp ? targetApp.id : 'STUDIO-DOC',
+                            hash: '0x' + Array.from(crypto.getRandomValues(new Uint8Array(8))).map(b => b.toString(16).padStart(2,'0')).join(''),
+                            timestamp: 'Just now'
+                        });
+                    }
                     API.showToast(`Official Reviewer Override recorded: Marked Compliant with justification logged to tamper-evident audit ledger.`, 'success');
                 };
             }
@@ -2778,6 +2816,25 @@
             const btnDefect = document.getElementById('btn-issue-defect-memo');
             if (btnDefect) {
                 btnDefect.onclick = () => {
+                    const targetApp = (this.applications || []).find(a => 
+                        (this.selectedStudioCollegeId === 'zec-zaskar' && a.id === 'APP-2025-002') ||
+                        (this.selectedStudioCollegeId === 'cit-coromandel' && a.id === 'APP-2025-003') ||
+                        (a.id === 'APP-2025-001')
+                    );
+                    if (targetApp) {
+                        targetApp.status = 'DEFICIENCY_FLAGGED';
+                        targetApp.deficienciesCount = Math.max(1, (targetApp.deficienciesCount || 0) + 1);
+                    }
+                    if (this.auditLedger) {
+                        this.auditLedger.unshift({
+                            block: '#' + (104400 + Math.floor(Math.random() * 900)),
+                            action: 'DEFECT_MEMO_72H_DISPATCHED',
+                            actor: this.getAuthoritativeRoleTitle() + ' (' + (this.currentUser ? this.currentUser.fullName : 'Officer') + ')',
+                            target: targetApp ? targetApp.id : 'STUDIO-DOC',
+                            hash: '0x' + Array.from(crypto.getRandomValues(new Uint8Array(8))).map(b => b.toString(16).padStart(2,'0')).join(''),
+                            timestamp: 'Just now'
+                        });
+                    }
                     API.showToast(`Formal 72-Hour Statutory Defect Memo dispatched to institution registrar via cryptographic notification ledger.`, 'info');
                 };
             }
@@ -6107,6 +6164,21 @@
             };
 
             const processFile = async (file) => {
+                const allowedExts = ['.pdf', '.png', '.jpg', '.jpeg'];
+                const fileNameLower = (file.name || '').toLowerCase();
+                const isValidExt = allowedExts.some(ext => fileNameLower.endsWith(ext));
+                if (!isValidExt) {
+                    API.showToast(`Invalid Document Format: "${file.name}" is not permitted. Only PDF, PNG, or JPG files are accepted for statutory audit records.`, 'error');
+                    fileInput.value = '';
+                    return;
+                }
+                const maxBytes = 25 * 1024 * 1024;
+                if (file.size > maxBytes) {
+                    API.showToast(`Document Size Exceeded: "${file.name}" is ${(file.size / 1024 / 1024).toFixed(1)}MB. Maximum allowed upload size is 25MB under APH norms.`, 'error');
+                    fileInput.value = '';
+                    return;
+                }
+
                 dropzoneText.innerHTML = `<strong>${file.name}</strong> (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
                 hashBadge.textContent = 'COMPUTING...';
                 hashBadge.style.color = '#D97706';
@@ -6134,6 +6206,12 @@
 
             overlay.querySelector('#doc-upload-form').onsubmit = (e) => {
                 e.preventDefault();
+                const submitBtn = overlay.querySelector('#upload-submit-btn');
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<span>Digesting & Registering in Vault...</span>';
+                }
+
                 const selectedType = overlay.querySelector('#upload-doc-type').value;
                 const newHash = hashValEl.textContent.trim();
                 const authVal = overlay.querySelector('#upload-authority').value;
@@ -7794,9 +7872,16 @@
                                             </span>
                                         </td>
                                         <td style="text-align:right;">
-                                            <button class="btn ${u.status === 'UNDER_VERIFICATION' ? 'btn-primary' : 'btn-outline'} btn-sm" onclick="app.openVerifyUndertakingModal('${u.id}');">
-                                                ${u.status === 'UNDER_VERIFICATION' ? 'Verify Evidence' : 'Inspect Record'}
-                                            </button>
+                                            <div style="display:inline-flex; gap:6px; justify-content:flex-end;">
+                                                ${u.status !== 'VERIFIED_OK' ? `
+                                                    <button class="btn btn-outline btn-sm" onclick="API.showToast('Official AICTE compliance reminder dispatched to Registrar of ${u.institution}', 'info');">
+                                                        Remind
+                                                    </button>
+                                                ` : ''}
+                                                <button class="btn ${u.status === 'UNDER_VERIFICATION' ? 'btn-primary' : 'btn-outline'} btn-sm" onclick="app.openVerifyUndertakingModal('${u.id}');">
+                                                    ${u.status === 'UNDER_VERIFICATION' ? 'Verify Evidence' : 'Inspect Record'}
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
                                 `).join('')}

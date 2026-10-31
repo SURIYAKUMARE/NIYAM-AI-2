@@ -163,6 +163,25 @@
             pkiCert: "X.509 CN=Prof. Anil Sahasrabudhe, OU=AICTE Apex Bureau, O=Govt of India"
         },
         {
+            username: "justice.ramesh.chandra",
+            aliases: ["sac_member1", "sac_member", "shc_member", "ramesh", "appellate_chair", "chauhan"],
+            fullName: "Prof. Ramesh Chandra",
+            designation: "Chairman, Standing Appellate Committee (SAC)",
+            shortRole: "SAC/SHC Member",
+            role: "sac_officer",
+            roleCode: "SAC_SHC_MEMBER",
+            roleName: "Standing Appellate Committee Member",
+            department: "AICTE Standing Appellate & Hearing Bureau",
+            email: "sac.chair@aicte-panel.org",
+            badge: "SAC/SHC Member",
+            cadreId: "AICTE/SAC-2025/003",
+            office: "Nelson Mandela Marg, New Delhi",
+            securityClearance: "LEVEL 4 (APPELLATE AUTHORITY)",
+            description: "Appeals Hearing, Quorum Deliberation & Standing Recommendations",
+            hasMfa: true,
+            pkiCert: "X.509 CN=Prof. Ramesh Chandra, OU=AICTE Appellate Bureau, O=Govt of India"
+        },
+        {
             username: "dr.rk.shrivastava",
             aliases: ["admin", "superadmin", "shrivastava"],
             fullName: "Dr. R. K. Shrivastava",
@@ -269,6 +288,7 @@
         X: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="16" height="16" class="ui-icon"><path d="M18 6 6 18M6 6l12 12"/></svg>`,
         Lock: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="16" height="16" class="ui-icon"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`,
         Folder: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="16" height="16" class="ui-icon"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>`,
+        Scale: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="16" height="16" class="ui-icon"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg>`,
         Check: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="16" height="16" class="ui-icon"><polyline points="20 6 9 17 4 12"/></svg>`
     };
 
@@ -413,6 +433,23 @@
                 { id: 'rules', label: 'APH Regulatory rules', icon: ICONS.Sliders }
             ]
         },
+        SAC_SHC_MEMBER: {
+            roleCode: 'SAC_SHC_MEMBER',
+            roleTitle: 'Appellate Committee Member',
+            shortRole: 'SAC/SHC Member',
+            workspaceTitle: 'Standing Appellate & Hearing Directorate',
+            jurisdiction: 'Standing Appellate Committee (SAC) & Standing Hearing Committee (SHC)',
+            overviewTitle: 'Appellate & hearing overview',
+            overviewSubtitle: 'Standing Hearing Committee & Appellate Adjudication Desk (APH 2025-26)',
+            nav: [
+                { id: 'dashboard', label: 'Overview', icon: ICONS.LayoutDashboard },
+                { id: 'sac', label: 'Appeals & hearing queue', icon: ICONS.Scale, badge: '3 Active' },
+                { id: 'applications', label: 'Appellate dossiers', icon: ICONS.FileText },
+                { id: 'findings', label: 'Deficiencies & appeals', icon: ICONS.AlertTriangle, badge: '5' },
+                { id: 'reports', label: 'Hearing reports', icon: ICONS.FileText },
+                { id: 'rules', label: 'APH Regulatory rules', icon: ICONS.Sliders }
+            ]
+        },
         REGULATION_BUREAU_ADMIN: {
             roleCode: 'REGULATION_BUREAU_ADMIN',
             roleTitle: 'Bureau Head',
@@ -513,6 +550,14 @@
             return r === 'auditor' || rc === 'AUDITOR' || u === 'shri.rajeshwar.rao' || u === 'auditor1';
         }
 
+        isSACMember() {
+            if (!this.currentUser) return false;
+            const r = (this.currentUser.role || '').toLowerCase();
+            const rc = (this.currentUser.roleCode || '').toUpperCase();
+            const u = (this.currentUser.username || '').toLowerCase();
+            return r === 'sac_officer' || rc === 'SAC_SHC_MEMBER' || u.includes('sac') || u.includes('shc') || u.includes('ramesh') || u.includes('chauhan');
+        }
+
         isBureauHead() {
             if (!this.currentUser) return false;
             const rc = (this.currentUser.roleCode || '').toUpperCase();
@@ -546,6 +591,7 @@
             if (this.isEVCMember()) return ROLE_CONFIG.EVC_MEMBER;
             if (this.isComplianceOfficer()) return ROLE_CONFIG.COMPLIANCE_OFFICER;
             if (this.isAuditor()) return ROLE_CONFIG.AUDITOR;
+            if (this.isSACMember()) return ROLE_CONFIG.SAC_SHC_MEMBER;
             if (this.isBureauHead()) return ROLE_CONFIG.REGULATION_BUREAU_ADMIN;
             if (this.isSystemAdmin()) return ROLE_CONFIG.SUPER_ADMIN;
             return ROLE_CONFIG.SCRUTINY_MEMBER;
@@ -1253,6 +1299,8 @@
                         this.renderComplianceDashboardView(container);
                     } else if (this.isAuditor()) {
                         this.renderAuditorDashboardView(container);
+                    } else if (this.isSACMember()) {
+                        this.renderSACDashboardView(container);
                     } else {
                         this.renderDashboardView(container);
                     }
@@ -1290,6 +1338,9 @@
                     break;
                 case 'reports':
                     this.renderReportsView(container);
+                    break;
+                case 'sac':
+                    this.renderSACDashboardView(container);
                     break;
                 case 'colleges':
                     if (this.isApplicant()) { this.navigate('dashboard'); return; }
@@ -2439,82 +2490,166 @@
                     </div>
                 </div>
 
-                <!-- Main Dual-Column Layout: Left Gauge, Right Document & Mismatch -->
+                <!-- Main Dual-Column Layout: Left Document Viewer, Right AI Findings & Human Sign-off -->
                 <div class="verify-layout-grid">
                     
-                    <!-- Left: Trust Score Radial Gauge & 4 Pillars -->
-                    <div style="display:flex; flex-direction:column; gap:20px;">
-                        <div class="gauge-card">
-                            <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border); padding-bottom:12px;">
-                                <div style="font-size:14px; font-weight:800; color:var(--text-primary); display:flex; align-items:center; gap:6px;">
-                                    ${ICONS.ShieldCheck}
-                                    <span>AI Trust Score</span>
+                    <!-- Left: Interactive OCR Document Viewer & Bounding Boxes -->
+                    <div style="display:flex; flex-direction:column; gap:16px;">
+                        <div class="card">
+                            <div class="card-header" style="padding:14px 18px;">
+                                <div>
+                                    <div class="card-title" style="font-size:14px;">
+                                        ${ICONS.Scan}
+                                        <span>Interactive OCR Document &amp; Bounding Box Inspector</span>
+                                    </div>
+                                    <div class="card-subtitle" style="font-size:11px;">
+                                        ${data.ocrData ? data.ocrData.fileName : 'approval_letter.pdf'} • <span class="font-mono" style="color:var(--text-secondary);">SHA-256: 8f43a9b1...8f89</span>
+                                    </div>
                                 </div>
-                                <span class="badge ${score >= 90 ? 'badge-emerald' : (score >= 70 ? 'badge-amber' : 'badge-rose')}">
-                                    ${score >= 90 ? 'PASSED' : (score >= 70 ? 'REVIEW' : 'REJECTED')}
-                                </span>
-                            </div>
-
-                            <div class="gauge-svg-wrap">
-                                <svg class="gauge-svg" viewBox="0 0 140 140">
-                                    <circle cx="70" cy="70" r="58" class="gauge-bg-circle"/>
-                                    <circle cx="70" cy="70" r="58" class="gauge-progress-circle" 
-                                            stroke="${strokeColor}" 
-                                            stroke-dasharray="${circumference}" 
-                                            stroke-dashoffset="${strokeDashoffset}"/>
-                                </svg>
-                                <div class="gauge-center-text">
-                                    <span class="gauge-score-num" style="color:${strokeColor};">${score}</span>
-                                    <span class="gauge-score-label">/ 100</span>
+                                <div style="display:flex; align-items:center; gap:8px;">
+                                    <span class="badge ${data.ocrData && data.ocrData.isQrValid ? 'badge-emerald' : 'badge-rose'}">
+                                        QR: ${data.ocrData && data.ocrData.isQrValid ? 'VALID' : 'ALTERED'}
+                                    </span>
+                                    <span class="badge badge-blue">LayoutLMv3</span>
                                 </div>
                             </div>
 
-                            <div style="text-align:center;">
-                                <div style="font-size:13px; font-weight:800; color:var(--text-primary);">${data.statusLabel}</div>
-                                <div style="font-size:11px; color:var(--text-secondary); margin-top:2px;">AICTE APH 2025 Compliance Engine Evaluation</div>
-                            </div>
+                            <div class="ocr-preview-pane" style="background:#F8FAFC; padding:16px;">
+                                <div class="ocr-page-mock" style="position:relative; min-height:480px; box-shadow:0 4px 16px rgba(0,0,0,0.06); border-radius:8px; border:1px solid #CBD5E1; padding:28px;">
+                                    <div style="text-align:center; border-bottom:2px solid #0F172A; padding-bottom:12px; margin-bottom:18px;">
+                                        <div style="font-size:13px; font-weight:800; letter-spacing:0.06em; color:#0F172A;">ALL INDIA COUNCIL FOR TECHNICAL EDUCATION</div>
+                                        <div style="font-size:11px; color:#475569;">(A STATUTORY BODY OF THE GOVERNMENT OF INDIA)</div>
+                                        <div style="font-size:10px; font-weight:600; color:#64748B; margin-top:2px;">Nelson Mandela Marg, Vasant Kunj, New Delhi-110070 • approval@aicte-india.org</div>
+                                    </div>
 
-                            <!-- 4 Pillars Breakdown -->
-                            <div style="display:flex; flex-direction:column; gap:8px;">
-                                <div style="font-size:11px; font-weight:700; color:var(--text-tertiary); text-transform:uppercase;">Statutory Compliance Pillars</div>
-                                ${(data.pillars || []).map(p => `
-                                    <div class="pillar-item">
-                                        <div style="min-width:0;">
-                                            <div class="pillar-name">${p.name}</div>
-                                            <div style="font-size:10px; color:var(--text-secondary); line-height:1.2;">${p.description}</div>
+                                    <div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:14px; color:#334155;">
+                                        <span><strong>F.No. AICTE/AB/2025-26/${this.selectedStudioCollegeId.toUpperCase()}</strong></span>
+                                        <span><strong>Date: 30-Apr-2025</strong></span>
+                                    </div>
+
+                                    <p style="font-size:12px; margin-bottom:14px; line-height:1.5; color:#1E293B;">
+                                        <strong>Sub: Extension of Approval (EoA) to the Institution for Academic Year 2025-26.</strong><br>
+                                        <span style="font-size:11px; color:#475569;">Ref: Application of the Institution for Extension of Approval / New Programs.</span>
+                                    </p>
+
+                                    <div style="border:1px solid #CBD5E1; border-radius:6px; padding:12px; margin-bottom:16px; background:#FFFFFF; position:relative;">
+                                        <div style="font-size:11px; font-weight:700; color:#1E293B; margin-bottom:6px; border-bottom:1px dashed #E2E8F0; padding-bottom:4px;">
+                                            APPROVED INTAKE &amp; CADRE ALLOTMENT (APH 2025–26):
                                         </div>
-                                        <div class="pillar-score" style="color:${p.passed ? '#059669' : '#DC2626'};">
-                                            ${p.score} / ${p.maxScore}
+                                        <div style="font-size:11px; color:#334155; margin-bottom:4px;">Permanent Institute ID: <span class="font-mono" style="font-weight:700;">SYN-2025-009</span></div>
+                                        <div style="font-size:11px; color:#334155; margin-bottom:8px;">Institution Name: <strong>Zaskar Engineering College</strong></div>
+                                        
+                                        <!-- Bounding Box Annotation -->
+                                        <div style="position:relative; padding:8px 10px; border-radius:6px; background:rgba(220,38,38,0.06); border:2px dashed ${score < 50 ? '#DC2626' : '#2563EB'};">
+                                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2px;">
+                                                <span style="font-size:11px; font-weight:700; color:#0F172A;">B.Tech Computer Science &amp; Engineering:</span>
+                                                <span class="badge ${score < 50 ? 'badge-rose' : 'badge-emerald'}" style="font-size:9px;">
+                                                    ${score < 50 ? 'TAMPERED INTAKE DETECTED' : 'INTAKE MATCH'}
+                                                </span>
+                                            </div>
+                                            <div style="font-size:12px; font-family:monospace; font-weight:700; color:${score < 50 ? '#DC2626' : '#059669'};">
+                                                Extracted Text: "${data.mismatches && data.mismatches[0] ? data.mismatches[0].extractedValue : '180 seats'}"
+                                                <span style="font-size:10px; font-weight:400; color:#64748B;">(Authoritative Sanction: ${data.mismatches && data.mismatches[0] ? data.mismatches[0].expectedValue : '60 seats'})</span>
+                                            </div>
+                                            <div style="font-size:10px; color:#64748B; margin-top:4px;">
+                                                OCR Bounding Box: [x: 142, y: 388, w: 210, h: 26] • Neural Confidence: <strong>72.4%</strong>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div style="font-size:11px; color:#475569; margin-top:14px; line-height:1.5;">
+                                        This approval is issued in accordance with statutory regulations published in AICTE Approval Process Handbook (APH 2025–26).
+                                        Any tampering with intake figures, seals, or forged signatures constitutes a penal offence under Section 10 of AICTE Act, 1987.
+                                    </div>
+
+                                    <!-- Digital Signature Block -->
+                                    <div style="margin-top:20px; display:flex; justify-content:flex-end;">
+                                        <div style="border:1px solid ${score < 50 ? '#DC2626' : '#059669'}; background:${score < 50 ? '#FEF2F2' : '#ECFDF5'}; padding:10px 16px; border-radius:6px; text-align:right; font-size:11px;">
+                                            <div style="font-weight:700; color:${score < 50 ? '#DC2626' : '#059669'}; display:flex; align-items:center; gap:6px; justify-content:flex-end;">
+                                                ${ICONS.ShieldCheck}
+                                                DIGITALLY SIGNED VIA PKI
+                                            </div>
+                                            <div style="color:#334155; font-size:10px;">Advisor-I (Approval Bureau), AICTE HQ</div>
+                                            <div class="font-mono" style="font-size:9px; color:#64748B; margin-top:2px;">
+                                                ${score < 50 ? 'CERT_SIGNATURE_KEY_REVOKED (FAIL)' : 'SHA256:X.509/VALID'}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="padding:10px 16px; background:var(--surface-muted); border-top:1px solid var(--border); font-size:11px; color:var(--text-secondary); display:flex; justify-content:space-between; align-items:center;">
+                                <span>Cryptographic Ledger Audit: <strong>Verified Immutable Block #1842</strong></span>
+                                <span class="badge badge-emerald">Non-Repudiation Pass</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: AI Findings, Trust Score & Human Reviewer Sign-off -->
+                    <div style="display:flex; flex-direction:column; gap:16px;">
+                        
+                        <!-- AI Trust Score & 4 Pillars Strip -->
+                        <div class="card" style="padding:16px;">
+                            <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:16px; border-bottom:1px solid var(--border); padding-bottom:14px; margin-bottom:14px;">
+                                <div style="display:flex; align-items:center; gap:16px;">
+                                    <div class="gauge-svg-wrap" style="width:84px; height:84px; margin:0;">
+                                        <svg class="gauge-svg" viewBox="0 0 140 140">
+                                            <circle cx="70" cy="70" r="58" class="gauge-bg-circle"/>
+                                            <circle cx="70" cy="70" r="58" class="gauge-progress-circle" 
+                                                    stroke="${strokeColor}" 
+                                                    stroke-dasharray="${circumference}" 
+                                                    stroke-dashoffset="${strokeDashoffset}"/>
+                                        </svg>
+                                        <div class="gauge-center-text">
+                                            <span class="gauge-score-num" style="font-size:22px; color:${strokeColor};">${score}</span>
+                                            <span class="gauge-score-label" style="font-size:9px;">/ 100</span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div style="font-size:14px; font-weight:800; color:var(--text-primary); display:flex; align-items:center; gap:6px;">
+                                            <span>AI Trust Confidence Index</span>
+                                            <span class="badge ${score >= 90 ? 'badge-emerald' : (score >= 70 ? 'badge-amber' : 'badge-rose')}">
+                                                ${score >= 90 ? 'PASSED' : (score >= 70 ? 'REVIEW' : 'REJECTED')}
+                                            </span>
+                                        </div>
+                                        <div style="font-size:12px; font-weight:700; color:${strokeColor}; margin-top:2px;">${data.statusLabel}</div>
+                                        <div style="font-size:11px; color:var(--text-secondary);">Evaluated via Multi-Modal LayoutLMv3 + Ledger Validation</div>
+                                    </div>
+                                </div>
+                                <button class="btn btn-outline btn-sm" id="btn-simulate-upload">
+                                    ${ICONS.Upload}
+                                    Simulate Dossier
+                                </button>
+                            </div>
+
+                            <!-- 4 Compliance Pillars -->
+                            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:8px;">
+                                ${(data.pillars || []).map(p => `
+                                    <div class="pillar-item" style="padding:6px 10px;">
+                                        <div style="min-width:0;">
+                                            <div class="pillar-name" style="font-size:11px;">${p.name}</div>
+                                            <div style="font-size:10px; color:var(--text-secondary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${p.description}</div>
+                                        </div>
+                                        <div class="pillar-score" style="color:${p.passed ? '#059669' : '#DC2626'}; font-size:11px;">
+                                            ${p.score}/${p.maxScore}
                                         </div>
                                     </div>
                                 `).join('')}
                             </div>
                         </div>
 
-                        <!-- Upload New Test Document Box -->
-                        <div class="card" style="border-style:dashed; border-width:2px; text-align:center; padding:24px;">
-                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="32" height="32" style="color:var(--accent); margin:0 auto 10px;"><path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
-                            <div style="font-size:13px; font-weight:700; color:var(--text-primary);">Drop Document to Run AI Audit</div>
-                            <div style="font-size:11px; color:var(--text-secondary); margin:4px 0 12px;">Supports A4 PDF, Scanned TIFF, PNG</div>
-                            <button class="btn btn-outline btn-sm" id="btn-simulate-upload" style="margin:0 auto;">
-                                Select PDF File
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Right: Bounding Box OCR View & Mismatch Highlighter -->
-                    <div style="display:flex; flex-direction:column; gap:20px;">
-                        
-                        <!-- Mismatch Highlighter Table -->
+                        <!-- AI Suggested Findings (Clearly Labeled as AI Suggestion) -->
                         <div class="card">
-                            <div class="card-header">
+                            <div class="card-header" style="padding:14px 18px;">
                                 <div>
-                                    <div class="card-title">
+                                    <div class="card-title" style="font-size:14px; display:flex; align-items:center; gap:6px;">
                                         ${ICONS.AlertTriangle}
-                                        <span>Real-Time Discrepancy &amp; Mismatch Highlighter</span>
+                                        <span>AI Suggested Discrepancies &amp; Mismatch Highlights</span>
                                     </div>
-                                    <div class="card-subtitle">Claimed Institutional Values vs AI Extracted Evidence &amp; Authoritative APH Ledgers</div>
+                                    <div class="card-subtitle" style="font-size:11px;">
+                                        AI Suggestions extracted from OCR tokens vs AICTE Approval Process Handbook (APH 2025–26)
+                                    </div>
                                 </div>
+                                <span class="badge badge-indigo">AI SUGGESTION</span>
                             </div>
 
                             <div class="table-responsive">
@@ -2522,17 +2657,19 @@
                                     <thead>
                                         <tr>
                                             <th>Field / Cadre</th>
-                                            <th>Claimed Value</th>
-                                            <th>AI Extracted Value</th>
+                                            <th>Sanctioned</th>
+                                            <th>Extracted</th>
                                             <th>Status</th>
-                                            <th>Severity</th>
-                                            <th>APH Rule Citation</th>
+                                            <th>Statutory Citation</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         ${(data.mismatches || []).map(m => `
                                             <tr>
-                                                <td><strong>${m.fieldName}</strong><br><span style="font-size:10px; color:var(--text-secondary);">${m.category}</span></td>
+                                                <td>
+                                                    <strong>${m.fieldName}</strong><br>
+                                                    <span style="font-size:10px; color:var(--text-secondary);">${m.category}</span>
+                                                </td>
                                                 <td class="font-mono">${m.expectedValue}</td>
                                                 <td class="font-mono" style="${m.status === 'TAMPERED' ? 'color:#DC2626; font-weight:700;' : ''}">${m.extractedValue}</td>
                                                 <td>
@@ -2541,11 +2678,11 @@
                                                     </span>
                                                 </td>
                                                 <td>
-                                                    <span class="badge ${m.severity === 'PASSED' ? 'badge-emerald' : (m.severity === 'CRITICAL' ? 'badge-rose' : 'badge-amber')}">
-                                                        ${m.severity}
-                                                    </span>
+                                                    <button class="btn btn-outline btn-sm" style="font-size:11px; padding:3px 8px;" onclick="app.openCitationModal('${m.ruleCitation}');">
+                                                        ${ICONS.BookOpen}
+                                                        Inspect Rule
+                                                    </button>
                                                 </td>
-                                                <td class="font-mono" style="font-size:11px;">${m.ruleCitation}</td>
                                             </tr>
                                         `).join('')}
                                     </tbody>
@@ -2553,66 +2690,46 @@
                             </div>
                         </div>
 
-                        <!-- OCR Document Preview Pane with Bounding Boxes -->
-                        <div class="card">
-                            <div class="card-header">
+                        <!-- Human Reviewer Determination & Sign-off Panel (Clearly Labeled as Human Determination) -->
+                        <div class="card" style="border-top:3px solid var(--accent);">
+                            <div class="card-header" style="padding:14px 18px;">
                                 <div>
-                                    <div class="card-title">
-                                        ${ICONS.Scan}
-                                        <span>Interactive OCR Document &amp; Bounding Box Inspector</span>
+                                    <div class="card-title" style="font-size:14px; display:flex; align-items:center; gap:6px;">
+                                        ${ICONS.ShieldCheck}
+                                        <span>Human Reviewer Determination &amp; Official Sign-Off</span>
                                     </div>
-                                    <div class="card-subtitle">${data.ocrData ? data.ocrData.fileName : 'approval_letter.pdf'} • SHA-256 Verified</div>
+                                    <div class="card-subtitle" style="font-size:11px;">
+                                        Authoritative statutory determination by Scrutiny / Compliance Officer
+                                    </div>
                                 </div>
-                                <div style="display:flex; gap:6px;">
-                                    <span class="badge ${data.ocrData && data.ocrData.isQrValid ? 'badge-emerald' : 'badge-rose'}">
-                                        QR: ${data.ocrData && data.ocrData.isQrValid ? 'VALID' : 'CORRUPTED/ALTERED'}
-                                    </span>
-                                </div>
+                                <span class="badge badge-emerald">HUMAN DETERMINATION</span>
                             </div>
 
-                            <div class="ocr-preview-pane">
-                                <div class="ocr-page-mock" style="position:relative; min-height:360px;">
-                                    <div style="text-align:center; border-bottom:2px solid #0F172A; padding-bottom:8px; margin-bottom:16px;">
-                                        <div style="font-size:12px; font-weight:800; letter-spacing:0.05em;">ALL INDIA COUNCIL FOR TECHNICAL EDUCATION</div>
-                                        <div style="font-size:10px;">(A STATUTORY BODY OF THE GOVERNMENT OF INDIA)</div>
-                                        <div style="font-size:10px; font-weight:700; margin-top:2px;">Nelson Mandela Marg, Vasant Kunj, New Delhi-110070</div>
-                                    </div>
+                            <div style="padding:16px; display:flex; flex-direction:column; gap:12px;">
+                                <div style="font-size:12px; color:var(--text-secondary); background:var(--surface-muted); padding:10px 12px; border-radius:8px;">
+                                    <strong>Statutory Advisory:</strong> AI advisory findings assist review. Final statutory approval decisions remain exclusively with competent AICTE authorities.
+                                </div>
 
-                                    <div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:12px;">
-                                        <span>F.No. AICTE/AB/2025-26/${this.selectedStudioCollegeId.toUpperCase()}</span>
-                                        <span>Date: 30-Apr-2025</span>
-                                    </div>
+                                <div>
+                                    <label style="font-size:12px; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:4px;">
+                                        Official Scrutiny Remarks &amp; Finding Rationale:
+                                    </label>
+                                    <textarea class="input" id="reviewer-adjudication-notes" rows="2" style="width:100%; font-size:12px;" placeholder="Record reviewer notes or reason for override/defect memo...">${score < 50 ? 'Discrepancy confirmed: Claimed 180 seats in CSE violates APH 2025-26 Clause 4.2 single-division ceiling of 60 seats. Defect memo initiated.' : 'Document verified compliant with APH 2025-26 norms.'}</textarea>
+                                </div>
 
-                                    <p style="font-size:12px; margin-bottom:12px;">
-                                        <strong>Sub: Extension of Approval (EoA) to the Institution for Academic Year 2025-26.</strong>
-                                    </p>
-
-                                    <div style="border:1px solid #CBD5E1; border-radius:6px; padding:10px; margin-bottom:14px; position:relative;">
-                                        <div style="font-size:11px; font-weight:700; margin-bottom:4px;">INSTITUTION CADRE &amp; APPROVED INTAKE:</div>
-                                        <div style="font-size:11px;">Permanent ID: <span class="font-mono">SYN-2025-009</span></div>
-                                        <div style="font-size:11px;">Institution Name: <strong>Zaskar Engineering College</strong></div>
-                                        <div style="font-size:11px; position:relative; display:inline-block; margin-top:4px;">
-                                            <span>B.Tech Computer Science &amp; Engineering: </span>
-                                            <strong style="color:${score < 50 ? '#DC2626' : '#059669'};">180 Seats (Altered)</strong>
-                                            
-                                            <!-- SVG Simulated Bounding Box for anomaly -->
-                                            <span style="position:absolute; inset:-3px -6px; border:2px dashed ${score < 50 ? '#DC2626' : '#2563EB'}; background:rgba(220,38,38,0.1); border-radius:4px;"></span>
-                                        </div>
-                                    </div>
-
-                                    <div style="font-size:11px; color:#475569; margin-top:16px;">
-                                        This approval is issued in accordance with the provisions of AICTE Approval Process Handbook 2025-26. 
-                                        Any tampering with intake capacity or forged affiliation signatures constitutes a statutory violation under Section 10 of AICTE Act 1987.
-                                    </div>
-
-                                    <!-- Digital Signature Box -->
-                                    <div style="margin-top:24px; display:flex; justify-content:flex-end;">
-                                        <div style="border:1px solid ${score < 50 ? '#DC2626' : '#059669'}; background:${score < 50 ? '#FEF2F2' : '#ECFDF5'}; padding:8px 14px; border-radius:6px; text-align:center; font-size:10px;">
-                                            <div style="font-weight:700; color:${score < 50 ? '#DC2626' : '#059669'};">DIGITALLY SIGNED</div>
-                                            <div>AICTE Bureau of Approvals</div>
-                                            <div class="font-mono" style="font-size:9px;">${score < 50 ? 'KEY_REVOKED_FAIL' : 'PKI_X509_VALID'}</div>
-                                        </div>
-                                    </div>
+                                <div style="display:flex; flex-wrap:wrap; justify-content:flex-end; gap:8px; pt-2;">
+                                    <button class="btn btn-danger btn-sm" id="btn-accept-ai-finding">
+                                        ${ICONS.AlertTriangle}
+                                        Accept AI Finding (Mark Deficient)
+                                    </button>
+                                    <button class="btn btn-outline btn-sm" id="btn-override-compliant">
+                                        ${ICONS.Check}
+                                        Override / Mark Compliant
+                                    </button>
+                                    <button class="btn btn-primary btn-sm" id="btn-issue-defect-memo">
+                                        ${ICONS.Send}
+                                        Issue Defect Memo (72h SLA)
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -2648,6 +2765,81 @@
                     this.renderVerifyStudioView(container);
                 }, 600);
             };
+
+            const btnAccept = document.getElementById('btn-accept-ai-finding');
+            if (btnAccept) {
+                btnAccept.onclick = () => {
+                    const notes = document.getElementById('reviewer-adjudication-notes').value;
+                    API.showToast(`AI finding accepted by ${this.getAuthoritativeRoleTitle()}. Deficiency recorded: "${notes.slice(0, 40)}..."`, 'warning');
+                };
+            }
+
+            const btnOverride = document.getElementById('btn-override-compliant');
+            if (btnOverride) {
+                btnOverride.onclick = () => {
+                    const notes = document.getElementById('reviewer-adjudication-notes').value;
+                    API.showToast(`Official Reviewer Override recorded: Marked Compliant with justification logged to tamper-evident audit ledger.`, 'success');
+                };
+            }
+
+            const btnDefect = document.getElementById('btn-issue-defect-memo');
+            if (btnDefect) {
+                btnDefect.onclick = () => {
+                    API.showToast(`Formal 72-Hour Statutory Defect Memo dispatched to institution registrar via cryptographic notification ledger.`, 'info');
+                };
+            }
+        }
+
+        openCitationModal(ruleCitation) {
+            const citations = {
+                'APH-2025-RULE-01': {
+                    clause: 'Chapter II, Clause 4.2',
+                    title: 'Approved Intake and Division Multiples',
+                    text: 'An institution may not exceed 60 seats per division in technical undergraduate engineering programs without valid National Board of Accreditation (NBA) certification and AICTE Executive Committee sanction.'
+                },
+                'APH-2025-RULE-02': {
+                    clause: 'Chapter II, Clause 2.14',
+                    title: 'Faculty Cadre Ratio and Principal Cadre Requirements',
+                    text: 'Institutions must maintain a minimum cadre ratio of 1:2:6 (Professor : Associate Professor : Assistant Professor) with an overall faculty-to-student ratio not less than 1:20.'
+                },
+                'APH-2025-RULE-03': {
+                    clause: 'Chapter II, Clause 7.1',
+                    title: 'Land and Built-up Area Title Deed Validity',
+                    text: 'The land on which the institution is established must be in perpetual ownership or held under an irrevocable registered lease deed of minimum 99 years (or 33 years for specialized metropolitan jurisdictions).'
+                }
+            };
+            const item = citations[ruleCitation] || {
+                clause: ruleCitation || 'APH 2025-26 Regulatory Norm',
+                title: 'AICTE Approval Process Handbook (APH 2025–26)',
+                text: 'Statutory compliance norm governing technical institutions. See official handbook Chapter II for regulatory schedule and legal references.'
+            };
+            const overlay = document.createElement('div');
+            overlay.className = 'modal-overlay';
+            overlay.innerHTML = `
+                <div class="modal-card" style="max-width:540px;">
+                    <div class="modal-header">
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            ${ICONS.BookOpen}
+                            <h3 style="font-size:16px; font-weight:800; color:var(--text-primary);">${item.clause}</h3>
+                        </div>
+                        <button class="modal-close-btn" id="btn-close-citation">&times;</button>
+                    </div>
+                    <div class="modal-body" style="padding:20px;">
+                        <div style="font-weight:700; color:var(--text-primary); margin-bottom:8px; font-size:14px;">${item.title}</div>
+                        <p style="font-size:13px; line-height:1.6; color:var(--text-secondary); background:var(--surface-muted); padding:14px; border-radius:8px; border-left:3px solid var(--accent);">
+                            "${item.text}"
+                        </p>
+                        <div style="margin-top:16px; font-size:11px; color:var(--text-tertiary); display:flex; justify-content:space-between; align-items:center;">
+                            <span>AICTE Regulation Bureau • Gazette Notification 2025</span>
+                            <span class="badge badge-blue">Statutory Norm</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+            const close = () => overlay.remove();
+            overlay.querySelector('#btn-close-citation').onclick = close;
+            overlay.onclick = (e) => { if (e.target === overlay) close(); };
         }
 
         // ====================================================================
@@ -6307,6 +6499,240 @@
                         API.showToast(`Audit Ledger Verified: ${res.verifiedEvents || 1842} events validated without tamper`, 'success');
                     } catch (err) {
                         API.showToast('Cryptographic audit trail integrity confirmed: Zero tampered hashes detected', 'success');
+                    }
+                };
+            }
+        }
+
+        renderSACDashboardView(container) {
+            container.innerHTML = `
+                <div class="view-header">
+                    <div class="view-title-group">
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <h1>Standing Appellate &amp; Hearing Committee — Prof. Ramesh Chandra</h1>
+                            <span class="badge badge-indigo">Appellate Directorate</span>
+                        </div>
+                        <p>AICTE Standing Appellate Committee (SAC) &amp; Standing Hearing Committee (SHC) • APH 2025–26 Adjudication</p>
+                    </div>
+                    <div class="view-actions">
+                        <button class="btn btn-outline btn-sm" onclick="app.navigate('reports');">
+                            ${ICONS.FileText}
+                            Hearing Minutes
+                        </button>
+                        <button class="btn btn-primary btn-sm" id="btn-record-sac-decision">
+                            ${ICONS.Scale}
+                            Record Appellate Finding
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 4 KPI Metrics -->
+                <div class="stats-grid-4">
+                    <div class="stat-card">
+                        <div class="stat-meta">
+                            <span class="stat-label">Total Appeals Docketed</span>
+                            <span class="stat-value">14</span>
+                            <span class="stat-sub" style="color:var(--text-secondary);">AY 2025–26 Appellate Roster</span>
+                        </div>
+                        <div class="stat-icon-box blue">${ICONS.Scale}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-meta">
+                            <span class="stat-label">Hearings Scheduled Today</span>
+                            <span class="stat-value" style="color:#2563EB;">3</span>
+                            <span class="stat-sub" style="color:#2563EB;">Quorum Bench Active · Room 4B</span>
+                        </div>
+                        <div class="stat-icon-box blue">${ICONS.Calendar}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-meta">
+                            <span class="stat-label">Pending Clarifications</span>
+                            <span class="stat-value" style="color:#D97706;">5</span>
+                            <span class="stat-sub" style="color:#D97706;">Awaiting Regional RO Response</span>
+                        </div>
+                        <div class="stat-icon-box amber">${ICONS.AlertTriangle}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-meta">
+                            <span class="stat-label">Disposed &amp; Decreed</span>
+                            <span class="stat-value" style="color:#059669;">42</span>
+                            <span class="stat-sub" style="color:#059669;">Digital Orders Sealed via PKI</span>
+                        </div>
+                        <div class="stat-icon-box green">${ICONS.CheckCircle2}</div>
+                    </div>
+                </div>
+
+                <!-- Appeals Docket & Hearing Queue -->
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">
+                                ${ICONS.Scale}
+                                <span>Active Hearing Docket &amp; Statutory Appeals Queue</span>
+                            </div>
+                            <div class="card-subtitle">Institutions appealing Scrutiny / EVC deficiency rejections under APH 2025–26 Chapter II</div>
+                        </div>
+                        <span class="badge badge-indigo">Quorum: 3 Panelists Required</span>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Appeal ID &amp; Ref</th>
+                                    <th>Institution &amp; Program</th>
+                                    <th>Contested Deficiency / Ground</th>
+                                    <th>Bench Quorum</th>
+                                    <th>Hearing Schedule</th>
+                                    <th>Appellate Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div style="font-weight:700; color:var(--text-primary);">SAC-2025-APP-003</div>
+                                        <span class="font-mono" style="font-size:11px; color:var(--text-secondary);">Dossier APP_2026_003</span>
+                                    </td>
+                                    <td>
+                                        <div style="font-weight:700; color:var(--text-primary);">Coromandel Institute of Technology</div>
+                                        <span style="font-size:11px; color:var(--text-secondary);">B.Tech Mechanical &amp; Electrical (Southern Region)</span>
+                                    </td>
+                                    <td>
+                                        <div style="font-size:12px; font-weight:600; color:#DC2626;">Leasehold Deed Validity (Clause 7.1)</div>
+                                        <div style="font-size:11px; color:var(--text-secondary);">33-Year Registered Lease tendered; 99-Year required. Appellant presents Special State Gazette notification.</div>
+                                    </td>
+                                    <td>
+                                        <div style="font-size:11px; font-weight:600;">Prof. Ramesh Chandra (Chair)</div>
+                                        <div style="font-size:10px; color:var(--text-secondary);">Justice K.G. Balakrishnan · RO Kanpur</div>
+                                    </td>
+                                    <td>
+                                        <span class="badge badge-rose">Today · 14:30 IST</span>
+                                        <div style="font-size:10px; color:var(--text-secondary); margin-top:2px;">Chamber 4B / Hybrid Mode</div>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-primary btn-sm" onclick="app.openApplicationModal('APP_2026_003');">
+                                            Adjudicate Appeal
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div style="font-weight:700; color:var(--text-primary);">SAC-2025-APP-009</div>
+                                        <span class="font-mono" style="font-size:11px; color:var(--text-secondary);">Dossier APP_2026_002</span>
+                                    </td>
+                                    <td>
+                                        <div style="font-weight:700; color:var(--text-primary);">Zaskar Engineering College</div>
+                                        <span style="font-size:11px; color:var(--text-secondary);">B.Tech CSE (Northern Region)</span>
+                                    </td>
+                                    <td>
+                                        <div style="font-size:12px; font-weight:600; color:#D97706;">Sanctioned Intake Discrepancy (Clause 4.2)</div>
+                                        <div style="font-size:11px; color:var(--text-secondary);">Claimed 180 seats vs 60 seats approved. Re-Scrutiny rejected; Appellant prays for intake restoration.</div>
+                                    </td>
+                                    <td>
+                                        <div style="font-size:11px; font-weight:600;">Prof. Ramesh Chandra (Chair)</div>
+                                        <div style="font-size:10px; color:var(--text-secondary);">Dr. Vandana Rao (Scrutiny Invitee)</div>
+                                    </td>
+                                    <td>
+                                        <span class="badge badge-amber">Tomorrow · 11:00 IST</span>
+                                        <div style="font-size:10px; color:var(--text-secondary); margin-top:2px;">Virtual Bench 1</div>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-outline btn-sm" onclick="app.openApplicationModal('APP_2026_002');">
+                                            Examine Record
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div style="font-weight:700; color:var(--text-primary);">SAC-2025-APP-014</div>
+                                        <span class="font-mono" style="font-size:11px; color:var(--text-secondary);">Dossier APP_2026_001</span>
+                                    </td>
+                                    <td>
+                                        <div style="font-weight:700; color:var(--text-primary);">Apex Institute of Technology</div>
+                                        <span style="font-size:11px; color:var(--text-secondary);">B.Tech Artificial Intelligence (Northern Region)</span>
+                                    </td>
+                                    <td>
+                                        <div style="font-size:12px; font-weight:600; color:#2563EB;">Cadre Ratio Compliance (Clause 2.14)</div>
+                                        <div style="font-size:11px; color:var(--text-secondary);">Cadre Ratio shortfall addressed via 4 Adjunct Professor contracts uploaded on portal.</div>
+                                    </td>
+                                    <td>
+                                        <div style="font-size:11px; font-weight:600;">Standing Hearing Committee</div>
+                                        <div style="font-size:10px; color:var(--text-secondary);">Division Bench 2</div>
+                                    </td>
+                                    <td>
+                                        <span class="badge badge-blue">Friday · 15:30 IST</span>
+                                        <div style="font-size:10px; color:var(--text-secondary); margin-top:2px;">Chamber 4B</div>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-outline btn-sm" onclick="app.openApplicationModal('APP_2026_001');">
+                                            View Submission
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Appellate Adjudication & Finding Sign-Off Box -->
+                <div class="card" style="margin-top:20px; border-left:4px solid var(--accent);">
+                    <div class="card-header">
+                        <div class="card-title">
+                            ${ICONS.ShieldCheck}
+                            <span>Standing Appellate Committee (SAC) Adjudication Recorder</span>
+                        </div>
+                        <span class="badge badge-indigo">Statutory Non-Repudiation</span>
+                    </div>
+                    <div style="padding:16px; display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:16px;">
+                        <div>
+                            <label style="font-size:12px; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:6px;">Select Appealing Dossier</label>
+                            <select class="select" id="sac-app-select" style="width:100%;">
+                                <option value="APP_2026_003">SAC-2025-APP-003 · Coromandel Institute of Technology</option>
+                                <option value="APP_2026_002">SAC-2025-APP-009 · Zaskar Engineering College</option>
+                                <option value="APP_2026_001">SAC-2025-APP-014 · Apex Institute of Technology</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-size:12px; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:6px;">Quorum Recommendation</label>
+                            <select class="select" id="sac-rec-select" style="width:100%;">
+                                <option value="RECOMMEND_APPROVAL">Recommend Full Statutory Approval (EoA) to Executive Committee</option>
+                                <option value="CONDITIONAL_UNDERTAKING">Recommend Conditional Approval with 60-Day Legal Undertaking</option>
+                                <option value="RE_INSPECTION_EVC">Order Re-Inspection via Special 3-Member Expert Visit Committee</option>
+                                <option value="DISMISS_APPEAL">Dismiss Appeal &amp; Confirm Scrutiny Rejection</option>
+                            </select>
+                        </div>
+                        <div style="grid-column:1 / -1;">
+                            <label style="font-size:12px; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:6px;">Appellate Bench Order &amp; Reasoned Findings</label>
+                            <textarea class="input" id="sac-findings-text" rows="3" style="width:100%; resize:vertical; font-size:13px;" placeholder="Record unanimous or majority appellate bench findings, referencing APH 2025-26 statutory clauses and submitted documentary evidence..."></textarea>
+                        </div>
+                    </div>
+                    <div style="padding:0 16px 16px; display:flex; justify-content:flex-end; gap:10px;">
+                        <button class="btn btn-outline btn-sm" onclick="API.showToast('Hearing adjourned to next standing docket session.', 'info');">
+                            Adjourn Hearing
+                        </button>
+                        <button class="btn btn-primary btn-sm" id="btn-submit-sac-finding">
+                            ${ICONS.CheckCircle2}
+                            Sign &amp; Seal Appellate Order (PKI X.509)
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            const btnRecord = container.querySelector('#btn-record-sac-decision');
+            const btnSubmit = container.querySelector('#btn-submit-sac-finding');
+            if (btnSubmit) {
+                btnSubmit.onclick = () => {
+                    const appSel = container.querySelector('#sac-app-select').value;
+                    const recSel = container.querySelector('#sac-rec-select').value;
+                    API.showToast(`Appellate Order digitally signed for ${appSel}: [${recSel}]. Transmitted to AICTE Regulation Bureau & Executive Committee.`, 'success');
+                };
+            }
+            if (btnRecord) {
+                btnRecord.onclick = () => {
+                    const el = container.querySelector('#sac-findings-text');
+                    if (el) {
+                        el.focus();
+                        el.scrollIntoView({ behavior: 'smooth' });
                     }
                 };
             }

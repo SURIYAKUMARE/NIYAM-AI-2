@@ -93,7 +93,7 @@ function seedDatabase() {
     }
 
     // 6. Users (with salted Scrypt passwords)
-    const defaultPasswordHash = cryptoService.hashPassword('Password@123');
+    const defaultPasswordHash = cryptoService.hashPasswordSync('Password@123');
 
     const users = [
         { id: 'USR_ADMIN_01', username: 'superadmin', email: 'admin@aicte-india.org', full_name: 'Dr. R. K. Shrivastava', role_code: 'SUPER_ADMIN', region_id: 'REG_NW', institution_id: null },

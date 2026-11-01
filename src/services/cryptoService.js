@@ -1,5 +1,8 @@
 const crypto = require('node:crypto');
+const util = require('node:util');
 const { JWT_SECRET } = require('../config/constants');
+
+const scryptAsync = util.promisify(crypto.scrypt);
 
 class CryptoService {
     constructor() {
@@ -7,18 +10,43 @@ class CryptoService {
         this.revokedUsers = new Map(); // userId -> revokedAtTimestamp
     }
 
-    // Cryptographically secure password hashing using Scrypt
-    hashPassword(password) {
+    // Cryptographically secure asynchronous password hashing using Scrypt
+    async hashPassword(password) {
+        if (!password || typeof password !== 'string') {
+            throw new Error('Password must be a non-empty string');
+        }
+        const salt = crypto.randomBytes(16).toString('hex');
+        const hash = await scryptAsync(password, salt, 64);
+        return `${salt}:${hash.toString('hex')}`;
+    }
+
+    // Synchronous hashing used strictly during database bootstrap seeding
+    hashPasswordSync(password) {
+        if (!password || typeof password !== 'string') {
+            throw new Error('Password must be a non-empty string');
+        }
         const salt = crypto.randomBytes(16).toString('hex');
         const hash = crypto.scryptSync(password, salt, 64).toString('hex');
         return `${salt}:${hash}`;
     }
 
-    verifyPassword(password, stored) {
-        if (!stored || !stored.includes(':')) return false;
-        const [salt, key] = stored.split(':');
-        const hash = crypto.scryptSync(password, salt, 64).toString('hex');
-        return crypto.timingSafeEqual(Buffer.from(key, 'hex'), Buffer.from(hash, 'hex'));
+    // Asynchronous non-blocking password verification with constant-time equality
+    async verifyPassword(password, stored) {
+        if (!password || typeof password !== 'string' || !stored || typeof stored !== 'string') {
+            return false;
+        }
+        if (!stored.includes(':')) return false;
+        const parts = stored.split(':');
+        if (parts.length !== 2) return false;
+        const [salt, key] = parts;
+        if (!salt || !key || key.length !== 128) return false;
+
+        try {
+            const hash = await scryptAsync(password, salt, 64);
+            return crypto.timingSafeEqual(Buffer.from(key, 'hex'), hash);
+        } catch {
+            return false;
+        }
     }
 
     // JWT-compatible signed token implementation
@@ -26,7 +54,13 @@ class CryptoService {
         const header = { alg: 'HS256', typ: 'JWT' };
         const now = Math.floor(Date.now() / 1000);
         const exp = now + expiresInSeconds;
-        const fullPayload = { ...payload, iat: now, exp };
+        const fullPayload = {
+            ...payload,
+            iss: 'NIYAM-AICTE',
+            aud: 'NIYAM-PORTAL',
+            iat: now,
+            exp
+        };
 
         const b64Header = Buffer.from(JSON.stringify(header)).toString('base64url');
         const b64Payload = Buffer.from(JSON.stringify(fullPayload)).toString('base64url');
@@ -63,11 +97,17 @@ class CryptoService {
 
     verifyToken(token) {
         try {
-            if (!token) return null;
+            if (!token || typeof token !== 'string') return null;
             if (this.isTokenRevoked(token)) return null;
             const parts = token.split('.');
             if (parts.length !== 3) return null;
             const [b64Header, b64Payload, signature] = parts;
+
+            // Algorithm check: Strictly enforce HS256
+            const header = JSON.parse(Buffer.from(b64Header, 'base64url').toString('utf8'));
+            if (header.alg !== 'HS256' || header.typ !== 'JWT') {
+                return null;
+            }
 
             const expectedSig = crypto
                 .createHmac('sha256', JWT_SECRET)

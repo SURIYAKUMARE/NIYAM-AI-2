@@ -127,6 +127,21 @@ class EVCService {
             const app = tx.queryOne('SELECT * FROM applications WHERE id = ?', [applicationId]);
             if (!app) throw new Error('Application not found.');
 
+            // Idempotency / Duplicate Check: prevent double-scheduling for same application
+            const existingSchedule = tx.queryOne(
+                "SELECT * FROM evc_schedules WHERE application_id = ? AND visit_status IN ('SCHEDULED', 'AWAITING_SCHEDULING')",
+                [applicationId]
+            );
+            if (existingSchedule) {
+                return {
+                    scheduleId: existingSchedule.id,
+                    applicationId,
+                    proposedDate: existingSchedule.proposed_date,
+                    visitStatus: existingSchedule.visit_status,
+                    isExisting: true
+                };
+            }
+
             // Verify member conflicts
             for (const member of members) {
                 const check = this.checkMemberConflict(member.institution, '', applicationId);

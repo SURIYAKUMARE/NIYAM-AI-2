@@ -30,11 +30,55 @@ const MIME_TYPES = {
     '.pdf': 'application/pdf'
 };
 
+// ----------------------------------------------------------------------------
+// Configurable CORS Allowlist
+// ----------------------------------------------------------------------------
+const DEFAULT_ALLOWED_ORIGINS = [
+    'https://niyam-ai-2-nu.vercel.app',
+    'https://niyam-ai-2.vercel.app',
+    'http://localhost:8080',
+    'http://localhost:3000',
+    'http://127.0.0.1:8080',
+    'http://127.0.0.1:3000'
+];
+
+const envOrigins = (process.env.CORS_ALLOWED_ORIGINS || '')
+    .split(',')
+    .map(s => s.trim())
+    .filter(Boolean);
+
+const ALLOWED_ORIGINS = new Set([...DEFAULT_ALLOWED_ORIGINS, ...envOrigins]);
+
 const server = http.createServer(async (req, res) => {
-    // CORS headers for interoperability
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    const origin = req.headers.origin;
+
+    // 1. Strict CORS Validation
+    if (origin && ALLOWED_ORIGINS.has(origin)) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+        res.setHeader('Vary', 'Origin');
+        res.setHeader('Access-Control-Allow-Credentials', 'true');
+    }
+
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, x-user-id');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+
+    // 2. Comprehensive HTTP Security Headers
+    res.setHeader('X-Frame-Options', 'DENY');
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+    res.setHeader('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
+    res.setHeader('Permissions-Policy', 'geolocation=(self), camera=(self), microphone=()');
+    res.setHeader('Content-Security-Policy', [
+        "default-src 'self'",
+        "script-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+        "font-src 'self' https://fonts.gstatic.com data:",
+        "img-src 'self' data: https:",
+        "connect-src 'self' https://niyam-ai-2-nu.vercel.app",
+        "frame-ancestors 'none'",
+        "base-uri 'self'",
+        "object-src 'none'"
+    ].join('; '));
 
     if (req.method === 'OPTIONS') {
         res.statusCode = 204;
@@ -42,7 +86,7 @@ const server = http.createServer(async (req, res) => {
         return;
     }
 
-    // Body parsing helper for JSON
+    // Body parsing helper for JSON with strict 10MB limit
     let body = '';
     req.on('data', chunk => {
         body += chunk.toString();
@@ -89,11 +133,25 @@ const server = http.createServer(async (req, res) => {
             return;
         }
 
-        // 2. Static Asset Serving
-        let filePath = path.join(__dirname, 'public', pathname === '/' ? 'index.html' : pathname);
+        // 2. Sensitive Directory Static Protection
+        // Prevent unauthorized direct crawling of internal ground truth or seed data
+        if (pathname.startsWith('/data/seed/ground_truth.json')) {
+            const authHeader = req.headers['authorization'];
+            if (!authHeader) {
+                res.statusCode = 403;
+                res.setHeader('Content-Type', 'application/json');
+                res.end(JSON.stringify({ error: 'Access Denied: Regulatory ground truth datasets require official authentication.' }));
+                return;
+            }
+        }
+
+        // 3. Static Asset Serving with Path Traversal Protection
+        const safePath = path.normalize(pathname).replace(/^(\.\.[\/\\])+/, '');
+        let filePath = path.join(__dirname, 'public', safePath === '/' || safePath === '\\' ? 'index.html' : safePath);
         
-        // Prevent path traversal
-        if (!filePath.startsWith(path.join(__dirname, 'public'))) {
+        // Strictly prevent path traversal outside public root
+        const publicRoot = path.join(__dirname, 'public');
+        if (!filePath.startsWith(publicRoot)) {
             res.statusCode = 403;
             res.end('Access Denied');
             return;

@@ -1,6 +1,15 @@
+const isProduction = process.env.NODE_ENV === 'production';
+let jwtSecret = process.env.JWT_SECRET;
+if (!jwtSecret) {
+    if (isProduction && !process.env.VERCEL) {
+        throw new Error('[CRITICAL SECURITY CONFIGURATION] JWT_SECRET must be explicitly set in production.');
+    }
+    jwtSecret = 'niyam-ai-secure-national-regulatory-token-2026';
+}
+
 module.exports = {
     PORT: process.env.PORT || 8080,
-    JWT_SECRET: process.env.JWT_SECRET || 'niyam-ai-secure-national-regulatory-token-2026',
+    JWT_SECRET: jwtSecret,
     PRODUCT_NAME: 'NIYAM AI',
     FULL_TITLE: 'All India Council for Technical Education',
     HINDI_TITLE: 'अखिल भारतीय तकनीकी शिक्षा परिषद',

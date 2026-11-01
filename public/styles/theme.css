@@ -2675,12 +2675,7 @@ svg.ill-svg {
 .auth-page-container {
   min-height: 100vh;
   position: relative;
-  background-color: #0b1329;
-  background-image: linear-gradient(rgba(11, 19, 41, 0.76), rgba(15, 23, 42, 0.88)), url('/images/aicte-building-bg.png');
-  background-size: cover;
-  background-position: center center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
+  background-color: var(--background);
   color: var(--text-primary);
   display: flex;
   flex-direction: column;
@@ -2698,35 +2693,32 @@ svg.ill-svg {
   align-items: center;
   justify-content: space-between;
   padding: 10px 18px;
-  background: rgba(15, 23, 42, 0.75);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  box-shadow: var(--shadow-xs);
 }
 
 .auth-nav-bar .btn-outline {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.3);
-  color: #FFFFFF;
+  background: var(--surface);
+  border-color: var(--border);
+  color: var(--text-primary);
 }
 
 .auth-nav-bar .btn-outline:hover {
-  background: rgba(255, 255, 255, 0.25);
-  color: #FFFFFF;
+  background: var(--surface-muted);
 }
 
 .auth-nav-bar .badge {
-  background: rgba(255, 255, 255, 0.15) !important;
-  border-color: rgba(255, 255, 255, 0.25) !important;
-  color: #F8FAFC !important;
+  background: var(--surface-muted) !important;
+  border-color: var(--border) !important;
+  color: var(--text-secondary) !important;
 }
 
 .auth-nav-bar .theme-toggle-btn {
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  color: #FFFFFF;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
 }
 
 .auth-card-wrap {
@@ -2753,8 +2745,7 @@ svg.ill-svg {
 .auth-hero-caption {
   flex: 1;
   max-width: 560px;
-  color: #FFFFFF;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
+  color: var(--text-primary);
 }
 
 .auth-hero-badge {
@@ -2763,15 +2754,15 @@ svg.ill-svg {
   gap: 8px;
   padding: 6px 14px;
   border-radius: 20px;
-  background: rgba(15, 23, 42, 0.78);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: var(--surface);
+  border: 1px solid var(--border);
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.5px;
   text-transform: uppercase;
-  color: #93C5FD;
+  color: var(--accent);
   margin-bottom: 16px;
+  box-shadow: var(--shadow-xs);
 }
 
 .auth-badge-dot {
@@ -2785,7 +2776,7 @@ svg.ill-svg {
   font-size: 32px;
   font-weight: 800;
   line-height: 1.25;
-  color: #FFFFFF;
+  color: var(--text-primary);
   margin-bottom: 14px;
   letter-spacing: -0.02em;
 }
@@ -2793,7 +2784,7 @@ svg.ill-svg {
 .auth-hero-subtitle {
   font-size: 15px;
   line-height: 1.6;
-  color: rgba(255, 255, 255, 0.92);
+  color: var(--text-secondary);
   margin-bottom: 20px;
 }
 
@@ -2806,12 +2797,12 @@ svg.ill-svg {
 .auth-tag-pill {
   padding: 6px 14px;
   border-radius: 8px;
-  background: rgba(15, 23, 42, 0.7);
-  backdrop-filter: blur(6px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: var(--surface);
+  border: 1px solid var(--border);
   font-size: 12px;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.95);
+  color: var(--text-secondary);
+  box-shadow: var(--shadow-xs);
 }
 
 @media (max-width: 960px) {
@@ -2829,24 +2820,22 @@ svg.ill-svg {
 }
 
 .auth-card {
-  background: rgba(255, 255, 255, 0.98);
-  border: 1px solid rgba(255, 255, 255, 0.6);
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.3);
+  box-shadow: var(--shadow-lg);
   padding: 28px;
   display: flex;
   flex-direction: column;
   gap: 16px;
   overflow: hidden;
   position: relative;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
 }
 
 .dark .auth-card {
-  background: rgba(15, 23, 42, 0.94);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-lg);
 }
 
 .auth-footer {
@@ -2854,8 +2843,7 @@ svg.ill-svg {
   z-index: 2;
   text-align: center;
   font-size: 11px;
-  color: rgba(255, 255, 255, 0.85);
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+  color: var(--text-tertiary);
   padding: 10px 0;
   font-weight: 600;
 }

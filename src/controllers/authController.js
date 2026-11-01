@@ -23,29 +23,56 @@ const USERNAME_ALIASES = {
     'evc_member': 'evc_expert1'
 };
 
+// In-Memory Rate Limiting for Authentication Attempts
+const loginAttempts = new Map(); // key -> { count, firstAttempt, lockUntil }
+
 class AuthController {
-    login(req, res) {
-        const { username, password } = req.body;
-        if (!username) {
-            return res.status(400).json({ error: 'Username is required.' });
+    async login(req, res) {
+        const { username, password } = req.body || {};
+        const clientIp = (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || 'local';
+        const rateLimitKey = `${clientIp}:${(username || '').toLowerCase()}`;
+
+        // 1. Rate Limiting / Lockout Check
+        const now = Date.now();
+        const attempt = loginAttempts.get(rateLimitKey);
+        if (attempt && attempt.lockUntil && attempt.lockUntil > now) {
+            const waitSeconds = Math.ceil((attempt.lockUntil - now) / 1000);
+            return res.status(429).json({
+                error: `Too many failed authentication attempts. Account temporarily locked for security. Please try again in ${waitSeconds} second(s).`
+            });
         }
 
-        const normalizedUsername = (username || '').toLowerCase().trim();
+        // 2. Mandatory Parameter Validation
+        if (!username || typeof username !== 'string' || username.trim() === '') {
+            return res.status(400).json({ error: 'Username is required.' });
+        }
+        if (!password || typeof password !== 'string' || password.trim() === '') {
+            return res.status(400).json({ error: 'Password is required.' });
+        }
+
+        const normalizedUsername = username.toLowerCase().trim();
         const targetUsername = USERNAME_ALIASES[normalizedUsername] || normalizedUsername;
 
+        // 3. User Lookup in Database
         const user = db.queryOne(
             'SELECT * FROM users WHERE (LOWER(username) = ? OR LOWER(username) = ?) AND is_active = 1',
             [normalizedUsername, targetUsername]
         );
+
         if (!user) {
+            this.recordFailedAttempt(rateLimitKey);
             return res.status(401).json({ error: 'Invalid credentials.' });
         }
 
-        // Check password (allows standard default Password@123 or matches hash)
-        const isValid = password ? cryptoService.verifyPassword(password, user.password_hash) : true;
+        // 4. Cryptographic Password Verification (Non-Blocking Scrypt)
+        const isValid = await cryptoService.verifyPassword(password, user.password_hash);
         if (!isValid) {
-            return res.status(401).json({ error: 'Invalid password.' });
+            this.recordFailedAttempt(rateLimitKey);
+            return res.status(401).json({ error: 'Invalid credentials.' });
         }
+
+        // 5. Success: Clear failed attempts
+        loginAttempts.delete(rateLimitKey);
 
         const token = cryptoService.generateToken({
             userId: user.id,
@@ -58,6 +85,17 @@ class AuthController {
         // Strip password hash from response
         const { password_hash, ...safeUser } = user;
         return res.json({ token, user: safeUser });
+    }
+
+    recordFailedAttempt(key) {
+        const now = Date.now();
+        const attempt = loginAttempts.get(key) || { count: 0, firstAttempt: now };
+        attempt.count += 1;
+        // Lock after 5 failed attempts for 15 minutes
+        if (attempt.count >= 5) {
+            attempt.lockUntil = now + 15 * 60 * 1000;
+        }
+        loginAttempts.set(key, attempt);
     }
 
     logout(req, res) {

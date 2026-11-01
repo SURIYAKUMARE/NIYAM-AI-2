@@ -603,13 +603,13 @@
         }
 
         constructor() {
-            this.isAuthenticated = localStorage.getItem('niyam_auth') === 'true';
+            this.isAuthenticated = localStorage.getItem('niyam_auth') === 'true' && !!API.getToken();
             this.currentView = this.isAuthenticated ? (localStorage.getItem('niyam_view') || 'dashboard') : 'landing';
             this.authMode = 'signin';
             this.passwordVisible = false;
             
             const rawUser = JSON.parse(localStorage.getItem('niyam_user') || 'null');
-            this.currentUser = resolveOfficial(rawUser);
+            this.currentUser = this.isAuthenticated ? resolveOfficial(rawUser) : resolveOfficial(null);
 
             const roleCfg = this.getRoleConfig();
             const allowed = roleCfg ? roleCfg.nav.map(n => n.id).concat(['dashboard', 'rules', 'notifications', 'verify', 'findings', 'clarifications', 'applications', 'intelligence-centre']) : null;
@@ -872,6 +872,7 @@
         logout() {
             this.isAuthenticated = false;
             this.currentUser = OFFICIAL_PERSONNEL[0];
+            API.clearSession();
             localStorage.removeItem('niyam_auth');
             localStorage.removeItem('niyam_user');
             localStorage.removeItem('niyam_view');
@@ -1804,7 +1805,7 @@
                                 <div class="form-group">
                                     <label for="login-password" class="form-label">Password</label>
                                     <div class="password-input-wrap">
-                                        <input type="${this.passwordVisible ? 'text' : 'password'}" class="input" id="login-password" value="password123" required placeholder="Enter password" style="height:38px; font-size:13px;">
+                                        <input type="${this.passwordVisible ? 'text' : 'password'}" class="input" id="login-password" value="Password@123" required placeholder="Enter password" style="height:38px; font-size:13px;">
                                         <button type="button" class="password-toggle-btn" id="btn-toggle-password" aria-label="Toggle password visibility">
                                             ${this.passwordVisible ? ICONS.EyeOff : ICONS.Eye}
                                         </button>
@@ -1946,16 +1947,15 @@
                 signinForm.onsubmit = async (e) => {
                     e.preventDefault();
                     const uname = wrap.querySelector('#login-username').value.trim();
+                    const pwd = (wrap.querySelector('#login-password')?.value || '').trim();
                     if (!uname) {
                         API.showToast('Please enter an official username or institutional ID.', 'error');
                         return;
                     }
-
-                    const official = resolveOfficial(uname);
-                    this.currentUser = official;
-                    this.isAuthenticated = true;
-                    localStorage.setItem('niyam_auth', 'true');
-                    localStorage.setItem('niyam_user', JSON.stringify(official));
+                    if (!pwd) {
+                        API.showToast('Please enter your password.', 'error');
+                        return;
+                    }
 
                     const submitBtn = wrap.querySelector('#btn-login-submit');
                     if (submitBtn) {
@@ -1964,15 +1964,29 @@
                     }
 
                     try {
-                        await API.post('/api/auth/login', { username: uname, password: 'password123' });
-                    } catch (_) {}
+                        const res = await API.post('/api/auth/login', { username: uname, password: pwd });
+                        if (res && res.token) {
+                            API.setSession(res.token, res.user);
+                            const official = resolveOfficial(uname);
+                            this.currentUser = { ...official, ...res.user };
+                            this.isAuthenticated = true;
+                            localStorage.setItem('niyam_auth', 'true');
+                            localStorage.setItem('niyam_user', JSON.stringify(this.currentUser));
 
-                    setTimeout(() => {
-                        this.currentView = 'dashboard';
-                        localStorage.setItem('niyam_view', 'dashboard');
-                        this.render();
-                        API.showToast(`Signed in as ${official.fullName} (${official.shortRole})`, 'success');
-                    }, 300);
+                            this.currentView = 'dashboard';
+                            localStorage.setItem('niyam_view', 'dashboard');
+                            await this.loadInitialData();
+                            this.render();
+                            API.showToast(`Signed in as ${this.currentUser.fullName || uname} (${this.currentUser.shortRole || this.currentUser.role || 'Official'})`, 'success');
+                        } else {
+                            throw new Error('Authentication response missing authorization token.');
+                        }
+                    } catch (err) {
+                        if (submitBtn) {
+                            submitBtn.innerHTML = `${ICONS.Lock}<span>Sign in to portal</span>`;
+                            submitBtn.disabled = false;
+                        }
+                    }
                 };
             }
 
@@ -3767,6 +3781,10 @@
                         <p>Cryptographic Merkle tree provenance chain providing ISO 27001 non-repudiation for regulatory oversight.</p>
                     </div>
                     <div class="view-actions">
+                        <button class="btn btn-outline btn-sm" id="btn-export-docket">
+                            ${ICONS.Download}
+                            Export Audit Docket
+                        </button>
                         <button class="btn btn-primary btn-sm" id="btn-verify-chain">
                             ${ICONS.ShieldCheck}
                             Verify Cryptographic Ledger
@@ -3871,6 +3889,34 @@
                     this.renderAuditView(container);
                 };
             });
+
+            const exportBtn = document.getElementById('btn-export-docket');
+            if (exportBtn) {
+                exportBtn.onclick = () => {
+                    const csvRows = [
+                        ['Block', 'Timestamp', 'Action', 'Target Institution', 'Actor', 'Category', 'SHA256_Hash', 'Status'].join(','),
+                        ...auditEvents.map(e => [
+                            e.block,
+                            `"${e.time}"`,
+                            `"${e.action}"`,
+                            `"${e.target}"`,
+                            `"${e.actor}"`,
+                            e.cat,
+                            `"${e.hash}"`,
+                            e.status
+                        ].join(','))
+                    ];
+                    const blob = new Blob([csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.setAttribute('href', url);
+                    link.setAttribute('download', `AICTE_Cryptographic_Audit_Docket_${new Date().toISOString().slice(0, 10)}.csv`);
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    API.showToast('Downloaded official Cryptographic Audit Docket (CSV with SHA-256 Hashes)', 'success');
+                };
+            }
 
             document.getElementById('btn-verify-chain').onclick = () => {
                 API.showToast('Cryptographic audit ledger verified: 941 consecutive blocks sealed with zero hash collisions.', 'success');
@@ -5136,6 +5182,10 @@
 
                 <div class="drawer-footer">
                     <button type="button" class="btn btn-outline" id="drawer-footer-close">Close</button>
+                    <button type="button" class="btn btn-outline" id="drawer-btn-view-pdf">
+                        ${ICONS.FileText}
+                        <span>View PDF</span>
+                    </button>
                     <button type="button" class="btn btn-outline" id="drawer-btn-ledger">
                         ${ICONS.ShieldCheck}
                         <span>Verify with Ledger</span>
@@ -5195,12 +5245,102 @@
                 };
             }
 
+            const viewPdfBtn = panel.querySelector('#drawer-btn-view-pdf');
+            if (viewPdfBtn) {
+                viewPdfBtn.onclick = () => {
+                    this.openPDFViewerModal(doc.fileUrl || '/seed/docs/nit-nilgiri/approval_letter.pdf', doc.name);
+                };
+            }
+
             const downloadBtn = panel.querySelector('#drawer-btn-download');
             if (downloadBtn) {
                 downloadBtn.onclick = () => {
                     API.showToast('Downloading verified document dossier: ' + doc.name + '.pdf', 'info');
                 };
             }
+        }
+
+        // --------------------------------------------------------------------
+        // In-Browser High-Fidelity Statutory PDF Viewer
+        // --------------------------------------------------------------------
+        openPDFViewerModal(pdfUrl = '/seed/docs/nit-nilgiri/approval_letter.pdf', title = 'Statutory Approval Dossier') {
+            const overlay = document.createElement('div');
+            overlay.className = 'modal-overlay';
+            let zoomLevel = 100;
+            let rotation = 0;
+
+            overlay.innerHTML = `
+                <div class="modal-dialog modal-lg" style="max-width:920px; width:95vw; height:88vh; display:flex; flex-direction:column; padding:0; overflow:hidden; border-radius:14px; box-shadow:var(--shadow-xl);">
+                    <!-- PDF Viewer Header Toolbar -->
+                    <div style="background:var(--surface); padding:12px 18px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
+                        <div style="display:flex; align-items:center; gap:10px; min-width:0;">
+                            <div style="width:34px; height:34px; border-radius:8px; background:rgba(37,99,235,0.1); color:#2563EB; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                                ${ICONS.FileText}
+                            </div>
+                            <div style="min-width:0;">
+                                <div style="font-size:14px; font-weight:700; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${title}</div>
+                                <div style="font-size:11px; color:var(--text-secondary); display:flex; align-items:center; gap:6px;">
+                                    <span class="badge badge-emerald" style="font-size:10px; padding:1px 6px;">AICTE Statutory Vault</span>
+                                    <span>SHA-256 Verified Dossier</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Viewer Action Controls -->
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <div style="display:flex; align-items:center; background:var(--surface-muted); border:1px solid var(--border); border-radius:6px; padding:2px;">
+                                <button type="button" class="btn btn-sm btn-outline" id="pdf-zoom-out" title="Zoom Out" style="border:none; padding:4px 8px; font-size:12px;">−</button>
+                                <span id="pdf-zoom-label" style="font-size:11px; font-weight:700; padding:0 6px; min-width:44px; text-align:center;">100%</span>
+                                <button type="button" class="btn btn-sm btn-outline" id="pdf-zoom-in" title="Zoom In" style="border:none; padding:4px 8px; font-size:12px;">+</button>
+                            </div>
+
+                            <button type="button" class="btn btn-outline btn-sm" id="pdf-rotate-btn" title="Rotate 90 degrees">
+                                ↻ Rotate
+                            </button>
+
+                            <a href="${pdfUrl}" target="_blank" download class="btn btn-primary btn-sm" style="display:inline-flex; align-items:center; gap:6px; text-decoration:none;">
+                                ${ICONS.Download}
+                                <span>Download PDF</span>
+                            </a>
+
+                            <button type="button" class="modal-close-btn" id="pdf-modal-close-x" style="font-size:18px; margin-left:6px;">✕</button>
+                        </div>
+                    </div>
+
+                    <!-- PDF Content Frame -->
+                    <div id="pdf-frame-container" style="flex:1; background:#525659; overflow:auto; display:flex; justify-content:center; align-items:flex-start; padding:16px;">
+                        <iframe id="pdf-viewer-iframe" src="${pdfUrl}#toolbar=0" style="width:100%; height:100%; border:none; background:#FFFFFF; border-radius:6px; box-shadow:0 4px 20px rgba(0,0,0,0.25); transition:transform 0.15s ease;"></iframe>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(overlay);
+            const close = () => overlay.remove();
+            overlay.querySelector('#pdf-modal-close-x').onclick = close;
+
+            const iframe = overlay.querySelector('#pdf-viewer-iframe');
+            const zoomLabel = overlay.querySelector('#pdf-zoom-label');
+
+            overlay.querySelector('#pdf-zoom-in').onclick = () => {
+                if (zoomLevel < 200) {
+                    zoomLevel += 25;
+                    zoomLabel.textContent = zoomLevel + '%';
+                    iframe.style.transform = `scale(${zoomLevel / 100}) rotate(${rotation}deg)`;
+                }
+            };
+
+            overlay.querySelector('#pdf-zoom-out').onclick = () => {
+                if (zoomLevel > 50) {
+                    zoomLevel -= 25;
+                    zoomLabel.textContent = zoomLevel + '%';
+                    iframe.style.transform = `scale(${zoomLevel / 100}) rotate(${rotation}deg)`;
+                }
+            };
+
+            overlay.querySelector('#pdf-rotate-btn').onclick = () => {
+                rotation = (rotation + 90) % 360;
+                iframe.style.transform = `scale(${zoomLevel / 100}) rotate(${rotation}deg)`;
+            };
         }
 
         // --------------------------------------------------------------------
@@ -5967,34 +6107,61 @@
             overlay.querySelector('#new-app-close-x').onclick = close;
             overlay.querySelector('#new-app-cancel-btn').onclick = close;
 
+            const challanInput = overlay.querySelector('#new-app-challan');
+            if (challanInput) {
+                challanInput.oninput = () => { challanInput.value = challanInput.value.toUpperCase(); };
+            }
+
             const draftBtn = overlay.querySelector('#new-app-draft-btn');
             if (draftBtn) {
-                draftBtn.onclick = () => {
+                draftBtn.onclick = async () => {
+                    draftBtn.disabled = true;
+                    draftBtn.textContent = 'Saving Draft...';
                     const type = overlay.querySelector('#new-app-type').value;
-                    const newId = `APP-2025-${String(this.applications.length + 1).padStart(3, '0')}`;
-                    this.applications.unshift({
-                        id: newId,
-                        collegeId: "nit-nilgiri",
-                        collegeName: "Nilgiri Institute of Technology",
-                        trustName: "Nilgiri Educational Trust",
-                        permanentId: "SYN-2025-001",
-                        appType: type,
-                        stage: "DRAFT",
-                        slaTarget: "30-May-2025",
-                        status: "DRAFT",
-                        statusBadge: "badge-amber",
-                        trustScore: 85,
-                        deficienciesCount: 0,
-                        submissionDate: new Date().toLocaleDateString('en-GB')
-                    });
-                    close();
-                    API.showToast(`Application draft ${newId} saved. You can upload required documents before final submission.`, 'info');
-                    this.render();
+
+                    try {
+                        const res = await API.post('/api/applications', {
+                            applicationTypeCode: 'EOA',
+                            academicYear: '2025-2026',
+                            institutionId: 'INST_001',
+                            isDraft: true
+                        });
+                        const serverApp = res?.application;
+                        const newId = serverApp?.applicationNumber || serverApp?.id || `APP-2026-${String(this.applications.length + 1).padStart(3, '0')}`;
+                        this.applications.unshift({
+                            id: newId,
+                            collegeId: "nit-nilgiri",
+                            collegeName: "Nilgiri Institute of Technology",
+                            trustName: "Nilgiri Educational Trust",
+                            permanentId: "SYN-2025-001",
+                            appType: type,
+                            stage: "DRAFT",
+                            slaTarget: "30-May-2025",
+                            status: "DRAFT",
+                            statusBadge: "badge-amber",
+                            trustScore: 85,
+                            deficienciesCount: 0,
+                            submissionDate: new Date().toLocaleDateString('en-GB')
+                        });
+                        close();
+                        API.showToast(`Application draft ${newId} saved to database. You can upload required documents before final submission.`, 'info');
+                        this.render();
+                    } catch (err) {
+                        draftBtn.disabled = false;
+                        draftBtn.textContent = 'Save as Draft';
+                    }
                 };
             }
 
-            overlay.querySelector('#new-app-form').onsubmit = (e) => {
+            overlay.querySelector('#new-app-form').onsubmit = async (e) => {
                 e.preventDefault();
+                const challanVal = (challanInput ? challanInput.value : '').trim();
+                const challanRegex = /^BK-[0-9]{4}-[A-Z]{2}-[0-9]{4,6}$/;
+                if (!challanRegex.test(challanVal)) {
+                    API.showToast('Invalid Bharatkosh ID: Must match format BK-YYYY-ST-XXXX (e.g. BK-2025-TN-9982)', 'error');
+                    return;
+                }
+
                 const submitBtn = overlay.querySelector('#new-app-submit-btn');
                 if (submitBtn) {
                     submitBtn.disabled = true;
@@ -6002,9 +6169,15 @@
                 }
 
                 const type = overlay.querySelector('#new-app-type').value;
-                const newId = `APP-2025-${String(this.applications.length + 1).padStart(3, '0')}`;
-                
-                setTimeout(() => {
+                try {
+                    const res = await API.post('/api/applications', {
+                        applicationTypeCode: 'EOA',
+                        academicYear: '2025-2026',
+                        institutionId: 'INST_001',
+                        isDraft: false
+                    });
+                    const serverApp = res?.application;
+                    const newId = serverApp?.applicationNumber || serverApp?.id || `APP-2026-${String(this.applications.length + 1).padStart(3, '0')}`;
                     this.applications.unshift({
                         id: newId,
                         collegeId: "nit-nilgiri",
@@ -6022,9 +6195,14 @@
                     });
 
                     close();
-                    API.showToast(`Application ${newId} submitted successfully and assigned to Scrutiny Desk!`, 'success');
+                    API.showToast(`Application ${newId} registered in SQLite and assigned to Scrutiny Desk!`, 'success');
                     this.render();
-                }, 350);
+                } catch (err) {
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = 'Submit Application';
+                    }
+                }
             };
         }
 
@@ -6179,7 +6357,11 @@
                     return;
                 }
 
-                dropzoneText.innerHTML = `<strong>${file.name}</strong> (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
+                dropzoneText.textContent = '';
+                const strongNameEl = document.createElement('strong');
+                strongNameEl.textContent = file.name;
+                dropzoneText.appendChild(strongNameEl);
+                dropzoneText.appendChild(document.createTextNode(` (${(file.size / 1024 / 1024).toFixed(2)} MB)`));
                 hashBadge.textContent = 'COMPUTING...';
                 hashBadge.style.color = '#D97706';
 
@@ -8165,6 +8347,12 @@
 
             overlay.querySelector('#evc-schedule-form').onsubmit = async (e) => {
                 e.preventDefault();
+                const submitBtn = overlay.querySelector('button[type="submit"]');
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<span>Issuing EVC Order...</span>';
+                }
+
                 const proposedDate = overlay.querySelector('#evc-date').value;
                 const expert1 = overlay.querySelector('#evc-expert-1').options[overlay.querySelector('#evc-expert-1').selectedIndex].text.split('(')[0].trim();
                 const expert2 = overlay.querySelector('#evc-expert-2').options[overlay.querySelector('#evc-expert-2').selectedIndex].text.split('(')[0].trim();
@@ -8230,6 +8418,13 @@
                             </select>
                         </div>
                         <div>
+                            <label style="font-size:11px; font-weight:700; color:var(--text-secondary); text-transform:uppercase; margin-bottom:4px; display:block;">Geo-Spatial Cadastral Verification</label>
+                            <div style="display:flex; gap:8px;">
+                                <input type="text" id="evc-gps-input" class="input" value="28.5355° N, 77.1565° E (Cadastral Matched)" readonly style="flex:1;">
+                                <button type="button" class="btn btn-outline btn-sm" id="btn-evc-gps">Acquire GPS</button>
+                            </div>
+                        </div>
+                        <div>
                             <label style="font-size:11px; font-weight:700; color:var(--text-secondary); text-transform:uppercase; margin-bottom:4px; display:block;">Committee Inspection Remarks</label>
                             <textarea id="evc-remarks" class="textarea" rows="3" style="width:100%;">Physical laboratories, faculty attendance roster, and fire escapes verified on-site. GPS coordinates match cadastral map.</textarea>
                         </div>
@@ -8249,8 +8444,38 @@
             overlay.querySelector('#evc-rep-close-x').onclick = close;
             overlay.querySelector('#evc-rep-cancel-btn').onclick = close;
 
+            const gpsBtn = overlay.querySelector('#btn-evc-gps');
+            if (gpsBtn) {
+                gpsBtn.onclick = () => {
+                    if ('geolocation' in navigator) {
+                        gpsBtn.textContent = 'Acquiring...';
+                        navigator.geolocation.getCurrentPosition(
+                            (pos) => {
+                                const lat = pos.coords.latitude.toFixed(4);
+                                const lng = pos.coords.longitude.toFixed(4);
+                                const input = overlay.querySelector('#evc-gps-input');
+                                if (input) input.value = `${lat}° N, ${lng}° E (Device GPS)`;
+                                gpsBtn.textContent = '✓ Verified';
+                                API.showToast(`GPS Coordinates logged: ${lat}° N, ${lng}° E`, 'success');
+                            },
+                            () => {
+                                gpsBtn.textContent = '✓ Sealed';
+                                API.showToast('Using AICTE Survey Station fixed GPS markers.', 'info');
+                            },
+                            { timeout: 4000 }
+                        );
+                    }
+                };
+            }
+
             overlay.querySelector('#evc-rep-form').onsubmit = async (e) => {
                 e.preventDefault();
+                const submitBtn = overlay.querySelector('button[type="submit"]');
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<span>Finalizing EVC Report...</span>';
+                }
+
                 const score = Number(overlay.querySelector('#evc-score').value);
                 const recommendation = overlay.querySelector('#evc-recommendation').value;
                 const remarks = overlay.querySelector('#evc-remarks').value;

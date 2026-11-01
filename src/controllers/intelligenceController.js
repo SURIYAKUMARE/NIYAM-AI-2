@@ -72,6 +72,9 @@ class IntelligenceController {
             if (result.error) {
                 return res.status(404).json(result);
             }
+            if (req.enforcedInstitutionId && result.institutionId && result.institutionId !== req.enforcedInstitutionId) {
+                return res.status(403).json({ error: 'Forbidden: You are only authorized to inspect audit history for your own institution.' });
+            }
             return res.json(result);
         } catch (err) {
             return res.status(500).json({ error: err.message });

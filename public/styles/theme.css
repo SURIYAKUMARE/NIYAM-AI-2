@@ -2794,6 +2794,40 @@ svg.ill-svg {
   gap: 10px;
 }
 
+.auth-hero-building-card {
+  margin: 18px 0 20px 0;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  max-width: 520px;
+}
+
+.auth-hero-building-img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  object-position: center 35%;
+  display: block;
+}
+
+.auth-hero-building-meta {
+  position: absolute;
+  bottom: 10px;
+  left: 12px;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 5px 12px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .auth-tag-pill {
   padding: 6px 14px;
   border-radius: 8px;

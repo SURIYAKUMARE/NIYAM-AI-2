@@ -124,9 +124,9 @@ router.post('/api/applications/:id/hold', requireRole([ROLES.REGULATION_BUREAU_A
 
 // Scrutiny
 router.get('/api/scrutiny/queue', requireRole([ROLES.SCRUTINY_MEMBER, ROLES.REGIONAL_OFFICER, ROLES.REGULATION_BUREAU_ADMIN]), scrutinyController.getQueue.bind(scrutinyController));
-router.get('/api/scrutiny/:id/checklist', requireAuth, scrutinyController.getChecklist.bind(scrutinyController));
+router.get('/api/scrutiny/:id/checklist', requireAuth, enforceDataIsolation, scrutinyController.getChecklist.bind(scrutinyController));
 router.post('/api/scrutiny/:id/deficiency', requireRole([ROLES.SCRUTINY_MEMBER, ROLES.REGIONAL_OFFICER, ROLES.REGULATION_BUREAU_ADMIN]), scrutinyController.raiseDeficiency.bind(scrutinyController));
-router.post('/api/scrutiny/deficiencies/:deficiencyId/response', requireAuth, scrutinyController.submitResponse.bind(scrutinyController));
+router.post('/api/scrutiny/deficiencies/:deficiencyId/response', requireAuth, enforceDataIsolation, scrutinyController.submitResponse.bind(scrutinyController));
 router.post('/api/scrutiny/:id/review', requireRole([ROLES.SCRUTINY_MEMBER, ROLES.REGIONAL_OFFICER, ROLES.REGULATION_BUREAU_ADMIN]), scrutinyController.completeReview.bind(scrutinyController));
 
 // EVC Management

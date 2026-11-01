@@ -39,7 +39,11 @@ function enforceDataIsolation(req, res, next) {
 
     // 2. Institution Representative isolation
     if (req.user.role_code === ROLES.INSTITUTION_REP) {
-        req.enforcedInstitutionId = req.user.institution_id || 'INST_001';
+        req.enforcedInstitutionId = req.user.institution_id || (
+            req.user.username === 'dr.suresh.chandra' || req.user.username === 'inst_apex'
+                ? 'INST_001'
+                : 'NO_INSTITUTION_ASSIGNED'
+        );
     }
 
     next();

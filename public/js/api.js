@@ -16,9 +16,11 @@ const API = {
     setSession(token, user) {
         if (token) {
             localStorage.setItem('niyam_auth_token', token);
+            localStorage.setItem('niyam_auth', 'true');
         }
         if (user) {
             localStorage.setItem('niyam_auth_user', JSON.stringify(user));
+            localStorage.setItem('niyam_user', JSON.stringify(user));
         }
         localStorage.removeItem('aicte_current_user_id'); // Clear legacy insecure mock ID
         window.dispatchEvent(new CustomEvent('aicte:userChanged', { detail: { user } }));
@@ -27,6 +29,9 @@ const API = {
     clearSession() {
         localStorage.removeItem('niyam_auth_token');
         localStorage.removeItem('niyam_auth_user');
+        localStorage.removeItem('niyam_auth');
+        localStorage.removeItem('niyam_user');
+        localStorage.removeItem('niyam_view');
         localStorage.removeItem('aicte_current_user_id');
         window.dispatchEvent(new CustomEvent('aicte:userChanged', { detail: { user: null } }));
     },

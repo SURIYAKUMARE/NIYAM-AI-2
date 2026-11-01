@@ -203,11 +203,31 @@
     ];
 
     function resolveOfficial(input) {
-        if (!input) return OFFICIAL_PERSONNEL[0];
+        if (!input) return null;
         if (typeof input === 'object' && input.username) {
+            const rawRole = (input.role_code || input.roleCode || input.role || '').toUpperCase();
+            let normalizedRole = rawRole;
+            if (rawRole === 'APPLICANT') normalizedRole = 'INSTITUTION_REP';
+            else if (rawRole === 'ADMIN' || rawRole === 'SUPERVISING_AUTHORITY') normalizedRole = 'SUPER_ADMIN';
+            else if (rawRole === 'BUREAUADMIN' || rawRole === 'COMPETENT_AUTHORITY') normalizedRole = 'REGULATION_BUREAU_ADMIN';
+            else if (rawRole === 'SCRUTINY_OFFICER') normalizedRole = 'SCRUTINY_MEMBER';
+            else if (rawRole === 'REGIONAL_OFFICER') normalizedRole = 'REGIONAL_OFFICER';
+            else if (rawRole === 'COMPLIANCE_OFFICER') normalizedRole = 'COMPLIANCE_OFFICER';
+            else if (rawRole === 'AUDITOR') normalizedRole = 'AUDITOR';
+            else if (rawRole === 'SAC_OFFICER') normalizedRole = 'SAC_SHC_MEMBER';
+
             const found = OFFICIAL_PERSONNEL.find(p => p.username === input.username || (p.aliases && p.aliases.includes(input.username)));
-            if (found) return { ...found, ...input };
-            return input;
+            if (found) {
+                const finalRole = normalizedRole || found.roleCode || found.role_code;
+                return { ...found, ...input, role_code: finalRole, roleCode: finalRole };
+            }
+            return {
+                ...input,
+                role_code: normalizedRole,
+                roleCode: normalizedRole,
+                fullName: input.full_name || input.fullName || input.username,
+                designation: normalizedRole === 'INSTITUTION_REP' ? 'Institutional Representative' : 'AICTE Authorized Personnel'
+            };
         }
         const str = String(input).toLowerCase().trim();
         const found = OFFICIAL_PERSONNEL.find(p => 
@@ -216,23 +236,11 @@
             p.fullName.toLowerCase().includes(str) ||
             p.email.toLowerCase() === str
         );
-        if (found) return found;
-        return {
-            username: str,
-            fullName: str.charAt(0).toUpperCase() + str.slice(1),
-            designation: "AICTE Authorized Official",
-            shortRole: "Official",
-            role: "scrutiny_officer",
-            roleName: "Authorized Regulatory Officer",
-            department: "AICTE Regulatory Directorate",
-            email: `${str}@aicte-india.org`,
-            badge: "Official",
-            cadreId: "AICTE/CADRE-2025",
-            office: "National Headquarters, New Delhi",
-            securityClearance: "LEVEL 2 (STANDARD CLEARANCE)",
-            hasMfa: false,
-            pkiCert: `X.509 CN=${str}, OU=AICTE, O=Govt of India`
-        };
+        if (found) {
+            const finalRole = found.roleCode || found.role_code;
+            return { ...found, role_code: finalRole, roleCode: finalRole };
+        }
+        return null;
     }
 
     // Icons SVG mapping
@@ -318,6 +326,8 @@
             jurisdiction: 'Nilgiri Institute of Technology (SYN-2025-001)',
             overviewTitle: 'Institution Overview',
             overviewSubtitle: 'Institutional Approval Applications & Compliance Desk (APH 2025-26)',
+            canFileNewApp: true,
+            allowedViews: ['dashboard', 'applications', 'documents', 'compliance', 'clarifications', 'institution-profile', 'institution-intelligence', 'rules'],
             nav: [
                 { id: 'dashboard', label: 'Overview', icon: ICONS.LayoutDashboard },
                 { id: 'applications', label: 'My applications', icon: ICONS.FileText, badge: '1 Active' },
@@ -336,6 +346,8 @@
             jurisdiction: 'Northern Regional Office (RO-NORTH), Kanpur',
             overviewTitle: 'Regional Overview',
             overviewSubtitle: 'Northern Regional Jurisdiction Dossiers & Review Desk (APH 2025-26)',
+            canFileNewApp: false,
+            allowedViews: ['dashboard', 'applications', 'queue', 'evc', 'compliance', 'findings', 'reports', 'rules', 'clarifications', 'intelligence-centre', 'colleges'],
             nav: [
                 { id: 'dashboard', label: 'Overview', icon: ICONS.LayoutDashboard },
                 { id: 'applications', label: 'Regional applications', icon: ICONS.FileText, badge: '4 Active' },
@@ -355,6 +367,8 @@
             jurisdiction: 'National Scrutiny Committee (Northern Region)',
             overviewTitle: 'Scrutiny overview',
             overviewSubtitle: 'National Scrutiny Committee · Northern Region (AICTE APH 2025-26)',
+            canFileNewApp: false,
+            allowedViews: ['dashboard', 'queue', 'verify', 'findings', 'clarifications', 'applications', 'rules', 'intelligence-centre', 'colleges'],
             nav: [
                 { id: 'dashboard', label: 'Overview', icon: ICONS.LayoutDashboard },
                 { id: 'queue', label: 'Review queue', icon: ICONS.ListFilter, badge: '48' },
@@ -373,6 +387,8 @@
             jurisdiction: 'National Inspection & Accreditation Bureau',
             overviewTitle: 'Inspection scheduling overview',
             overviewSubtitle: 'Expert Visit Committee Logistics & Scheduling Desk (APH 2025-26)',
+            canFileNewApp: false,
+            allowedViews: ['dashboard', 'evc', 'infrastructure', 'applications', 'findings', 'rules', 'reports', 'intelligence-centre', 'colleges'],
             nav: [
                 { id: 'dashboard', label: 'Overview', icon: ICONS.LayoutDashboard },
                 { id: 'evc', label: 'Inspection scheduling', icon: ICONS.Landmark, badge: '12 Scheduled' },
@@ -390,6 +406,8 @@
             jurisdiction: 'AICTE National Expert Inspection Panel',
             overviewTitle: 'Assigned inspections overview',
             overviewSubtitle: 'Expert Visit Committee On-Site Verification Desk (APH 2025-26)',
+            canFileNewApp: false,
+            allowedViews: ['dashboard', 'evc', 'infrastructure', 'reports', 'rules', 'intelligence-centre', 'colleges'],
             nav: [
                 { id: 'dashboard', label: 'Overview', icon: ICONS.LayoutDashboard },
                 { id: 'evc', label: 'Assigned inspections', icon: ICONS.Landmark, badge: '2 Active' },
@@ -406,6 +424,8 @@
             jurisdiction: 'Legal & Institutional Undertakings Cell',
             overviewTitle: 'Compliance monitoring overview',
             overviewSubtitle: 'Statutory Validity & Institutional Undertakings Desk (APH 2025-26)',
+            canFileNewApp: false,
+            allowedViews: ['dashboard', 'compliance', 'documents', 'findings', 'clarifications', 'applications', 'rules', 'intelligence-centre', 'colleges'],
             nav: [
                 { id: 'dashboard', label: 'Overview', icon: ICONS.LayoutDashboard },
                 { id: 'compliance', label: 'Compliance monitoring', icon: ICONS.ShieldCheck, badge: '6 Due' },
@@ -424,6 +444,8 @@
             jurisdiction: 'Comptroller & Auditor General (CAG) Deputation',
             overviewTitle: 'Audit workspace overview',
             overviewSubtitle: 'Independent Cryptographic SHA-256 Ledger & Non-Repudiation Audit (APH 2025-26)',
+            canFileNewApp: false,
+            allowedViews: ['dashboard', 'audit', 'verify', 'analytics', 'reports', 'rules', 'intelligence-centre'],
             nav: [
                 { id: 'dashboard', label: 'Overview', icon: ICONS.LayoutDashboard },
                 { id: 'audit', label: 'Statutory audit ledger', icon: ICONS.History, badge: 'SHA-256' },
@@ -441,6 +463,8 @@
             jurisdiction: 'Standing Appellate Committee (SAC) & Standing Hearing Committee (SHC)',
             overviewTitle: 'Appellate & hearing overview',
             overviewSubtitle: 'Standing Hearing Committee & Appellate Adjudication Desk (APH 2025-26)',
+            canFileNewApp: false,
+            allowedViews: ['dashboard', 'sac', 'applications', 'findings', 'reports', 'rules', 'intelligence-centre'],
             nav: [
                 { id: 'dashboard', label: 'Overview', icon: ICONS.LayoutDashboard },
                 { id: 'sac', label: 'Appeals & hearing queue', icon: ICONS.Scale, badge: '3 Active' },
@@ -458,6 +482,8 @@
             jurisdiction: 'AICTE Apex Regulatory Directorate, New Delhi',
             overviewTitle: 'Bureau oversight overview',
             overviewSubtitle: 'Competent Authority Approval Determinations & Escalations (APH 2025-26)',
+            canFileNewApp: false,
+            allowedViews: ['dashboard', 'applications', 'queue', 'findings', 'rules', 'analytics', 'reports', 'verify', 'compliance', 'audit', 'intelligence-centre', 'colleges'],
             nav: [
                 { id: 'dashboard', label: 'Overview', icon: ICONS.LayoutDashboard },
                 { id: 'applications', label: 'Executive dossiers', icon: ICONS.FileText, badge: '14 Pending' },
@@ -476,6 +502,8 @@
             jurisdiction: 'AICTE e-Governance & Systems Division',
             overviewTitle: 'Administration overview',
             overviewSubtitle: 'Platform Security, Role-Based Access, & Rules Engine Administration',
+            canFileNewApp: false,
+            allowedViews: ['dashboard', 'users', 'rules', 'audit', 'analytics', 'scenarios', 'applications', 'queue', 'verify', 'compliance', 'reports', 'intelligence-centre', 'colleges'],
             nav: [
                 { id: 'dashboard', label: 'Overview', icon: ICONS.LayoutDashboard },
                 { id: 'users', label: 'User & role management', icon: ICONS.Users, badge: '9 Active' },
@@ -488,118 +516,75 @@
     };
 
     class NiyamAIApp {
+        getRoleCode() {
+            if (!this.currentUser) return null;
+            const rc = (this.currentUser.role_code || this.currentUser.roleCode || this.currentUser.role || '').toUpperCase();
+            if (rc === 'APPLICANT') return 'INSTITUTION_REP';
+            if (rc === 'ADMIN' || rc === 'SUPERVISING_AUTHORITY') return 'SUPER_ADMIN';
+            if (rc === 'BUREAUADMIN' || rc === 'COMPETENT_AUTHORITY') return 'REGULATION_BUREAU_ADMIN';
+            if (rc === 'SCRUTINY_OFFICER') return 'SCRUTINY_MEMBER';
+            return rc || null;
+        }
+
         isApplicant() {
-            if (!this.currentUser) return false;
-            const r = (this.currentUser.role || '').toLowerCase();
-            const rc = (this.currentUser.roleCode || '').toUpperCase();
-            const u = (this.currentUser.username || '').toLowerCase();
-            return r === 'applicant' || rc === 'INSTITUTION_REP' || u === 'dr.suresh.chandra' || u === 'inst_apex';
+            return this.getRoleCode() === 'INSTITUTION_REP';
         }
 
         isRegionalOfficer() {
-            if (!this.currentUser) return false;
-            const r = (this.currentUser.role || '').toLowerCase();
-            const rc = (this.currentUser.roleCode || '').toUpperCase();
-            const u = (this.currentUser.username || '').toLowerCase();
-            return r === 'regional_officer' || rc === 'REGIONAL_OFFICER' || u === 'er.manoj.verma' || u === 'ro_northern' || u === 'ro_north';
+            return this.getRoleCode() === 'REGIONAL_OFFICER';
         }
 
         isScrutinyOfficer() {
-            if (!this.currentUser) return false;
-            const r = (this.currentUser.role || '').toLowerCase();
-            const rc = (this.currentUser.roleCode || '').toUpperCase();
-            const u = (this.currentUser.username || '').toLowerCase();
-            return r === 'scrutiny_officer' || rc === 'SCRUTINY_MEMBER' || u === 'dr.vandana.rao' || u === 'scrutiny_expert1';
-        }
-
-        isEVCOfficer() {
-            if (!this.currentUser) return false;
-            const r = (this.currentUser.role || '').toLowerCase();
-            const rc = (this.currentUser.roleCode || '').toUpperCase();
-            const u = (this.currentUser.username || '').toLowerCase();
-            return r.includes('evc') || rc.includes('EVC') || u.includes('evc') || u === 'shri.vikramaditya.rathore' || u === 'prof.devendra.pathak';
+            return this.getRoleCode() === 'SCRUTINY_MEMBER';
         }
 
         isEVCCoordinator() {
-            if (!this.currentUser) return false;
-            const rc = (this.currentUser.roleCode || '').toUpperCase();
-            const u = (this.currentUser.username || '').toLowerCase();
-            return rc === 'EVC_COORDINATOR' || u === 'shri.vikramaditya.rathore' || u === 'evc_coord1' || u === 'evc_coord';
+            return this.getRoleCode() === 'EVC_COORDINATOR';
         }
 
         isEVCMember() {
-            if (!this.currentUser) return false;
-            const rc = (this.currentUser.roleCode || '').toUpperCase();
-            const u = (this.currentUser.username || '').toLowerCase();
-            return rc === 'EVC_MEMBER' || u === 'prof.devendra.pathak' || u === 'evc_expert1' || u === 'evc_member';
+            return this.getRoleCode() === 'EVC_MEMBER';
+        }
+
+        isEVCOfficer() {
+            const rc = this.getRoleCode();
+            return rc === 'EVC_COORDINATOR' || rc === 'EVC_MEMBER';
         }
 
         isComplianceOfficer() {
-            if (!this.currentUser) return false;
-            const r = (this.currentUser.role || '').toLowerCase();
-            const rc = (this.currentUser.roleCode || '').toUpperCase();
-            const u = (this.currentUser.username || '').toLowerCase();
-            return r === 'compliance_officer' || rc === 'COMPLIANCE_OFFICER' || u === 'smt.priya.sundaram' || u === 'compliance_officer1';
+            return this.getRoleCode() === 'COMPLIANCE_OFFICER';
         }
 
         isAuditor() {
-            if (!this.currentUser) return false;
-            const r = (this.currentUser.role || '').toLowerCase();
-            const rc = (this.currentUser.roleCode || '').toUpperCase();
-            const u = (this.currentUser.username || '').toLowerCase();
-            return r === 'auditor' || rc === 'AUDITOR' || u === 'shri.rajeshwar.rao' || u === 'auditor1';
+            return this.getRoleCode() === 'AUDITOR';
         }
 
         isSACMember() {
-            if (!this.currentUser) return false;
-            const r = (this.currentUser.role || '').toLowerCase();
-            const rc = (this.currentUser.roleCode || '').toUpperCase();
-            const u = (this.currentUser.username || '').toLowerCase();
-            return r === 'sac_officer' || rc === 'SAC_SHC_MEMBER' || u.includes('sac') || u.includes('shc') || u.includes('ramesh') || u.includes('chauhan');
+            return this.getRoleCode() === 'SAC_SHC_MEMBER';
         }
 
         isBureauHead() {
-            if (!this.currentUser) return false;
-            const rc = (this.currentUser.roleCode || '').toUpperCase();
-            const u = (this.currentUser.username || '').toLowerCase();
-            return rc === 'REGULATION_BUREAU_ADMIN' || u === 'prof.anil.sahasrabudhe' || u === 'bureauadmin' || u === 'competent_auth1';
+            return this.getRoleCode() === 'REGULATION_BUREAU_ADMIN';
         }
 
         isSystemAdmin() {
-            if (!this.currentUser) return false;
-            const rc = (this.currentUser.roleCode || '').toUpperCase();
-            const u = (this.currentUser.username || '').toLowerCase();
-            return rc === 'SUPER_ADMIN' || u === 'dr.rk.shrivastava' || u === 'superadmin';
+            return this.getRoleCode() === 'SUPER_ADMIN';
         }
 
         isAdmin() {
-            if (!this.currentUser) return true;
-            const r = (this.currentUser.role || '').toLowerCase();
-            const rc = (this.currentUser.roleCode || '').toUpperCase();
-            const u = (this.currentUser.username || '').toLowerCase();
-            return r === 'admin' || r === 'supervising_authority' || rc === 'SUPER_ADMIN' || rc === 'REGULATION_BUREAU_ADMIN' || u === 'prof.anil.sahasrabudhe' || u === 'dr.rk.shrivastava' || u === 'bureauadmin' || u === 'superadmin';
+            const rc = this.getRoleCode();
+            return rc === 'SUPER_ADMIN' || rc === 'REGULATION_BUREAU_ADMIN';
         }
 
         getRoleConfig() {
-            if (!this.currentUser) return ROLE_CONFIG.SCRUTINY_MEMBER;
-            const rc = (this.currentUser.roleCode || '').toUpperCase();
-            if (ROLE_CONFIG[rc]) return ROLE_CONFIG[rc];
-            if (this.isApplicant()) return ROLE_CONFIG.INSTITUTION_REP;
-            if (this.isRegionalOfficer()) return ROLE_CONFIG.REGIONAL_OFFICER;
-            if (this.isScrutinyOfficer()) return ROLE_CONFIG.SCRUTINY_MEMBER;
-            if (this.isEVCCoordinator()) return ROLE_CONFIG.EVC_COORDINATOR;
-            if (this.isEVCMember()) return ROLE_CONFIG.EVC_MEMBER;
-            if (this.isComplianceOfficer()) return ROLE_CONFIG.COMPLIANCE_OFFICER;
-            if (this.isAuditor()) return ROLE_CONFIG.AUDITOR;
-            if (this.isSACMember()) return ROLE_CONFIG.SAC_SHC_MEMBER;
-            if (this.isBureauHead()) return ROLE_CONFIG.REGULATION_BUREAU_ADMIN;
-            if (this.isSystemAdmin()) return ROLE_CONFIG.SUPER_ADMIN;
-            return ROLE_CONFIG.SCRUTINY_MEMBER;
+            const rc = this.getRoleCode();
+            if (!rc || !ROLE_CONFIG[rc]) return null;
+            return ROLE_CONFIG[rc];
         }
 
         getAuthoritativeRoleTitle() {
             const cfg = this.getRoleConfig();
-            return cfg ? cfg.roleTitle : (this.currentUser.roleName || 'Authorized Official');
+            return cfg ? cfg.roleTitle : (this.currentUser?.roleName || 'Authorized Official');
         }
 
         constructor() {
@@ -609,12 +594,15 @@
             this.passwordVisible = false;
             
             const rawUser = JSON.parse(localStorage.getItem('niyam_user') || 'null');
-            this.currentUser = this.isAuthenticated ? resolveOfficial(rawUser) : resolveOfficial(null);
+            this.currentUser = (this.isAuthenticated && rawUser) ? resolveOfficial(rawUser) : null;
+            if (this.isAuthenticated && !this.currentUser) {
+                this.isAuthenticated = false;
+                this.currentView = 'landing';
+                API.clearSession();
+            }
 
             const roleCfg = this.getRoleConfig();
-            const allowed = roleCfg ? roleCfg.nav.map(n => n.id).concat(['dashboard', 'rules', 'notifications', 'verify', 'findings', 'clarifications', 'applications', 'intelligence-centre']) : null;
-
-            if (allowed && !allowed.includes(this.currentView)) {
+            if (roleCfg && !roleCfg.allowedViews.includes(this.currentView)) {
                 this.currentView = 'dashboard';
             }
 
@@ -830,28 +818,26 @@
                 this.render();
                 return;
             }
-            let allowed = null;
-            if (this.isApplicant()) {
-                allowed = ['dashboard', 'applications', 'documents', 'compliance', 'clarifications', 'institution-profile', 'institution-intelligence'];
-            } else if (this.isRegionalOfficer()) {
-                allowed = ['dashboard', 'applications', 'queue', 'evc', 'analytics', 'findings', 'clarifications', 'reports', 'intelligence-centre'];
-            } else if (this.isScrutinyOfficer()) {
-                allowed = ['dashboard', 'queue', 'verify', 'findings', 'clarifications', 'applications', 'intelligence-centre'];
-            } else if (this.isEVCOfficer()) {
-                allowed = ['dashboard', 'evc', 'infrastructure', 'applications', 'intelligence-centre'];
-            } else if (this.isComplianceOfficer()) {
-                allowed = ['dashboard', 'compliance', 'documents', 'findings', 'clarifications', 'applications', 'intelligence-centre'];
-            } else if (this.isAuditor()) {
-                allowed = ['dashboard', 'audit', 'verification', 'analytics', 'reports', 'intelligence-centre'];
+            if (!this.isAuthenticated) {
+                this.currentView = 'landing';
+                this.render();
+                return;
+            }
+            const roleCfg = this.getRoleConfig();
+            if (!roleCfg) {
+                API.showToast('Access Denied: Unrecognized regulatory role.', 'error');
+                this.logout();
+                return;
             }
 
-            if (allowed && !allowed.includes(view)) {
-                API.showToast('Access Denied: Requested bureau view is restricted to authorised personnel.', 'error');
+            if (view !== 'dashboard' && !roleCfg.allowedViews.includes(view)) {
+                API.showToast(`Access Denied: The '${view}' view is restricted for ${roleCfg.roleTitle}.`, 'error');
                 this.currentView = 'dashboard';
                 localStorage.setItem('niyam_view', 'dashboard');
                 this.render();
                 return;
             }
+
             this.currentView = view;
             localStorage.setItem('niyam_view', view);
             this.mobileSidebarOpen = false;
@@ -860,23 +846,23 @@
         }
 
         async login(user) {
-            this.currentUser = user;
+            const official = resolveOfficial(user);
+            this.currentUser = { ...official, ...user };
             this.isAuthenticated = true;
             localStorage.setItem('niyam_auth', 'true');
-            localStorage.setItem('niyam_user', JSON.stringify(user));
-            API.setSimulatedUser(user.username);
+            localStorage.setItem('niyam_user', JSON.stringify(this.currentUser));
+            if (this.currentUser.username) {
+                API.setSimulatedUser(this.currentUser.username);
+            }
             await this.loadInitialData();
             this.navigate('dashboard');
         }
 
         logout() {
             this.isAuthenticated = false;
-            this.currentUser = OFFICIAL_PERSONNEL[0];
+            this.currentUser = null;
             API.clearSession();
-            localStorage.removeItem('niyam_auth');
-            localStorage.removeItem('niyam_user');
-            localStorage.removeItem('niyam_view');
-            this.currentView = 'login';
+            this.currentView = 'landing';
             this.loginMode = 'signin';
             this.render();
         }
@@ -1286,6 +1272,24 @@
             main.innerHTML = `<div class="content-max-w" id="view-container"></div>`;
             const container = document.getElementById('view-container');
 
+            const roleCfg = this.getRoleConfig();
+            if (!roleCfg) {
+                container.innerHTML = `
+                    <div class="card" style="padding:48px 24px; text-align:center; max-width:540px; margin:40px auto;">
+                        <div style="font-size:36px; margin-bottom:12px;">🛡️</div>
+                        <h3 style="margin-bottom:8px;">Access Denied: Unrecognized Role</h3>
+                        <p style="color:var(--text-secondary); margin-bottom:20px;">Your session does not have an authoritative role assigned. Please sign in with valid credentials.</p>
+                        <button class="btn btn-primary" onclick="app.logout();">Return to Sign In</button>
+                    </div>
+                `;
+                return;
+            }
+
+            if (this.currentView !== 'dashboard' && !roleCfg.allowedViews.includes(this.currentView)) {
+                API.showToast(`Access Denied: The '${this.currentView}' view is not permitted for ${roleCfg.roleTitle}.`, 'error');
+                this.currentView = 'dashboard';
+            }
+
             switch (this.currentView) {
                 case 'dashboard':
                     if (this.isApplicant()) {
@@ -1344,55 +1348,42 @@
                     this.renderSACDashboardView(container);
                     break;
                 case 'colleges':
-                    if (this.isApplicant()) { this.navigate('dashboard'); return; }
                     this.renderCollegesView(container);
                     break;
                 case 'verify':
-                    if (this.isApplicant()) { this.navigate('dashboard'); return; }
                     this.renderVerifyStudioView(container);
                     break;
                 case 'queue':
-                    if (this.isApplicant()) { this.navigate('dashboard'); return; }
                     this.renderQueueView(container);
                     break;
                 case 'findings':
-                    if (this.isApplicant()) { this.navigate('dashboard'); return; }
                     this.renderFindingsView(container);
                     break;
                 case 'verification':
-                    if (this.isApplicant()) { this.navigate('dashboard'); return; }
                     this.renderSourceVerificationView(container);
                     break;
                 case 'infrastructure':
-                    if (this.isApplicant()) { this.navigate('dashboard'); return; }
                     this.renderInfrastructureView(container);
                     break;
                 case 'analytics':
-                    if (this.isApplicant()) { this.navigate('dashboard'); return; }
                     this.renderAnalyticsView(container);
                     break;
                 case 'audit':
-                    if (this.isApplicant()) { this.navigate('dashboard'); return; }
                     this.renderAuditView(container);
                     break;
                 case 'rules':
-                    if (this.isApplicant()) { this.navigate('dashboard'); return; }
                     this.renderRulesView(container);
                     break;
                 case 'users':
-                    if (this.isApplicant()) { this.navigate('dashboard'); return; }
                     this.renderUsersView(container);
                     break;
                 case 'scenarios':
-                    if (this.isApplicant()) { this.navigate('dashboard'); return; }
                     this.renderScenariosView(container);
                     break;
                 case 'intelligence-centre':
-                    if (this.isApplicant()) { this.navigate('dashboard'); return; }
                     this.renderIntelligenceCentreView(container);
                     break;
                 case 'institution-intelligence':
-                    if (!this.isApplicant()) { this.navigate('dashboard'); return; }
                     this.renderInstitutionIntelligenceView(container);
                     break;
                 default:
@@ -1765,8 +1756,17 @@
                         </div>
                         <h1 class="auth-hero-title">National Institutional Approval &amp; Compliance Portal</h1>
                         <p class="auth-hero-subtitle">Integrated approval automation, digital scrutiny, and continuous statutory validity monitoring under AICTE APH 2025–26.</p>
+                        
+                        <div class="auth-hero-building-card">
+                            <img src="/images/aicte-building-bg.png" alt="AICTE Headquarters, Nelson Mandela Marg, New Delhi" class="auth-hero-building-img">
+                            <div class="auth-hero-building-meta">
+                                <span class="auth-badge-dot" style="background:#10B981;"></span>
+                                <span style="font-size:12px; font-weight:700;">AICTE Headquarters • Nelson Mandela Marg, New Delhi</span>
+                            </div>
+                        </div>
+
                         <div class="auth-hero-tags">
-                            <span class="auth-tag-pill">AICTE HQ • Nelson Mandela Marg, New Delhi</span>
+                            <span class="auth-tag-pill">APH 2025–26 Standard</span>
                             <span class="auth-tag-pill">Smart India Hackathon 2026 • PS 26262</span>
                         </div>
                     </div>
@@ -1967,8 +1967,8 @@
                         const res = await API.post('/api/auth/login', { username: uname, password: pwd });
                         if (res && res.token) {
                             API.setSession(res.token, res.user);
-                            const official = resolveOfficial(uname);
-                            this.currentUser = { ...official, ...res.user };
+                            const official = resolveOfficial(res.user);
+                            this.currentUser = { ...official, ...res.user, role_code: res.user.role_code, roleCode: res.user.role_code };
                             this.isAuthenticated = true;
                             localStorage.setItem('niyam_auth', 'true');
                             localStorage.setItem('niyam_user', JSON.stringify(this.currentUser));
@@ -2943,10 +2943,12 @@
                         <p>End-to-End Statutory Case Lifecycle Management (APH 2025-26)</p>
                     </div>
                     <div class="view-actions">
-                        <button class="btn btn-primary btn-sm" id="btn-file-new-app">
-                            ${ICONS.FileCheck2}
-                            File New Application
-                        </button>
+                        ${this.isApplicant() ? `
+                            <button class="btn btn-primary btn-sm" id="btn-file-new-app">
+                                ${ICONS.FileCheck2}
+                                File New Application
+                            </button>
+                        ` : ''}
                         <button class="btn btn-outline btn-sm" onclick="app.navigate('verify');">
                             ${ICONS.FileSearch}
                             AI Verification Studio
@@ -4431,7 +4433,13 @@
         // 16. MY APPLICATIONS (Applicant Isolated View)
         // ====================================================================
         renderMyApplicationsView(container) {
-            const myApps = this.applications.filter(a => a.collegeId === 'nit-nilgiri' || a.id.startsWith('APP-2025-001') || a.collegeName === 'Nilgiri Institute of Technology');
+            const currentInstId = this.currentUser?.institution_id || (this.currentUser?.username === 'inst_southern' ? 'INST_002' : 'INST_001');
+            const myApps = this.applications.filter(a => {
+                if (a.institution_id && a.institution_id === currentInstId) return true;
+                if (currentInstId === 'INST_001' && (a.collegeId === 'nit-nilgiri' || a.id.startsWith('APP-2025-001') || (a.collegeName && a.collegeName.includes('Nilgiri')))) return true;
+                if (currentInstId === 'INST_002' && (a.collegeId === 'cit-coromandel' || a.id.startsWith('APP-2025-003') || (a.collegeName && a.collegeName.includes('Coromandel')))) return true;
+                return false;
+            });
 
             const renderTableRows = (appsToRender) => {
                 const tbody = container.querySelector('#my-apps-table-body');
@@ -5688,7 +5696,9 @@
             };
 
             // RBAC Check: applicant cannot view other colleges' applications!
-            if (this.isApplicant() && app.collegeId && app.collegeId !== 'nit-nilgiri') {
+            const currentInstId = this.currentUser?.institution_id || (this.currentUser?.username === 'inst_southern' ? 'INST_002' : 'INST_001');
+            const allowedCollegeId = currentInstId === 'INST_002' ? 'cit-coromandel' : 'nit-nilgiri';
+            if (this.isApplicant() && app.collegeId && app.collegeId !== allowedCollegeId && app.institution_id !== currentInstId) {
                 API.showToast('Access Denied: You are not authorized to inspect confidential dossiers of other institutions.', 'error');
                 return;
             }
@@ -6537,19 +6547,34 @@
             overlay.querySelector('#emergency-close-btn').onclick = close;
 
             overlay.querySelectorAll('.switch-ident-btn').forEach(btn => {
-                btn.onclick = () => {
+                btn.onclick = async () => {
                     const u = btn.getAttribute('data-username');
-                    const acc = resolveOfficial(u);
-                    if (acc) {
-                        close();
-                        this.login(acc);
+                    btn.disabled = true;
+                    btn.textContent = 'Authenticating...';
+                    try {
+                        const res = await API.post('/api/auth/login', { username: u, password: 'Password@123' });
+                        if (res && res.token) {
+                            API.setSession(res.token, res.user);
+                            const official = resolveOfficial(res.user);
+                            close();
+                            await this.login({ ...official, ...res.user, role_code: res.user.role_code, roleCode: res.user.role_code });
+                            API.showToast(`Switched identity to ${res.user.full_name} (${res.user.role_code})`, 'success');
+                        } else {
+                            throw new Error('Authentication response missing token');
+                        }
+                    } catch (err) {
+                        API.showToast('Failed to switch persona: ' + (err.message || 'Authentication error'), 'error');
+                        btn.disabled = false;
+                        btn.textContent = 'Switch Persona';
                     }
                 };
             });
         }
 
         openCollegeModal(cid) {
-            if (this.isApplicant() && cid !== 'nit-nilgiri') {
+            const currentInstId = this.currentUser?.institution_id || (this.currentUser?.username === 'inst_southern' ? 'INST_002' : 'INST_001');
+            const allowedCollegeId = currentInstId === 'INST_002' ? 'cit-coromandel' : 'nit-nilgiri';
+            if (this.isApplicant() && cid !== allowedCollegeId && cid !== currentInstId) {
                 API.showToast('Access Denied: Institutional representatives cannot browse other colleges.', 'error');
                 return;
             }

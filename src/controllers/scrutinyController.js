@@ -15,6 +15,14 @@ class ScrutinyController {
     getChecklist(req, res) {
         try {
             const { id } = req.params;
+            const db = require('../database/db');
+            const app = db.queryOne('SELECT institution_id FROM applications WHERE id = ?', [id]);
+            if (!app) {
+                return res.status(404).json({ error: 'Application not found.' });
+            }
+            if (req.enforcedInstitutionId && app.institution_id !== req.enforcedInstitutionId) {
+                return res.status(403).json({ error: 'Forbidden: You are only authorized to inspect documents for your own institution.' });
+            }
             const data = scrutinyService.getChecklistForApplication(id);
             return res.json(data);
         } catch (err) {
@@ -53,6 +61,22 @@ class ScrutinyController {
 
             if (!responseText) {
                 return res.status(400).json({ error: 'Response explanation is mandatory.' });
+            }
+
+            const db = require('../database/db');
+            const def = db.queryOne(`
+                SELECT d.*, a.institution_id 
+                FROM deficiencies d 
+                JOIN applications a ON d.application_id = a.id 
+                WHERE d.id = ?
+            `, [deficiencyId]);
+
+            if (!def) {
+                return res.status(404).json({ error: 'Deficiency record not found.' });
+            }
+
+            if (req.enforcedInstitutionId && def.institution_id !== req.enforcedInstitutionId) {
+                return res.status(403).json({ error: 'Forbidden: You cannot respond to deficiencies for another institution.' });
             }
 
             const result = scrutinyService.submitDeficiencyResponse({

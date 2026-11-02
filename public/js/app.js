@@ -2070,63 +2070,54 @@
             const currentRole = (this.pendingLogin && this.pendingLogin.role) ? this.pendingLogin.role : currentDemo;
 
             wrap.innerHTML = `
-                <!-- Top Floating Navigation Bar -->
-                <div class="auth-nav-bar" style="max-width:1080px; width:100%; margin:0 auto; display:flex; justify-content:space-between; align-items:center;">
-                    <button type="button" class="btn btn-sm btn-outline" id="btn-auth-back-home" style="background:rgba(255,255,255,0.92); backdrop-filter:blur(8px); border-radius:8px; border:1px solid #CBD5E1; color:#002147; font-weight:700; display:flex; align-items:center; gap:6px; cursor:pointer;">
-                        <span>← Back to public portal</span>
-                    </button>
-                    <span class="hide-on-mobile" style="background:rgba(255,255,255,0.85); backdrop-filter:blur(8px); padding:4px 14px; border-radius:20px; font-size:11.5px; font-weight:700; color:#002147; border:1px solid rgba(0,33,71,0.15);">
-                        AICTE Regulatory Portal (APH 2025–26)
-                    </span>
-                    <button type="button" class="btn btn-sm btn-outline" id="auth-theme-toggle" aria-label="Toggle theme" style="background:rgba(255,255,255,0.92); backdrop-filter:blur(8px); border-radius:8px; border:1px solid #CBD5E1; color:#002147; cursor:pointer;">
-                        ${this.theme === 'dark' ? ICONS.Sun : ICONS.Moon}
-                    </button>
-                </div>
-
-                <!-- Centered Floating Card Matching Reference Design -->
-                <div class="auth-card-wrap" style="margin: auto; max-width: 405px; width: 100%; padding: 4px 0;">
+                <div class="auth-card-wrap">
                     <div class="auth-card">
-                        <!-- Emblem with online green dot -->
-                        <div class="auth-emblem-wrap">
-                            <div class="auth-emblem-box">
-                                <img src="/images/aicte-logo.png" alt="AICTE Emblem" class="auth-emblem-img">
-                                <span class="auth-online-dot" title="AICTE Regulatory Core Online"></span>
+                        <!-- Top Navigation Bar inside Card -->
+                        <div class="auth-card-top-bar">
+                            <button type="button" class="auth-back-link" id="btn-auth-back-home" title="Return to public portal">
+                                <span>← Portal Home</span>
+                            </button>
+                            <div class="auth-live-pill" title="AICTE Regulatory Server Active">
+                                <span class="auth-live-dot"></span>
+                                <span>AICTE Core Online</span>
                             </div>
+                            <button type="button" class="auth-theme-btn" id="auth-theme-toggle" aria-label="Toggle theme">
+                                ${this.theme === 'dark' ? ICONS.Sun : ICONS.Moon}
+                            </button>
                         </div>
 
-                        <!-- Header Titles -->
-                        <div class="auth-hindi-subtitle">अखिल भारतीय तकनीकी शिक्षा परिषद</div>
-                        <h1 class="auth-card-title">NIYAM Regulatory Portal</h1>
-                        <div class="auth-card-sub">${this.authMode === 'mpin' ? 'AICTE Regulatory MPIN Verification' : 'AICTE Application Review &amp; Compliance Verification'}</div>
+                        <!-- Official Header -->
+                        <div class="auth-header">
+                            <div class="auth-emblem-wrap">
+                                <div class="auth-emblem-box">
+                                    <img src="/images/aicte-logo.png" alt="AICTE Emblem" class="auth-emblem-img">
+                                </div>
+                            </div>
+                            <div class="auth-hindi-subtitle">अखिल भारतीय तकनीकी शिक्षा परिषद</div>
+                            <h1 class="auth-title">NIYAM Regulatory Portal</h1>
+                            <p class="auth-subtitle">${this.authMode === 'mpin' ? '4-Digit Security MPIN Verification' : 'AICTE Approval &amp; Compliance Management'}</p>
+                        </div>
 
                         ${this.authMode === 'mpin' ? `
-                            <!-- 4-Digit Regulatory MPIN View -->
+                            <!-- 4-Digit MPIN View -->
                             <div class="mpin-container">
-                                <!-- Official Profile Summary -->
+                                <!-- User Meta -->
                                 <div class="mpin-user-card">
-                                    <div class="mpin-user-avatar">
-                                        ${(currentRole.roleTitle || 'A')[0]}
-                                    </div>
+                                    <div class="mpin-user-avatar">${(currentRole.roleTitle || 'A')[0]}</div>
                                     <div class="mpin-user-info">
-                                        <div class="mpin-user-name">${currentRole.roleTitle}</div>
+                                        <div class="mpin-user-name">${currentRole.fullName || currentRole.roleTitle}</div>
                                         <div class="mpin-user-role">
                                             <span>${currentRole.username}</span>
                                             <span>•</span>
-                                            <span class="demo-clearance-badge">${(currentRole.securityClearance || 'LEVEL 4').split('•')[0].trim()}</span>
+                                            <span class="auth-persona-badge">${(currentRole.securityClearance || 'LEVEL 4').split('•')[0].trim()}</span>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div style="text-align:center; margin-bottom:6px;">
-                                    <div style="font-size:12px; font-weight:700; color:var(--text-primary); margin-bottom:2px;">
-                                        Enter 4-Digit Security MPIN
-                                    </div>
-                                    <div style="font-size:10.5px; color:var(--text-secondary);">
-                                        Official security PIN for authenticated portal access
-                                    </div>
+                                <div style="text-align:center; margin-bottom:4px;">
+                                    <div style="font-size:11.5px; font-weight:700; color:var(--text-primary);">Enter 4-Digit Security MPIN</div>
                                 </div>
 
-                                <!-- 4 MPIN Digit Boxes -->
                                 <div class="mpin-display-row" id="mpin-display-boxes">
                                     <div class="mpin-digit-box ${this.enteredMpin.length > 0 ? 'filled' : ''} ${this.enteredMpin.length === 0 ? 'active' : ''}">
                                         ${this.enteredMpin.length > 0 ? '●' : ''}
@@ -2142,18 +2133,14 @@
                                     </div>
                                 </div>
 
-                                <!-- Demo MPIN Helper Badge -->
                                 <div class="mpin-demo-badge">
                                     <div class="mpin-demo-text">
                                         ${ICONS.Sparkles}
                                         <span>Demo MPIN: <strong>2626</strong></span>
                                     </div>
-                                    <button type="button" class="mpin-autofill-btn" id="btn-mpin-autofill">
-                                        Auto-fill MPIN
-                                    </button>
+                                    <button type="button" class="mpin-autofill-btn" id="btn-mpin-autofill">Auto-fill MPIN</button>
                                 </div>
 
-                                <!-- Virtual Numeric Keypad -->
                                 <div class="mpin-keypad">
                                     <button type="button" class="mpin-key-btn" data-key="1">1</button>
                                     <button type="button" class="mpin-key-btn" data-key="2">2</button>
@@ -2169,8 +2156,7 @@
                                     <button type="button" class="mpin-key-btn action-btn" id="btn-mpin-backspace">⌫</button>
                                 </div>
 
-                                <!-- Verify Button -->
-                                <button type="button" class="auth-btn-submit" id="btn-verify-mpin">
+                                <button type="button" class="auth-btn-primary" id="btn-verify-mpin">
                                     ${ICONS.ShieldCheck}
                                     <span>Verify MPIN &amp; Access Workspace</span>
                                 </button>
@@ -2182,130 +2168,114 @@
                                 </div>
                             </div>
                         ` : this.authMode === 'signin' ? `
-                            <!-- Quick Demo Access Box with Security Matrix -->
-                            <div class="demo-access-box">
-                                <div class="demo-access-header">
-                                    <div class="demo-access-title">
-                                        ${ICONS.Sparkles}
-                                        <span>Quick Demo Access</span>
-                                    </div>
-                                    <div style="display:flex; align-items:center; gap:6px;">
-                                        <span class="demo-sec-tag">${ICONS.ShieldCheck} MPIN Protected</span>
-                                        <span class="demo-access-pw">PW: password123</span>
-                                    </div>
+                            <!-- Persona Switcher -->
+                            <div class="auth-persona-box">
+                                <div class="auth-persona-header">
+                                    <span style="display:flex; align-items:center; gap:5px;">${ICONS.Sparkles} Quick Demo Persona</span>
+                                    <span class="auth-pin-badge">Demo PIN: 2626</span>
                                 </div>
 
-                                <!-- 5 Pill Buttons -->
-                                <div class="demo-pills-row" role="tablist">
+                                <div class="auth-persona-tabs" role="tablist">
                                     ${DEMO_LOGIN_ROLES.map(r => `
-                                        <button type="button" class="demo-pill-btn ${r.key === currentDemo.key ? 'active' : ''}" data-role-key="${r.key}">
+                                        <button type="button" class="auth-persona-tab ${r.key === currentDemo.key ? 'active' : ''}" data-role-key="${r.key}">
                                             ${r.label}
                                         </button>
                                     `).join('')}
                                 </div>
 
-                                <!-- Role Detail, Security Clearance & Direct Access -->
-                                <div class="demo-detail-row">
-                                    <div class="demo-role-indicator">
-                                        <span class="demo-dot"></span>
-                                        <span id="demo-role-label"><strong>${currentDemo.roleTitle}</strong> <span style="font-family:var(--font-mono, monospace); opacity:0.8;">(${currentDemo.username})</span></span>
-                                        <span class="demo-clearance-badge" id="demo-clearance-badge">${currentDemo.securityClearance.split('•')[0].trim()}</span>
+                                <div class="auth-persona-meta-row">
+                                    <div class="auth-persona-user">
+                                        <span><strong>${currentDemo.roleTitle}</strong></span>
+                                        <span style="font-family:var(--font-mono, monospace); opacity:0.75; font-size:10px;">(${currentDemo.username})</span>
                                     </div>
-                                    <button type="button" class="demo-direct-btn" id="btn-direct-access" title="Instant verified sign in with demo MPIN 2626">
-                                        Direct Access
-                                    </button>
+                                    <span class="auth-persona-badge">${currentDemo.securityClearance.split('•')[0].trim()}</span>
                                 </div>
                             </div>
 
-                            <!-- Primary Sign In Form -->
+                            <!-- Clean Sign In Form -->
                             <form id="auth-signin-form" novalidate>
-                                <div class="auth-field-group">
-                                    <label for="login-username" class="auth-field-label">Username / AICTE Official ID</label>
-                                    <div class="auth-input-container">
-                                        <span class="auth-input-leading-icon">${ICONS.User || ICONS.Users}</span>
-                                        <input type="text" class="auth-text-input" id="login-username" value="${currentDemo.username}" required placeholder="e.g. auditor or officer" autocomplete="username">
+                                <div class="auth-input-group">
+                                    <div class="auth-label-row">
+                                        <label for="login-username" class="auth-label">Username / Official ID</label>
+                                    </div>
+                                    <div class="auth-field-box">
+                                        <span class="auth-field-icon">${ICONS.User || ICONS.Users}</span>
+                                        <input type="text" class="auth-input" id="login-username" value="${currentDemo.username}" required placeholder="Official username" autocomplete="username">
                                     </div>
                                 </div>
 
-                                <div class="auth-field-group">
-                                    <div class="auth-field-label-row">
-                                        <label for="login-password" class="auth-field-label">Password</label>
-                                        <a href="#" class="auth-link-forgot" id="auth-forgot-link">Forgot password?</a>
+                                <div class="auth-input-group">
+                                    <div class="auth-label-row">
+                                        <label for="login-password" class="auth-label">Password</label>
+                                        <a href="#" class="auth-sub-link" id="auth-forgot-link">PW: password123</a>
                                     </div>
-                                    <div class="auth-input-container">
-                                        <span class="auth-input-leading-icon">${ICONS.Lock}</span>
-                                        <input type="${this.passwordVisible ? 'text' : 'password'}" class="auth-text-input" id="login-password" value="${currentDemo.defaultPassword}" required placeholder="••••••••••••" autocomplete="current-password">
+                                    <div class="auth-field-box">
+                                        <span class="auth-field-icon">${ICONS.Lock}</span>
+                                        <input type="${this.passwordVisible ? 'text' : 'password'}" class="auth-input" id="login-password" value="${currentDemo.defaultPassword}" required placeholder="••••••••••••" autocomplete="current-password">
                                         <button type="button" class="auth-eye-btn" id="btn-toggle-password" aria-label="Toggle password visibility">
                                             ${this.passwordVisible ? ICONS.EyeOff : ICONS.Eye}
                                         </button>
                                     </div>
                                 </div>
 
-                                <!-- Security Code (Captcha) Section -->
-                                <div class="auth-field-group">
-                                    <div class="auth-field-label-row">
-                                        <label for="login-captcha" class="auth-field-label">Security Code (Captcha)</label>
-                                        <span style="font-size:10.5px; color:#64748B;">Official AICTE Verification</span>
+                                <div class="auth-input-group">
+                                    <div class="auth-label-row">
+                                        <label for="login-captcha" class="auth-label">Security Code (Captcha)</label>
+                                        <span class="auth-sub-link" style="color:var(--text-secondary); cursor:default;">AICTE NIC Verified</span>
                                     </div>
-                                    <div style="display:flex; gap:6px; align-items:center;">
-                                        <div class="auth-captcha-box" id="auth-captcha-display" title="Click to refresh security code">
+                                    <div class="auth-captcha-row">
+                                        <div class="auth-captcha-tag" id="auth-captcha-display" title="Click to refresh security code">
                                             ${this.currentCaptcha}
                                         </div>
-                                        <button type="button" class="auth-captcha-refresh-btn" id="btn-refresh-captcha" title="Generate new security code">
+                                        <button type="button" class="auth-captcha-refresh" id="btn-refresh-captcha" title="New security code">
                                             ${ICONS.Refresh}
                                         </button>
-                                        <div class="auth-input-container" style="flex:1;">
-                                            <input type="text" class="auth-text-input font-mono" id="login-captcha" value="${this.currentCaptcha}" required placeholder="Enter code" maxlength="6" style="padding-left:10px; text-transform:uppercase; font-weight:700; letter-spacing:1px; height:34px;">
-                                        </div>
+                                        <input type="text" class="auth-input font-mono" id="login-captcha" value="${this.currentCaptcha}" required placeholder="Code" maxlength="6" style="padding-left:10px; text-transform:uppercase; font-weight:700; letter-spacing:1.5px; text-align:center;">
                                     </div>
                                 </div>
 
-                                <label class="auth-remember-row">
-                                    <input type="checkbox" checked id="auth-remember-me">
-                                    <span>Remember active session</span>
-                                </label>
-
-                                <button type="submit" class="auth-btn-submit" id="btn-login-submit">
-                                    ${ICONS.LogIn || ICONS.ArrowRight}
-                                    <span>Sign In to Workspace</span>
+                                <!-- Primary: Continue with MPIN -->
+                                <button type="submit" class="auth-btn-primary" id="btn-login-submit">
+                                    ${ICONS.ShieldCheck}
+                                    <span>Continue with Security MPIN</span>
                                 </button>
 
-                                <!-- Regulatory Security Compliance Banner -->
-                                <div class="auth-security-banner">
-                                    <div class="auth-security-banner-icon">${ICONS.ShieldCheck}</div>
-                                    <div class="auth-security-banner-text">
-                                        <strong>Government Cyber Security Compliance</strong><br>
-                                        256-bit TLS encrypted session • SHA-256 chained audit ledger • IT Act 2000 Section 43A Compliant
-                                    </div>
-                                </div>
+                                <!-- Secondary: Instant 1-Click Demo Entry -->
+                                <button type="button" class="auth-btn-secondary" id="btn-direct-access">
+                                    ${ICONS.Sparkles}
+                                    <span>Instant Demo Access (Skip PIN)</span>
+                                </button>
                             </form>
 
-                            <!-- Bottom Link -->
-                            <div class="auth-bottom-link-row">
-                                <span>New institutional applicant? </span>
-                                <a href="#" class="auth-link-register" id="link-switch-to-register">Register institutional account</a>
+                            <!-- Trustmark Footer -->
+                            <div class="auth-trust-strip">
+                                <span style="display:flex; align-items:center; gap:4px;">${ICONS.ShieldCheck} 256-Bit TLS</span>
+                                <span>•</span>
+                                <span>4-Digit MPIN Protected</span>
+                                <span>•</span>
+                                <span>IT Act 2000 Compliant</span>
+                            </div>
+
+                            <div class="auth-footer-link">
+                                New institutional applicant? <a href="#" id="link-switch-to-register">Register institutional account</a>
                             </div>
                         ` : `
                             <!-- Institutional Enrolment Form -->
-                            <form id="auth-register-form" style="display:flex; flex-direction:column; gap:10px;" novalidate>
-                                <div class="auth-field-group" style="margin-bottom:6px;">
-                                    <label for="reg-pid" class="auth-field-label">AICTE Permanent Institute ID (PID)</label>
-                                    <div class="auth-input-container">
-                                        <input type="text" class="auth-text-input" style="padding-left:12px;" id="reg-pid" placeholder="e.g. 1-3324901821" required>
-                                    </div>
+                            <form id="auth-register-form" style="display:flex; flex-direction:column; gap:8px;" novalidate>
+                                <div class="auth-input-group">
+                                    <label for="reg-pid" class="auth-label">AICTE Permanent Institute ID (PID)</label>
+                                    <input type="text" class="auth-input" style="padding-left:10px;" id="reg-pid" placeholder="e.g. 1-3324901821" required>
                                 </div>
 
-                                <div class="auth-field-group" style="margin-bottom:6px;">
-                                    <label for="reg-name" class="auth-field-label">Official Institution Name</label>
-                                    <div class="auth-input-container">
-                                        <input type="text" class="auth-text-input" style="padding-left:12px;" id="reg-name" placeholder="Full legal name of technical college" required>
-                                    </div>
+                                <div class="auth-input-group">
+                                    <label for="reg-name" class="auth-label">Official Institution Name</label>
+                                    <input type="text" class="auth-input" style="padding-left:10px;" id="reg-name" placeholder="Full legal name of technical college" required>
                                 </div>
 
-                                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-                                    <div class="auth-field-group" style="margin-bottom:6px;">
-                                        <label for="reg-state" class="auth-field-label">State / UT</label>
-                                        <select class="auth-text-input" style="padding-left:8px; height:36px; font-size:11.5px;" id="reg-state" required>
+                                <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
+                                    <div class="auth-input-group">
+                                        <label for="reg-state" class="auth-label">State / UT</label>
+                                        <select class="auth-input" style="padding-left:8px; font-size:11.5px;" id="reg-state" required>
                                             <option value="Tamil Nadu">Tamil Nadu</option>
                                             <option value="Karnataka">Karnataka</option>
                                             <option value="Maharashtra">Maharashtra</option>
@@ -2313,9 +2283,9 @@
                                             <option value="Uttar Pradesh">Uttar Pradesh</option>
                                         </select>
                                     </div>
-                                    <div class="auth-field-group" style="margin-bottom:6px;">
-                                        <label for="reg-region" class="auth-field-label">Regional Office</label>
-                                        <select class="auth-text-input" style="padding-left:8px; height:36px; font-size:11.5px;" id="reg-region" required>
+                                    <div class="auth-input-group">
+                                        <label for="reg-region" class="auth-label">Regional Office</label>
+                                        <select class="auth-input" style="padding-left:8px; font-size:11.5px;" id="reg-region" required>
                                             <option value="Southern">Southern (Chennai)</option>
                                             <option value="Northern">Northern (Kanpur)</option>
                                             <option value="Western">Western (Mumbai)</option>
@@ -2324,36 +2294,27 @@
                                     </div>
                                 </div>
 
-                                <div class="auth-field-group" style="margin-bottom:8px;">
-                                    <label for="reg-email" class="auth-field-label">Registrar / Liaison Email</label>
-                                    <div class="auth-input-container">
-                                        <input type="email" class="auth-text-input" style="padding-left:12px;" id="reg-email" placeholder="registrar@institution.edu.in" required>
-                                    </div>
+                                <div class="auth-input-group">
+                                    <label for="reg-email" class="auth-label">Registrar / Liaison Email</label>
+                                    <input type="email" class="auth-input" style="padding-left:10px;" id="reg-email" placeholder="registrar@institution.edu.in" required>
                                 </div>
 
-                                <button type="submit" class="auth-btn-submit" style="margin-top:0;">
+                                <button type="submit" class="auth-btn-primary" style="margin-top:2px;">
                                     ${ICONS.ShieldCheck}
                                     <span>Submit Institutional Enrolment</span>
                                 </button>
 
-                                <div class="auth-bottom-link-row">
-                                    <span>Already registered? </span>
-                                    <a href="#" class="auth-link-register" id="link-switch-to-signin">Sign in to workspace</a>
+                                <div class="auth-footer-link">
+                                    Already registered? <a href="#" id="link-switch-to-signin">Sign in to workspace</a>
                                 </div>
                             </form>
                         `}
 
-                        <!-- Footer Watermark matching image -->
-                        <div class="auth-card-watermark">
+                        <div class="auth-watermark">
                             AICTE Problem Statement 26262 · APH 2025-26
                         </div>
                     </div>
                 </div>
-
-                <!-- Page Footer -->
-                <footer class="auth-footer" style="text-align:center; font-size:11px; opacity:0.85; margin-top:auto;">
-                    Smart India Hackathon 2026 • Problem Statement ID: 26262 • Team PROJECT CHAOS (197354)
-                </footer>
             `;
 
             // Event Bindings
@@ -2526,45 +2487,25 @@
             if (btnRefreshCaptcha) btnRefreshCaptcha.onclick = refreshCaptchaHandler;
             if (captchaDisplay) captchaDisplay.onclick = refreshCaptchaHandler;
 
-            // Demo pills selection
-            wrap.querySelectorAll('.demo-pill-btn').forEach(btn => {
+            // Demo persona selection
+            wrap.querySelectorAll('.auth-persona-tab').forEach(btn => {
                 btn.onclick = () => {
                     const key = btn.getAttribute('data-role-key');
                     const selected = DEMO_LOGIN_ROLES.find(d => d.key === key);
                     if (!selected) return;
                     this.activeDemoRole = key;
-
-                    wrap.querySelectorAll('.demo-pill-btn').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-
-                    const label = wrap.querySelector('#demo-role-label');
-                    if (label) label.innerHTML = `<strong>${selected.roleTitle}</strong> <span style="font-family:var(--font-mono, monospace); opacity:0.8;">(${selected.username})</span>`;
-
-                    const badge = wrap.querySelector('#demo-clearance-badge');
-                    if (badge) badge.textContent = selected.securityClearance.split('•')[0].trim();
-
-                    const uInput = wrap.querySelector('#login-username');
-                    if (uInput) uInput.value = selected.username;
-
-                    const pInput = wrap.querySelector('#login-password');
-                    if (pInput) pInput.value = selected.defaultPassword;
-
-                    // Refresh and sync security captcha
-                    refreshCaptchaHandler();
+                    this.render();
                 };
             });
 
-            // Direct Access button (transitions directly to MPIN with 2626 pre-filled for rapid demo)
+            // Instant 1-Click Demo Login (Direct Access shortcut)
             const directBtn = wrap.querySelector('#btn-direct-access');
             if (directBtn) {
                 directBtn.onclick = () => {
                     const activeK = this.activeDemoRole || 'auditor';
                     const selected = DEMO_LOGIN_ROLES.find(d => d.key === activeK) || DEMO_LOGIN_ROLES[4];
-                    this.pendingLogin = { username: selected.username, password: selected.defaultPassword, role: selected };
-                    this.enteredMpin = '2626';
-                    this.authMode = 'mpin';
-                    this.render();
-                    API.showToast(`Official Demo Profile Loaded • Demo MPIN 2626 ready`, 'info');
+                    API.showToast(`Instant Clearance Verified: ${selected.roleTitle} (${selected.securityClearance.split('•')[0].trim()})`, 'info');
+                    this.executeLogin(selected.username, selected.defaultPassword, wrap);
                 };
             }
 

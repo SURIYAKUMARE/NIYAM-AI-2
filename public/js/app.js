@@ -1513,7 +1513,7 @@
                                     <span>${this.isAuthenticated ? 'Open Institutional Workspace' : 'Sign in to Portal'}</span>
                                     ${ICONS.ArrowRight}
                                 </button>
-                                <button type="button" class="btn-aicte-outline-white" id="hero-btn-explore">
+                                <button type="button" class="btn-aicte-outline" id="hero-btn-explore">
                                     <span>View 7-Stage Workflow</span>
                                     ${ICONS.ArrowRight}
                                 </button>

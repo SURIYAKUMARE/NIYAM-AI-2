@@ -4835,8 +4835,8 @@ svg.ill-svg {
   padding: 48px 24px;
   display: flex;
   align-items: center;
-  /* Crystal-clear building photo background: gentle gradient only on far left behind placard, transparent across building */
-  background: linear-gradient(90deg, rgba(7, 21, 43, 0.88) 0%, rgba(7, 21, 43, 0.35) 45%, rgba(7, 21, 43, 0.0) 62%), url('/images/aicte-building-bg.png') center right / cover no-repeat;
+  /* Crystal-clear AICTE headquarters photograph in full natural daylight */
+  background: url('/images/aicte-building-bg.png') center right / cover no-repeat;
   border-bottom: 3px solid #D97706;
   overflow: hidden;
 }
@@ -4854,63 +4854,89 @@ svg.ill-svg {
 
 .aicte-hero-placard {
   max-width: 580px;
-  background: rgba(0, 33, 71, 0.90);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  border-left: 5px solid #F59E0B;
+  background: #FFFFFF; /* Pure White Institutional Card as requested */
+  border: 1px solid #CBD5E1;
+  border-left: 6px solid #D97706; /* AICTE Saffron Accent */
   border-radius: 8px;
-  padding: 32px 34px;
-  box-shadow: 0 16px 36px rgba(0, 20, 50, 0.45);
-  color: #FFFFFF;
+  padding: 34px 36px;
+  box-shadow: 0 16px 36px rgba(0, 33, 71, 0.16), 0 2px 6px rgba(0, 0, 0, 0.06);
+  color: #1E293B;
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
+.dark .aicte-hero-placard {
+  background: #0B132B;
+  border-color: #1E293B;
+  color: #F8FAFC;
+}
+
 .aicte-hero-tagline {
   font-size: 11px;
   font-weight: 700;
-  color: #FCD34D;
+  color: #92400E;
   text-transform: uppercase;
   letter-spacing: 0.06em;
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: rgba(245, 158, 11, 0.18);
-  border: 1px solid rgba(245, 158, 11, 0.45);
+  background: #FEF3C7;
+  border: 1px solid #FDE68A;
   padding: 4px 12px;
   border-radius: 4px;
   width: fit-content;
 }
 
+.dark .aicte-hero-tagline {
+  background: rgba(245, 158, 11, 0.2);
+  border-color: rgba(245, 158, 11, 0.4);
+  color: #FCD34D;
+}
+
 .aicte-hero-h1-hindi {
   font-size: 17px;
-  font-weight: 700;
-  color: #FCD34D;
+  font-weight: 800;
+  color: #8B0000; /* Official AICTE Crimson / Maroon */
   font-family: 'Noto Sans Devanagari', -apple-system, sans-serif;
   line-height: 1.25;
+}
+
+.dark .aicte-hero-h1-hindi {
+  color: #F87171;
 }
 
 .aicte-hero-h1-eng {
   font-size: 30px;
   font-weight: 800;
   line-height: 1.18;
-  color: #FFFFFF;
+  color: #002147; /* Official AICTE Deep Navy */
   letter-spacing: -0.02em;
   margin: 0;
 }
 
+.dark .aicte-hero-h1-eng {
+  color: #F8FAFC;
+}
+
 .aicte-hero-h1-eng span.highlight {
+  color: #0284C7;
+}
+
+.dark .aicte-hero-h1-eng span.highlight {
   color: #38BDF8;
 }
 
 .aicte-hero-sub {
   font-size: 13.5px;
-  line-height: 1.6;
-  color: #E2E8F0;
+  line-height: 1.62;
+  color: #475569;
   font-weight: 400;
   margin: 0;
+}
+
+.dark .aicte-hero-sub {
+  color: #CBD5E1;
 }
 
 .aicte-hero-ctas {
@@ -4929,7 +4955,7 @@ svg.ill-svg {
   padding: 12px 22px;
   border-radius: 6px;
   border: 1px solid #B45309;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -4944,15 +4970,15 @@ svg.ill-svg {
   transform: translateY(-1px);
 }
 
-.btn-aicte-outline-white {
-  background: rgba(255, 255, 255, 0.12);
-  color: #FFFFFF;
-  font-weight: 600;
-  font-size: 14px;
+.btn-aicte-outline-white,
+.btn-aicte-outline {
+  background: #FFFFFF;
+  color: #002147;
+  font-weight: 700;
+  font-size: 13.5px;
   padding: 12px 20px;
   border-radius: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.45);
-  backdrop-filter: blur(8px);
+  border: 1.5px solid #002147;
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -4961,10 +4987,24 @@ svg.ill-svg {
   transition: all 0.15s ease;
 }
 
-.btn-aicte-outline-white:hover {
-  background: rgba(255, 255, 255, 0.22);
-  border-color: #FFFFFF;
+.btn-aicte-outline-white:hover,
+.btn-aicte-outline:hover {
+  background: #002147;
   color: #FFFFFF;
+  transform: translateY(-1px);
+}
+
+.dark .btn-aicte-outline-white,
+.dark .btn-aicte-outline {
+  background: transparent;
+  color: #F8FAFC;
+  border-color: #64748B;
+}
+
+.dark .btn-aicte-outline-white:hover,
+.dark .btn-aicte-outline:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: #F8FAFC;
 }
 
 .aicte-hero-stats-row {
@@ -4973,7 +5013,11 @@ svg.ill-svg {
   gap: 12px;
   margin-top: 10px;
   padding-top: 16px;
-  border-top: 1px solid rgba(255, 255, 255, 0.18);
+  border-top: 1px solid #E2E8F0;
+}
+
+.dark .aicte-hero-stats-row {
+  border-top-color: #1E293B;
 }
 
 .aicte-stat-cell {
@@ -4982,34 +5026,49 @@ svg.ill-svg {
 }
 
 .aicte-stat-value {
-  font-size: 18px;
+  font-size: 19px;
   font-weight: 800;
-  color: #FCD34D;
+  color: #D97706; /* Saffron gold number */
   font-family: var(--font-mono, monospace);
 }
 
+.dark .aicte-stat-value {
+  color: #FCD34D;
+}
+
 .aicte-stat-label {
-  font-size: 10px;
-  color: #CBD5E1;
+  font-size: 10.5px;
+  color: #64748B;
   margin-top: 2px;
   line-height: 1.3;
+  font-weight: 600;
+}
+
+.dark .aicte-stat-label {
+  color: #94A3B8;
 }
 
 /* Building location banner */
 .aicte-hero-location-badge {
-  background: rgba(0, 33, 71, 0.85);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  color: #FFFFFF;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid #CBD5E1;
+  color: #002147;
   font-size: 11.5px;
-  font-weight: 600;
+  font-weight: 700;
   padding: 8px 14px;
   border-radius: 6px;
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 4px 14px rgba(0, 33, 71, 0.12);
+}
+
+.dark .aicte-hero-location-badge {
+  background: rgba(11, 19, 43, 0.92);
+  border-color: #1E293B;
+  color: #F1F5F9;
 }
 
 /* Authentic Government Portal Quick Services Bar */

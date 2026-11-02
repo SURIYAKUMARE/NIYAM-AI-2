@@ -434,3 +434,121 @@ CREATE INDEX IF NOT EXISTS idx_docs_expiry ON documents(expiry_date);
 CREATE INDEX IF NOT EXISTS idx_notifs_user ON notifications(recipient_user_id);
 CREATE INDEX IF NOT EXISTS idx_notifs_role ON notifications(recipient_role);
 CREATE INDEX IF NOT EXISTS idx_audit_chain ON audit_events(id, prev_hash, current_hash);
+
+-- ============================================================================
+-- NIYAM 2.0 ADVANCED NATIONAL UPGRADE TABLES
+-- ============================================================================
+
+-- 29. Dual-Clock Accountability Ledger (Zero Double-Counting Partition)
+CREATE TABLE IF NOT EXISTS dual_clock_ledger (
+    id TEXT PRIMARY KEY,
+    application_id TEXT NOT NULL REFERENCES applications(id),
+    clock_type TEXT NOT NULL CHECK(clock_type IN ('COLLEGE_DELAY', 'OFFICER_PROCESSING', 'REGULATORY_HOLD')),
+    start_time TIMESTAMP NOT NULL,
+    end_time TIMESTAMP,
+    duration_seconds INTEGER DEFAULT 0,
+    stage_name TEXT NOT NULL,
+    responsible_entity_type TEXT NOT NULL, -- 'INSTITUTION' or 'AICTE_OFFICER'
+    responsible_actor_id TEXT,
+    reason_for_clock TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 30. 13-Stage Granular Workflow Telemetry
+CREATE TABLE IF NOT EXISTS application_stages_13 (
+    id TEXT PRIMARY KEY,
+    application_id TEXT NOT NULL REFERENCES applications(id),
+    stage_number INTEGER NOT NULL, -- 1 to 13
+    stage_name TEXT NOT NULL,
+    assigned_officer_id TEXT REFERENCES users(id),
+    assigned_role TEXT NOT NULL,
+    status TEXT NOT NULL CHECK(status IN ('PENDING', 'IN_PROGRESS', 'COMPLETED', 'DEFICIENT', 'ESCALATED', 'REVERTED')),
+    start_time TIMESTAMP NOT NULL,
+    completion_time TIMESTAMP,
+    sla_deadline TIMESTAMP NOT NULL,
+    pending_duration_seconds INTEGER DEFAULT 0,
+    clock_type TEXT NOT NULL CHECK(clock_type IN ('COLLEGE_DELAY', 'OFFICER_PROCESSING')),
+    evidence_ref TEXT,
+    comments TEXT,
+    escalation_level INTEGER DEFAULT 1,
+    escalation_history_json TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 31. Android EVC Mobile Inspection & Multi-Signal Integrity
+CREATE TABLE IF NOT EXISTS evc_mobile_inspections (
+    id TEXT PRIMARY KEY,
+    evc_schedule_id TEXT NOT NULL REFERENCES evc_schedules(id),
+    application_id TEXT NOT NULL REFERENCES applications(id),
+    inspector_user_id TEXT NOT NULL REFERENCES users(id),
+    campus_latitude REAL NOT NULL,
+    campus_longitude REAL NOT NULL,
+    captured_latitude REAL NOT NULL,
+    captured_longitude REAL NOT NULL,
+    distance_meters REAL NOT NULL,
+    is_mock_location INTEGER DEFAULT 0,
+    mock_provider_flag INTEGER DEFAULT 0,
+    developer_options_enabled INTEGER DEFAULT 0,
+    device_integrity_score REAL DEFAULT 1.0, -- 0.00 to 1.00
+    integrity_flags_json TEXT, -- ['MOCK_PROVIDER_DETECTED', 'DEV_OPTIONS_ACTIVE', 'GEO_RADIUS_BREACH']
+    device_info_json TEXT,
+    offline_captured_at TIMESTAMP NOT NULL,
+    synced_at TIMESTAMP,
+    sync_status TEXT NOT NULL CHECK(sync_status IN ('PENDING_SYNC', 'SYNCED_VERIFIED', 'FLAGGED_MANUAL_REVIEW', 'REJECTED')),
+    docket_sha256 TEXT NOT NULL,
+    checklist_answers_json TEXT NOT NULL,
+    photos_metadata_json TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 32. Multi-Channel Notification Dispatches Outbox
+CREATE TABLE IF NOT EXISTS notification_dispatches (
+    id TEXT PRIMARY KEY,
+    notification_id TEXT NOT NULL REFERENCES notifications(id),
+    channel TEXT NOT NULL CHECK(channel IN ('IN_APP', 'EMAIL', 'SMS', 'WHATSAPP_DLT')),
+    recipient_destination TEXT NOT NULL,
+    provider_name TEXT NOT NULL,
+    payload_json TEXT NOT NULL,
+    delivery_status TEXT NOT NULL CHECK(delivery_status IN ('QUEUED', 'SENT', 'DELIVERED', 'FAILED')),
+    retry_count INTEGER DEFAULT 0,
+    error_log TEXT,
+    dispatched_at TIMESTAMP,
+    delivered_at TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 33. Time-Travel Virtual Demonstration Clock
+CREATE TABLE IF NOT EXISTS simulation_clock (
+    id INTEGER PRIMARY KEY CHECK (id = 1),
+    is_simulation_active INTEGER DEFAULT 0,
+    virtual_time_offset_seconds INTEGER DEFAULT 0,
+    simulated_timestamp TIMESTAMP,
+    updated_by TEXT,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    notes TEXT
+);
+
+-- 34. Statutory Expiry Registry (90d, 60d, 30d, 15d, 7d, Expired)
+CREATE TABLE IF NOT EXISTS statutory_expiry_registry (
+    id TEXT PRIMARY KEY,
+    document_id TEXT NOT NULL REFERENCES documents(id),
+    institution_id TEXT NOT NULL REFERENCES institutions(id),
+    statutory_type TEXT NOT NULL,
+    title TEXT NOT NULL,
+    issue_date DATE NOT NULL,
+    expiry_date DATE NOT NULL,
+    alert_90d_sent INTEGER DEFAULT 0,
+    alert_60d_sent INTEGER DEFAULT 0,
+    alert_30d_sent INTEGER DEFAULT 0,
+    alert_15d_sent INTEGER DEFAULT 0,
+    alert_7d_sent INTEGER DEFAULT 0,
+    alert_expired_sent INTEGER DEFAULT 0,
+    renewal_status TEXT NOT NULL CHECK(renewal_status IN ('CURRENT', 'RENEWAL_PENDING', 'RENEWAL_UNDER_VERIFICATION', 'RENEWED', 'EXPIRED')),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_dual_clock_app ON dual_clock_ledger(application_id);
+CREATE INDEX IF NOT EXISTS idx_stages13_app ON application_stages_13(application_id);
+CREATE INDEX IF NOT EXISTS idx_evc_mobile_app ON evc_mobile_inspections(application_id);
+CREATE INDEX IF NOT EXISTS idx_notif_disp_status ON notification_dispatches(delivery_status);
+CREATE INDEX IF NOT EXISTS idx_stat_expiry_inst ON statutory_expiry_registry(institution_id, expiry_date);

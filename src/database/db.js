@@ -57,9 +57,30 @@ class DatabaseConnection {
         safeAddCol('documents', 'issuing_authority TEXT');
         safeAddCol('documents', 'registration_number TEXT');
         safeAddCol('documents', 'version_number INTEGER DEFAULT 1');
+        safeAddCol('documents', 'statutory_category TEXT');
         safeAddCol('applications', 'decision_reason TEXT');
         safeAddCol('applications', 'official_outcome TEXT');
         safeAddCol('applications', 'order_number TEXT');
+        safeAddCol('applications', 'college_delay_seconds INTEGER DEFAULT 0');
+        safeAddCol('applications', 'officer_processing_seconds INTEGER DEFAULT 0');
+        safeAddCol('applications', 'active_clock TEXT DEFAULT "OFFICER_PROCESSING"');
+        safeAddCol('applications', 'last_clock_switch_at TIMESTAMP');
+        safeAddCol('applications', 'current_escalation_level INTEGER DEFAULT 1');
+        safeAddCol('applications', 'detailed_stage_index INTEGER DEFAULT 1');
+        safeAddCol('applications', 'detailed_stage_name TEXT DEFAULT "APPLICATION_SUBMISSION"');
+        safeAddCol('applications', 'aph_version TEXT DEFAULT "APH-2025-26"');
+        safeAddCol('escalation_events', 'escalation_level INTEGER DEFAULT 1');
+        safeAddCol('escalation_events', 'administrative_override INTEGER DEFAULT 0');
+        safeAddCol('escalation_events', 'override_justification TEXT');
+        safeAddCol('escalation_events', 'override_actor_id TEXT');
+
+        // Ensure simulation clock singleton exists
+        try {
+            this.db.exec(`
+                INSERT OR IGNORE INTO simulation_clock (id, is_simulation_active, virtual_time_offset_seconds, simulated_timestamp, notes)
+                VALUES (1, 0, 0, CURRENT_TIMESTAMP, 'Real-time production baseline');
+            `);
+        } catch (_) {}
 
         // Ensure retention_policies table and seed defaults
         this.db.exec(`

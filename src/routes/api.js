@@ -20,6 +20,7 @@ const collegeController = require('../controllers/collegeController');
 const verifyController = require('../controllers/verifyController');
 const intelligenceController = require('../controllers/intelligenceController');
 const adminController = require('../controllers/adminController');
+const nationalUpgradeController = require('../controllers/nationalUpgradeController');
 
 // Lightweight high-performance router compatible with Node.js http
 class SimpleRouter {
@@ -244,5 +245,52 @@ router.get('/api/intelligence/consolidated-alerts', requireAuth, intelligenceCon
 router.get('/api/intelligence/case-handover/:id', requireRole([ROLES.REGIONAL_OFFICER, ROLES.SCRUTINY_MEMBER, ROLES.REGULATION_BUREAU_ADMIN]), intelligenceController.getCaseHandoverSummary.bind(intelligenceController));
 router.get('/api/intelligence/case-handover', requireRole([ROLES.REGIONAL_OFFICER, ROLES.SCRUTINY_MEMBER, ROLES.REGULATION_BUREAU_ADMIN]), intelligenceController.getCaseHandoverSummary.bind(intelligenceController));
 router.get('/api/intelligence/command-summary', requireAuth, intelligenceController.getCommandIntelligenceSummary.bind(intelligenceController));
+
+// ============================================================================
+// NIYAM 2.0 ADVANCED NATIONAL UPGRADE ENDPOINTS
+// ============================================================================
+
+// 1. Dual-Clock Accountability Engine
+router.get('/api/applications/:id/dual-clock', requireAuth, nationalUpgradeController.getDualClock.bind(nationalUpgradeController));
+router.get('/api/intelligence/regional-accountability', requireAuth, nationalUpgradeController.getRegionalAccountability.bind(nationalUpgradeController));
+
+// 2. 13-Stage Granular Workflow Telemetry
+router.get('/api/applications/:id/stages-13', requireAuth, nationalUpgradeController.get13Stages.bind(nationalUpgradeController));
+router.post('/api/applications/:id/advance-13', requireAuth, nationalUpgradeController.advance13Stage.bind(nationalUpgradeController));
+
+// 3. 4-Level Hierarchical Escalations
+router.get('/api/escalations/active', requireAuth, nationalUpgradeController.getActiveEscalations.bind(nationalUpgradeController));
+router.get('/api/escalations/history/:applicationId', requireAuth, nationalUpgradeController.getEscalationHistory.bind(nationalUpgradeController));
+router.post('/api/escalations/:id/acknowledge', requireRole([ROLES.SCRUTINY_MEMBER, ROLES.REGIONAL_OFFICER, ROLES.REGULATION_BUREAU_ADMIN, ROLES.COMPETENT_AUTHORITY]), nationalUpgradeController.acknowledgeEscalation.bind(nationalUpgradeController));
+router.post('/api/escalations/:id/resolve', requireRole([ROLES.REGIONAL_OFFICER, ROLES.REGULATION_BUREAU_ADMIN, ROLES.SUPER_ADMIN]), nationalUpgradeController.resolveEscalation.bind(nationalUpgradeController));
+router.post('/api/escalations/override', requireRole([ROLES.REGULATION_BUREAU_ADMIN, ROLES.COMPETENT_AUTHORITY, ROLES.SUPER_ADMIN]), nationalUpgradeController.overrideEscalation.bind(nationalUpgradeController));
+
+// 4. Statutory Expiry Engine
+router.get('/api/statutory/calendar', requireAuth, nationalUpgradeController.getExpiryCalendar.bind(nationalUpgradeController));
+router.get('/api/statutory/institution-health/:id', requireAuth, nationalUpgradeController.getInstitutionHealth.bind(nationalUpgradeController));
+router.post('/api/statutory/evaluate', requireRole([ROLES.SUPER_ADMIN, ROLES.REGULATION_BUREAU_ADMIN, ROLES.REGIONAL_OFFICER]), nationalUpgradeController.evaluateExpiries.bind(nationalUpgradeController));
+router.get('/api/statutory/documents/:id/versions', requireAuth, nationalUpgradeController.getDocumentVersions.bind(nationalUpgradeController));
+
+// 5. NIYAM Regulatory Intelligence Engine
+router.get('/api/regulatory-intelligence/rules', requireAuth, nationalUpgradeController.getRuleDefinitions.bind(nationalUpgradeController));
+router.get('/api/regulatory-intelligence/evaluate/:id', requireAuth, nationalUpgradeController.evaluateInstitutionRegulatory.bind(nationalUpgradeController));
+
+// 6. Advanced Trust & Evidence Engine
+router.get('/api/trust-evidence/:applicationId', requireAuth, nationalUpgradeController.getTrustAndEvidence.bind(nationalUpgradeController));
+
+// 7. Time-Travel Demonstration Simulator
+router.get('/api/simulation/status', requireAuth, nationalUpgradeController.getSimulationStatus.bind(nationalUpgradeController));
+router.post('/api/simulation/advance', requireAuth, nationalUpgradeController.advanceTime.bind(nationalUpgradeController));
+router.post('/api/simulation/reset', requireAuth, nationalUpgradeController.resetTime.bind(nationalUpgradeController));
+router.post('/api/simulation/college-resubmit', requireAuth, nationalUpgradeController.simulateResubmission.bind(nationalUpgradeController));
+router.post('/api/simulation/evc-complete', requireAuth, nationalUpgradeController.simulateEvcCompletion.bind(nationalUpgradeController));
+
+// 8. EVC Mobile Companion Backend Sync & Docket API
+router.get('/api/evc/mobile/docket/:scheduleId', requireAuth, nationalUpgradeController.getEvcMobileDocket.bind(nationalUpgradeController));
+router.post('/api/evc/mobile/sync', requireAuth, nationalUpgradeController.syncEvcMobileInspection.bind(nationalUpgradeController));
+
+// 9. Multi-Channel Notification Telemetry
+router.get('/api/notifications/telemetry', requireAuth, nationalUpgradeController.getNotificationTelemetry.bind(nationalUpgradeController));
+router.post('/api/notifications/retry-failed', requireRole([ROLES.SUPER_ADMIN, ROLES.REGULATION_BUREAU_ADMIN]), nationalUpgradeController.retryFailedNotifications.bind(nationalUpgradeController));
 
 module.exports = router;

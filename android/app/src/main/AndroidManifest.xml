@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Essential Statutory Inspection Permissions -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    
+    <uses-feature android:name="android.hardware.camera" android:required="true" />
+    <uses-feature android:name="android.hardware.location.gps" android:required="true" />
+
+    <application
+        android:name=".NiyamEvcApplication"
+        android:allowBackup="false"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="false"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.NiyamEVC"
+        tools:targetApi="34">
+
+        <!-- Officer Secure Authentication -->
+        <activity
+            android:name=".ui.LoginActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Assigned Campus Visits Dashboard -->
+        <activity
+            android:name=".ui.VisitsListActivity"
+            android:exported="false" />
+
+        <!-- Multi-Pillar Inspection Workspace -->
+        <activity
+            android:name=".ui.InspectionWorkspaceActivity"
+            android:exported="false" />
+
+        <!-- Geotagged Timestamped Camera & SHA-256 Capture -->
+        <activity
+            android:name=".ui.GeotagCameraActivity"
+            android:exported="false" />
+
+        <!-- Report Preview & Offline Sync -->
+        <activity
+            android:name=".ui.InspectionReportActivity"
+            android:exported="false" />
+
+    </application>
+
+</manifest>

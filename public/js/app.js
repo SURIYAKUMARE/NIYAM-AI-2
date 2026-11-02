@@ -1015,10 +1015,6 @@
                                 <div class="account-dropdown-meta font-mono" style="font-size:10px; color:var(--text-tertiary);">${this.currentUser.email || ''}</div>
                             </div>
                             <div class="account-dropdown-actions">
-                                <button class="account-dropdown-item" id="menu-switch-persona">
-                                    ${ICONS.Users}
-                                    <span>Switch Persona (9 Roles)</span>
-                                </button>
                                 <button class="account-dropdown-item" id="menu-about-niyam">
                                     ${ICONS.Award}
                                     <span>About NIYAM (PS 26262)</span>
@@ -1427,7 +1423,6 @@
                     <div style="display:flex; align-items:center; gap:16px;">
                         <nav class="desktop-only" style="display:flex; align-items:center; gap:20px; font-size:13px; font-weight:600; color:var(--text-secondary);">
                             <a href="#workflow-section" id="nav-link-workflow" style="color:inherit; text-decoration:none;">7-Stage Workflow</a>
-                            <a href="#compliance-preview" id="nav-link-compliance" style="color:inherit; text-decoration:none;">Compliance Desk</a>
                             <a href="#workflow-section" id="nav-link-guidelines" style="color:inherit; text-decoration:none;">Regulatory Norms</a>
                         </nav>
 
@@ -1480,80 +1475,6 @@
                         <div style="position:absolute; bottom:12px; left:16px; background:rgba(15,23,42,0.82); backdrop-filter:blur(8px); padding:6px 14px; border-radius:8px; border:1px solid rgba(255,255,255,0.2); color:#fff; display:flex; align-items:center; gap:8px;">
                             <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#10B981;"></span>
                             <span style="font-size:12px; font-weight:700;">AICTE Headquarters • Nelson Mandela Marg, Vasant Kunj, New Delhi</span>
-                        </div>
-                    </div>
-
-                    <!-- Meaningful Product Preview Card -->
-                    <div class="portal-preview-wrap" id="compliance-preview">
-                        <div class="portal-preview-topbar">
-                            <div style="display:flex; align-items:center; gap:8px;">
-                                <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#10B981;"></span>
-                                <span>Institutional Compliance Workspace Preview — Nilgiri Institute of Technology (SYN-2025-001)</span>
-                            </div>
-                            <span class="badge badge-primary" style="font-size:10px;">AY 2025–26 Active Docket</span>
-                        </div>
-
-                        <div class="portal-preview-body">
-                            <!-- Visual Stage Tracker -->
-                            <div style="margin-bottom:24px; background:var(--surface-muted); padding:16px 20px; border-radius:8px; border:1px solid var(--border);">
-                                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                                    <div style="font-size:13px; font-weight:700; color:var(--text-primary);">
-                                        Application APP-2025-001 • Extension of Approval
-                                    </div>
-                                    <span class="badge badge-amber" style="font-size:11px;">Stage 2 of 7: Initial Document Scrutiny</span>
-                                </div>
-                                <div style="display:grid; grid-template-columns:repeat(7, 1fr); gap:6px; font-size:10px; font-weight:600; text-align:center;">
-                                    <div style="padding:6px; border-radius:4px; background:var(--success-light); color:var(--success-text); border:1px solid #A7F3D0;">1. Intake ✓</div>
-                                    <div style="padding:6px; border-radius:4px; background:var(--accent-light); color:var(--accent); border:1px solid #BFDBFE; font-weight:700;">2. Scrutiny ⟳</div>
-                                    <div style="padding:6px; border-radius:4px; background:var(--surface); color:var(--text-secondary); border:1px solid var(--border);">3. Rectify</div>
-                                    <div style="padding:6px; border-radius:4px; background:var(--surface); color:var(--text-secondary); border:1px solid var(--border);">4. EVC Visit</div>
-                                    <div style="padding:6px; border-radius:4px; background:var(--surface); color:var(--text-secondary); border:1px solid var(--border);">5. SAC Review</div>
-                                    <div style="padding:6px; border-radius:4px; background:var(--surface); color:var(--text-secondary); border:1px solid var(--border);">6. Sanction</div>
-                                    <div style="padding:6px; border-radius:4px; background:var(--surface); color:var(--text-secondary); border:1px solid var(--border);">7. Validity</div>
-                                </div>
-                            </div>
-
-                            <!-- Statutory Documents Table Preview -->
-                            <div style="text-align:left;">
-                                <div style="font-size:13px; font-weight:700; color:var(--text-primary); margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;">
-                                    <span>Mandatory Evidence Verification Status</span>
-                                    <span style="font-size:11px; color:var(--text-secondary); font-weight:normal;">Continuous 365-day statutory validity tracking</span>
-                                </div>
-                                <table class="data-table" style="font-size:12px; margin:0;">
-                                    <thead>
-                                        <tr>
-                                            <th>Evidence Type</th>
-                                            <th>APH Clause Reference</th>
-                                            <th>Verification Status</th>
-                                            <th>Validity Horizon</th>
-                                            <th style="text-align:right;">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td><strong>District Fire Safety Clearance NOC</strong></td>
-                                            <td>APH Ch. II Clause 4.3</td>
-                                            <td><span class="badge badge-amber">EXPIRING SOON</span></td>
-                                            <td><span style="color:#D97706; font-weight:600;">15-Jun-2025 (45 Days Remaining)</span></td>
-                                            <td style="text-align:right;"><button class="btn btn-outline btn-sm" onclick="app.navigate('login');">Upload Renewal</button></td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>Land Title &amp; Registered 99-Year Leasehold</strong></td>
-                                            <td>APH Ch. II Clause 4.1</td>
-                                            <td><span class="badge badge-emerald">VERIFIED</span></td>
-                                            <td>Perpetual Leasehold</td>
-                                            <td style="text-align:right;"><button class="btn btn-outline btn-sm" onclick="app.navigate('login');">View Certificate</button></td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>Approved Building Master Layout Plan</strong></td>
-                                            <td>APH Ch. II Clause 4.2</td>
-                                            <td><span class="badge badge-emerald">VERIFIED</span></td>
-                                            <td>Permanent DTCP Approval</td>
-                                            <td style="text-align:right;"><button class="btn btn-outline btn-sm" onclick="app.navigate('login');">Inspect Blueprint</button></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
                         </div>
                     </div>
                 </section>
@@ -1710,13 +1631,6 @@
                 if (el) el.scrollIntoView({ behavior: 'smooth' });
             };
 
-            const navCompliance = wrap.querySelector('#nav-link-compliance');
-            if (navCompliance) navCompliance.onclick = (e) => {
-                e.preventDefault();
-                const el = wrap.querySelector('#compliance-preview');
-                if (el) el.scrollIntoView({ behavior: 'smooth' });
-            };
-
             return wrap;
         }
 
@@ -1730,23 +1644,6 @@
             const selectedAcc = resolveOfficial(this.selectedLoginRole);
 
             wrap.innerHTML = `
-                <!-- Minimal Top Bar -->
-                <header class="auth-nav-bar">
-                    <button class="btn btn-outline btn-sm" id="btn-auth-back-home" title="Return to public portal overview" style="font-weight:600; display:inline-flex; align-items:center; gap:6px;">
-                        ${ICONS.ArrowRight}
-                        <span>← Back to public portal</span>
-                    </button>
-
-                    <div style="display:flex; align-items:center; gap:12px;">
-                        <span class="badge" style="background:var(--surface); border:1px solid var(--border); color:var(--text-secondary); font-size:11px;">
-                            AICTE Regulatory Portal (APH 2025–26)
-                        </span>
-                        <button class="theme-toggle-btn" id="auth-theme-toggle" title="Toggle Light/Dark Theme" aria-label="Toggle theme">
-                            ${this.theme === 'dark' ? ICONS.Sun : ICONS.Moon}
-                        </button>
-                    </div>
-                </header>
-
                 <!-- Focused Sign-In Layout -->
                 <main class="auth-main-layout">
                     <div class="auth-hero-caption desktop-only">
@@ -1756,14 +1653,6 @@
                         </div>
                         <h1 class="auth-hero-title">National Institutional Approval &amp; Compliance Portal</h1>
                         <p class="auth-hero-subtitle">Integrated approval automation, digital scrutiny, and continuous statutory validity monitoring under AICTE APH 2025–26.</p>
-                        
-                        <div class="auth-hero-building-card">
-                            <img src="/images/aicte-building-bg.png" alt="AICTE Headquarters, Nelson Mandela Marg, New Delhi" class="auth-hero-building-img">
-                            <div class="auth-hero-building-meta">
-                                <span class="auth-badge-dot" style="background:#10B981;"></span>
-                                <span style="font-size:12px; font-weight:700;">AICTE Headquarters • Nelson Mandela Marg, New Delhi</span>
-                            </div>
-                        </div>
 
                         <div class="auth-hero-tags">
                             <span class="auth-tag-pill">APH 2025–26 Standard</span>
@@ -1898,12 +1787,16 @@
             `;
 
             // Event Bindings
-            wrap.querySelector('#btn-auth-back-home').onclick = () => this.navigate('landing');
+            const btnBackHome = wrap.querySelector('#btn-auth-back-home');
+            if (btnBackHome) btnBackHome.onclick = () => this.navigate('landing');
 
-            wrap.querySelector('#auth-theme-toggle').onclick = () => {
-                this.toggleTheme();
-                this.render();
-            };
+            const authThemeToggle = wrap.querySelector('#auth-theme-toggle');
+            if (authThemeToggle) {
+                authThemeToggle.onclick = () => {
+                    this.toggleTheme();
+                    this.render();
+                };
+            }
 
             const tabSignin = wrap.querySelector('#tab-auth-signin');
             if (tabSignin) tabSignin.onclick = () => {

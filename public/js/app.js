@@ -1405,82 +1405,149 @@
             wrap.className = 'portal-page-wrap';
 
             wrap.innerHTML = `
-                <!-- Concise Header -->
-                <header class="portal-nav">
-                    <div class="portal-nav-brand">
-                        <div class="brand-emblem-wrap" style="width:34px; height:34px;">
-                            <img src="/images/aicte-logo.png" alt="AICTE Official Emblem">
-                        </div>
+                <!-- Tricolor Ribbon -->
+                <div class="aicte-tricolor-ribbon" aria-hidden="true"></div>
+
+                <!-- Official Government of India Topbar -->
+                <div class="aicte-gov-topbar">
+                    <div class="aicte-gov-topbar-left">
+                        <span class="aicte-flag-icon">🇮🇳</span>
+                        <span>भारत सरकार | Government of India</span>
+                        <span style="opacity:0.4;">|</span>
+                        <span>शिक्षा मंत्रालय | Ministry of Education</span>
+                    </div>
+                    <div class="aicte-gov-topbar-right">
+                        <a href="#workflow-section" class="aicte-top-link hide-on-mobile">मुख्य सामग्री पर जाएं (Skip to Main Content)</a>
+                        <span class="aicte-font-resizer hide-on-mobile" title="Text Resizer">
+                            <button type="button" id="font-dec-btn" title="Decrease font">A-</button>
+                            <button type="button" id="font-reset-btn" title="Default font">A</button>
+                            <button type="button" id="font-inc-btn" title="Increase font">A+</button>
+                        </span>
+                        <button class="theme-toggle-btn" id="portal-theme-toggle" title="Toggle Light/Dark Theme" aria-label="Toggle theme" style="color:#CBD5E1; border:none; background:none; cursor:pointer; font-size:13px; display:inline-flex; align-items:center;">
+                            ${this.theme === 'dark' ? ICONS.Sun : ICONS.Moon}
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Master Header with Official AICTE Logo and Bilingual Headings -->
+                <header class="aicte-master-header">
+                    <div class="aicte-brand-block">
+                        <img src="/images/aicte-logo.png" alt="AICTE Emblem" class="aicte-emblem-img">
                         <div>
-                            <div style="font-size:16px; font-weight:700; color:var(--text-primary); letter-spacing:-0.015em; display:flex; align-items:center; gap:8px;">
-                                <span>NIYAM AI</span>
-                                <span class="badge" style="background:var(--accent-light); color:var(--accent); font-size:10px; padding:2px 7px;">Regulatory Portal</span>
-                            </div>
-                            <div style="font-size:11px; color:var(--text-secondary);">All India Council for Technical Education • Ministry of Education</div>
+                            <div class="aicte-title-hindi">अखिल भारतीय तकनीकी शिक्षा परिषद्</div>
+                            <div class="aicte-title-eng">ALL INDIA COUNCIL FOR TECHNICAL EDUCATION</div>
+                            <div class="aicte-title-sub">(A Statutory Body Under Ministry of Education, Govt. of India) • NIYAM Portal</div>
                         </div>
                     </div>
 
-                    <div style="display:flex; align-items:center; gap:16px;">
-                        <nav class="desktop-only" style="display:flex; align-items:center; gap:20px; font-size:13px; font-weight:600; color:var(--text-secondary);">
-                            <a href="#workflow-section" id="nav-link-workflow" style="color:inherit; text-decoration:none;">7-Stage Workflow</a>
-                            <a href="#workflow-section" id="nav-link-guidelines" style="color:inherit; text-decoration:none;">Regulatory Norms</a>
-                        </nav>
-
-                        <button class="theme-toggle-btn" id="portal-theme-toggle" title="Toggle Light/Dark Theme" aria-label="Toggle theme">
-                            ${this.theme === 'dark' ? ICONS.Sun : ICONS.Moon}
-                        </button>
-
+                    <div class="aicte-header-right">
+                        <div class="aicte-helpdesk-info hide-on-mobile">
+                            <div><strong>National Helpline:</strong> 1800-11-2026</div>
+                            <div><strong>Desk:</strong> compliance-desk@aicte-india.org</div>
+                        </div>
                         ${this.isAuthenticated ? `
-                            <button class="btn btn-primary btn-sm" id="portal-btn-dash" style="font-weight:600;">
-                                <span>Return to Workspace</span>
+                            <button class="btn btn-primary btn-sm" id="portal-btn-dash" style="font-weight:700; background:#002147; border-color:#002147; display:inline-flex; align-items:center; gap:6px;">
+                                <span>Institutional Workspace</span>
                                 ${ICONS.ArrowRight}
                             </button>
                         ` : `
-                            <button class="btn btn-primary btn-sm" id="portal-btn-login" style="font-weight:600;">
-                                <span>Access portal</span>
+                            <button class="btn btn-primary btn-sm" id="portal-btn-login" style="font-weight:700; background:#D97706; border-color:#B45309; display:inline-flex; align-items:center; gap:6px;">
+                                <span>Sign In to Portal</span>
                                 ${ICONS.ArrowRight}
                             </button>
                         `}
                     </div>
                 </header>
 
-                <!-- Polished Institutional Hero Section -->
-                <section class="niyam-hero-section" aria-labelledby="hero-main-heading">
-                    <div class="niyam-hero-container">
-                        <!-- Left Column: Copy & Actions -->
-                        <div class="niyam-hero-content">
-                            <div class="niyam-hero-eyebrow-wrap">
-                                <span class="niyam-hero-eyebrow-dot" aria-hidden="true"></span>
-                                <span class="niyam-hero-eyebrow">AICTE APPROVAL WORKFLOW</span>
+                <!-- Official Deep Navy Navigation Bar -->
+                <nav class="aicte-main-nav" aria-label="Main Navigation">
+                    <ul class="aicte-nav-links">
+                        <li><button type="button" class="aicte-nav-item active" id="nav-item-home">${ICONS.Home || '🏛️'} Home</button></li>
+                        <li><button type="button" class="aicte-nav-item" id="nav-item-aph">Approval Process APH 2025–26</button></li>
+                        <li><button type="button" class="aicte-nav-item" id="nav-item-workflow">7-Stage Workflow</button></li>
+                        <li><button type="button" class="aicte-nav-item" id="nav-item-scrutiny">Scrutiny &amp; Deficiencies</button></li>
+                        <li><button type="button" class="aicte-nav-item" id="nav-item-evc">EVC Inspections</button></li>
+                        <li><button type="button" class="aicte-nav-item" id="nav-item-regulations">Statutory Regulations</button></li>
+                    </ul>
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <button type="button" class="aicte-nav-btn-login" id="nav-btn-portal-login">
+                            <span>${this.isAuthenticated ? 'Open Workspace' : 'Portal Login'}</span>
+                            ${ICONS.ArrowRight}
+                        </button>
+                    </div>
+                </nav>
+
+                <!-- Urgent Notification Ticker -->
+                <div class="aicte-ticker-bar" role="region" aria-label="Important Regulatory Notices">
+                    <div class="aicte-ticker-badge">📢 NOTICES</div>
+                    <div class="aicte-ticker-content">
+                        AICTE Approval Process Handbook (APH 2025–26) Operationalized • Extension of Approval (EoA) &amp; New Institutions Scrutiny Window Active • Continuous 365-Day Fire Safety &amp; Land Title Compliance Watchdog Active • Smart India Hackathon 2026 (PS 26262)
+                    </div>
+                </div>
+
+                <!-- Authentic AICTE Hero Section with Real Headquarters Photo Overlay -->
+                <section class="aicte-hero-grand" aria-labelledby="aicte-hero-main-title">
+                    <div class="aicte-hero-wrap">
+                        <!-- Left Column: Copy, Tagline, CTAs, Stats -->
+                        <div class="aicte-hero-left">
+                            <div class="aicte-hero-tagline">
+                                <span aria-hidden="true">🏛️</span>
+                                <span>STATUTORY REGULATORY PORTAL • APH 2025–26</span>
                             </div>
 
-                            <h1 class="niyam-hero-headline" id="hero-main-heading">
-                                <span>Clearer approval workflows.</span>
-                                <span class="niyam-headline-highlight">More accountable reviews.</span>
+                            <div class="aicte-hero-h1-hindi">
+                                अखिल भारतीय तकनीकी शिक्षा परिषद् • राष्ट्रीय नियामक पोर्टल
+                            </div>
+
+                            <h1 class="aicte-hero-h1-eng" id="aicte-hero-main-title">
+                                National Institutional
+                                <span class="highlight">Approval &amp; Compliance Portal</span>
                             </h1>
 
-                            <p class="niyam-hero-supporting">
-                                NIYAM helps institutions and review teams organize applications, supporting evidence, compliance findings, clarifications, and audit history in one structured workspace.
+                            <p class="aicte-hero-sub">
+                                Official statutory governance platform empowering institutions, scrutiny committees, and AICTE directorates with automated evidence verification, deficiency dockets, offline field inspection validation, and continuous 365-day statutory compliance tracking under AICTE APH 2025–26.
                             </p>
 
-                            <div class="niyam-hero-actions">
-                                <button type="button" class="niyam-btn niyam-btn-primary" id="hero-btn-explore">
-                                    <span>Explore the workflow</span>
+                            <div class="aicte-hero-ctas">
+                                <button type="button" class="btn-aicte-saffron" id="hero-btn-explore">
+                                    <span>Explore 7-Stage Workflow</span>
                                     ${ICONS.ArrowRight}
                                 </button>
-                                <button type="button" class="niyam-btn niyam-btn-secondary" id="hero-btn-prototype">
-                                    <span>View prototype</span>
+                                <button type="button" class="btn-aicte-outline-white" id="hero-btn-prototype">
+                                    <span>Enter Regulatory Portal</span>
+                                    ${ICONS.ArrowRight}
                                 </button>
                             </div>
 
-                            <div class="niyam-hero-note">
-                                <span style="display:inline-flex; align-items:center; color:#0D9488;" aria-hidden="true">${ICONS.ShieldCheck}</span>
-                                <span>Fictional sample records shown for demonstration. Statutory decision authority rests solely with authorized AICTE officials.</span>
+                            <!-- 4 Metrics Ribbon -->
+                            <div class="aicte-hero-stats-row">
+                                <div class="aicte-stat-cell">
+                                    <span class="aicte-stat-value">10,500+</span>
+                                    <span class="aicte-stat-label">Governed Institutions Nationwide</span>
+                                </div>
+                                <div class="aicte-stat-cell">
+                                    <span class="aicte-stat-value">8</span>
+                                    <span class="aicte-stat-label">Regional Regulatory Directorates</span>
+                                </div>
+                                <div class="aicte-stat-cell">
+                                    <span class="aicte-stat-value">7 Stages</span>
+                                    <span class="aicte-stat-label">Statutory APH 2025–26 SLA</span>
+                                </div>
+                                <div class="aicte-stat-cell">
+                                    <span class="aicte-stat-value">100%</span>
+                                    <span class="aicte-stat-label">Chained Immutable Audit Trail</span>
+                                </div>
                             </div>
                         </div>
 
                         <!-- Right Column: Interactive Fictional Dashboard Visual -->
                         <div class="niyam-hero-visual" aria-label="Interactive Preview of NIYAM Review Workspace">
+                            <div style="margin-bottom: 10px; display:flex; justify-content:flex-end;">
+                                <div class="aicte-hq-pin">
+                                    <span>📍 AICTE Headquarters • Nelson Mandela Marg, New Delhi</span>
+                                </div>
+                            </div>
+
                             <div class="niyam-preview-window">
                                 <!-- Chrome Header -->
                                 <div class="niyam-preview-chrome">
@@ -1776,10 +1843,13 @@
             `;
 
             // Event Bindings
-            wrap.querySelector('#portal-theme-toggle').onclick = () => {
-                this.toggleTheme();
-                this.render();
-            };
+            const portalThemeToggle = wrap.querySelector('#portal-theme-toggle');
+            if (portalThemeToggle) {
+                portalThemeToggle.onclick = () => {
+                    this.toggleTheme();
+                    this.render();
+                };
+            }
 
             const exploreBtn = wrap.querySelector('#hero-btn-explore');
             if (exploreBtn) exploreBtn.onclick = () => {
@@ -1790,34 +1860,36 @@
             const protoBtn = wrap.querySelector('#hero-btn-prototype');
             if (protoBtn) protoBtn.onclick = () => this.navigate(this.isAuthenticated ? 'dashboard' : 'login');
 
-            const accessBtn = wrap.querySelector('#hero-btn-access');
-            if (accessBtn) accessBtn.onclick = () => this.navigate('login');
-
             const portalLoginBtn = wrap.querySelector('#portal-btn-login');
             if (portalLoginBtn) portalLoginBtn.onclick = () => this.navigate('login');
 
             const portalDashBtn = wrap.querySelector('#portal-btn-dash');
             if (portalDashBtn) portalDashBtn.onclick = () => this.navigate('dashboard');
 
-            const navGuidelines = wrap.querySelector('#nav-link-guidelines');
-            if (navGuidelines) navGuidelines.onclick = (e) => {
-                e.preventDefault();
+            const navBtnLogin = wrap.querySelector('#nav-btn-portal-login');
+            if (navBtnLogin) navBtnLogin.onclick = () => this.navigate(this.isAuthenticated ? 'dashboard' : 'login');
+
+            const navHome = wrap.querySelector('#nav-item-home');
+            if (navHome) navHome.onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            const scrollToWorkflow = (e) => {
+                if (e) e.preventDefault();
                 const el = wrap.querySelector('#workflow-section');
                 if (el) el.scrollIntoView({ behavior: 'smooth' });
             };
 
-            const workflowBtn = wrap.querySelector('#hero-btn-workflow');
-            if (workflowBtn) workflowBtn.onclick = () => {
-                const el = wrap.querySelector('#workflow-section');
-                if (el) el.scrollIntoView({ behavior: 'smooth' });
-            };
+            ['#nav-item-aph', '#nav-item-workflow', '#nav-item-scrutiny', '#nav-item-evc', '#nav-item-regulations', '#nav-link-workflow', '#nav-link-guidelines', '#hero-btn-workflow'].forEach(sel => {
+                const btn = wrap.querySelector(sel);
+                if (btn) btn.onclick = scrollToWorkflow;
+            });
 
-            const navWorkflow = wrap.querySelector('#nav-link-workflow');
-            if (navWorkflow) navWorkflow.onclick = (e) => {
-                e.preventDefault();
-                const el = wrap.querySelector('#workflow-section');
-                if (el) el.scrollIntoView({ behavior: 'smooth' });
-            };
+            // Font resizers
+            const fontDec = wrap.querySelector('#font-dec-btn');
+            const fontReset = wrap.querySelector('#font-reset-btn');
+            const fontInc = wrap.querySelector('#font-inc-btn');
+            if (fontDec) fontDec.onclick = () => document.documentElement.style.fontSize = '92%';
+            if (fontReset) fontReset.onclick = () => document.documentElement.style.fontSize = '100%';
+            if (fontInc) fontInc.onclick = () => document.documentElement.style.fontSize = '108%';
 
             return wrap;
         }

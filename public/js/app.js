@@ -354,7 +354,7 @@
             overviewTitle: 'Regional Overview',
             overviewSubtitle: 'Northern Regional Jurisdiction Dossiers & Review Desk (APH 2025-26)',
             canFileNewApp: false,
-            allowedViews: ['dashboard', 'applications', 'queue', 'evc', 'compliance', 'findings', 'reports', 'rules', 'clarifications', 'intelligence-centre', 'colleges'],
+            allowedViews: ['dashboard', 'applications', 'pendency', 'aph-routing', 'officers', 'escalations', 'queue', 'evc', 'compliance', 'findings', 'reports', 'rules', 'clarifications', 'intelligence-centre', 'colleges', 'simulation', 'dual-clock', 'evc-mobile', 'statutory-expiry', 'regulatory-intelligence', 'trust-evidence', 'praa-benchmark'],
             nav: [
                 { id: 'dashboard', label: 'Overview', icon: ICONS.LayoutDashboard },
                 { id: 'applications', label: 'Regional applications', icon: ICONS.FileText, badge: '4 Active' },
@@ -490,7 +490,7 @@
             overviewTitle: 'Bureau oversight overview',
             overviewSubtitle: 'Competent Authority Approval Determinations & Escalations (APH 2025-26)',
             canFileNewApp: false,
-            allowedViews: ['dashboard', 'applications', 'queue', 'findings', 'rules', 'analytics', 'reports', 'verify', 'compliance', 'audit', 'intelligence-centre', 'colleges'],
+            allowedViews: ['dashboard', 'applications', 'aph-routing', 'pendency', 'officers', 'queue', 'findings', 'rules', 'analytics', 'reports', 'verify', 'compliance', 'audit', 'escalations', 'retention', 'intelligence-centre', 'colleges', 'simulation', 'dual-clock', 'evc-mobile', 'statutory-expiry', 'regulatory-intelligence', 'trust-evidence', 'praa-benchmark'],
             nav: [
                 { id: 'dashboard', label: 'Overview', icon: ICONS.LayoutDashboard },
                 { id: 'applications', label: 'Executive dossiers', icon: ICONS.FileText, badge: '14 Pending' },
@@ -510,14 +510,22 @@
             overviewTitle: 'Administration overview',
             overviewSubtitle: 'Platform Security, Role-Based Access, & Rules Engine Administration',
             canFileNewApp: false,
-            allowedViews: ['dashboard', 'users', 'rules', 'audit', 'analytics', 'scenarios', 'applications', 'queue', 'verify', 'compliance', 'reports', 'intelligence-centre', 'colleges'],
+            allowedViews: ['dashboard', 'applications', 'aph-routing', 'pendency', 'officers', 'evc', 'compliance', 'documents', 'notifications', 'escalations', 'audit', 'reports', 'users', 'retention', 'scenarios', 'analytics', 'queue', 'verify', 'rules', 'colleges', 'intelligence-centre', 'simulation', 'dual-clock', 'evc-mobile', 'statutory-expiry', 'regulatory-intelligence', 'trust-evidence', 'praa-benchmark'],
             nav: [
-                { id: 'dashboard', label: 'Overview', icon: ICONS.LayoutDashboard },
-                { id: 'users', label: 'User & role management', icon: ICONS.Users, badge: '9 Active' },
-                { id: 'rules', label: 'Rules & configuration', icon: ICONS.Sliders },
-                { id: 'audit', label: 'Statutory audit ledger', icon: ICONS.History, badge: 'SHA-256' },
-                { id: 'analytics', label: 'System analytics', icon: ICONS.BarChart3 },
-                { id: 'scenarios', label: 'Evaluation scenarios', icon: ICONS.FlaskConical }
+                { id: 'dashboard', label: '1. Overview', icon: ICONS.LayoutDashboard },
+                { id: 'applications', label: '2. Application Management', icon: ICONS.FileText },
+                { id: 'aph-routing', label: '3. APH Routing Config', icon: ICONS.Sliders },
+                { id: 'pendency', label: '4. Regional Pendency', icon: ICONS.ListFilter },
+                { id: 'officers', label: '5. Officer & Workload', icon: ICONS.Users },
+                { id: 'evc', label: '6. EVC Management', icon: ICONS.Landmark },
+                { id: 'compliance', label: '7. Undertaking Registry', icon: ICONS.ShieldCheck },
+                { id: 'documents', label: '8. Document Lifecycle', icon: ICONS.FileCheck2 },
+                { id: 'notifications', label: '9. Alerts & Notifications', icon: ICONS.Bell || ICONS.MessageSquare },
+                { id: 'escalations', label: '10. SLA & Escalations', icon: ICONS.AlertTriangle },
+                { id: 'audit', label: '11. Cryptographic Audit Trail', icon: ICONS.History, badge: 'SHA-256' },
+                { id: 'reports', label: '12. Performance Reports', icon: ICONS.FileSpreadsheet || ICONS.FileText },
+                { id: 'users', label: '13. User & Role Admin', icon: ICONS.UserCheck || ICONS.Users, badge: 'Active' },
+                { id: 'retention', label: '14. System Configuration', icon: ICONS.Database || ICONS.Sliders }
             ]
         }
     };

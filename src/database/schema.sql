@@ -552,3 +552,56 @@ CREATE INDEX IF NOT EXISTS idx_stages13_app ON application_stages_13(application
 CREATE INDEX IF NOT EXISTS idx_evc_mobile_app ON evc_mobile_inspections(application_id);
 CREATE INDEX IF NOT EXISTS idx_notif_disp_status ON notification_dispatches(delivery_status);
 CREATE INDEX IF NOT EXISTS idx_stat_expiry_inst ON statutory_expiry_registry(institution_id, expiry_date);
+
+-- ============================================================================
+-- PHASE 1 & 10: APH-CONFIGURABLE AUTOMATIC APPLICATION ROUTING & WORKLOAD
+-- ============================================================================
+
+-- 35. APH Routing Rules (Versioned & Effective-Dated)
+CREATE TABLE IF NOT EXISTS aph_routing_rules (
+    id TEXT PRIMARY KEY,
+    rule_code TEXT UNIQUE NOT NULL,
+    rule_name TEXT NOT NULL,
+    aph_version TEXT NOT NULL, -- e.g. 'APH-2025-26'
+    category TEXT NOT NULL, -- Engineering & Technology, Management, Pharmacy, Architecture, etc.
+    subcategory TEXT, -- New Institution, Extension of Approval, Increase in Intake, New Course
+    institution_type TEXT, -- Government, Private-Unaided, Deemed, Central
+    target_region_id TEXT REFERENCES regions(id),
+    specialization_required TEXT, -- Engineering, Management, Pharmacy, Architecture
+    workload_threshold INTEGER DEFAULT 15,
+    is_active INTEGER DEFAULT 1,
+    effective_from DATE NOT NULL,
+    effective_to DATE,
+    created_by TEXT REFERENCES users(id),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 36. Immutable Routing & Reassignment History
+CREATE TABLE IF NOT EXISTS routing_history (
+    id TEXT PRIMARY KEY,
+    application_id TEXT NOT NULL REFERENCES applications(id),
+    from_region_id TEXT REFERENCES regions(id),
+    to_region_id TEXT NOT NULL REFERENCES regions(id),
+    from_officer_id TEXT REFERENCES users(id),
+    to_officer_id TEXT REFERENCES users(id),
+    routing_rule_id TEXT REFERENCES aph_routing_rules(id),
+    reassignment_reason TEXT NOT NULL,
+    routed_by_user_id TEXT NOT NULL REFERENCES users(id),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 37. Officer Workload & Specialization Profiles
+CREATE TABLE IF NOT EXISTS officer_profiles (
+    user_id TEXT PRIMARY KEY REFERENCES users(id),
+    specialization TEXT NOT NULL, -- Engineering, Management, Pharmacy, Architecture
+    max_workload INTEGER DEFAULT 15,
+    current_workload INTEGER DEFAULT 0,
+    availability_status TEXT DEFAULT 'AVAILABLE' CHECK(availability_status IN ('AVAILABLE', 'ON_LEAVE', 'OVERLOADED')),
+    region_id TEXT REFERENCES regions(id),
+    last_assigned_at TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_routing_rules_aph ON aph_routing_rules(aph_version, category);
+CREATE INDEX IF NOT EXISTS idx_routing_history_app ON routing_history(application_id);
+CREATE INDEX IF NOT EXISTS idx_officer_profile_avail ON officer_profiles(region_id, availability_status, specialization);

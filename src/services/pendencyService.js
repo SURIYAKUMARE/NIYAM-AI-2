@@ -274,6 +274,113 @@ class PendencyService {
             applications: filtered.slice(offset, offset + limit)
         };
     }
+
+    // Phase 2: Clickable Multi-Dimensional Drill-Down into Real Database Records
+    getDrillDownApplications({
+        regionId = null,
+        state = null,
+        institutionId = null,
+        applicationType = null,
+        officerId = null,
+        status = null,
+        stage = null,
+        metric = 'ALL',
+        search = null,
+        limit = 50,
+        offset = 0
+    } = {}) {
+        let sql = `
+            SELECT a.*, i.name as institution_name, i.permanent_id, i.state, i.district, i.institution_type, i.category,
+                   r.name as region_name, r.code as region_code, at.name as application_type_name,
+                   u.full_name as assigned_officer_name, u.email as assigned_officer_email
+            FROM applications a
+            JOIN institutions i ON a.institution_id = i.id
+            JOIN regions r ON a.assigned_region_id = r.id
+            JOIN application_types at ON a.application_type_code = at.code
+            LEFT JOIN users u ON a.assigned_officer_id = u.id
+            WHERE 1=1
+        `;
+        const params = [];
+
+        // Apply Metric Filter
+        if (metric) {
+            const m = metric.toUpperCase();
+            if (m === 'PENDING') {
+                sql += " AND a.current_stage NOT IN ('APPROVED', 'REJECTED')";
+            } else if (m === 'APPROVED') {
+                sql += " AND a.current_stage = 'APPROVED'";
+            } else if (m === 'REJECTED') {
+                sql += " AND a.current_stage = 'REJECTED'";
+            } else if (m === 'UNDER_VERIFICATION') {
+                sql += " AND a.current_stage IN ('SCRUTINY', 'RE_SCRUTINY', 'EVC', 'SAC_SHC')";
+            } else if (m === 'OVERDUE') {
+                sql += " AND a.current_stage NOT IN ('APPROVED', 'REJECTED') AND a.is_on_hold = 0 AND datetime(a.processing_due_date) < datetime('now')";
+            } else if (m === 'APPROACHING_DEADLINE') {
+                sql += " AND a.current_stage NOT IN ('APPROVED', 'REJECTED') AND datetime(a.processing_due_date) >= datetime('now') AND datetime(a.processing_due_date) <= datetime('now', '+3 days')";
+            } else if (m === 'PENDING_SCRUTINY') {
+                sql += " AND a.current_stage IN ('SCRUTINY', 'RE_SCRUTINY')";
+            } else if (m === 'PENDING_EVC') {
+                sql += " AND a.current_stage = 'EVC'";
+            } else if (m === 'AWAITING_SAC') {
+                sql += " AND a.current_stage = 'SAC_SHC'";
+            } else if (m === 'ON_HOLD') {
+                sql += " AND a.is_on_hold = 1";
+            }
+        }
+
+        // Apply Multi-Dimensional Filters
+        if (regionId) {
+            sql += ' AND a.assigned_region_id = ?';
+            params.push(regionId);
+        }
+        if (state) {
+            sql += ' AND i.state = ?';
+            params.push(state);
+        }
+        if (institutionId) {
+            sql += ' AND a.institution_id = ?';
+            params.push(institutionId);
+        }
+        if (applicationType) {
+            sql += ' AND a.application_type_code = ?';
+            params.push(applicationType);
+        }
+        if (officerId) {
+            sql += ' AND a.assigned_officer_id = ?';
+            params.push(officerId);
+        }
+        if (status) {
+            sql += ' AND a.status = ?';
+            params.push(status);
+        }
+        if (stage) {
+            sql += ' AND a.current_stage = ?';
+            params.push(stage);
+        }
+        if (search) {
+            sql += ' AND (i.name LIKE ? OR a.application_no LIKE ? OR i.permanent_id LIKE ?)';
+            const q = `%${search}%`;
+            params.push(q, q, q);
+        }
+
+        sql += ' ORDER BY a.processing_due_date ASC';
+        const rawApps = db.query(sql, params);
+
+        const calculatedApps = rawApps.map(app => {
+            const ageing = this.classifyApplicationAgeing(app);
+            return {
+                ...app,
+                ...ageing
+            };
+        });
+
+        return {
+            total: calculatedApps.length,
+            metric: metric || 'ALL',
+            filters: { regionId, state, institutionId, applicationType, officerId, status, stage, search },
+            applications: calculatedApps.slice(offset, offset + limit)
+        };
+    }
 }
 
 module.exports = new PendencyService();

@@ -21,6 +21,7 @@ const verifyController = require('../controllers/verifyController');
 const intelligenceController = require('../controllers/intelligenceController');
 const adminController = require('../controllers/adminController');
 const nationalUpgradeController = require('../controllers/nationalUpgradeController');
+const aphRoutingController = require('../controllers/aphRoutingController');
 
 // Lightweight high-performance router compatible with Node.js http
 class SimpleRouter {
@@ -144,9 +145,21 @@ router.post('/api/evc/:id/schedule', requireRole([ROLES.EVC_COORDINATOR, ROLES.R
 router.post('/api/evc/:scheduleId/report', requireRole([ROLES.EVC_MEMBER, ROLES.EVC_COORDINATOR, ROLES.REGIONAL_OFFICER]), evcController.submitReport.bind(evcController));
 
 // Pendency & Dashboard
-router.get('/api/pendency/kpis', requireRole([ROLES.REGIONAL_OFFICER, ROLES.REGULATION_BUREAU_ADMIN, ROLES.COMPETENT_AUTHORITY, ROLES.AUDITOR]), pendencyController.getDashboardKPIs.bind(pendencyController));
-router.get('/api/pendency/analytics', requireRole([ROLES.REGIONAL_OFFICER, ROLES.REGULATION_BUREAU_ADMIN, ROLES.COMPETENT_AUTHORITY, ROLES.AUDITOR]), pendencyController.getAnalytics.bind(pendencyController));
-router.get('/api/pendency/list', requireRole([ROLES.REGIONAL_OFFICER, ROLES.REGULATION_BUREAU_ADMIN, ROLES.COMPETENT_AUTHORITY, ROLES.AUDITOR]), pendencyController.getPendencyList.bind(pendencyController));
+router.get('/api/pendency/kpis', requireRole([ROLES.SUPER_ADMIN, ROLES.REGIONAL_OFFICER, ROLES.REGULATION_BUREAU_ADMIN, ROLES.COMPETENT_AUTHORITY, ROLES.AUDITOR]), pendencyController.getDashboardKPIs.bind(pendencyController));
+router.get('/api/pendency/analytics', requireRole([ROLES.SUPER_ADMIN, ROLES.REGIONAL_OFFICER, ROLES.REGULATION_BUREAU_ADMIN, ROLES.COMPETENT_AUTHORITY, ROLES.AUDITOR]), pendencyController.getAnalytics.bind(pendencyController));
+router.get('/api/pendency/list', requireRole([ROLES.SUPER_ADMIN, ROLES.REGIONAL_OFFICER, ROLES.REGULATION_BUREAU_ADMIN, ROLES.COMPETENT_AUTHORITY, ROLES.AUDITOR]), pendencyController.getPendencyList.bind(pendencyController));
+router.get('/api/pendency/drill-down', requireRole([ROLES.SUPER_ADMIN, ROLES.REGIONAL_OFFICER, ROLES.REGULATION_BUREAU_ADMIN, ROLES.COMPETENT_AUTHORITY, ROLES.AUDITOR]), pendencyController.getDrillDown.bind(pendencyController));
+
+// Phase 1: APH-Configurable Automatic Application Routing & Workload
+router.get('/api/routing/rules', requireAuth, aphRoutingController.getRules.bind(aphRoutingController));
+router.post('/api/routing/rules', requireRole([ROLES.SUPER_ADMIN, ROLES.REGULATION_BUREAU_ADMIN]), aphRoutingController.createRule.bind(aphRoutingController));
+router.put('/api/routing/rules/:id', requireRole([ROLES.SUPER_ADMIN, ROLES.REGULATION_BUREAU_ADMIN]), aphRoutingController.updateRule.bind(aphRoutingController));
+router.delete('/api/routing/rules/:id', requireRole([ROLES.SUPER_ADMIN, ROLES.REGULATION_BUREAU_ADMIN]), aphRoutingController.deleteRule.bind(aphRoutingController));
+router.post('/api/routing/evaluate/:applicationId', requireRole([ROLES.SUPER_ADMIN, ROLES.REGULATION_BUREAU_ADMIN, ROLES.REGIONAL_OFFICER]), aphRoutingController.evaluateRouting.bind(aphRoutingController));
+router.post('/api/routing/reassign', requireRole([ROLES.SUPER_ADMIN, ROLES.REGULATION_BUREAU_ADMIN, ROLES.REGIONAL_OFFICER]), aphRoutingController.manualReassign.bind(aphRoutingController));
+router.get('/api/routing/history/:applicationId', requireAuth, aphRoutingController.getHistory.bind(aphRoutingController));
+router.get('/api/routing/officers', requireAuth, aphRoutingController.getOfficers.bind(aphRoutingController));
+router.put('/api/routing/officers/:id', requireRole([ROLES.SUPER_ADMIN, ROLES.REGULATION_BUREAU_ADMIN]), aphRoutingController.updateOfficer.bind(aphRoutingController));
 
 // Institutional Compliance & Undertakings
 router.get('/api/compliance/undertakings', requireAuth, complianceController.list.bind(complianceController));
@@ -186,8 +199,8 @@ router.post('/api/regulatory-rules', requireRole([ROLES.REGULATION_BUREAU_ADMIN]
 router.post('/api/regulatory-rules/:id/publish', requireRole([ROLES.REGULATION_BUREAU_ADMIN]), regulatoryRulesController.publish.bind(regulatoryRulesController));
 
 // Audit Log & Non-Repudiation
-router.get('/api/audit/events', requireRole([ROLES.AUDITOR, ROLES.REGULATION_BUREAU_ADMIN]), auditController.list.bind(auditController));
-router.get('/api/audit/verify-integrity', requireRole([ROLES.AUDITOR, ROLES.REGULATION_BUREAU_ADMIN]), auditController.verifyIntegrity.bind(auditController));
+router.get('/api/audit/events', requireRole([ROLES.SUPER_ADMIN, ROLES.AUDITOR, ROLES.REGULATION_BUREAU_ADMIN]), auditController.list.bind(auditController));
+router.get('/api/audit/verify-integrity', requireRole([ROLES.SUPER_ADMIN, ROLES.AUDITOR, ROLES.REGULATION_BUREAU_ADMIN]), auditController.verifyIntegrity.bind(auditController));
 
 // AI Advisory Layer
 router.get('/api/ai/case-summary/:id', requireAuth, aiAdvisoryController.getCaseSummary.bind(aiAdvisoryController));

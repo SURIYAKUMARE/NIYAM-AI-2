@@ -45,6 +45,44 @@ class PendencyController {
             return res.status(500).json({ error: err.message });
         }
     }
+
+    getDrillDown(req, res) {
+        try {
+            const {
+                regionId,
+                state,
+                institutionId,
+                applicationType,
+                officerId,
+                status,
+                stage,
+                metric,
+                search,
+                limit = 50,
+                offset = 0
+            } = req.query;
+
+            const effectiveRegionId = req.enforcedRegionId || regionId || null;
+
+            const data = pendencyService.getDrillDownApplications({
+                regionId: effectiveRegionId,
+                state: state || null,
+                institutionId: institutionId || null,
+                applicationType: applicationType || null,
+                officerId: officerId || null,
+                status: status || null,
+                stage: stage || null,
+                metric: metric || 'ALL',
+                search: search || null,
+                limit: Number(limit),
+                offset: Number(offset)
+            });
+
+            return res.json(data);
+        } catch (err) {
+            return res.status(500).json({ error: err.message });
+        }
+    }
 }
 
 module.exports = new PendencyController();

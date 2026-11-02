@@ -302,7 +302,9 @@
         Megaphone: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="16" height="16" class="ui-icon"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>`,
         IndianFlag: `<svg viewBox="0 0 24 16" width="18" height="12" class="ui-icon" style="vertical-align:middle; border-radius:2px; box-shadow:0 0 1px rgba(0,0,0,0.4);"><rect width="24" height="5.33" fill="#FF9933"/><rect y="5.33" width="24" height="5.33" fill="#FFFFFF"/><rect y="10.66" width="24" height="5.34" fill="#138808"/><circle cx="12" cy="8" r="2" fill="#000080" stroke="#000080" stroke-width="0.3"/></svg>`,
         ClipboardCheck: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="16" height="16" class="ui-icon"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>`,
-        Home: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="16" height="16" class="ui-icon"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/></svg>`
+        Home: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="16" height="16" class="ui-icon"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/></svg>`,
+        User: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="16" height="16" class="ui-icon"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
+        LogIn: `<svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" width="16" height="16" class="ui-icon"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg>`
     };
 
     // Reusable Custom SVG Illustrations
@@ -520,6 +522,14 @@
         }
     };
 
+    const DEMO_LOGIN_ROLES = [
+        { key: 'officer', label: 'Officer', roleTitle: 'Scrutiny Officer', username: 'officer', defaultPassword: 'password123' },
+        { key: 'applicant', label: 'Applicant', roleTitle: 'Institutional Applicant', username: 'applicant', defaultPassword: 'password123' },
+        { key: 'authority', label: 'Authority', roleTitle: 'Competent Authority', username: 'authority', defaultPassword: 'password123' },
+        { key: 'admin', label: 'Admin', roleTitle: 'AICTE System Admin', username: 'admin', defaultPassword: 'password123' },
+        { key: 'auditor', label: 'Auditor', roleTitle: 'Regulatory Auditor', username: 'auditor', defaultPassword: 'password123' }
+    ];
+
     class NiyamAIApp {
         getRoleCode() {
             if (!this.currentUser) return null;
@@ -631,6 +641,7 @@
             this.mobileSidebarOpen = false;
             this.loginMode = 'signin'; // 'signin' | 'mfa'
             this.selectedLoginRole = 'dr.vandana.rao';
+            this.activeDemoRole = 'auditor';
 
             // Live Applications State (100% interactive)
             this.applications = [
@@ -1985,118 +1996,138 @@
         }
 
         // ====================================================================
-        // FOCUSED & COMPACT AUTHENTICATION VIEW (FITS ON LAPTOP VIEWPORT)
+        // FOCUSED & COMPACT AUTHENTICATION VIEW (AICTE DEMO ACCESS)
         // ====================================================================
         renderLoginView() {
             const wrap = document.createElement('div');
             wrap.className = 'auth-page-container';
 
-            const selectedAcc = resolveOfficial(this.selectedLoginRole);
+            const activeKey = this.activeDemoRole || 'auditor';
+            const currentDemo = DEMO_LOGIN_ROLES.find(d => d.key === activeKey) || DEMO_LOGIN_ROLES[4];
 
             wrap.innerHTML = `
-                <!-- Focused Sign-In Layout -->
-                <main class="auth-main-layout">
-                    <div class="auth-hero-caption desktop-only">
-                        <div class="auth-hero-badge">
-                            <span class="auth-badge-dot"></span>
-                            <span>All India Council for Technical Education</span>
-                        </div>
-                        <h1 class="auth-hero-title">National Institutional Approval &amp; Compliance Portal</h1>
-                        <p class="auth-hero-subtitle">Integrated approval automation, digital scrutiny, and continuous statutory validity monitoring under AICTE APH 2025–26.</p>
+                <!-- Top Floating Navigation Bar -->
+                <div class="auth-nav-bar" style="max-width:1080px; width:100%; margin:0 auto; display:flex; justify-content:space-between; align-items:center;">
+                    <button type="button" class="btn btn-sm btn-outline" id="btn-auth-back-home" style="background:rgba(255,255,255,0.92); backdrop-filter:blur(8px); border-radius:8px; border:1px solid #CBD5E1; color:#002147; font-weight:700; display:flex; align-items:center; gap:6px; cursor:pointer;">
+                        <span>← Back to public portal</span>
+                    </button>
+                    <span class="hide-on-mobile" style="background:rgba(255,255,255,0.85); backdrop-filter:blur(8px); padding:5px 16px; border-radius:20px; font-size:12px; font-weight:700; color:#002147; border:1px solid rgba(0,33,71,0.15);">
+                        AICTE Regulatory Portal (APH 2025–26)
+                    </span>
+                    <button type="button" class="btn btn-sm btn-outline" id="auth-theme-toggle" aria-label="Toggle theme" style="background:rgba(255,255,255,0.92); backdrop-filter:blur(8px); border-radius:8px; border:1px solid #CBD5E1; color:#002147; cursor:pointer;">
+                        ${this.theme === 'dark' ? ICONS.Sun : ICONS.Moon}
+                    </button>
+                </div>
 
-                        <div class="auth-hero-tags">
-                            <span class="auth-tag-pill">APH 2025–26 Standard</span>
-                            <span class="auth-tag-pill">Smart India Hackathon 2026 • PS 26262</span>
-                        </div>
-                    </div>
-
-                    <div class="auth-card-wrap">
-                        <div class="auth-card">
-                            <!-- Header -->
-                            <div class="auth-header">
-                            <div class="auth-logo-row">
-                                <img src="/images/aicte-logo.png" alt="AICTE" class="auth-emblem">
-                                <span style="font-size:13px; font-weight:700; color:var(--text-secondary);">AICTE REGULATORY DESK</span>
+                <!-- Centered Floating Card Matching Reference Design -->
+                <div class="auth-card-wrap" style="margin: auto; max-width: 440px; width: 100%; padding: 16px 0;">
+                    <div class="auth-card">
+                        <!-- Emblem with online green dot -->
+                        <div class="auth-emblem-wrap">
+                            <div class="auth-emblem-box">
+                                <img src="/images/aicte-logo.png" alt="AICTE Emblem" class="auth-emblem-img">
+                                <span class="auth-online-dot" title="AICTE Regulatory Core Online"></span>
                             </div>
-                            <h1 class="auth-title">Sign in to NIYAM</h1>
-                            <div class="auth-subtitle">Institutional Approval &amp; Compliance Management Portal</div>
                         </div>
 
-                        <!-- Sign In vs Registration Tabs -->
-                        <div class="auth-tabs-row" role="tablist">
-                            <button type="button" class="auth-tab-btn ${this.authMode === 'signin' ? 'active' : ''}" id="tab-auth-signin" role="tab" aria-selected="${this.authMode === 'signin'}">
-                                Portal Sign In
-                            </button>
-                            <button type="button" class="auth-tab-btn ${this.authMode === 'register' ? 'active' : ''}" id="tab-auth-register" role="tab" aria-selected="${this.authMode === 'register'}">
-                                New Institutional Enrolment
-                            </button>
-                        </div>
+                        <!-- Header Titles -->
+                        <div class="auth-hindi-subtitle">अखिल भारतीय तकनीकी शिक्षा परिषद</div>
+                        <h1 class="auth-card-title">NIYAM Regulatory Portal</h1>
+                        <div class="auth-card-sub">AICTE Application Review &amp; Compliance Verification</div>
 
                         ${this.authMode === 'signin' ? `
-                            <!-- Primary Sign In Form -->
-                            <form id="auth-signin-form" style="display:flex; flex-direction:column; gap:14px;" novalidate>
-                                
-                                <div class="form-group">
-                                    <label for="login-username" class="form-label">Official Username or Institutional ID</label>
-                                    <input type="text" class="input" id="login-username" value="${selectedAcc.username}" required placeholder="e.g. dr.suresh.chandra or SYN-2025-001" style="height:38px; font-size:13px;">
+                            <!-- Quick Demo Access Box -->
+                            <div class="demo-access-box">
+                                <div class="demo-access-header">
+                                    <div class="demo-access-title">
+                                        ${ICONS.Sparkles}
+                                        <span>Quick Demo Access</span>
+                                    </div>
+                                    <div class="demo-access-pw">PW: password123</div>
                                 </div>
 
-                                <div class="form-group">
-                                    <label for="login-password" class="form-label">Password</label>
-                                    <div class="password-input-wrap">
-                                        <input type="${this.passwordVisible ? 'text' : 'password'}" class="input" id="login-password" value="Password@123" required placeholder="Enter password" style="height:38px; font-size:13px;">
-                                        <button type="button" class="password-toggle-btn" id="btn-toggle-password" aria-label="Toggle password visibility">
+                                <!-- 5 Pill Buttons -->
+                                <div class="demo-pills-row" role="tablist">
+                                    ${DEMO_LOGIN_ROLES.map(r => `
+                                        <button type="button" class="demo-pill-btn ${r.key === currentDemo.key ? 'active' : ''}" data-role-key="${r.key}">
+                                            ${r.label}
+                                        </button>
+                                    `).join('')}
+                                </div>
+
+                                <!-- Role Detail & Direct Access -->
+                                <div class="demo-detail-row">
+                                    <div class="demo-role-indicator">
+                                        <span class="demo-dot"></span>
+                                        <span id="demo-role-label"><strong>${currentDemo.roleTitle}</strong> <span style="font-family:var(--font-mono, monospace); opacity:0.8;">(${currentDemo.username})</span></span>
+                                    </div>
+                                    <button type="button" class="demo-direct-btn" id="btn-direct-access" title="Instant one-click sign in">
+                                        Direct Access
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Primary Sign In Form -->
+                            <form id="auth-signin-form" novalidate>
+                                <div class="auth-field-group">
+                                    <label for="login-username" class="auth-field-label">Username / AICTE Official ID</label>
+                                    <div class="auth-input-container">
+                                        <span class="auth-input-leading-icon">${ICONS.User || ICONS.Users}</span>
+                                        <input type="text" class="auth-text-input" id="login-username" value="${currentDemo.username}" required placeholder="e.g. auditor or officer" autocomplete="username">
+                                    </div>
+                                </div>
+
+                                <div class="auth-field-group">
+                                    <div class="auth-field-label-row">
+                                        <label for="login-password" class="auth-field-label">Password</label>
+                                        <a href="#" class="auth-link-forgot" id="auth-forgot-link">Forgot password?</a>
+                                    </div>
+                                    <div class="auth-input-container">
+                                        <span class="auth-input-leading-icon">${ICONS.Lock}</span>
+                                        <input type="${this.passwordVisible ? 'text' : 'password'}" class="auth-text-input" id="login-password" value="${currentDemo.defaultPassword}" required placeholder="••••••••••••" autocomplete="current-password">
+                                        <button type="button" class="auth-eye-btn" id="btn-toggle-password" aria-label="Toggle password visibility">
                                             ${this.passwordVisible ? ICONS.EyeOff : ICONS.Eye}
                                         </button>
                                     </div>
                                 </div>
 
-                                <div style="display:flex; justify-content:space-between; align-items:center; font-size:12px; color:var(--text-secondary);">
-                                    <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
-                                        <input type="checkbox" checked id="auth-remember-me" style="accent-color:var(--accent);">
-                                        <span>Remember me</span>
-                                    </label>
-                                    <a href="#" class="link-muted" id="auth-forgot-link" onclick="API.showToast('Please contact your Regional Directorate nodal officer for credential assistance.', 'info'); return false;">Forgot password?</a>
-                                </div>
+                                <label class="auth-remember-row">
+                                    <input type="checkbox" checked id="auth-remember-me">
+                                    <span>Remember active session</span>
+                                </label>
 
-                                <button type="submit" class="btn btn-primary" id="btn-login-submit" style="height:40px; font-size:14px; font-weight:600; justify-content:center; margin-top:2px;">
-                                    ${ICONS.Lock}
-                                    <span>Sign in to portal</span>
+                                <button type="submit" class="auth-btn-submit" id="btn-login-submit">
+                                    ${ICONS.LogIn || ICONS.ArrowRight}
+                                    <span>Sign In to Workspace</span>
                                 </button>
                             </form>
 
-                            <!-- Official Personnel Directory -->
-                            <div class="personnel-access-panel" id="personnel-directory">
-                                <div class="personnel-access-header">
-                                    <span class="directory-badge" style="background:var(--surface-muted); color:var(--text-secondary); border:1px solid var(--border);">Personnel Directory</span>
-                                    <span>Registered official profile (Quick Access):</span>
-                                </div>
-
-                                <select class="personnel-role-dropdown" id="personnel-role-dropdown" aria-label="Select registered official profile">
-                                    ${OFFICIAL_PERSONNEL.map(a => `
-                                        <option value="${a.username}" ${(selectedAcc.username === a.username || (a.aliases && a.aliases.includes(selectedAcc.username))) ? 'selected' : ''}>
-                                            ${a.shortRole}: ${a.fullName} (${a.roleName})
-                                        </option>
-                                    `).join('')}
-                                </select>
+                            <!-- Bottom Link -->
+                            <div class="auth-bottom-link-row">
+                                <span>New institutional applicant? </span>
+                                <a href="#" class="auth-link-register" id="link-switch-to-register">Register institutional account</a>
                             </div>
                         ` : `
-                            <!-- Institutional Registration Form -->
+                            <!-- Institutional Enrolment Form -->
                             <form id="auth-register-form" style="display:flex; flex-direction:column; gap:12px;" novalidate>
-                                <div class="form-group">
-                                    <label for="reg-pid" class="form-label">AICTE Permanent Institute ID (PID)</label>
-                                    <input type="text" class="input" id="reg-pid" placeholder="e.g. 1-3324901821" required style="height:36px; font-size:13px;">
+                                <div class="auth-field-group" style="margin-bottom:8px;">
+                                    <label for="reg-pid" class="auth-field-label">AICTE Permanent Institute ID (PID)</label>
+                                    <div class="auth-input-container">
+                                        <input type="text" class="auth-text-input" style="padding-left:14px;" id="reg-pid" placeholder="e.g. 1-3324901821" required>
+                                    </div>
                                 </div>
 
-                                <div class="form-group">
-                                    <label for="reg-name" class="form-label">Official Institution Name</label>
-                                    <input type="text" class="input" id="reg-name" placeholder="Full legal name of institution" required style="height:36px; font-size:13px;">
+                                <div class="auth-field-group" style="margin-bottom:8px;">
+                                    <label for="reg-name" class="auth-field-label">Official Institution Name</label>
+                                    <div class="auth-input-container">
+                                        <input type="text" class="auth-text-input" style="padding-left:14px;" id="reg-name" placeholder="Full legal name of technical college" required>
+                                    </div>
                                 </div>
 
                                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-                                    <div class="form-group">
-                                        <label for="reg-state" class="form-label">State / UT</label>
-                                        <select class="input" id="reg-state" style="height:36px; font-size:12px;" required>
+                                    <div class="auth-field-group" style="margin-bottom:8px;">
+                                        <label for="reg-state" class="auth-field-label">State / UT</label>
+                                        <select class="auth-text-input" style="padding-left:10px; height:38px; font-size:12px;" id="reg-state" required>
                                             <option value="Tamil Nadu">Tamil Nadu</option>
                                             <option value="Karnataka">Karnataka</option>
                                             <option value="Maharashtra">Maharashtra</option>
@@ -2104,9 +2135,9 @@
                                             <option value="Uttar Pradesh">Uttar Pradesh</option>
                                         </select>
                                     </div>
-                                    <div class="form-group">
-                                        <label for="reg-region" class="form-label">Regional Office</label>
-                                        <select class="input" id="reg-region" style="height:36px; font-size:12px;" required>
+                                    <div class="auth-field-group" style="margin-bottom:8px;">
+                                        <label for="reg-region" class="auth-field-label">Regional Office</label>
+                                        <select class="auth-text-input" style="padding-left:10px; height:38px; font-size:12px;" id="reg-region" required>
                                             <option value="Southern">Southern (Chennai)</option>
                                             <option value="Northern">Northern (Kanpur)</option>
                                             <option value="Western">Western (Mumbai)</option>
@@ -2115,23 +2146,34 @@
                                     </div>
                                 </div>
 
-                                <div class="form-group">
-                                    <label for="reg-email" class="form-label">Registrar / Liaison Email</label>
-                                    <input type="email" class="input" id="reg-email" placeholder="registrar@institution.edu.in" required style="height:36px; font-size:13px;">
+                                <div class="auth-field-group" style="margin-bottom:12px;">
+                                    <label for="reg-email" class="auth-field-label">Registrar / Liaison Email</label>
+                                    <div class="auth-input-container">
+                                        <input type="email" class="auth-text-input" style="padding-left:14px;" id="reg-email" placeholder="registrar@institution.edu.in" required>
+                                    </div>
                                 </div>
 
-                                <button type="submit" class="btn btn-primary" style="height:40px; font-size:14px; font-weight:600; justify-content:center; margin-top:4px;">
+                                <button type="submit" class="auth-btn-submit" style="margin-top:0;">
                                     ${ICONS.ShieldCheck}
-                                    <span>Submit registration request</span>
+                                    <span>Submit Institutional Enrolment</span>
                                 </button>
+
+                                <div class="auth-bottom-link-row">
+                                    <span>Already registered? </span>
+                                    <a href="#" class="auth-link-register" id="link-switch-to-signin">Sign in to workspace</a>
+                                </div>
                             </form>
                         `}
+
+                        <!-- Footer Watermark matching image -->
+                        <div class="auth-card-watermark">
+                            AICTE Problem Statement 26262 · APH 2025-26
+                        </div>
                     </div>
                 </div>
-            </main>
 
-                <!-- Project Information Footer -->
-                <footer class="auth-footer">
+                <!-- Page Footer -->
+                <footer class="auth-footer" style="text-align:center; font-size:11.5px; opacity:0.85; margin-top:auto;">
                     Smart India Hackathon 2026 • Problem Statement ID: 26262 • Team PROJECT CHAOS (197354)
                 </footer>
             `;
@@ -2148,32 +2190,39 @@
                 };
             }
 
-            const tabSignin = wrap.querySelector('#tab-auth-signin');
-            if (tabSignin) tabSignin.onclick = () => {
-                this.authMode = 'signin';
-                this.render();
-            };
+            // Demo pills selection
+            wrap.querySelectorAll('.demo-pill-btn').forEach(btn => {
+                btn.onclick = () => {
+                    const key = btn.getAttribute('data-role-key');
+                    const selected = DEMO_LOGIN_ROLES.find(d => d.key === key);
+                    if (!selected) return;
+                    this.activeDemoRole = key;
 
-            const tabRegister = wrap.querySelector('#tab-auth-register');
-            if (tabRegister) tabRegister.onclick = () => {
-                this.authMode = 'register';
-                this.render();
-            };
+                    wrap.querySelectorAll('.demo-pill-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
 
-            // Personnel directory dropdown
-            const personnelDropdown = wrap.querySelector('#personnel-role-dropdown');
-            if (personnelDropdown) {
-                personnelDropdown.onchange = (e) => {
-                    const uname = e.target.value;
-                    this.selectedLoginRole = uname;
-                    const official = resolveOfficial(uname);
-                    const usernameInput = wrap.querySelector('#login-username');
-                    if (usernameInput) usernameInput.value = official.username;
-                    API.showToast(`Active profile loaded: ${official.fullName} (${official.shortRole})`, 'info');
+                    const label = wrap.querySelector('#demo-role-label');
+                    if (label) label.innerHTML = `<strong>${selected.roleTitle}</strong> <span style="font-family:var(--font-mono, monospace); opacity:0.8;">(${selected.username})</span>`;
+
+                    const uInput = wrap.querySelector('#login-username');
+                    if (uInput) uInput.value = selected.username;
+
+                    const pInput = wrap.querySelector('#login-password');
+                    if (pInput) pInput.value = selected.defaultPassword;
+                };
+            });
+
+            // Direct Access button (instant 1-click login)
+            const directBtn = wrap.querySelector('#btn-direct-access');
+            if (directBtn) {
+                directBtn.onclick = () => {
+                    const activeK = this.activeDemoRole || 'auditor';
+                    const selected = DEMO_LOGIN_ROLES.find(d => d.key === activeK) || DEMO_LOGIN_ROLES[4];
+                    this.executeLogin(selected.username, selected.defaultPassword, wrap);
                 };
             }
 
-            // Password toggle
+            // Password eye toggle
             const pwdToggle = wrap.querySelector('#btn-toggle-password');
             if (pwdToggle) {
                 pwdToggle.onclick = () => {
@@ -2184,62 +2233,53 @@
                 };
             }
 
-            // Sign In form submit
-            const signinForm = wrap.querySelector('#auth-signin-form');
-            if (signinForm) {
-                signinForm.onsubmit = async (e) => {
+            // Forgot password hint
+            const forgotLink = wrap.querySelector('#auth-forgot-link');
+            if (forgotLink) {
+                forgotLink.onclick = (e) => {
                     e.preventDefault();
-                    const uname = wrap.querySelector('#login-username').value.trim();
-                    const pwd = (wrap.querySelector('#login-password')?.value || '').trim();
-                    if (!uname) {
-                        API.showToast('Please enter an official username or institutional ID.', 'error');
-                        return;
-                    }
-                    if (!pwd) {
-                        API.showToast('Please enter your password.', 'error');
-                        return;
-                    }
-
-                    const submitBtn = wrap.querySelector('#btn-login-submit');
-                    if (submitBtn) {
-                        submitBtn.innerHTML = '<span>Verifying credentials...</span>';
-                        submitBtn.disabled = true;
-                    }
-
-                    try {
-                        const res = await API.post('/api/auth/login', { username: uname, password: pwd });
-                        if (res && res.token) {
-                            API.setSession(res.token, res.user);
-                            const official = resolveOfficial(res.user);
-                            this.currentUser = { ...official, ...res.user, role_code: res.user.role_code, roleCode: res.user.role_code };
-                            this.isAuthenticated = true;
-                            localStorage.setItem('niyam_auth', 'true');
-                            localStorage.setItem('niyam_user', JSON.stringify(this.currentUser));
-
-                            this.currentView = 'dashboard';
-                            localStorage.setItem('niyam_view', 'dashboard');
-                            await this.loadInitialData();
-                            this.render();
-                            API.showToast(`Signed in as ${this.currentUser.fullName || uname} (${this.currentUser.shortRole || this.currentUser.role || 'Official'})`, 'success');
-                        } else {
-                            throw new Error('Authentication response missing authorization token.');
-                        }
-                    } catch (err) {
-                        if (submitBtn) {
-                            submitBtn.innerHTML = `${ICONS.Lock}<span>Sign in to portal</span>`;
-                            submitBtn.disabled = false;
-                        }
-                    }
+                    API.showToast('Demo Environment: All official personas use password: password123', 'info');
                 };
             }
 
-            // Registration form submit
+            // Switch to registration mode
+            const linkReg = wrap.querySelector('#link-switch-to-register');
+            if (linkReg) {
+                linkReg.onclick = (e) => {
+                    e.preventDefault();
+                    this.authMode = 'register';
+                    this.render();
+                };
+            }
+
+            // Switch back to signin mode
+            const linkSign = wrap.querySelector('#link-switch-to-signin');
+            if (linkSign) {
+                linkSign.onclick = (e) => {
+                    e.preventDefault();
+                    this.authMode = 'signin';
+                    this.render();
+                };
+            }
+
+            // Form Submit
+            const signinForm = wrap.querySelector('#auth-signin-form');
+            if (signinForm) {
+                signinForm.onsubmit = (e) => {
+                    e.preventDefault();
+                    const u = (wrap.querySelector('#login-username')?.value || '').trim();
+                    const p = (wrap.querySelector('#login-password')?.value || '').trim();
+                    this.executeLogin(u, p, wrap);
+                };
+            }
+
+            // Registration Submit
             const regForm = wrap.querySelector('#auth-register-form');
             if (regForm) {
                 regForm.onsubmit = (e) => {
                     e.preventDefault();
-                    const name = wrap.querySelector('#reg-name').value;
-                    API.showToast(`Registration request submitted for ${name}. Verification token dispatched.`, 'success');
+                    const name = wrap.querySelector('#reg-name')?.value || 'New Technical Institute';
+                    API.showToast(`Enrolment dossier submitted for ${name}. Digital token dispatched.`, 'success');
                     this.authMode = 'signin';
                     this.render();
                 };
@@ -2248,6 +2288,59 @@
             return wrap;
         }
 
+        async executeLogin(username, password, wrap) {
+            const u = (username || '').trim();
+            const p = (password || '').trim();
+            if (!u) {
+                API.showToast('Please enter an official username or institutional ID.', 'error');
+                return;
+            }
+            if (!p) {
+                API.showToast('Please enter your password.', 'error');
+                return;
+            }
+
+            const submitBtn = wrap ? wrap.querySelector('#btn-login-submit') : document.getElementById('btn-login-submit');
+            const directBtn = wrap ? wrap.querySelector('#btn-direct-access') : document.getElementById('btn-direct-access');
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = `<span>Signing in to workspace...</span>`;
+            }
+            if (directBtn) {
+                directBtn.disabled = true;
+                directBtn.textContent = 'Connecting...';
+            }
+
+            try {
+                const res = await API.post('/api/auth/login', { username: u, password: p });
+                if (res && res.token) {
+                    API.setSession(res.token, res.user);
+                    const official = resolveOfficial(res.user);
+                    this.currentUser = { ...official, ...res.user, role_code: res.user.role_code, roleCode: res.user.role_code };
+                    this.isAuthenticated = true;
+                    localStorage.setItem('niyam_auth', 'true');
+                    localStorage.setItem('niyam_user', JSON.stringify(this.currentUser));
+
+                    this.currentView = 'dashboard';
+                    localStorage.setItem('niyam_view', 'dashboard');
+                    await this.loadInitialData();
+                    this.render();
+                    API.showToast(`Signed in as ${this.currentUser.fullName || u} (${this.getAuthoritativeRoleTitle()})`, 'success');
+                } else {
+                    throw new Error('Authentication response missing authorization token.');
+                }
+            } catch (err) {
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = `${ICONS.LogIn || ICONS.ArrowRight}<span>Sign In to Workspace</span>`;
+                }
+                if (directBtn) {
+                    directBtn.disabled = false;
+                    directBtn.textContent = 'Direct Access';
+                }
+                API.showToast(err.message || 'Invalid credentials. Please verify your username and password.', 'error');
+            }
+        }
 
         // ====================================================================
         // 1. EXECUTIVE DASHBOARD

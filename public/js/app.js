@@ -1488,15 +1488,15 @@
                 <!-- Authentic AICTE Hero Section with Real Headquarters Photo Overlay -->
                 <section class="aicte-hero-grand" aria-labelledby="aicte-hero-main-title">
                     <div class="aicte-hero-wrap">
-                        <!-- Left Column: Copy, Tagline, CTAs, Stats -->
-                        <div class="aicte-hero-left">
+                        <!-- Left Placard: Crisp institutional information card -->
+                        <div class="aicte-hero-placard">
                             <div class="aicte-hero-tagline">
                                 <span aria-hidden="true">🏛️</span>
-                                <span>STATUTORY REGULATORY PORTAL • APH 2025–26</span>
+                                <span>AICTE REGULATORY PORTAL • APH 2025–26</span>
                             </div>
 
                             <div class="aicte-hero-h1-hindi">
-                                अखिल भारतीय तकनीकी शिक्षा परिषद् • राष्ट्रीय नियामक पोर्टल
+                                अखिल भारतीय तकनीकी शिक्षा परिषद्
                             </div>
 
                             <h1 class="aicte-hero-h1-eng" id="aicte-hero-main-title">
@@ -1505,221 +1505,115 @@
                             </h1>
 
                             <p class="aicte-hero-sub">
-                                Official statutory governance platform empowering institutions, scrutiny committees, and AICTE directorates with automated evidence verification, deficiency dockets, offline field inspection validation, and continuous 365-day statutory compliance tracking under AICTE APH 2025–26.
+                                Official regulatory governance portal under the AICTE Approval Process Handbook (APH 2025–26). Facilitates end-to-end institutional applications, digitized scrutiny, deficiency rectification, and continuous 365-day statutory compliance tracking.
                             </p>
 
                             <div class="aicte-hero-ctas">
-                                <button type="button" class="btn-aicte-saffron" id="hero-btn-explore">
-                                    <span>Explore 7-Stage Workflow</span>
+                                <button type="button" class="btn-aicte-saffron" id="hero-btn-login">
+                                    <span>${this.isAuthenticated ? 'Open Institutional Workspace' : 'Sign in to Portal'}</span>
                                     ${ICONS.ArrowRight}
                                 </button>
-                                <button type="button" class="btn-aicte-outline-white" id="hero-btn-prototype">
-                                    <span>Enter Regulatory Portal</span>
+                                <button type="button" class="btn-aicte-outline-white" id="hero-btn-explore">
+                                    <span>View 7-Stage Workflow</span>
                                     ${ICONS.ArrowRight}
                                 </button>
                             </div>
 
-                            <!-- 4 Metrics Ribbon -->
+                            <!-- Key Metrics Strip -->
                             <div class="aicte-hero-stats-row">
                                 <div class="aicte-stat-cell">
                                     <span class="aicte-stat-value">10,500+</span>
-                                    <span class="aicte-stat-label">Governed Institutions Nationwide</span>
+                                    <span class="aicte-stat-label">Governed Institutions</span>
                                 </div>
                                 <div class="aicte-stat-cell">
                                     <span class="aicte-stat-value">8</span>
-                                    <span class="aicte-stat-label">Regional Regulatory Directorates</span>
+                                    <span class="aicte-stat-label">Regional Offices</span>
                                 </div>
                                 <div class="aicte-stat-cell">
                                     <span class="aicte-stat-value">7 Stages</span>
-                                    <span class="aicte-stat-label">Statutory APH 2025–26 SLA</span>
+                                    <span class="aicte-stat-label">Statutory APH SLA</span>
                                 </div>
                                 <div class="aicte-stat-cell">
                                     <span class="aicte-stat-value">100%</span>
-                                    <span class="aicte-stat-label">Chained Immutable Audit Trail</span>
+                                    <span class="aicte-stat-label">Chained Audit</span>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Right Column: Interactive Fictional Dashboard Visual -->
-                        <div class="niyam-hero-visual" aria-label="Interactive Preview of NIYAM Review Workspace">
-                            <div style="margin-bottom: 10px; display:flex; justify-content:flex-end;">
-                                <div class="aicte-hq-pin">
-                                    <span>📍 AICTE Headquarters • Nelson Mandela Marg, New Delhi</span>
+                        <!-- Top Right Location Badge (Keeps entire center & right clear to show the building photo!) -->
+                        <div class="aicte-hero-location-badge hide-on-mobile">
+                            <span>📍 AICTE Headquarters • Nelson Mandela Marg, Vasant Kunj, New Delhi</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Authentic Government Quick Services Grid -->
+                <section class="aicte-services-section" id="aicte-services-section">
+                    <div class="aicte-services-container">
+                        <div class="aicte-services-header">
+                            <div>
+                                <h2 class="aicte-services-title">Institutional Approval &amp; Regulatory Services</h2>
+                                <div class="aicte-services-sub">Core statutory workflows operationalized under AICTE Approval Process Handbook (APH 2025–26)</div>
+                            </div>
+                            <button type="button" class="btn btn-secondary btn-sm hide-on-mobile" id="services-btn-login">
+                                <span>Access Regulatory Desk</span>
+                                ${ICONS.ArrowRight}
+                            </button>
+                        </div>
+
+                        <div class="aicte-services-grid">
+                            <div class="aicte-service-card" data-action="workflow">
+                                <div>
+                                    <div class="aicte-service-icon">📋</div>
+                                    <div class="aicte-service-name">Extension of Approval (EoA)</div>
+                                    <div class="aicte-service-desc">Annual approval extension, seat intake sanction, and faculty-to-student cadre ratio verification for established technical institutions.</div>
                                 </div>
+                                <span class="aicte-service-link">View EoA Requirements ${ICONS.ArrowRight}</span>
                             </div>
 
-                            <div class="niyam-preview-window">
-                                <!-- Chrome Header -->
-                                <div class="niyam-preview-chrome">
-                                    <div class="niyam-chrome-dots" aria-hidden="true">
-                                        <span class="dot"></span>
-                                        <span class="dot"></span>
-                                        <span class="dot"></span>
-                                    </div>
-                                    <div class="niyam-chrome-title font-mono">
-                                        <span>Dossier: APP-2026-0842</span>
-                                        <span style="opacity:0.6;">•</span>
-                                        <span>Review Workspace</span>
-                                    </div>
-                                    <div class="niyam-chrome-badge">
-                                        <span class="niyam-pulse-dot" aria-hidden="true"></span>
-                                        <span>Scrutiny Active</span>
-                                    </div>
+                            <div class="aicte-service-card" data-action="workflow">
+                                <div>
+                                    <div class="aicte-service-icon">🏛️</div>
+                                    <div class="aicte-service-name">New Technical Institution</div>
+                                    <div class="aicte-service-desc">Establishment approval, land title &amp; 99-year leasehold validation, DTCP master layout blueprint, and municipal clearances.</div>
                                 </div>
+                                <span class="aicte-service-link">New Institute Norms ${ICONS.ArrowRight}</span>
+                            </div>
 
-                                <!-- 1. Application Summary -->
-                                <div class="niyam-summary-card">
-                                    <div class="niyam-summary-meta">
-                                        <div class="niyam-summary-title">Coromandel Institute of Technology</div>
-                                        <div class="niyam-summary-sub">Permanent ID: SYN-2026-0042 • Southern Regional Directorate</div>
-                                    </div>
-                                    <div class="niyam-summary-chips">
-                                        <span class="niyam-chip niyam-chip-navy">Extension of Approval (EoA)</span>
-                                        <span class="niyam-chip niyam-chip-teal">Stage: Technical Scrutiny</span>
-                                    </div>
+                            <div class="aicte-service-card" data-action="workflow">
+                                <div>
+                                    <div class="aicte-service-icon">🔍</div>
+                                    <div class="aicte-service-name">Scrutiny &amp; Deficiency Desk</div>
+                                    <div class="aicte-service-desc">Senior scrutiny committee evaluation with clause-referenced deficiency letters and rapid institutional clarification response.</div>
                                 </div>
+                                <span class="aicte-service-link">Scrutiny Guidelines ${ICONS.ArrowRight}</span>
+                            </div>
 
-                                <!-- 2-Column Inner Grid: Checklist + Finding Panel -->
-                                <div class="niyam-preview-grid">
-                                    <!-- 2. Checklist with Status Labels -->
-                                    <div class="niyam-card niyam-checklist-card">
-                                        <div class="niyam-card-header">
-                                            <span class="niyam-card-title">Statutory Checklist</span>
-                                            <span class="niyam-card-counter font-mono">3 / 4 Screened</span>
-                                        </div>
-                                        <ul class="niyam-checklist-list" role="list">
-                                            <li class="niyam-check-item">
-                                                <div class="niyam-check-left">
-                                                    <span class="niyam-check-icon check-ok" aria-hidden="true">✓</span>
-                                                    <div>
-                                                        <div class="niyam-check-name">Land Title &amp; DTCP Plan</div>
-                                                        <div class="niyam-check-clause font-mono">APH Ch. I Clause 4.1</div>
-                                                    </div>
-                                                </div>
-                                                <span class="niyam-status-tag status-verified">Verified</span>
-                                            </li>
-
-                                            <li class="niyam-check-item active-finding">
-                                                <div class="niyam-check-left">
-                                                    <span class="niyam-check-icon check-active" aria-hidden="true">⟳</span>
-                                                    <div>
-                                                        <div class="niyam-check-name">District Fire Safety NOC</div>
-                                                        <div class="niyam-check-clause font-mono">APH Ch. II Clause 4.3</div>
-                                                    </div>
-                                                </div>
-                                                <span class="niyam-status-tag status-clarification">
-                                                    <span class="niyam-pulse-indicator" aria-hidden="true"></span>
-                                                    Under Review
-                                                </span>
-                                            </li>
-
-                                            <li class="niyam-check-item">
-                                                <div class="niyam-check-left">
-                                                    <span class="niyam-check-icon check-ok" aria-hidden="true">✓</span>
-                                                    <div>
-                                                        <div class="niyam-check-name">Building Completion Certificate</div>
-                                                        <div class="niyam-check-clause font-mono">APH Appendix 6</div>
-                                                    </div>
-                                                </div>
-                                                <span class="niyam-status-tag status-verified">Verified</span>
-                                            </li>
-
-                                            <li class="niyam-check-item">
-                                                <div class="niyam-check-left">
-                                                    <span class="niyam-check-icon check-pending" aria-hidden="true">⏳</span>
-                                                    <div>
-                                                        <div class="niyam-check-name">Faculty Cadre &amp; Pay Scale</div>
-                                                        <div class="niyam-check-clause font-mono">APH Ch. III Clause 2.1</div>
-                                                    </div>
-                                                </div>
-                                                <span class="niyam-status-tag status-pending">Officer Queue</span>
-                                            </li>
-                                        </ul>
-                                    </div>
-
-                                    <!-- 3. Compliance Finding or Clarification Panel -->
-                                    <div class="niyam-card niyam-finding-card">
-                                        <div class="niyam-card-header">
-                                            <span class="niyam-card-title">Clarification Docket</span>
-                                            <span class="niyam-card-badge-amber font-mono">DEF-2026-03</span>
-                                        </div>
-                                        <div class="niyam-finding-body">
-                                            <div class="niyam-finding-issue">
-                                                <div class="niyam-field-label">Scrutiny Finding</div>
-                                                <div>Municipal Fire NOC renewal acknowledgement uploaded without local gazette dispatch seal.</div>
-                                            </div>
-
-                                            <div class="niyam-finding-response">
-                                                <div class="niyam-field-label">Institutional Response (24-Oct)</div>
-                                                <div>Provisional clearance affidavit from Chief Fire Officer attached as Exhibit B (PDF, 2.4 MB).</div>
-                                            </div>
-
-                                            <div class="niyam-finding-footer">
-                                                <span class="niyam-review-needed">
-                                                    <span aria-hidden="true">⏱</span>
-                                                    <span>Awaiting Officer Verification</span>
-                                                </span>
-                                                <span class="niyam-target-date font-mono">Target: 48h SLA</span>
-                                            </div>
-                                        </div>
-                                    </div>
+                            <div class="aicte-service-card" data-action="workflow">
+                                <div>
+                                    <div class="aicte-service-icon">🏢</div>
+                                    <div class="aicte-service-name">Expert Visit Committee (EVC)</div>
+                                    <div class="aicte-service-desc">Offline-first field inspections of laboratories, instructional infrastructure, and amenities with cryptographic docket synchronization.</div>
                                 </div>
+                                <span class="aicte-service-link">EVC Inspection Protocol ${ICONS.ArrowRight}</span>
+                            </div>
 
-                                <!-- 4. Small Review History / Audit Trail -->
-                                <div class="niyam-card niyam-audit-card">
-                                    <div class="niyam-card-header">
-                                        <span class="niyam-card-title">Review History &amp; Audit Trail</span>
-                                        <span class="niyam-card-sub font-mono">WORM Cryptographic Chain</span>
-                                    </div>
-
-                                    <div class="niyam-timeline-track">
-                                        <!-- Step 1 -->
-                                        <div class="niyam-timeline-node">
-                                            <div class="niyam-node-indicator past" aria-hidden="true"></div>
-                                            <div class="niyam-node-content">
-                                                <div class="niyam-node-head">
-                                                    <span class="niyam-node-action">Application Submitted</span>
-                                                    <span class="niyam-node-time font-mono">04-Oct</span>
-                                                </div>
-                                                <div class="niyam-node-meta">Challan verified</div>
-                                            </div>
-                                        </div>
-
-                                        <div class="niyam-timeline-connector" aria-hidden="true"></div>
-
-                                        <!-- Step 2 -->
-                                        <div class="niyam-timeline-node">
-                                            <div class="niyam-node-indicator past" aria-hidden="true"></div>
-                                            <div class="niyam-node-content">
-                                                <div class="niyam-node-head">
-                                                    <span class="niyam-node-action">Deficiency Flagged</span>
-                                                    <span class="niyam-node-time font-mono">18-Oct</span>
-                                                </div>
-                                                <div class="niyam-node-meta">Notice dispatched</div>
-                                            </div>
-                                        </div>
-
-                                        <div class="niyam-timeline-connector active-pulse" aria-hidden="true"></div>
-
-                                        <!-- Step 3 (Active) -->
-                                        <div class="niyam-timeline-node">
-                                            <div class="niyam-node-indicator current" aria-hidden="true"></div>
-                                            <div class="niyam-node-content">
-                                                <div class="niyam-node-head">
-                                                    <span class="niyam-node-action">Clarification Uploaded</span>
-                                                    <span class="niyam-node-time font-mono">24-Oct</span>
-                                                </div>
-                                                <div class="niyam-node-meta">Re-scrutiny in progress</div>
-                                            </div>
-                                        </div>
-                                    </div>
+                            <div class="aicte-service-card" data-action="workflow">
+                                <div>
+                                    <div class="aicte-service-icon">🛡️</div>
+                                    <div class="aicte-service-name">Continuous 365-Day Validity</div>
+                                    <div class="aicte-service-desc">Automated watchdog tracking 365-day statutory validity for Fire Safety NOCs, structural certificates, and land leaseholds with proactive alerts.</div>
                                 </div>
+                                <span class="aicte-service-link">Validity Monitoring ${ICONS.ArrowRight}</span>
+                            </div>
 
-                                <!-- Preview Window Footer -->
-                                <div class="niyam-preview-footer">
-                                    <span>Sample review dossier for workflow demonstration.</span>
-                                    <span class="niyam-footer-disclaimer">Decisions made solely by authorized officials.</span>
+                            <div class="aicte-service-card" data-action="workflow">
+                                <div>
+                                    <div class="aicte-service-icon">⚖️</div>
+                                    <div class="aicte-service-name">Standing Appellate Committee</div>
+                                    <div class="aicte-service-desc">Independent statutory appellate body reviewing contested observations, institutional representations, and reasoned council sanctions.</div>
                                 </div>
+                                <span class="aicte-service-link">Appellate Procedure ${ICONS.ArrowRight}</span>
                             </div>
                         </div>
                     </div>
@@ -1800,6 +1694,183 @@
                     </div>
                 </section>
 
+                <!-- Official Government Regulatory Scrutiny Docket Showcase -->
+                <section class="aicte-docket-section" id="regulatory-docket-section">
+                    <div class="aicte-docket-container">
+                        <div class="section-title-box" style="margin-bottom: 24px;">
+                            <h2>Statutory Scrutiny Docket &amp; Compliance Audit Desk</h2>
+                            <p>Official prototype demonstration of clause-level document screening, clarification dockets, and tamper-evident audit trail.</p>
+                        </div>
+
+                        <div class="aicte-docket-window">
+                            <!-- Official Docket Header (NO fake macOS dots!) -->
+                            <div class="aicte-docket-header">
+                                <div class="aicte-docket-title font-mono">
+                                    <span>🏛️</span>
+                                    <span>AICTE SCRUTINY DESK • DOSSIER: APP-2026-0842</span>
+                                    <span style="opacity:0.6;">•</span>
+                                    <span style="font-weight:400; font-size:12px;">Coromandel Institute of Technology (Southern Region)</span>
+                                </div>
+                                <div class="niyam-chrome-badge">
+                                    <span class="niyam-pulse-dot" aria-hidden="true"></span>
+                                    <span>Stage 2: Technical Scrutiny Active</span>
+                                </div>
+                            </div>
+
+                            <!-- Summary Meta -->
+                            <div class="niyam-summary-card" style="border-radius:0; border-left:none; border-right:none; border-top:none;">
+                                <div class="niyam-summary-meta">
+                                    <div class="niyam-summary-title">Coromandel Institute of Technology</div>
+                                    <div class="niyam-summary-sub">Permanent Institutional ID: SYN-2026-0042 • Directorate of Technical Education • Chennai Jurisdiction</div>
+                                </div>
+                                <div class="niyam-summary-chips">
+                                    <span class="niyam-chip niyam-chip-navy">Extension of Approval (EoA 2025–26)</span>
+                                    <span class="niyam-chip niyam-chip-teal">Scrutiny Committee: Southern Region Bench-2</span>
+                                </div>
+                            </div>
+
+                            <!-- 2-Column Inner Grid: Checklist + Clarification -->
+                            <div class="niyam-preview-grid" style="padding: 20px;">
+                                <!-- Checklist -->
+                                <div class="niyam-card niyam-checklist-card">
+                                    <div class="niyam-card-header">
+                                        <span class="niyam-card-title">Statutory Verification Checklist</span>
+                                        <span class="niyam-card-counter font-mono">3 / 4 Screened</span>
+                                    </div>
+                                    <ul class="niyam-checklist-list" role="list">
+                                        <li class="niyam-check-item">
+                                            <div class="niyam-check-left">
+                                                <span class="niyam-check-icon check-ok" aria-hidden="true">✓</span>
+                                                <div>
+                                                    <div class="niyam-check-name">Land Title &amp; DTCP Plan</div>
+                                                    <div class="niyam-check-clause font-mono">APH Ch. I Clause 4.1</div>
+                                                </div>
+                                            </div>
+                                            <span class="niyam-status-tag status-verified">Verified</span>
+                                        </li>
+
+                                        <li class="niyam-check-item active-finding">
+                                            <div class="niyam-check-left">
+                                                <span class="niyam-check-icon check-active" aria-hidden="true">⟳</span>
+                                                <div>
+                                                    <div class="niyam-check-name">District Fire Safety NOC</div>
+                                                    <div class="niyam-check-clause font-mono">APH Ch. II Clause 4.3</div>
+                                                </div>
+                                            </div>
+                                            <span class="niyam-status-tag status-clarification">
+                                                <span class="niyam-pulse-indicator" aria-hidden="true"></span>
+                                                Under Review
+                                            </span>
+                                        </li>
+
+                                        <li class="niyam-check-item">
+                                            <div class="niyam-check-left">
+                                                <span class="niyam-check-icon check-ok" aria-hidden="true">✓</span>
+                                                <div>
+                                                    <div class="niyam-check-name">Building Completion Certificate</div>
+                                                    <div class="niyam-check-clause font-mono">APH Appendix 6</div>
+                                                </div>
+                                            </div>
+                                            <span class="niyam-status-tag status-verified">Verified</span>
+                                        </li>
+
+                                        <li class="niyam-check-item">
+                                            <div class="niyam-check-left">
+                                                <span class="niyam-check-icon check-pending" aria-hidden="true">⏳</span>
+                                                <div>
+                                                    <div class="niyam-check-name">Faculty Cadre &amp; Pay Scale</div>
+                                                    <div class="niyam-check-clause font-mono">APH Ch. III Clause 2.1</div>
+                                                </div>
+                                            </div>
+                                            <span class="niyam-status-tag status-pending">Officer Queue</span>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <!-- Clarification Docket -->
+                                <div class="niyam-card niyam-finding-card">
+                                    <div class="niyam-card-header">
+                                        <span class="niyam-card-title">Clarification Docket</span>
+                                        <span class="niyam-card-badge-amber font-mono">DEF-2026-03</span>
+                                    </div>
+                                    <div class="niyam-finding-body">
+                                        <div class="niyam-finding-issue">
+                                            <div class="niyam-field-label">Scrutiny Observation</div>
+                                            <div>Municipal Fire NOC renewal acknowledgement uploaded without local gazette dispatch seal.</div>
+                                        </div>
+
+                                        <div class="niyam-finding-response">
+                                            <div class="niyam-field-label">Institutional Response (24-Oct)</div>
+                                            <div>Provisional clearance affidavit from Chief Fire Officer attached as Exhibit B (PDF, 2.4 MB).</div>
+                                        </div>
+
+                                        <div class="niyam-finding-footer">
+                                            <span class="niyam-review-needed">
+                                                <span aria-hidden="true">⏱</span>
+                                                <span>Awaiting Officer Re-Scrutiny</span>
+                                            </span>
+                                            <span class="niyam-target-date font-mono">48h SLA Target</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Review History / Audit Trail -->
+                            <div class="niyam-card niyam-audit-card" style="margin: 0 20px 20px 20px;">
+                                <div class="niyam-card-header">
+                                    <span class="niyam-card-title">Immutable Audit Trail &amp; Chronological Progress</span>
+                                    <span class="niyam-card-sub font-mono">SHA-256 Tamper-Evident Chain</span>
+                                </div>
+
+                                <div class="niyam-timeline-track">
+                                    <div class="niyam-timeline-node">
+                                        <div class="niyam-node-indicator past" aria-hidden="true"></div>
+                                        <div class="niyam-node-content">
+                                            <div class="niyam-node-head">
+                                                <span class="niyam-node-action">Application Submitted</span>
+                                                <span class="niyam-node-time font-mono">04-Oct</span>
+                                            </div>
+                                            <div class="niyam-node-meta">Challan verified &amp; registered</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="niyam-timeline-connector" aria-hidden="true"></div>
+
+                                    <div class="niyam-timeline-node">
+                                        <div class="niyam-node-indicator past" aria-hidden="true"></div>
+                                        <div class="niyam-node-content">
+                                            <div class="niyam-node-head">
+                                                <span class="niyam-node-action">Deficiency Flagged</span>
+                                                <span class="niyam-node-time font-mono">18-Oct</span>
+                                            </div>
+                                            <div class="niyam-node-meta">Clause 4.3 deficiency notice issued</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="niyam-timeline-connector active-pulse" aria-hidden="true"></div>
+
+                                    <div class="niyam-timeline-node">
+                                        <div class="niyam-node-indicator current" aria-hidden="true"></div>
+                                        <div class="niyam-node-content">
+                                            <div class="niyam-node-head">
+                                                <span class="niyam-node-action">Clarification Uploaded</span>
+                                                <span class="niyam-node-time font-mono">24-Oct</span>
+                                            </div>
+                                            <div class="niyam-node-meta">Under officer verification</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Docket Footer -->
+                            <div class="niyam-preview-footer">
+                                <span>Sample institutional scrutiny dossier for demonstration.</span>
+                                <span class="niyam-footer-disclaimer">Statutory decision authority rests solely with authorized AICTE officials.</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
                 <!-- Core User Benefits -->
                 <section style="padding: 48px 24px; max-width: 1080px; margin: 0 auto; width: 100%;">
                     <div class="section-title-box" style="margin-bottom: 28px;">
@@ -1856,6 +1927,19 @@
                 const el = wrap.querySelector('#workflow-section');
                 if (el) el.scrollIntoView({ behavior: 'smooth' });
             };
+
+            const heroLoginBtn = wrap.querySelector('#hero-btn-login');
+            if (heroLoginBtn) heroLoginBtn.onclick = () => this.navigate(this.isAuthenticated ? 'dashboard' : 'login');
+
+            const servicesLoginBtn = wrap.querySelector('#services-btn-login');
+            if (servicesLoginBtn) servicesLoginBtn.onclick = () => this.navigate(this.isAuthenticated ? 'dashboard' : 'login');
+
+            wrap.querySelectorAll('.aicte-service-card').forEach(card => {
+                card.onclick = () => {
+                    const el = wrap.querySelector('#workflow-section');
+                    if (el) el.scrollIntoView({ behavior: 'smooth' });
+                };
+            });
 
             const protoBtn = wrap.querySelector('#hero-btn-prototype');
             if (protoBtn) protoBtn.onclick = () => this.navigate(this.isAuthenticated ? 'dashboard' : 'login');

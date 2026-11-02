@@ -33,6 +33,15 @@ class ReportController {
             return res.status(500).json({ error: err.message });
         }
     }
+
+    getPilotIndicators(req, res) {
+        try {
+            const indicators = reportService.getPilotIndicators();
+            return res.json(indicators);
+        } catch (err) {
+            return res.status(500).json({ error: err.message });
+        }
+    }
 }
 
 module.exports = new ReportController();

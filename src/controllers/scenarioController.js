@@ -73,11 +73,17 @@ class ScenarioController {
 
                 case 2: {
                     // Scenario 2: Deficiency & Re-Scrutiny
-                    let app = db.queryOne("SELECT * FROM applications WHERE current_stage IN ('SCRUTINY', 'RE_SCRUTINY') LIMIT 1");
+                    let app = db.queryOne("SELECT * FROM applications WHERE id = 'APP_2026_002'") || 
+                              db.queryOne("SELECT * FROM applications WHERE current_stage IN ('SCRUTINY', 'RE_SCRUTINY') LIMIT 1");
                     if (!app) {
-                        db.execute("UPDATE applications SET current_stage = 'RE_SCRUTINY', current_status = 'DEFICIENCY_RAISED' WHERE id = 'APP_2026_002'");
+                        db.execute("UPDATE applications SET current_stage = 'SCRUTINY', current_status = 'UNDER_SCRUTINY' WHERE id = 'APP_2026_002'");
                         app = db.queryOne("SELECT * FROM applications WHERE id = 'APP_2026_002'");
+                    } else {
+                        db.execute("UPDATE applications SET current_stage = 'SCRUTINY', current_status = 'UNDER_SCRUTINY' WHERE id = ?", [app.id]);
                     }
+                    // Clear prior pending deficiencies on this application for clean lifecycle test
+                    db.execute("UPDATE deficiencies SET status = 'VERIFIED_OK' WHERE application_id = ?", [app.id]);
+
                     const officer = db.queryOne("SELECT * FROM users WHERE role_code = 'SCRUTINY_MEMBER' LIMIT 1") || user;
                     const rep = db.queryOne("SELECT * FROM users WHERE role_code = 'INSTITUTION_REP' LIMIT 1") || user;
 
@@ -99,7 +105,16 @@ class ScenarioController {
                         user: rep
                     });
 
-                    // Step 3: Re-Scrutiny cleared
+                    // Step 3: Re-Scrutiny verification accepts evidence and clears deficiency
+                    scrutinyService.reScrutinizeDeficiency({
+                        deficiencyId: def.id,
+                        status: 'VERIFIED_OK',
+                        findings: 'NABL calibration certificate verified in order.',
+                        reason: 'Mandatory equipment standard satisfied.',
+                        user: officer
+                    });
+
+                    // Step 4: Scrutiny review completed and recommended
                     const review = scrutinyService.completeReview({
                         applicationId: app.id,
                         outcome: 'RECOMMENDED',

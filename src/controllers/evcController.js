@@ -60,6 +60,16 @@ class EVCController {
         }
     }
 
+    getCalendar(req, res) {
+        try {
+            const regionId = req.enforcedRegionId || req.query.regionId;
+            const calendar = evcService.getCalendarView({ regionId, month: req.query.month, year: req.query.year });
+            return res.json({ calendar, total: calendar.length });
+        } catch (err) {
+            return res.status(500).json({ error: err.message });
+        }
+    }
+
     submitReport(req, res) {
         try {
             const { scheduleId } = req.params;

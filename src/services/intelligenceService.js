@@ -1293,6 +1293,136 @@ class IntelligenceService {
             generatedAt: new Date().toISOString()
         };
     }
+
+    // 16. EXPLAINABLE RULE-BASED PRIORITY SCORE (0–100 Scale)
+    calculatePriorityScore(app) {
+        if (!app) return null;
+
+        const now = new Date();
+        const stageEntry = app.stage_entry_time ? new Date(app.stage_entry_time) : (app.submission_date ? new Date(app.submission_date) : now);
+        const stageDays = Math.max(0, Math.floor((now - stageEntry) / 86400000));
+        const dueDate = app.processing_due_date ? new Date(app.processing_due_date) : null;
+        const daysRemaining = dueDate ? Math.ceil((dueDate - now) / 86400000) : 999;
+        const isOverdue = daysRemaining < 0;
+
+        // Query open unresolved deficiencies
+        const openDeficiencies = db.queryOne(`
+            SELECT COUNT(*) as count FROM deficiencies
+            WHERE application_id = ? AND status IN ('RAISED', 'DEFICIENT_PERSISTS', 'RESPONSES_SUBMITTED')
+        `, [app.id])?.count || (app.deficiency_count || 0);
+
+        // Query open unfulfilled undertakings
+        const openUndertakings = db.queryOne(`
+            SELECT COUNT(*) as count FROM undertakings
+            WHERE (application_id = ? OR institution_id = ?) AND status IN ('PENDING', 'OVERDUE', 'DEFICIENCY_RAISED')
+        `, [app.id, app.institution_id])?.count || 0;
+
+        // Query active escalations
+        const activeEscalations = db.queryOne(`
+            SELECT COUNT(*) as count FROM escalation_events
+            WHERE application_id = ? AND status IN ('TRIGGERED', 'ACKNOWLEDGED')
+        `, [app.id])?.count || 0;
+
+        const factors = [];
+        let totalScore = 0;
+
+        // Factor 1: Stage Age & SLA Utilization (max 30 pts)
+        let stageAgeScore = 0;
+        let stageAgeExplanation = '';
+        if (stageDays > 14) {
+            stageAgeScore = 30;
+            stageAgeExplanation = `Dossier has aged ${stageDays} days in stage ${app.current_stage} (Statutory ceiling breached).`;
+        } else if (stageDays > 7) {
+            stageAgeScore = 20;
+            stageAgeExplanation = `Dossier has aged ${stageDays} days in stage ${app.current_stage} (Moderate ageing).`;
+        } else if (stageDays > 3) {
+            stageAgeScore = 10;
+            stageAgeExplanation = `Dossier in stage ${app.current_stage} for ${stageDays} days (Normal cadence).`;
+        } else {
+            stageAgeScore = 5;
+            stageAgeExplanation = `Recent intake: ${stageDays} days in stage ${app.current_stage}.`;
+        }
+        factors.push({ factor: 'STAGE_AGE', maxPoints: 30, points: stageAgeScore, explanation: stageAgeExplanation });
+        totalScore += stageAgeScore;
+
+        // Factor 2: Overdue SLA Breach Status (max 25 pts)
+        let overdueScore = 0;
+        let overdueExplanation = '';
+        if (isOverdue) {
+            const overdueDays = Math.abs(daysRemaining);
+            overdueScore = Math.min(25, 15 + overdueDays * 2);
+            overdueExplanation = `Official processing deadline exceeded by ${overdueDays} days. High triage priority required.`;
+        } else {
+            overdueScore = 0;
+            overdueExplanation = `Within statutory deadline (${daysRemaining} days remaining).`;
+        }
+        factors.push({ factor: 'OVERDUE_STATUS', maxPoints: 25, points: overdueScore, explanation: overdueExplanation });
+        totalScore += overdueScore;
+
+        // Factor 3: Approaching Deadlines Horizon (max 15 pts)
+        let deadlineScore = 0;
+        let deadlineExplanation = '';
+        if (!isOverdue && daysRemaining <= 3 && daysRemaining >= 0) {
+            deadlineScore = 15;
+            deadlineExplanation = `Critical SLA expiry imminent in ${daysRemaining} days. Immediate committee action needed.`;
+        } else if (!isOverdue && daysRemaining <= 7) {
+            deadlineScore = 8;
+            deadlineExplanation = `Approaching SLA window in ${daysRemaining} days.`;
+        } else {
+            deadlineScore = 0;
+            deadlineExplanation = `Healthy processing runway (${daysRemaining} days remaining).`;
+        }
+        factors.push({ factor: 'APPROACHING_DEADLINE', maxPoints: 15, points: deadlineScore, explanation: deadlineExplanation });
+        totalScore += deadlineScore;
+
+        // Factor 4: Unresolved Deficiencies & Undertakings (max 20 pts)
+        let deficiencyScore = 0;
+        let defExplanation = '';
+        const defectCount = openDeficiencies + openUndertakings;
+        if (defectCount >= 3) {
+            deficiencyScore = 20;
+            defExplanation = `${openDeficiencies} open deficiency notice(s) and ${openUndertakings} unfulfilled undertaking(s) active.`;
+        } else if (defectCount > 0) {
+            deficiencyScore = defectCount * 7;
+            defExplanation = `${openDeficiencies} deficiency notice(s) and ${openUndertakings} undertaking(s) pending verification.`;
+        } else {
+            deficiencyScore = 0;
+            defExplanation = 'Zero unresolved deficiencies or undertakings.';
+        }
+        factors.push({ factor: 'UNRESOLVED_FINDINGS', maxPoints: 20, points: deficiencyScore, explanation: defExplanation });
+        totalScore += deficiencyScore;
+
+        // Factor 5: Active Administrative Escalations (max 10 pts)
+        let escalationScore = 0;
+        let escExplanation = '';
+        if (activeEscalations > 0) {
+            escalationScore = 10;
+            escExplanation = `${activeEscalations} unresolved statutory escalation event(s) logged on this case.`;
+        } else {
+            escalationScore = 0;
+            escExplanation = 'Zero escalations active.';
+        }
+        factors.push({ factor: 'ACTIVE_ESCALATIONS', maxPoints: 10, points: escalationScore, explanation: escExplanation });
+        totalScore += escalationScore;
+
+        totalScore = Math.min(100, Math.max(0, totalScore));
+
+        let urgencyLevel = 'LOW';
+        if (totalScore >= 75) urgencyLevel = 'CRITICAL';
+        else if (totalScore >= 50) urgencyLevel = 'HIGH';
+        else if (totalScore >= 25) urgencyLevel = 'MEDIUM';
+
+        return {
+            applicationId: app.id,
+            applicationNo: app.application_no,
+            score: totalScore,
+            urgencyLevel,
+            factors,
+            label: 'Heuristic Priority Score (0–100 Scale)',
+            summary: `Composite Heuristic Priority Score is ${totalScore}/100 (${urgencyLevel} priority). Derived deterministically from ${factors.length} weighted regulatory indicators.`,
+            disclaimer: 'RULE-BASED DECISION SUPPORT ONLY: This heuristic priority score guides administrative queue triage and officer allocation. It does NOT automatically approve, reject, or modify the legal status of any application.'
+        };
+    }
 }
 
 module.exports = new IntelligenceService();

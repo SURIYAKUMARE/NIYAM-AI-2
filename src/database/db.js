@@ -43,6 +43,43 @@ class DatabaseConnection {
             const schemaSql = fs.readFileSync(schemaPath, 'utf8');
             this.db.exec(schemaSql);
         }
+
+        // Safe column additions for existing persistent databases
+        const safeAddCol = (table, colDef) => {
+            try {
+                this.db.exec(`ALTER TABLE ${table} ADD COLUMN ${colDef};`);
+            } catch (e) {
+                // Ignore if column already exists
+            }
+        };
+
+        safeAddCol('deficiencies', 'response_due_date DATE');
+        safeAddCol('documents', 'issuing_authority TEXT');
+        safeAddCol('documents', 'registration_number TEXT');
+        safeAddCol('documents', 'version_number INTEGER DEFAULT 1');
+        safeAddCol('applications', 'decision_reason TEXT');
+        safeAddCol('applications', 'official_outcome TEXT');
+        safeAddCol('applications', 'order_number TEXT');
+
+        // Ensure retention_policies table and seed defaults
+        this.db.exec(`
+            CREATE TABLE IF NOT EXISTS retention_policies (
+                id TEXT PRIMARY KEY,
+                policy_name TEXT NOT NULL,
+                entity_name TEXT NOT NULL UNIQUE,
+                retention_period_years INTEGER NOT NULL,
+                archive_storage_tier TEXT NOT NULL,
+                auto_purge_enabled INTEGER DEFAULT 0,
+                is_active INTEGER DEFAULT 1,
+                last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+            INSERT OR IGNORE INTO retention_policies (id, policy_name, entity_name, retention_period_years, archive_storage_tier, auto_purge_enabled, is_active)
+            VALUES 
+                ('RET_POL_001', 'Cryptographic Audit Trail Retention', 'audit_events', 10, 'IMMUTABLE_WORM_COLD', 0, 1),
+                ('RET_POL_002', 'Statutory Approval Dossier Retention', 'applications', 15, 'PERMANENT_LEGAL_ARCHIVE', 0, 1),
+                ('RET_POL_003', 'Statutory Deeds & Leases Retention', 'documents', 7, 'SECURE_DOCUMENT_VAULT', 0, 1),
+                ('RET_POL_004', 'System Notifications & Operational Alerts', 'notifications', 1, 'ROTATING_OPERATIONAL', 1, 1);
+        `);
     }
 
     query(sql, params = []) {

@@ -341,6 +341,144 @@ class ApplicationController {
             return res.status(400).json({ error: err.message });
         }
     }
+
+    // Assign owner / officer to application (Section 1 & 2)
+    assignOfficer(req, res) {
+        try {
+            const { id } = req.params;
+            const { officerId, comments } = req.body;
+
+            const app = db.queryOne('SELECT * FROM applications WHERE id = ?', [id]);
+            if (!app) return res.status(404).json({ error: 'Application not found.' });
+
+            const officer = db.queryOne('SELECT id, full_name, email, role_code FROM users WHERE id = ?', [officerId]);
+            if (!officer) return res.status(404).json({ error: 'Assigned officer not found.' });
+
+            const now = new Date().toISOString();
+            db.execute(`
+                UPDATE applications 
+                SET assigned_officer_id = ?, updated_at = ?
+                WHERE id = ?
+            `, [officerId, now, id]);
+
+            auditService.log({
+                actorId: req.user.id,
+                actorUsername: req.user.username,
+                actorRole: req.user.role_code,
+                actionType: 'ASSIGN_APPLICATION_OFFICER',
+                entityName: 'applications',
+                entityId: id,
+                previousState: { assigned_officer_id: app.assigned_officer_id },
+                newState: { assigned_officer_id: officerId, officerName: officer.full_name },
+                justification: `Assigned case ${app.application_no} to officer ${officer.full_name} (${officer.role_code}): ${comments || 'Administrative assignment'}`
+            });
+
+            return res.json({
+                message: `Application ${app.application_no} assigned to officer ${officer.full_name}.`,
+                applicationId: id,
+                assignedOfficerId: officerId,
+                assignedOfficerName: officer.full_name
+            });
+        } catch (err) {
+            return res.status(500).json({ error: err.message });
+        }
+    }
+
+    // Record Reasoned Decision (Official statutory outcome, Section 1, 2 & 10)
+    recordDecision(req, res) {
+        try {
+            const { id } = req.params;
+            const decisionType = req.body.decisionType || req.body.outcome;
+            const rationale = req.body.rationale || req.body.reason;
+            const orderNumber = req.body.orderNumber || req.body.order_number;
+            const effectiveAcademicYear = req.body.effectiveAcademicYear || req.body.effective_academic_year;
+
+            if (!decisionType || !rationale) {
+                return res.status(400).json({ error: 'decisionType (APPROVED, REJECTED, CONDITIONAL_APPROVAL) and rationale are required.' });
+            }
+
+            const app = db.queryOne('SELECT * FROM applications WHERE id = ?', [id]);
+            if (!app) return res.status(404).json({ error: 'Application not found.' });
+
+            const orderNo = orderNumber || `AICTE/APH-2026/ORD-${Math.floor(10000 + Math.random() * 90000)}`;
+            const year = effectiveAcademicYear || app.academic_year || '2026-2027';
+            const now = new Date().toISOString();
+            const decisionId = crypto.randomUUID();
+
+            db.transaction((tx) => {
+                // Record in statutory_decisions
+                tx.execute(`
+                    INSERT INTO statutory_decisions (
+                        id, application_id, competent_authority_id, decision_type,
+                        order_number, decision_date, effective_academic_year, statutory_rationale,
+                        digital_signature
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                `, [
+                    decisionId, id, req.user.id, decisionType, orderNo, now, year, rationale,
+                    `SIG-SHA256:${crypto.createHash('sha256').update(`${req.user.id}:${id}:${orderNo}:${now}`).digest('hex').slice(0, 32)}`
+                ]);
+
+                // Update application stage and outcome
+                const targetStage = decisionType === 'REJECTED' ? STAGES.REJECTED : STAGES.APPROVED;
+                const targetStatus = decisionType === 'REJECTED' ? STATUSES.REJECTED : (decisionType === 'CONDITIONAL_APPROVAL' ? 'CONDITIONAL_APPROVAL' : STATUSES.APPROVED);
+
+                tx.execute(`
+                    UPDATE applications
+                    SET current_stage = ?, current_status = ?, official_outcome = ?,
+                        decision_reason = ?, order_number = ?, updated_at = ?
+                    WHERE id = ?
+                `, [targetStage, targetStatus, decisionType, rationale, orderNo, now, id]);
+
+                // Transition workflow log
+                tx.execute(`
+                    INSERT INTO stage_transitions (
+                        id, application_id, from_stage, to_stage, actor_user_id,
+                        actor_role, transition_type, rule_version, comments, timestamp
+                    ) VALUES (?, ?, ?, ?, ?, ?, 'COMPLETE', 'APH-2026-v1.0', ?, ?)
+                `, [
+                    crypto.randomUUID(), id, app.current_stage, targetStage, req.user.id,
+                    req.user.role_code, `Statutory order ${orderNo} recorded: ${decisionType} - ${rationale}`, now
+                ]);
+
+                auditService.log({
+                    actorId: req.user.id,
+                    actorUsername: req.user.username,
+                    actorRole: req.user.role_code,
+                    actionType: 'RECORD_STATUTORY_DECISION',
+                    entityName: 'applications',
+                    entityId: id,
+                    previousState: { stage: app.current_stage, status: app.current_status },
+                    newState: { decisionType, orderNumber: orderNo, stage: targetStage, status: targetStatus },
+                    justification: `Recorded statutory decision ${decisionType} on ${app.application_no}: ${rationale}`
+                });
+            });
+
+            return res.json({
+                message: `Statutory regulatory decision successfully recorded. Order Number: ${orderNo}.`,
+                orderNumber: orderNo,
+                decisionType,
+                applicationId: id
+            });
+        } catch (err) {
+            return res.status(500).json({ error: err.message });
+        }
+    }
+
+    // Explainable Heuristic Priority Score (Section 9)
+    getPriorityScore(req, res) {
+        try {
+            const { id } = req.params;
+            const app = db.queryOne('SELECT * FROM applications WHERE id = ?', [id]);
+            if (!app) return res.status(404).json({ error: 'Application not found.' });
+
+            const intelligenceService = require('../services/intelligenceService');
+            const priority = intelligenceService.calculatePriorityScore(app);
+
+            return res.json(priority);
+        } catch (err) {
+            return res.status(500).json({ error: err.message });
+        }
+    }
 }
 
 module.exports = new ApplicationController();

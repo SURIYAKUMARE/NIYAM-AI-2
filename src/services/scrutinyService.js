@@ -128,6 +128,50 @@ class ScrutinyService {
         return { deficiencyId, status: 'RESPONSES_SUBMITTED' };
     }
 
+    // Re-scrutiny finding for a specific deficiency (Section 3: Track unresolved findings through re-scrutiny)
+    reScrutinizeDeficiency({
+        deficiencyId,
+        status, // 'VERIFIED_OK' or 'DEFICIENT_PERSISTS'
+        findings = '',
+        reason = '',
+        user
+    }) {
+        const def = db.queryOne('SELECT * FROM deficiencies WHERE id = ?', [deficiencyId]);
+        if (!def) throw new Error('Deficiency record not found.');
+
+        const now = new Date().toISOString();
+        db.execute(`
+            UPDATE deficiencies
+            SET status = ?, verified_at = ?, verified_by = ?
+            WHERE id = ?
+        `, [status, now, user.id, deficiencyId]);
+
+        // Recalculate remaining unresolved deficiencies
+        const unresolved = db.queryOne(`
+            SELECT COUNT(*) as count FROM deficiencies 
+            WHERE application_id = ? AND status IN ('RAISED', 'DEFICIENT_PERSISTS', 'RESPONSES_SUBMITTED')
+        `, [def.application_id]).count;
+
+        db.execute(`
+            UPDATE applications
+            SET deficiency_count = ?, current_status = ?
+            WHERE id = ?
+        `, [unresolved, unresolved === 0 ? 'UNDER_SCRUTINY' : 'DEFICIENCY_FLAGGED', def.application_id]);
+
+        auditService.log({
+            actorId: user.id,
+            actorUsername: user.username,
+            actorRole: user.role_code,
+            actionType: 'RE_SCRUTINY_FINDING',
+            entityName: 'deficiencies',
+            entityId: deficiencyId,
+            newState: { status, findings, reason, remainingDeficiencies: unresolved },
+            justification: `Re-scrutiny outcome for deficiency ${deficiencyId}: ${status} by ${user.full_name} (${reason || 'Standard Re-scrutiny Examination'})`
+        });
+
+        return { deficiencyId, status, remainingDeficiencies: unresolved };
+    }
+
     // Scrutiny Officer Completes Review
     completeReview({
         applicationId,

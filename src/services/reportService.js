@@ -168,6 +168,195 @@ class ReportService {
 
         return csvRows.join('\n');
     }
+
+    // 7 MANDATED PILOT INDICATORS (SIH26262 Performance Specifications)
+    getPilotIndicators() {
+        // 1. Pending applications by stage
+        const stageRows = db.query(`
+            SELECT current_stage, COUNT(id) as count
+            FROM applications
+            WHERE current_stage NOT IN ('APPROVED', 'REJECTED')
+            GROUP BY current_stage
+        `);
+        const pendingByStage = {};
+        for (const row of stageRows) {
+            pendingByStage[row.current_stage] = row.count;
+        }
+
+        // 2. Mean submission-to-decision time (in days)
+        const decidedCases = db.query(`
+            SELECT a.submission_date,
+                   COALESCE(sd.decision_date, st.timestamp, a.updated_at) as decision_date
+            FROM applications a
+            LEFT JOIN statutory_decisions sd ON a.id = sd.application_id
+            LEFT JOIN stage_transitions st ON a.id = st.application_id AND st.to_stage IN ('APPROVED', 'REJECTED')
+            WHERE a.current_stage IN ('APPROVED', 'REJECTED')
+        `);
+        let totalDecisionDays = 0;
+        let validDecisionCount = 0;
+        for (const c of decidedCases) {
+            if (c.submission_date && c.decision_date) {
+                const diffDays = (new Date(c.decision_date) - new Date(c.submission_date)) / 86400000;
+                if (diffDays >= 0) {
+                    totalDecisionDays += diffDays;
+                    validDecisionCount++;
+                }
+            }
+        }
+        const meanSubmissionToDecisionDays = validDecisionCount > 0 
+            ? Number((totalDecisionDays / validDecisionCount).toFixed(1)) 
+            : 0;
+
+        // 3. Overdue actions divided by open actions with due dates
+        const openAppActions = db.queryOne(`
+            SELECT COUNT(*) as total,
+                   SUM(CASE WHEN datetime(processing_due_date) < datetime('now') THEN 1 ELSE 0 END) as overdue
+            FROM applications
+            WHERE current_stage NOT IN ('APPROVED', 'REJECTED')
+        `);
+        const openUtkActions = db.queryOne(`
+            SELECT COUNT(*) as total,
+                   SUM(CASE WHEN datetime(due_date) < datetime('now') THEN 1 ELSE 0 END) as overdue
+            FROM undertakings
+            WHERE status IN ('PENDING', 'UPCOMING', 'OVERDUE')
+        `);
+        const openActionsWithDueDates = (openAppActions?.total || 0) + (openUtkActions?.total || 0);
+        const overdueActionsCount = (openAppActions?.overdue || 0) + (openUtkActions?.overdue || 0);
+        const overdueActionsRatio = openActionsWithDueDates > 0
+            ? Number((overdueActionsCount / openActionsWithDueDates).toFixed(3))
+            : 0;
+
+        // 4. Mean EVC request-to-schedule time (days from proposed/creation to confirmed_date)
+        const evcScheduled = db.query(`
+            SELECT proposed_date, confirmed_date, created_at
+            FROM evc_schedules
+            WHERE confirmed_date IS NOT NULL
+        `);
+        let totalEvcScheduleDays = 0;
+        let validEvcCount = 0;
+        for (const e of evcScheduled) {
+            const start = new Date(e.created_at || e.proposed_date);
+            const confirmed = new Date(e.confirmed_date);
+            const diffDays = Math.max(0, (confirmed - start) / 86400000);
+            totalEvcScheduleDays += diffDays;
+            validEvcCount++;
+        }
+        const meanEvcRequestToScheduleDays = validEvcCount > 0
+            ? Number((totalEvcScheduleDays / validEvcCount).toFixed(1))
+            : 0;
+
+        // 5. On-time evidence submissions divided by submissions due
+        const submissions = db.query(`
+            SELECT cs.submission_date, u.due_date
+            FROM compliance_submissions cs
+            JOIN undertakings u ON cs.undertaking_id = u.id
+        `);
+        let onTimeCount = 0;
+        for (const s of submissions) {
+            if (new Date(s.submission_date) <= new Date(s.due_date + 'T23:59:59')) {
+                onTimeCount++;
+            }
+        }
+        const submissionsDueTotal = Math.max(submissions.length, db.queryOne('SELECT COUNT(*) as count FROM undertakings').count || 1);
+        const onTimeEvidenceSubmissionsRatio = submissionsDueTotal > 0
+            ? Number((onTimeCount / submissionsDueTotal).toFixed(3))
+            : 0;
+
+        // 6. Document expiry alerts generated
+        const docExpiryAlertsGenerated = db.queryOne(`
+            SELECT COUNT(*) as count FROM notifications
+            WHERE event_type IN ('LEASE_EXPIRING', 'DOCUMENT_EXPIRING', 'UNDERTAKING_OVERDUE')
+        `)?.count || 0;
+
+        // 7. Escalation response time (mean hours from triggered_at to acknowledged_at/resolved_at)
+        const escalations = db.query(`
+            SELECT triggered_at, acknowledged_at, resolved_at
+            FROM escalation_events
+            WHERE acknowledged_at IS NOT NULL OR resolved_at IS NOT NULL
+        `);
+        let totalEscalationHours = 0;
+        let acknowledgedEscCount = 0;
+        for (const esc of escalations) {
+            const start = new Date(esc.triggered_at);
+            const end = new Date(esc.acknowledged_at || esc.resolved_at);
+            const diffHours = Math.max(0, (end - start) / 3600000);
+            totalEscalationHours += diffHours;
+            acknowledgedEscCount++;
+        }
+        const meanEscalationResponseTimeHours = acknowledgedEscCount > 0
+            ? Number((totalEscalationHours / acknowledgedEscCount).toFixed(1))
+            : 0;
+
+        return {
+            title: 'NIYAM Pilot Indicators (Mandated SIH26262 Performance Metrics)',
+            calculatedAt: new Date().toISOString(),
+            dataSource: 'Live SQLite DatabaseSync (aicte_approval.db)',
+            baselineNotice: 'Pre-pilot baseline values are synthetic demonstration reference marks. Current values are computed from active database records.',
+            indicators: [
+                {
+                    key: 'pending_by_stage',
+                    name: 'Pending Applications by Stage',
+                    value: pendingByStage,
+                    definition: 'Count of unfinalized dossiers grouped by current workflow stage (SCRUTINY, RE_SCRUTINY, EVC, SAC_SHC, COMPETENT_DECISION)',
+                    unit: 'dossiers per stage'
+                },
+                {
+                    key: 'mean_submission_to_decision_time',
+                    name: 'Mean Submission-to-Decision Time',
+                    value: meanSubmissionToDecisionDays,
+                    numerator: Number(totalDecisionDays.toFixed(1)),
+                    denominator: validDecisionCount,
+                    definition: 'Total elapsed days from initial intake timestamp to statutory order date divided by decided applications count (handles 0 denominator)',
+                    unit: 'days'
+                },
+                {
+                    key: 'overdue_actions_ratio',
+                    name: 'Overdue Actions Ratio',
+                    value: overdueActionsRatio,
+                    percentage: Number((overdueActionsRatio * 100).toFixed(1)),
+                    numerator: overdueActionsCount,
+                    denominator: openActionsWithDueDates,
+                    definition: 'Count of overdue active actions divided by total open actions with due dates (dossiers + undertakings)',
+                    unit: 'ratio (0 to 1)'
+                },
+                {
+                    key: 'mean_evc_request_to_schedule_time',
+                    name: 'Mean EVC Request-to-Schedule Time',
+                    value: meanEvcRequestToScheduleDays,
+                    numerator: Number(totalEvcScheduleDays.toFixed(1)),
+                    denominator: validEvcCount,
+                    definition: 'Average days elapsed between initial EVC visit requisition and confirmation of committee roster',
+                    unit: 'days'
+                },
+                {
+                    key: 'on_time_evidence_submissions_ratio',
+                    name: 'On-Time Evidence Submissions Ratio',
+                    value: onTimeEvidenceSubmissionsRatio,
+                    percentage: Number((onTimeEvidenceSubmissionsRatio * 100).toFixed(1)),
+                    numerator: onTimeCount,
+                    denominator: submissionsDueTotal,
+                    definition: 'Compliance evidence submitted on or before statutory due date divided by total obligations due',
+                    unit: 'ratio (0 to 1)'
+                },
+                {
+                    key: 'document_expiry_alerts_generated',
+                    name: 'Document Expiry Alerts Generated',
+                    value: docExpiryAlertsGenerated,
+                    definition: 'Cumulative persistent regulatory alerts generated for approaching expiry of land deeds, leases, and FDRs',
+                    unit: 'alerts generated'
+                },
+                {
+                    key: 'escalation_response_time',
+                    name: 'Escalation Response Time',
+                    value: meanEscalationResponseTimeHours,
+                    numerator: Number(totalEscalationHours.toFixed(1)),
+                    denominator: acknowledgedEscCount,
+                    definition: 'Average hours elapsed from automated SLA breach trigger to officer acknowledgment or resolution',
+                    unit: 'hours'
+                }
+            ]
+        };
+    }
 }
 
 module.exports = new ReportService();

@@ -46,6 +46,7 @@ class RegulatoryRulesService {
                     { from: 'SUBMITTED', to: 'SCRUTINY', condition: 'EOA_VALIDATED', actorRole: ['REGIONAL_OFFICER', 'SCRUTINY_MEMBER'] },
                     { from: 'SCRUTINY', to: 'COMPETENT_DECISION', condition: 'SCRUTINY_CLEARED', actorRole: ['SCRUTINY_MEMBER', 'REGIONAL_OFFICER'] },
                     { from: 'SCRUTINY', to: 'EVC', condition: 'SURPRISE_EVC_TRIGGERED', actorRole: ['REGIONAL_OFFICER', 'SCRUTINY_MEMBER'] },
+                    { from: 'EVC', to: 'COMPETENT_DECISION', condition: 'INSPECTION_RECOMMENDED', actorRole: ['EVC_COORDINATOR', 'REGIONAL_OFFICER'] },
                     { from: 'COMPETENT_DECISION', to: 'APPROVED', condition: 'EOA_ISSUED', actorRole: ['COMPETENT_AUTHORITY'] }
                 ]
             }

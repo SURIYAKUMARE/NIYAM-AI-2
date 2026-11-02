@@ -92,6 +92,31 @@ class ScrutinyController {
         }
     }
 
+    reScrutinizeDeficiency(req, res) {
+        try {
+            const { deficiencyId } = req.params;
+            const status = req.body.status || req.body.findingStatus;
+            const findings = req.body.findings || req.body.notes || '';
+            const reason = req.body.reason || req.body.notes || '';
+
+            if (!status || !['VERIFIED_OK', 'DEFICIENT_PERSISTS'].includes(status)) {
+                return res.status(400).json({ error: "Status must be 'VERIFIED_OK' or 'DEFICIENT_PERSISTS'." });
+            }
+
+            const result = scrutinyService.reScrutinizeDeficiency({
+                deficiencyId,
+                status,
+                findings: findings || '',
+                reason: reason || '',
+                user: req.user
+            });
+
+            return res.json({ message: `Re-scrutiny finding recorded: Marked as ${status}.`, result });
+        } catch (err) {
+            return res.status(400).json({ error: err.message });
+        }
+    }
+
     completeReview(req, res) {
         try {
             const { id } = req.params;

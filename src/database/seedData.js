@@ -340,7 +340,24 @@ function seedDatabase() {
         )
     `);
 
-    // 14. Seed Genesis and Initial Cryptographic Audit Event for Scenario 8
+    // 14. Retention Policies
+    const retentionPolicies = [
+        { id: 'RET_POL_001', name: 'Cryptographic Audit Trail Retention', entity: 'audit_events', years: 10, tier: 'IMMUTABLE_WORM_COLD', autoPurge: 0 },
+        { id: 'RET_POL_002', name: 'Statutory Approval Dossier Retention', entity: 'applications', years: 15, tier: 'PERMANENT_LEGAL_ARCHIVE', autoPurge: 0 },
+        { id: 'RET_POL_003', name: 'Statutory Deeds & Leases Retention', entity: 'documents', years: 7, tier: 'SECURE_DOCUMENT_VAULT', autoPurge: 0 },
+        { id: 'RET_POL_004', name: 'System Notifications & Operational Alerts', entity: 'notifications', years: 1, tier: 'ROTATING_OPERATIONAL', autoPurge: 1 }
+    ];
+
+    for (const pol of retentionPolicies) {
+        db.execute(`
+            INSERT OR IGNORE INTO retention_policies (
+                id, policy_name, entity_name, retention_period_years,
+                archive_storage_tier, auto_purge_enabled, is_active
+            ) VALUES (?, ?, ?, ?, ?, ?, 1)
+        `, [pol.id, pol.name, pol.entity, pol.years, pol.tier, pol.autoPurge]);
+    }
+
+    // 15. Seed Genesis and Initial Cryptographic Audit Event for Scenario 8
     auditService.log({
         actorId: 'USR_ADMIN_01',
         actorUsername: 'superadmin',

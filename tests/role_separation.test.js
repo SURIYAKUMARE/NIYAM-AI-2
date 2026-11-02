@@ -148,8 +148,8 @@ test('Role Separation & RBAC Security Enforcement (Section 8 Suite)', async (t) 
         });
         assert.strictEqual(res.statusCode, 200);
         assert.ok(Array.isArray(res.body.applications));
-        assert.strictEqual(res.body.applications.length, 1);
-        assert.strictEqual(res.body.applications[0].institution_id, 'INST_001');
+        assert.ok(res.body.applications.length >= 1);
+        assert.ok(res.body.applications.every(a => a.institution_id === 'INST_001'));
     });
 
     await t.test('8. Applicant can view their own application details (HTTP 200)', async () => {

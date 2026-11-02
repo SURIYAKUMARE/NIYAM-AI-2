@@ -19,6 +19,7 @@ const scenarioController = require('../controllers/scenarioController');
 const collegeController = require('../controllers/collegeController');
 const verifyController = require('../controllers/verifyController');
 const intelligenceController = require('../controllers/intelligenceController');
+const adminController = require('../controllers/adminController');
 
 // Lightweight high-performance router compatible with Node.js http
 class SimpleRouter {
@@ -121,17 +122,22 @@ router.post('/api/applications', requireAuth, applicationController.submit.bind(
 router.get('/api/applications/:id', requireAuth, applicationController.getCaseWorkspace.bind(applicationController));
 router.post('/api/applications/:id/transition', requireRole([ROLES.SCRUTINY_MEMBER, ROLES.REGIONAL_OFFICER, ROLES.REGULATION_BUREAU_ADMIN, ROLES.COMPETENT_AUTHORITY]), applicationController.advanceWorkflow.bind(applicationController));
 router.post('/api/applications/:id/hold', requireRole([ROLES.REGULATION_BUREAU_ADMIN, ROLES.COMPETENT_AUTHORITY]), applicationController.setHold.bind(applicationController));
+router.post('/api/applications/:id/assign', requireRole([ROLES.REGIONAL_OFFICER, ROLES.REGULATION_BUREAU_ADMIN, ROLES.SUPER_ADMIN]), applicationController.assignOfficer.bind(applicationController));
+router.post('/api/applications/:id/decision', requireRole([ROLES.COMPETENT_AUTHORITY, ROLES.REGULATION_BUREAU_ADMIN, ROLES.SUPER_ADMIN]), applicationController.recordDecision.bind(applicationController));
+router.get('/api/applications/:id/priority-score', requireAuth, applicationController.getPriorityScore.bind(applicationController));
 
 // Scrutiny
 router.get('/api/scrutiny/queue', requireRole([ROLES.SCRUTINY_MEMBER, ROLES.REGIONAL_OFFICER, ROLES.REGULATION_BUREAU_ADMIN]), scrutinyController.getQueue.bind(scrutinyController));
 router.get('/api/scrutiny/:id/checklist', requireAuth, enforceDataIsolation, scrutinyController.getChecklist.bind(scrutinyController));
 router.post('/api/scrutiny/:id/deficiency', requireRole([ROLES.SCRUTINY_MEMBER, ROLES.REGIONAL_OFFICER, ROLES.REGULATION_BUREAU_ADMIN]), scrutinyController.raiseDeficiency.bind(scrutinyController));
 router.post('/api/scrutiny/deficiencies/:deficiencyId/response', requireAuth, enforceDataIsolation, scrutinyController.submitResponse.bind(scrutinyController));
+router.post('/api/scrutiny/deficiencies/:deficiencyId/re-scrutiny', requireRole([ROLES.SCRUTINY_MEMBER, ROLES.REGIONAL_OFFICER, ROLES.REGULATION_BUREAU_ADMIN]), scrutinyController.reScrutinizeDeficiency.bind(scrutinyController));
 router.post('/api/scrutiny/:id/review', requireRole([ROLES.SCRUTINY_MEMBER, ROLES.REGIONAL_OFFICER, ROLES.REGULATION_BUREAU_ADMIN]), scrutinyController.completeReview.bind(scrutinyController));
 
 // EVC Management
 router.get('/api/evc/dashboard', requireRole([ROLES.EVC_COORDINATOR, ROLES.EVC_MEMBER, ROLES.REGIONAL_OFFICER, ROLES.REGULATION_BUREAU_ADMIN]), evcController.getDashboard.bind(evcController));
 router.get('/api/evc/queue', requireRole([ROLES.EVC_COORDINATOR, ROLES.REGIONAL_OFFICER, ROLES.REGULATION_BUREAU_ADMIN]), evcController.getSchedulingQueue.bind(evcController));
+router.get('/api/evc/calendar', requireRole([ROLES.EVC_COORDINATOR, ROLES.EVC_MEMBER, ROLES.REGIONAL_OFFICER, ROLES.REGULATION_BUREAU_ADMIN]), evcController.getCalendar.bind(evcController));
 router.post('/api/evc/check-conflict', requireRole([ROLES.EVC_COORDINATOR, ROLES.REGULATION_BUREAU_ADMIN]), evcController.checkConflict.bind(evcController));
 router.post('/api/evc/:id/schedule', requireRole([ROLES.EVC_COORDINATOR, ROLES.REGIONAL_OFFICER, ROLES.REGULATION_BUREAU_ADMIN]), evcController.scheduleVisit.bind(evcController));
 router.post('/api/evc/:scheduleId/report', requireRole([ROLES.EVC_MEMBER, ROLES.EVC_COORDINATOR, ROLES.REGIONAL_OFFICER]), evcController.submitReport.bind(evcController));
@@ -157,10 +163,19 @@ router.get('/api/documents/expiry-alerts', requireAuth, documentController.check
 // Notifications & Alerts
 router.get('/api/notifications', requireAuth, notificationController.getUserNotifications.bind(notificationController));
 router.post('/api/notifications/:id/read', requireAuth, notificationController.markAsRead.bind(notificationController));
+router.post('/api/notifications/run-scheduler', requireRole([ROLES.SUPER_ADMIN, ROLES.REGULATION_BUREAU_ADMIN, ROLES.REGIONAL_OFFICER]), (req, res) => {
+    try {
+        const schedulerService = require('../services/schedulerService');
+        const results = schedulerService.runCycle();
+        return res.json({ success: true, results });
+    } catch (err) {
+        return res.status(500).json({ error: err.message });
+    }
+});
 
 // Escalations
 router.get('/api/escalations', requireRole([ROLES.REGIONAL_OFFICER, ROLES.REGULATION_BUREAU_ADMIN, ROLES.SUPER_ADMIN]), escalationController.getActiveEscalations.bind(escalationController));
-router.post('/api/escalations/evaluate', requireRole([ROLES.REGULATION_BUREAU_ADMIN, ROLES.SUPER_ADMIN]), escalationController.triggerEvaluation.bind(escalationController));
+router.post('/api/escalations/evaluate', requireRole([ROLES.REGIONAL_OFFICER, ROLES.REGULATION_BUREAU_ADMIN, ROLES.SUPER_ADMIN]), escalationController.triggerEvaluation.bind(escalationController));
 router.post('/api/escalations/:id/acknowledge', requireRole([ROLES.REGIONAL_OFFICER, ROLES.REGULATION_BUREAU_ADMIN]), escalationController.acknowledge.bind(escalationController));
 router.post('/api/escalations/:id/resolve', requireRole([ROLES.REGULATION_BUREAU_ADMIN, ROLES.SUPER_ADMIN]), escalationController.resolve.bind(escalationController));
 
@@ -179,8 +194,17 @@ router.post('/api/ai/draft-deficiency', requireRole([ROLES.SCRUTINY_MEMBER, ROLE
 
 // Reports & Exports
 router.get('/api/reports', requireRole([ROLES.REGIONAL_OFFICER, ROLES.REGULATION_BUREAU_ADMIN, ROLES.AUDITOR]), reportController.listReports.bind(reportController));
+router.get('/api/reports/pilot-indicators', requireAuth, reportController.getPilotIndicators.bind(reportController));
 router.get('/api/reports/:reportId', requireRole([ROLES.REGIONAL_OFFICER, ROLES.REGULATION_BUREAU_ADMIN, ROLES.AUDITOR]), reportController.generate.bind(reportController));
 router.get('/api/reports/:reportId/export-csv', requireRole([ROLES.REGIONAL_OFFICER, ROLES.REGULATION_BUREAU_ADMIN, ROLES.AUDITOR]), reportController.exportCSV.bind(reportController));
+
+// Admin Management (Section 1: Manage roles, approve workflow rule versions, configure retention policies)
+router.get('/api/admin/roles-matrix', requireRole([ROLES.SUPER_ADMIN, ROLES.REGULATION_BUREAU_ADMIN]), adminController.getRolesMatrix.bind(adminController));
+router.post('/api/admin/users/:userId/role', requireRole([ROLES.SUPER_ADMIN, ROLES.REGULATION_BUREAU_ADMIN]), adminController.updateUserRole.bind(adminController));
+router.put('/api/admin/users/:userId/role', requireRole([ROLES.SUPER_ADMIN, ROLES.REGULATION_BUREAU_ADMIN]), adminController.updateUserRole.bind(adminController));
+router.get('/api/admin/retention-policies', requireRole([ROLES.SUPER_ADMIN, ROLES.REGULATION_BUREAU_ADMIN]), adminController.getRetentionPolicies.bind(adminController));
+router.put('/api/admin/retention-policies/:id', requireRole([ROLES.SUPER_ADMIN]), adminController.updateRetentionPolicy.bind(adminController));
+router.post('/api/admin/retention-policies/:id', requireRole([ROLES.SUPER_ADMIN]), adminController.updateRetentionPolicy.bind(adminController));
 
 // Synthetic Colleges Directory & AI Verification Studio
 router.get('/api/colleges', collegeController.list.bind(collegeController));

@@ -96,7 +96,7 @@ class EVCService {
     }
 
     // Conflict of interest check for prospective EVC members
-    checkMemberConflict(expertInstitution, expertState, applicationId) {
+    checkMemberConflict(expertInstitution = '', expertState = '', applicationId) {
         const app = db.queryOne(`
             SELECT i.name, i.state, i.id as institution_id 
             FROM applications a
@@ -106,8 +106,11 @@ class EVCService {
 
         if (!app) return { conflict: true, reason: 'Application not found' };
 
+        const instStr = (expertInstitution || '').toLowerCase().trim();
+        const appNameStr = (app.name || '').toLowerCase().trim();
+
         // Conflict rule 1: Member belongs to the exact same institution
-        if (expertInstitution.toLowerCase().trim() === app.name.toLowerCase().trim()) {
+        if (instStr && instStr === appNameStr) {
             return { conflict: true, reason: 'Direct institutional affiliation conflict.' };
         }
 
@@ -258,6 +261,37 @@ class EVCService {
             });
 
             return { reportId, status: 'REPORT_SUBMITTED', digitalSignature: digitalSig };
+        });
+    }
+
+    // EVC Calendar and List View for Inspection Coordination (Section 4)
+    getCalendarView({ regionId = null, month = null, year = null } = {}) {
+        let sql = `
+            SELECT es.*, a.application_no, a.assigned_region_id,
+                   i.name as institution_name, i.permanent_id, i.state, i.district,
+                   r.name as region_name, er.overall_recommendation,
+                   er.infrastructure_score, er.faculty_score, er.compliance_score
+            FROM evc_schedules es
+            JOIN applications a ON es.application_id = a.id
+            JOIN institutions i ON a.institution_id = i.id
+            JOIN regions r ON a.assigned_region_id = r.id
+            LEFT JOIN evc_reports er ON es.id = er.evc_schedule_id
+            WHERE 1=1
+        `;
+        const params = [];
+        if (regionId) {
+            sql += ' AND a.assigned_region_id = ?';
+            params.push(regionId);
+        }
+        sql += ' ORDER BY es.confirmed_date ASC, es.proposed_date ASC';
+        const schedules = db.query(sql, params);
+
+        return schedules.map(s => {
+            const members = db.query('SELECT * FROM evc_members WHERE evc_schedule_id = ?', [s.id]);
+            return {
+                ...s,
+                members
+            };
         });
     }
 }

@@ -2,7 +2,7 @@ const crypto = require('node:crypto');
 const db = require('../database/db');
 
 class NotificationEngine {
-    // Send event notification
+    // Send event notification with deduplication
     send({
         recipientUserId = null,
         recipientRole,
@@ -10,8 +10,27 @@ class NotificationEngine {
         eventType,
         title,
         message,
-        channel = 'IN_APP'
+        channel = 'IN_APP',
+        preventDuplicatesToday = true
     }) {
+        // Prevent duplicate alerts during repeated scheduler runs within the same calendar day
+        if (preventDuplicatesToday) {
+            const existing = db.queryOne(`
+                SELECT id FROM notifications
+                WHERE (recipient_user_id = ? OR (? IS NULL AND recipient_user_id IS NULL))
+                AND recipient_role = ?
+                AND (institution_id = ? OR (? IS NULL AND institution_id IS NULL))
+                AND event_type = ?
+                AND title = ?
+                AND date(sent_at) = date('now')
+                LIMIT 1
+            `, [recipientUserId, recipientUserId, recipientRole, institutionId, institutionId, eventType, title]);
+
+            if (existing) {
+                return { id: existing.id, status: 'DEDUPLICATED', sentAt: new Date().toISOString() };
+            }
+        }
+
         const id = crypto.randomUUID();
         const now = new Date().toISOString();
 
@@ -31,9 +50,9 @@ class NotificationEngine {
         return { id, status: 'SENT', sentAt: now };
     }
 
-    // Mock adapter for external delivery with zero fake claims
+    // Explicitly labeled external simulation adapter (no live SMTP / SMS gateway claims)
     dispatchExternalAdapter(channel, payload) {
-        console.log(`[Adapter Dispatch: ${channel}] To: ${payload.recipientRole} (${payload.recipientUserId || 'Role Broadcast'}) | Subject: ${payload.title}`);
+        console.log(`[SIMULATION: Gateway Not Configured | Channel: ${channel}] To: ${payload.recipientRole} (${payload.recipientUserId || 'Role Broadcast'}) | Subject: ${payload.title}`);
     }
 
     // Get notifications for user or role

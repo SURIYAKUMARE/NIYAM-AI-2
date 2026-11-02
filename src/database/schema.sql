@@ -406,6 +406,19 @@ CREATE TABLE IF NOT EXISTS audit_events (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- 28. Retention Policies (Configurable Administrative Governance)
+CREATE TABLE IF NOT EXISTS retention_policies (
+    id TEXT PRIMARY KEY,
+    policy_name TEXT NOT NULL,
+    entity_name TEXT NOT NULL, -- e.g. 'audit_events', 'documents', 'applications', 'notifications'
+    retention_period_years INTEGER NOT NULL,
+    archive_storage_tier TEXT NOT NULL DEFAULT 'COLD_STORAGE',
+    auto_purge_enabled INTEGER DEFAULT 0,
+    is_active INTEGER DEFAULT 1,
+    updated_by TEXT REFERENCES users(id),
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Indexes for maximum query efficiency and fast dashboard aggregations
 CREATE INDEX IF NOT EXISTS idx_apps_region ON applications(assigned_region_id);
 CREATE INDEX IF NOT EXISTS idx_apps_stage ON applications(current_stage);

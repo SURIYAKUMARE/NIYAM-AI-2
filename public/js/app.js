@@ -297,7 +297,12 @@
         Lock: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="16" height="16" class="ui-icon"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`,
         Folder: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="16" height="16" class="ui-icon"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>`,
         Scale: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="16" height="16" class="ui-icon"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg>`,
-        Check: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="16" height="16" class="ui-icon"><polyline points="20 6 9 17 4 12"/></svg>`
+        Check: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="16" height="16" class="ui-icon"><polyline points="20 6 9 17 4 12"/></svg>`,
+        MapPin: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="16" height="16" class="ui-icon"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21s-8-6.5-8-12a8 8 0 1116 0c0 5.5-8 12-8 12z"/><circle cx="12" cy="9" r="3"/></svg>`,
+        Megaphone: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="16" height="16" class="ui-icon"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>`,
+        IndianFlag: `<svg viewBox="0 0 24 16" width="18" height="12" class="ui-icon" style="vertical-align:middle; border-radius:2px; box-shadow:0 0 1px rgba(0,0,0,0.4);"><rect width="24" height="5.33" fill="#FF9933"/><rect y="5.33" width="24" height="5.33" fill="#FFFFFF"/><rect y="10.66" width="24" height="5.34" fill="#138808"/><circle cx="12" cy="8" r="2" fill="#000080" stroke="#000080" stroke-width="0.3"/></svg>`,
+        ClipboardCheck: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="16" height="16" class="ui-icon"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>`,
+        Home: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="16" height="16" class="ui-icon"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/></svg>`
     };
 
     // Reusable Custom SVG Illustrations
@@ -1272,7 +1277,7 @@
             if (!roleCfg) {
                 container.innerHTML = `
                     <div class="card" style="padding:48px 24px; text-align:center; max-width:540px; margin:40px auto;">
-                        <div style="font-size:36px; margin-bottom:12px;">🛡️</div>
+                        <div style="display:inline-flex; align-items:center; justify-content:center; width:56px; height:56px; border-radius:50%; background:rgba(220,38,38,0.1); color:#DC2626; margin-bottom:12px;"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="32" height="32"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1zM12 8v4m0 4h.01"/></svg></div>
                         <h3 style="margin-bottom:8px;">Access Denied: Unrecognized Role</h3>
                         <p style="color:var(--text-secondary); margin-bottom:20px;">Your session does not have an authoritative role assigned. Please sign in with valid credentials.</p>
                         <button class="btn btn-primary" onclick="app.logout();">Return to Sign In</button>
@@ -1411,7 +1416,7 @@
                 <!-- Official Government of India Topbar -->
                 <div class="aicte-gov-topbar">
                     <div class="aicte-gov-topbar-left">
-                        <span class="aicte-flag-icon">🇮🇳</span>
+                        <span class="aicte-flag-icon">${ICONS.IndianFlag}</span>
                         <span>भारत सरकार | Government of India</span>
                         <span style="opacity:0.4;">|</span>
                         <span>शिक्षा मंत्रालय | Ministry of Education</span>
@@ -1462,7 +1467,7 @@
                 <!-- Official Deep Navy Navigation Bar -->
                 <nav class="aicte-main-nav" aria-label="Main Navigation">
                     <ul class="aicte-nav-links">
-                        <li><button type="button" class="aicte-nav-item active" id="nav-item-home">${ICONS.Home || '🏛️'} Home</button></li>
+                        <li><button type="button" class="aicte-nav-item active" id="nav-item-home">${ICONS.Home} <span>Home</span></button></li>
                         <li><button type="button" class="aicte-nav-item" id="nav-item-aph">Approval Process APH 2025–26</button></li>
                         <li><button type="button" class="aicte-nav-item" id="nav-item-workflow">7-Stage Workflow</button></li>
                         <li><button type="button" class="aicte-nav-item" id="nav-item-scrutiny">Scrutiny &amp; Deficiencies</button></li>
@@ -1479,7 +1484,7 @@
 
                 <!-- Urgent Notification Ticker -->
                 <div class="aicte-ticker-bar" role="region" aria-label="Important Regulatory Notices">
-                    <div class="aicte-ticker-badge">📢 NOTICES</div>
+                    <div class="aicte-ticker-badge">${ICONS.Megaphone} <span>NOTICES</span></div>
                     <div class="aicte-ticker-content">
                         AICTE Approval Process Handbook (APH 2025–26) Operationalized • Extension of Approval (EoA) &amp; New Institutions Scrutiny Window Active • Continuous 365-Day Fire Safety &amp; Land Title Compliance Watchdog Active • Smart India Hackathon 2026 (PS 26262)
                     </div>
@@ -1491,7 +1496,7 @@
                         <!-- Left Placard: Crisp institutional information card -->
                         <div class="aicte-hero-placard">
                             <div class="aicte-hero-tagline">
-                                <span aria-hidden="true">🏛️</span>
+                                ${ICONS.Landmark}
                                 <span>AICTE REGULATORY PORTAL • APH 2025–26</span>
                             </div>
 
@@ -1500,7 +1505,7 @@
                             </div>
 
                             <h1 class="aicte-hero-h1-eng" id="aicte-hero-main-title">
-                                National Institutional
+                                <span>National Institutional</span>
                                 <span class="highlight">Approval &amp; Compliance Portal</span>
                             </h1>
 
@@ -1542,7 +1547,8 @@
 
                         <!-- Top Right Location Badge (Keeps entire center & right clear to show the building photo!) -->
                         <div class="aicte-hero-location-badge hide-on-mobile">
-                            <span>📍 AICTE Headquarters • Nelson Mandela Marg, Vasant Kunj, New Delhi</span>
+                            ${ICONS.MapPin}
+                            <span>AICTE Headquarters • Nelson Mandela Marg, Vasant Kunj, New Delhi</span>
                         </div>
                     </div>
                 </section>
@@ -1564,7 +1570,7 @@
                         <div class="aicte-services-grid">
                             <div class="aicte-service-card" data-action="workflow">
                                 <div>
-                                    <div class="aicte-service-icon">📋</div>
+                                    <div class="aicte-service-icon aicte-icon-amber">${ICONS.ClipboardCheck}</div>
                                     <div class="aicte-service-name">Extension of Approval (EoA)</div>
                                     <div class="aicte-service-desc">Annual approval extension, seat intake sanction, and faculty-to-student cadre ratio verification for established technical institutions.</div>
                                 </div>
@@ -1573,7 +1579,7 @@
 
                             <div class="aicte-service-card" data-action="workflow">
                                 <div>
-                                    <div class="aicte-service-icon">🏛️</div>
+                                    <div class="aicte-service-icon aicte-icon-blue">${ICONS.Landmark}</div>
                                     <div class="aicte-service-name">New Technical Institution</div>
                                     <div class="aicte-service-desc">Establishment approval, land title &amp; 99-year leasehold validation, DTCP master layout blueprint, and municipal clearances.</div>
                                 </div>
@@ -1582,7 +1588,7 @@
 
                             <div class="aicte-service-card" data-action="workflow">
                                 <div>
-                                    <div class="aicte-service-icon">🔍</div>
+                                    <div class="aicte-service-icon aicte-icon-indigo">${ICONS.Search}</div>
                                     <div class="aicte-service-name">Scrutiny &amp; Deficiency Desk</div>
                                     <div class="aicte-service-desc">Senior scrutiny committee evaluation with clause-referenced deficiency letters and rapid institutional clarification response.</div>
                                 </div>
@@ -1591,7 +1597,7 @@
 
                             <div class="aicte-service-card" data-action="workflow">
                                 <div>
-                                    <div class="aicte-service-icon">🏢</div>
+                                    <div class="aicte-service-icon aicte-icon-teal">${ICONS.Building2}</div>
                                     <div class="aicte-service-name">Expert Visit Committee (EVC)</div>
                                     <div class="aicte-service-desc">Offline-first field inspections of laboratories, instructional infrastructure, and amenities with cryptographic docket synchronization.</div>
                                 </div>
@@ -1600,7 +1606,7 @@
 
                             <div class="aicte-service-card" data-action="workflow">
                                 <div>
-                                    <div class="aicte-service-icon">🛡️</div>
+                                    <div class="aicte-service-icon aicte-icon-green">${ICONS.ShieldCheck}</div>
                                     <div class="aicte-service-name">Continuous 365-Day Validity</div>
                                     <div class="aicte-service-desc">Automated watchdog tracking 365-day statutory validity for Fire Safety NOCs, structural certificates, and land leaseholds with proactive alerts.</div>
                                 </div>
@@ -1609,7 +1615,7 @@
 
                             <div class="aicte-service-card" data-action="workflow">
                                 <div>
-                                    <div class="aicte-service-icon">⚖️</div>
+                                    <div class="aicte-service-icon aicte-icon-purple">${ICONS.Scale}</div>
                                     <div class="aicte-service-name">Standing Appellate Committee</div>
                                     <div class="aicte-service-desc">Independent statutory appellate body reviewing contested observations, institutional representations, and reasoned council sanctions.</div>
                                 </div>
@@ -1706,7 +1712,7 @@
                             <!-- Official Docket Header (NO fake macOS dots!) -->
                             <div class="aicte-docket-header">
                                 <div class="aicte-docket-title font-mono">
-                                    <span>🏛️</span>
+                                    <span>${ICONS.Landmark}</span>
                                     <span>AICTE SCRUTINY DESK • DOSSIER: APP-2026-0842</span>
                                     <span style="opacity:0.6;">•</span>
                                     <span style="font-weight:400; font-size:12px;">Coromandel Institute of Technology (Southern Region)</span>
@@ -1740,7 +1746,7 @@
                                     <ul class="niyam-checklist-list" role="list">
                                         <li class="niyam-check-item">
                                             <div class="niyam-check-left">
-                                                <span class="niyam-check-icon check-ok" aria-hidden="true">✓</span>
+                                                <span class="niyam-check-icon check-ok" aria-hidden="true">${ICONS.Check}</span>
                                                 <div>
                                                     <div class="niyam-check-name">Land Title &amp; DTCP Plan</div>
                                                     <div class="niyam-check-clause font-mono">APH Ch. I Clause 4.1</div>
@@ -1751,7 +1757,7 @@
 
                                         <li class="niyam-check-item active-finding">
                                             <div class="niyam-check-left">
-                                                <span class="niyam-check-icon check-active" aria-hidden="true">⟳</span>
+                                                <span class="niyam-check-icon check-active" aria-hidden="true">${ICONS.Refresh}</span>
                                                 <div>
                                                     <div class="niyam-check-name">District Fire Safety NOC</div>
                                                     <div class="niyam-check-clause font-mono">APH Ch. II Clause 4.3</div>
@@ -1765,7 +1771,7 @@
 
                                         <li class="niyam-check-item">
                                             <div class="niyam-check-left">
-                                                <span class="niyam-check-icon check-ok" aria-hidden="true">✓</span>
+                                                <span class="niyam-check-icon check-ok" aria-hidden="true">${ICONS.Check}</span>
                                                 <div>
                                                     <div class="niyam-check-name">Building Completion Certificate</div>
                                                     <div class="niyam-check-clause font-mono">APH Appendix 6</div>
@@ -1776,7 +1782,7 @@
 
                                         <li class="niyam-check-item">
                                             <div class="niyam-check-left">
-                                                <span class="niyam-check-icon check-pending" aria-hidden="true">⏳</span>
+                                                <span class="niyam-check-icon check-pending" aria-hidden="true">${ICONS.Clock}</span>
                                                 <div>
                                                     <div class="niyam-check-name">Faculty Cadre &amp; Pay Scale</div>
                                                     <div class="niyam-check-clause font-mono">APH Ch. III Clause 2.1</div>
@@ -1806,7 +1812,7 @@
 
                                         <div class="niyam-finding-footer">
                                             <span class="niyam-review-needed">
-                                                <span aria-hidden="true">⏱</span>
+                                                <span aria-hidden="true">${ICONS.Clock}</span>
                                                 <span>Awaiting Officer Re-Scrutiny</span>
                                             </span>
                                             <span class="niyam-target-date font-mono">48h SLA Target</span>
@@ -4590,8 +4596,9 @@
                             </select>
                         </div>
 
-                        <div style="padding:10px; border-radius:8px; background:var(--surface-muted); border:1px solid var(--border); font-size:11px; color:var(--text-secondary);">
-                            ⚠️ Reassigning user role will be permanently recorded in the cryptographic SHA-256 audit ledger with the administrator's digital signature.
+                        <div style="padding:10px; border-radius:8px; background:var(--surface-muted); border:1px solid var(--border); font-size:11px; color:var(--text-secondary); display:flex; align-items:center; gap:8px;">
+                            ${ICONS.AlertTriangle}
+                            <span>Reassigning user role will be permanently recorded in the cryptographic SHA-256 audit ledger with the administrator's digital signature.</span>
                         </div>
 
                         <div class="modal-footer" style="padding:12px 0 0; border-top:1px solid var(--border); display:flex; justify-content:flex-end; gap:8px;">
@@ -5951,8 +5958,8 @@
                                         <td class="font-mono">${u.clause}</td>
                                         <td class="font-mono">${u.dueDate}</td>
                                         <td>
-                                            <span style="font-size:12px; color:var(--accent); cursor:pointer;" onclick="API.showToast('Downloading verified evidence: ${u.evidence}', 'info');">
-                                                📄 ${u.evidence}
+                                            <span style="font-size:12px; color:var(--accent); cursor:pointer; display:inline-flex; align-items:center; gap:4px;" onclick="API.showToast('Downloading verified evidence: ${u.evidence}', 'info');">
+                                                ${ICONS.FileText} <span>${u.evidence}</span>
                                             </span>
                                         </td>
                                         <td>
@@ -6420,19 +6427,19 @@
                     tabContent.innerHTML = `
                         <div style="display:flex; flex-direction:column; gap:8px;">
                             <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; border-radius:8px; background:var(--surface-muted); font-size:12px;">
-                                <span>📄 Land Title Deed &amp; 99-Year Leasehold</span>
+                                <span style="display:inline-flex; align-items:center; gap:6px;">${ICONS.FileText} <span>Land Title Deed &amp; 99-Year Leasehold</span></span>
                                 <span class="badge badge-emerald">SHA-256 VERIFIED</span>
                             </div>
                             <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; border-radius:8px; background:var(--surface-muted); font-size:12px;">
-                                <span>📄 Municipal Approved Master Building Plan</span>
+                                <span style="display:inline-flex; align-items:center; gap:6px;">${ICONS.FileText} <span>Municipal Approved Master Building Plan</span></span>
                                 <span class="badge badge-emerald">SHA-256 VERIFIED</span>
                             </div>
                             <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; border-radius:8px; background:var(--surface-muted); font-size:12px;">
-                                <span>📄 District Fire Safety Clearance NOC</span>
+                                <span style="display:inline-flex; align-items:center; gap:6px;">${ICONS.FileText} <span>District Fire Safety Clearance NOC</span></span>
                                 <span class="badge badge-amber">EXPIRING_SOON (45d)</span>
                             </div>
                             <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; border-radius:8px; background:var(--surface-muted); font-size:12px;">
-                                <span>📄 Faculty Roster &amp; Aadhaar Cadre Ratio</span>
+                                <span style="display:inline-flex; align-items:center; gap:6px;">${ICONS.FileText} <span>Faculty Roster &amp; Aadhaar Cadre Ratio</span></span>
                                 <span class="badge badge-emerald">1:15 COMPLIANT</span>
                             </div>
                         </div>

@@ -2687,7 +2687,8 @@ svg.ill-svg {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 16px 20px;
+  padding: 10px 16px 8px 16px;
+  box-sizing: border-box;
 }
 
 .dark .auth-page-container {
@@ -2706,7 +2707,7 @@ svg.ill-svg {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 18px;
+  padding: 8px 16px;
   background: rgba(15, 23, 42, 0.75);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
@@ -2742,8 +2743,12 @@ svg.ill-svg {
   position: relative;
   z-index: 2;
   width: 100%;
-  max-width: 440px;
-  padding: 16px 0;
+  max-width: 405px;
+  margin: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 0;
 }
 
 .auth-main-layout {
@@ -2842,38 +2847,42 @@ svg.ill-svg {
 .auth-card {
   background: rgba(255, 255, 255, 0.98);
   border: 1px solid rgba(255, 255, 255, 0.85);
-  border-radius: 20px;
-  box-shadow: 0 20px 45px rgba(0, 33, 71, 0.16), 0 4px 12px rgba(0, 0, 0, 0.06);
+  border-radius: 16px;
+  box-shadow: 0 16px 40px rgba(0, 33, 71, 0.16), 0 2px 8px rgba(0, 0, 0, 0.06);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  padding: 32px 30px 24px 30px;
+  padding: 18px 20px 14px 20px;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow-y: auto;
+  max-height: calc(100vh - 65px);
+  scrollbar-width: thin;
   position: relative;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .dark .auth-card {
   background: rgba(15, 23, 42, 0.96);
   border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65);
 }
 
 /* Emblem with green online dot */
 .auth-emblem-wrap {
   display: flex;
   justify-content: center;
-  margin-bottom: 10px;
+  margin-bottom: 6px;
 }
 
 .auth-emblem-box {
   position: relative;
-  width: 52px;
-  height: 52px;
-  border-radius: 14px;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
   background: #FFFFFF;
   border: 1px solid #E2E8F0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2885,17 +2894,17 @@ svg.ill-svg {
 }
 
 .auth-emblem-img {
-  width: 36px;
-  height: 36px;
+  width: 30px;
+  height: 30px;
   object-fit: contain;
 }
 
 .auth-online-dot {
   position: absolute;
-  top: -3px;
-  right: -3px;
-  width: 11px;
-  height: 11px;
+  top: -2px;
+  right: -2px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   background: #10B981;
   border: 2px solid #FFFFFF;
@@ -2910,8 +2919,8 @@ svg.ill-svg {
 .auth-hindi-subtitle {
   color: #2563EB;
   font-weight: 700;
-  font-size: 13.5px;
-  margin-bottom: 4px;
+  font-size: 11.5px;
+  margin-bottom: 2px;
   text-align: center;
   font-family: 'Noto Sans Devanagari', -apple-system, sans-serif;
 }
@@ -2921,11 +2930,11 @@ svg.ill-svg {
 }
 
 .auth-card-title {
-  font-size: 23px;
+  font-size: 19px;
   font-weight: 800;
   color: #0F172A;
   letter-spacing: -0.02em;
-  margin: 0 0 4px 0;
+  margin: 0 0 2px 0;
   text-align: center;
 }
 
@@ -2934,12 +2943,12 @@ svg.ill-svg {
 }
 
 .auth-card-sub {
-  font-size: 12.5px;
+  font-size: 11.5px;
   font-weight: 500;
   color: #64748B;
-  line-height: 1.4;
+  line-height: 1.35;
   text-align: center;
-  margin-bottom: 18px;
+  margin-bottom: 10px;
 }
 
 .dark .auth-card-sub {
@@ -2950,9 +2959,9 @@ svg.ill-svg {
 .demo-access-box {
   background: #F8FAFC;
   border: 1px solid #E2E8F0;
-  border-radius: 12px;
-  padding: 12px 14px;
-  margin-bottom: 18px;
+  border-radius: 10px;
+  padding: 8px 10px;
+  margin-bottom: 10px;
 }
 
 .dark .demo-access-box {
@@ -2964,16 +2973,16 @@ svg.ill-svg {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 12px;
+  font-size: 11.5px;
 }
 
 .demo-access-title {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   font-weight: 700;
   color: #1E293B;
-  font-size: 12.5px;
+  font-size: 11.5px;
 }
 
 .dark .demo-access-title {
@@ -2982,8 +2991,8 @@ svg.ill-svg {
 
 .demo-access-title svg {
   color: #2563EB;
-  width: 15px;
-  height: 15px;
+  width: 14px;
+  height: 14px;
 }
 
 .dark .demo-access-title svg {
@@ -2992,7 +3001,7 @@ svg.ill-svg {
 
 .demo-access-pw {
   font-family: var(--font-mono, monospace);
-  font-size: 11.5px;
+  font-size: 11px;
   color: #64748B;
   font-weight: 600;
 }
@@ -3003,11 +3012,11 @@ svg.ill-svg {
 
 .demo-pills-row {
   display: flex;
-  gap: 4px;
+  gap: 3px;
   background: #E2E8F0;
-  padding: 3px;
-  border-radius: 8px;
-  margin: 10px 0 10px 0;
+  padding: 2px;
+  border-radius: 6px;
+  margin: 6px 0 6px 0;
 }
 
 .dark .demo-pills-row {
@@ -3017,13 +3026,13 @@ svg.ill-svg {
 .demo-pill-btn {
   flex: 1;
   text-align: center;
-  padding: 6px 4px;
-  font-size: 12px;
+  padding: 4px 2px;
+  font-size: 11px;
   font-weight: 600;
   color: #475569;
   background: transparent;
   border: none;
-  border-radius: 6px;
+  border-radius: 5px;
   cursor: pointer;
   transition: all 0.15s ease;
 }
@@ -3044,22 +3053,22 @@ svg.ill-svg {
   background: #2563EB;
   color: #FFFFFF !important;
   font-weight: 700;
-  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.35);
+  box-shadow: 0 1px 4px rgba(37, 99, 235, 0.35);
 }
 
 .demo-detail-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 12px;
+  font-size: 11.5px;
 }
 
 .demo-role-indicator {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   color: #334155;
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 600;
 }
 
@@ -3084,9 +3093,9 @@ svg.ill-svg {
   color: #15803D;
   border: 1px solid #86EFAC;
   font-weight: 700;
-  font-size: 11px;
-  padding: 3px 10px;
-  border-radius: 20px;
+  font-size: 10.5px;
+  padding: 2px 8px;
+  border-radius: 14px;
   cursor: pointer;
   transition: all 0.15s ease;
   display: inline-flex;
@@ -3108,8 +3117,8 @@ svg.ill-svg {
 .auth-field-group {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  margin-bottom: 14px;
+  gap: 3px;
+  margin-bottom: 8px;
 }
 
 .auth-field-label-row {
@@ -3119,7 +3128,7 @@ svg.ill-svg {
 }
 
 .auth-field-label {
-  font-size: 12.5px;
+  font-size: 11.5px;
   font-weight: 700;
   color: #1E293B;
 }
@@ -3131,7 +3140,7 @@ svg.ill-svg {
 .auth-link-forgot {
   color: #2563EB;
   font-weight: 600;
-  font-size: 12px;
+  font-size: 11px;
   text-decoration: none;
   cursor: pointer;
 }
@@ -3149,7 +3158,7 @@ svg.ill-svg {
 
 .auth-input-leading-icon {
   position: absolute;
-  left: 12px;
+  left: 10px;
   color: #94A3B8;
   display: flex;
   align-items: center;
@@ -3157,20 +3166,20 @@ svg.ill-svg {
 }
 
 .auth-input-leading-icon svg {
-  width: 16px;
-  height: 16px;
+  width: 15px;
+  height: 15px;
 }
 
 .auth-text-input {
   width: 100%;
-  height: 42px;
-  padding-left: 38px;
-  padding-right: 14px;
+  height: 36px;
+  padding-left: 34px;
+  padding-right: 12px;
   border: 1.5px solid #CBD5E1;
   border-radius: 8px;
   background: #FFFFFF;
   color: #0F172A;
-  font-size: 13.5px;
+  font-size: 12.5px;
   font-weight: 500;
   transition: border-color 0.15s, box-shadow 0.15s;
 }
@@ -3189,12 +3198,12 @@ svg.ill-svg {
 
 .auth-eye-btn {
   position: absolute;
-  right: 10px;
+  right: 8px;
   background: none;
   border: none;
   cursor: pointer;
   color: #94A3B8;
-  padding: 4px;
+  padding: 3px;
   display: flex;
   align-items: center;
 }
@@ -3210,11 +3219,11 @@ svg.ill-svg {
 .auth-remember-row {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 12.5px;
+  gap: 6px;
+  font-size: 11.5px;
   font-weight: 600;
   color: #334155;
-  margin: 4px 0 6px 0;
+  margin: 2px 0 4px 0;
   cursor: pointer;
 }
 
@@ -3224,8 +3233,8 @@ svg.ill-svg {
 
 .auth-remember-row input {
   accent-color: #2563EB;
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
   cursor: pointer;
 }
 
@@ -3233,24 +3242,25 @@ svg.ill-svg {
   background: #2563EB;
   color: #FFFFFF;
   font-weight: 700;
-  font-size: 14.5px;
-  padding: 12px 20px;
-  border-radius: 10px;
+  font-size: 13.5px;
+  padding: 8px 16px;
+  height: 38px;
+  border-radius: 8px;
   border: none;
   width: 100%;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+  gap: 7px;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.35);
   transition: all 0.15s ease;
-  margin-top: 6px;
+  margin-top: 4px;
 }
 
 .auth-btn-submit:hover {
   background: #1D4ED8;
-  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.45);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.45);
   transform: translateY(-1px);
 }
 
@@ -3262,9 +3272,9 @@ svg.ill-svg {
 
 .auth-bottom-link-row {
   text-align: center;
-  font-size: 12.5px;
+  font-size: 11.5px;
   color: #64748B;
-  margin-top: 14px;
+  margin-top: 8px;
 }
 
 .dark .auth-bottom-link-row {
@@ -3288,10 +3298,10 @@ svg.ill-svg {
 
 .auth-card-watermark {
   text-align: center;
-  font-size: 11.5px;
+  font-size: 10.5px;
   color: #94A3B8;
   font-weight: 500;
-  margin-top: 18px;
+  margin-top: 8px;
 }
 
 .dark .auth-card-watermark {
@@ -3302,23 +3312,25 @@ svg.ill-svg {
 .auth-captcha-box {
   background: #EFF6FF;
   border: 1.5px solid #BFDBFE;
-  border-radius: 8px;
-  padding: 8px 12px;
+  border-radius: 6px;
+  padding: 4px 8px;
+  height: 34px;
   display: inline-flex;
   align-items: center;
   gap: 4px;
   font-family: 'Courier New', Courier, monospace;
   font-weight: 800;
-  font-size: 15px;
+  font-size: 13.5px;
   color: #1E40AF;
-  letter-spacing: 3px;
+  letter-spacing: 2px;
   user-select: none;
   cursor: pointer;
   background-image: radial-gradient(rgba(37, 99, 235, 0.15) 1px, transparent 1px);
   background-size: 5px 5px;
   text-decoration: line-through;
   text-decoration-color: rgba(30, 64, 175, 0.35);
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
 }
 
 .dark .auth-captcha-box {
@@ -3330,9 +3342,9 @@ svg.ill-svg {
 .auth-captcha-refresh-btn {
   background: #F1F5F9;
   border: 1.5px solid #CBD5E1;
-  border-radius: 8px;
-  width: 40px;
-  height: 40px;
+  border-radius: 6px;
+  width: 34px;
+  height: 34px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -3362,15 +3374,15 @@ svg.ill-svg {
 .auth-security-banner {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   background: rgba(239, 246, 255, 0.85);
   border: 1px solid #BFDBFE;
-  border-radius: 10px;
-  padding: 10px 12px;
-  margin-top: 14px;
-  font-size: 11px;
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin-top: 8px;
+  font-size: 10px;
   color: #1E3A8A;
-  line-height: 1.45;
+  line-height: 1.35;
 }
 
 .dark .auth-security-banner {
@@ -3391,20 +3403,20 @@ svg.ill-svg {
 }
 
 .auth-security-banner-icon svg {
-  width: 20px;
-  height: 20px;
+  width: 16px;
+  height: 16px;
 }
 
 .demo-sec-tag {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  font-size: 10.5px;
+  gap: 3px;
+  font-size: 10px;
   font-weight: 700;
   color: #059669;
   background: #DCFCE7;
   border: 1px solid #86EFAC;
-  padding: 1px 7px;
+  padding: 1px 6px;
   border-radius: 10px;
 }
 
@@ -3415,19 +3427,282 @@ svg.ill-svg {
 }
 
 .demo-sec-tag svg {
-  width: 12px;
-  height: 12px;
+  width: 11px;
+  height: 11px;
 }
 
 .demo-clearance-badge {
-  font-size: 9.5px;
+  font-size: 9px;
   font-weight: 800;
-  padding: 2px 7px;
+  padding: 1px 6px;
   border-radius: 4px;
   letter-spacing: 0.3px;
   background: #E0E7FF;
   color: #3730A3;
   border: 1px solid #C7D2FE;
+}
+
+.dark .demo-clearance-badge {
+  background: rgba(79, 70, 229, 0.25);
+  color: #A5B4FC;
+  border-color: rgba(99, 102, 241, 0.4);
+}
+
+/* ============================================================================
+   AICTE REGULATORY MPIN VERIFICATION STYLES
+============================================================================ */
+.mpin-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.mpin-user-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 10px;
+  padding: 8px 10px;
+  width: 100%;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+}
+
+.dark .mpin-user-card {
+  background: rgba(30, 41, 59, 0.7);
+  border-color: #334155;
+}
+
+.mpin-user-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #2563EB;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.mpin-user-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.mpin-user-name {
+  font-size: 12px;
+  font-weight: 700;
+  color: #0F172A;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dark .mpin-user-name {
+  color: #F8FAFC;
+}
+
+.mpin-user-role {
+  font-size: 10.5px;
+  color: #64748B;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 1px;
+}
+
+.dark .mpin-user-role {
+  color: #94A3B8;
+}
+
+/* 4 PIN Digit Dots / Display */
+.mpin-display-row {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin: 8px 0 10px 0;
+}
+
+.mpin-digit-box {
+  width: 44px;
+  height: 46px;
+  border: 2px solid #CBD5E1;
+  border-radius: 10px;
+  background: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 800;
+  color: #0F172A;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.dark .mpin-digit-box {
+  background: #0F172A;
+  border-color: #334155;
+  color: #F8FAFC;
+}
+
+.mpin-digit-box.filled {
+  border-color: #2563EB;
+  background: #EFF6FF;
+  color: #2563EB;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.dark .mpin-digit-box.filled {
+  border-color: #3B82F6;
+  background: rgba(37, 99, 235, 0.15);
+  color: #60A5FA;
+}
+
+.mpin-digit-box.active {
+  border-color: #2563EB;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
+}
+
+/* Demo MPIN Helper Badge */
+.mpin-demo-badge {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: #EFF6FF;
+  border: 1px solid #BFDBFE;
+  border-radius: 8px;
+  padding: 6px 10px;
+  width: 100%;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+}
+
+.dark .mpin-demo-badge {
+  background: rgba(30, 58, 138, 0.25);
+  border-color: #1E3A8A;
+}
+
+.mpin-demo-text {
+  font-size: 11px;
+  color: #1E40AF;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.dark .mpin-demo-text {
+  color: #93C5FD;
+}
+
+.mpin-autofill-btn {
+  background: #2563EB;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 6px;
+  padding: 3px 10px;
+  font-size: 10.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.mpin-autofill-btn:hover {
+  background: #1D4ED8;
+}
+
+/* Virtual Numeric Keypad */
+.mpin-keypad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  width: 100%;
+  max-width: 250px;
+  margin: 0 auto 10px auto;
+}
+
+.mpin-key-btn {
+  height: 38px;
+  border-radius: 8px;
+  border: 1px solid #E2E8F0;
+  background: #F8FAFC;
+  color: #0F172A;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.12s ease;
+  user-select: none;
+}
+
+.dark .mpin-key-btn {
+  background: #1E293B;
+  border-color: #334155;
+  color: #F8FAFC;
+}
+
+.mpin-key-btn:hover {
+  background: #E2E8F0;
+  transform: translateY(-1px);
+}
+
+.dark .mpin-key-btn:hover {
+  background: #334155;
+}
+
+.mpin-key-btn:active {
+  transform: scale(0.96);
+  background: #CBD5E1;
+}
+
+.dark .mpin-key-btn:active {
+  background: #475569;
+}
+
+.mpin-key-btn.action-btn {
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748B;
+}
+
+.dark .mpin-key-btn.action-btn {
+  color: #94A3B8;
+}
+
+.mpin-back-row {
+  display: flex;
+  justify-content: center;
+  margin-top: 6px;
+}
+
+.mpin-back-btn {
+  background: none;
+  border: none;
+  color: #2563EB;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.dark .mpin-back-btn {
+  color: #60A5FA;
+}
+
+.mpin-back-btn:hover {
+  text-decoration: underline;
+}
 }
 
 .dark .demo-clearance-badge {

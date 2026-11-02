@@ -531,7 +531,8 @@
             defaultPassword: 'password123',
             securityClearance: 'LEVEL 3 • RESTRICTED REGULATORY',
             certSubject: 'CN=Dr. Vandana Rao, OU=AICTE Scrutiny Bureau, O=Govt of India',
-            mfaCode: '262620'
+            mfaCode: '262620',
+            mpin: '2626'
         },
         { 
             key: 'applicant', 
@@ -541,7 +542,8 @@
             defaultPassword: 'password123',
             securityClearance: 'LEVEL 1 • INSTITUTIONAL PORTAL',
             certSubject: 'CN=Dr. Suresh Chandra, OU=Nilgiri Tech, O=Govt of India',
-            mfaCode: '262620'
+            mfaCode: '262620',
+            mpin: '2626'
         },
         { 
             key: 'authority', 
@@ -551,7 +553,8 @@
             defaultPassword: 'password123',
             securityClearance: 'LEVEL 4 • EXECUTIVE SANCTION DESK',
             certSubject: 'CN=Prof. Anil Sahasrabudhe, OU=AICTE Executive Council, O=Govt of India',
-            mfaCode: '262620'
+            mfaCode: '262620',
+            mpin: '2626'
         },
         { 
             key: 'admin', 
@@ -561,7 +564,8 @@
             defaultPassword: 'password123',
             securityClearance: 'LEVEL 5 • SUPER ADMIN CLEARANCE',
             certSubject: 'CN=Dr. R. K. Shrivastava, OU=AICTE e-Gov Systems, O=Govt of India',
-            mfaCode: '262620'
+            mfaCode: '262620',
+            mpin: '2626'
         },
         { 
             key: 'auditor', 
@@ -571,7 +575,8 @@
             defaultPassword: 'password123',
             securityClearance: 'LEVEL 4 • INDEPENDENT AUDIT OVERSIGHT',
             certSubject: 'CN=Shri Rajeshwar Rao, OU=CAG Audit Cell, O=Govt of India',
-            mfaCode: '262620'
+            mfaCode: '262620',
+            mpin: '2626'
         }
     ];
 
@@ -652,6 +657,8 @@
             this.currentView = this.isAuthenticated ? (localStorage.getItem('niyam_view') || 'dashboard') : 'landing';
             this.authMode = 'signin';
             this.passwordVisible = false;
+            this.enteredMpin = '';
+            this.pendingLogin = null;
             
             const rawUser = JSON.parse(localStorage.getItem('niyam_user') || 'null');
             this.currentUser = (this.isAuthenticated && rawUser) ? resolveOfficial(rawUser) : null;
@@ -2060,6 +2067,7 @@
             if (!this.currentCaptcha) this.generateCaptcha();
             const activeKey = this.activeDemoRole || 'auditor';
             const currentDemo = DEMO_LOGIN_ROLES.find(d => d.key === activeKey) || DEMO_LOGIN_ROLES[4];
+            const currentRole = (this.pendingLogin && this.pendingLogin.role) ? this.pendingLogin.role : currentDemo;
 
             wrap.innerHTML = `
                 <!-- Top Floating Navigation Bar -->
@@ -2067,7 +2075,7 @@
                     <button type="button" class="btn btn-sm btn-outline" id="btn-auth-back-home" style="background:rgba(255,255,255,0.92); backdrop-filter:blur(8px); border-radius:8px; border:1px solid #CBD5E1; color:#002147; font-weight:700; display:flex; align-items:center; gap:6px; cursor:pointer;">
                         <span>← Back to public portal</span>
                     </button>
-                    <span class="hide-on-mobile" style="background:rgba(255,255,255,0.85); backdrop-filter:blur(8px); padding:5px 16px; border-radius:20px; font-size:12px; font-weight:700; color:#002147; border:1px solid rgba(0,33,71,0.15);">
+                    <span class="hide-on-mobile" style="background:rgba(255,255,255,0.85); backdrop-filter:blur(8px); padding:4px 14px; border-radius:20px; font-size:11.5px; font-weight:700; color:#002147; border:1px solid rgba(0,33,71,0.15);">
                         AICTE Regulatory Portal (APH 2025–26)
                     </span>
                     <button type="button" class="btn btn-sm btn-outline" id="auth-theme-toggle" aria-label="Toggle theme" style="background:rgba(255,255,255,0.92); backdrop-filter:blur(8px); border-radius:8px; border:1px solid #CBD5E1; color:#002147; cursor:pointer;">
@@ -2076,7 +2084,7 @@
                 </div>
 
                 <!-- Centered Floating Card Matching Reference Design -->
-                <div class="auth-card-wrap" style="margin: auto; max-width: 440px; width: 100%; padding: 16px 0;">
+                <div class="auth-card-wrap" style="margin: auto; max-width: 405px; width: 100%; padding: 4px 0;">
                     <div class="auth-card">
                         <!-- Emblem with online green dot -->
                         <div class="auth-emblem-wrap">
@@ -2089,9 +2097,91 @@
                         <!-- Header Titles -->
                         <div class="auth-hindi-subtitle">अखिल भारतीय तकनीकी शिक्षा परिषद</div>
                         <h1 class="auth-card-title">NIYAM Regulatory Portal</h1>
-                        <div class="auth-card-sub">AICTE Application Review &amp; Compliance Verification</div>
+                        <div class="auth-card-sub">${this.authMode === 'mpin' ? 'AICTE Regulatory MPIN Verification' : 'AICTE Application Review &amp; Compliance Verification'}</div>
 
-                        ${this.authMode === 'signin' ? `
+                        ${this.authMode === 'mpin' ? `
+                            <!-- 4-Digit Regulatory MPIN View -->
+                            <div class="mpin-container">
+                                <!-- Official Profile Summary -->
+                                <div class="mpin-user-card">
+                                    <div class="mpin-user-avatar">
+                                        ${(currentRole.roleTitle || 'A')[0]}
+                                    </div>
+                                    <div class="mpin-user-info">
+                                        <div class="mpin-user-name">${currentRole.roleTitle}</div>
+                                        <div class="mpin-user-role">
+                                            <span>${currentRole.username}</span>
+                                            <span>•</span>
+                                            <span class="demo-clearance-badge">${(currentRole.securityClearance || 'LEVEL 4').split('•')[0].trim()}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div style="text-align:center; margin-bottom:6px;">
+                                    <div style="font-size:12px; font-weight:700; color:var(--text-primary); margin-bottom:2px;">
+                                        Enter 4-Digit Security MPIN
+                                    </div>
+                                    <div style="font-size:10.5px; color:var(--text-secondary);">
+                                        Official security PIN for authenticated portal access
+                                    </div>
+                                </div>
+
+                                <!-- 4 MPIN Digit Boxes -->
+                                <div class="mpin-display-row" id="mpin-display-boxes">
+                                    <div class="mpin-digit-box ${this.enteredMpin.length > 0 ? 'filled' : ''} ${this.enteredMpin.length === 0 ? 'active' : ''}">
+                                        ${this.enteredMpin.length > 0 ? '●' : ''}
+                                    </div>
+                                    <div class="mpin-digit-box ${this.enteredMpin.length > 1 ? 'filled' : ''} ${this.enteredMpin.length === 1 ? 'active' : ''}">
+                                        ${this.enteredMpin.length > 1 ? '●' : ''}
+                                    </div>
+                                    <div class="mpin-digit-box ${this.enteredMpin.length > 2 ? 'filled' : ''} ${this.enteredMpin.length === 2 ? 'active' : ''}">
+                                        ${this.enteredMpin.length > 2 ? '●' : ''}
+                                    </div>
+                                    <div class="mpin-digit-box ${this.enteredMpin.length > 3 ? 'filled' : ''} ${this.enteredMpin.length === 3 ? 'active' : ''}">
+                                        ${this.enteredMpin.length > 3 ? '●' : ''}
+                                    </div>
+                                </div>
+
+                                <!-- Demo MPIN Helper Badge -->
+                                <div class="mpin-demo-badge">
+                                    <div class="mpin-demo-text">
+                                        ${ICONS.Sparkles}
+                                        <span>Demo MPIN: <strong>2626</strong></span>
+                                    </div>
+                                    <button type="button" class="mpin-autofill-btn" id="btn-mpin-autofill">
+                                        Auto-fill MPIN
+                                    </button>
+                                </div>
+
+                                <!-- Virtual Numeric Keypad -->
+                                <div class="mpin-keypad">
+                                    <button type="button" class="mpin-key-btn" data-key="1">1</button>
+                                    <button type="button" class="mpin-key-btn" data-key="2">2</button>
+                                    <button type="button" class="mpin-key-btn" data-key="3">3</button>
+                                    <button type="button" class="mpin-key-btn" data-key="4">4</button>
+                                    <button type="button" class="mpin-key-btn" data-key="5">5</button>
+                                    <button type="button" class="mpin-key-btn" data-key="6">6</button>
+                                    <button type="button" class="mpin-key-btn" data-key="7">7</button>
+                                    <button type="button" class="mpin-key-btn" data-key="8">8</button>
+                                    <button type="button" class="mpin-key-btn" data-key="9">9</button>
+                                    <button type="button" class="mpin-key-btn action-btn" id="btn-mpin-clear">Clear</button>
+                                    <button type="button" class="mpin-key-btn" data-key="0">0</button>
+                                    <button type="button" class="mpin-key-btn action-btn" id="btn-mpin-backspace">⌫</button>
+                                </div>
+
+                                <!-- Verify Button -->
+                                <button type="button" class="auth-btn-submit" id="btn-verify-mpin">
+                                    ${ICONS.ShieldCheck}
+                                    <span>Verify MPIN &amp; Access Workspace</span>
+                                </button>
+
+                                <div class="mpin-back-row">
+                                    <button type="button" class="mpin-back-btn" id="btn-mpin-back">
+                                        ← Switch Official / Back to Login
+                                    </button>
+                                </div>
+                            </div>
+                        ` : this.authMode === 'signin' ? `
                             <!-- Quick Demo Access Box with Security Matrix -->
                             <div class="demo-access-box">
                                 <div class="demo-access-header">
@@ -2099,8 +2189,8 @@
                                         ${ICONS.Sparkles}
                                         <span>Quick Demo Access</span>
                                     </div>
-                                    <div style="display:flex; align-items:center; gap:8px;">
-                                        <span class="demo-sec-tag">${ICONS.ShieldCheck} 2FA Protected</span>
+                                    <div style="display:flex; align-items:center; gap:6px;">
+                                        <span class="demo-sec-tag">${ICONS.ShieldCheck} MPIN Protected</span>
                                         <span class="demo-access-pw">PW: password123</span>
                                     </div>
                                 </div>
@@ -2121,7 +2211,7 @@
                                         <span id="demo-role-label"><strong>${currentDemo.roleTitle}</strong> <span style="font-family:var(--font-mono, monospace); opacity:0.8;">(${currentDemo.username})</span></span>
                                         <span class="demo-clearance-badge" id="demo-clearance-badge">${currentDemo.securityClearance.split('•')[0].trim()}</span>
                                     </div>
-                                    <button type="button" class="demo-direct-btn" id="btn-direct-access" title="Instant verified sign in with 2FA token">
+                                    <button type="button" class="demo-direct-btn" id="btn-direct-access" title="Instant verified sign in with demo MPIN 2626">
                                         Direct Access
                                     </button>
                                 </div>
@@ -2155,9 +2245,9 @@
                                 <div class="auth-field-group">
                                     <div class="auth-field-label-row">
                                         <label for="login-captcha" class="auth-field-label">Security Code (Captcha)</label>
-                                        <span style="font-size:11px; color:#64748B;">Official AICTE Verification</span>
+                                        <span style="font-size:10.5px; color:#64748B;">Official AICTE Verification</span>
                                     </div>
-                                    <div style="display:flex; gap:8px; align-items:center;">
+                                    <div style="display:flex; gap:6px; align-items:center;">
                                         <div class="auth-captcha-box" id="auth-captcha-display" title="Click to refresh security code">
                                             ${this.currentCaptcha}
                                         </div>
@@ -2165,7 +2255,7 @@
                                             ${ICONS.Refresh}
                                         </button>
                                         <div class="auth-input-container" style="flex:1;">
-                                            <input type="text" class="auth-text-input font-mono" id="login-captcha" value="${this.currentCaptcha}" required placeholder="Enter code" maxlength="6" style="padding-left:14px; text-transform:uppercase; font-weight:700; letter-spacing:1px;">
+                                            <input type="text" class="auth-text-input font-mono" id="login-captcha" value="${this.currentCaptcha}" required placeholder="Enter code" maxlength="6" style="padding-left:10px; text-transform:uppercase; font-weight:700; letter-spacing:1px; height:34px;">
                                         </div>
                                     </div>
                                 </div>
@@ -2197,25 +2287,25 @@
                             </div>
                         ` : `
                             <!-- Institutional Enrolment Form -->
-                            <form id="auth-register-form" style="display:flex; flex-direction:column; gap:12px;" novalidate>
-                                <div class="auth-field-group" style="margin-bottom:8px;">
+                            <form id="auth-register-form" style="display:flex; flex-direction:column; gap:10px;" novalidate>
+                                <div class="auth-field-group" style="margin-bottom:6px;">
                                     <label for="reg-pid" class="auth-field-label">AICTE Permanent Institute ID (PID)</label>
                                     <div class="auth-input-container">
-                                        <input type="text" class="auth-text-input" style="padding-left:14px;" id="reg-pid" placeholder="e.g. 1-3324901821" required>
+                                        <input type="text" class="auth-text-input" style="padding-left:12px;" id="reg-pid" placeholder="e.g. 1-3324901821" required>
                                     </div>
                                 </div>
 
-                                <div class="auth-field-group" style="margin-bottom:8px;">
+                                <div class="auth-field-group" style="margin-bottom:6px;">
                                     <label for="reg-name" class="auth-field-label">Official Institution Name</label>
                                     <div class="auth-input-container">
-                                        <input type="text" class="auth-text-input" style="padding-left:14px;" id="reg-name" placeholder="Full legal name of technical college" required>
+                                        <input type="text" class="auth-text-input" style="padding-left:12px;" id="reg-name" placeholder="Full legal name of technical college" required>
                                     </div>
                                 </div>
 
-                                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-                                    <div class="auth-field-group" style="margin-bottom:8px;">
+                                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                                    <div class="auth-field-group" style="margin-bottom:6px;">
                                         <label for="reg-state" class="auth-field-label">State / UT</label>
-                                        <select class="auth-text-input" style="padding-left:10px; height:38px; font-size:12px;" id="reg-state" required>
+                                        <select class="auth-text-input" style="padding-left:8px; height:36px; font-size:11.5px;" id="reg-state" required>
                                             <option value="Tamil Nadu">Tamil Nadu</option>
                                             <option value="Karnataka">Karnataka</option>
                                             <option value="Maharashtra">Maharashtra</option>
@@ -2223,9 +2313,9 @@
                                             <option value="Uttar Pradesh">Uttar Pradesh</option>
                                         </select>
                                     </div>
-                                    <div class="auth-field-group" style="margin-bottom:8px;">
+                                    <div class="auth-field-group" style="margin-bottom:6px;">
                                         <label for="reg-region" class="auth-field-label">Regional Office</label>
-                                        <select class="auth-text-input" style="padding-left:10px; height:38px; font-size:12px;" id="reg-region" required>
+                                        <select class="auth-text-input" style="padding-left:8px; height:36px; font-size:11.5px;" id="reg-region" required>
                                             <option value="Southern">Southern (Chennai)</option>
                                             <option value="Northern">Northern (Kanpur)</option>
                                             <option value="Western">Western (Mumbai)</option>
@@ -2234,10 +2324,10 @@
                                     </div>
                                 </div>
 
-                                <div class="auth-field-group" style="margin-bottom:12px;">
+                                <div class="auth-field-group" style="margin-bottom:8px;">
                                     <label for="reg-email" class="auth-field-label">Registrar / Liaison Email</label>
                                     <div class="auth-input-container">
-                                        <input type="email" class="auth-text-input" style="padding-left:14px;" id="reg-email" placeholder="registrar@institution.edu.in" required>
+                                        <input type="email" class="auth-text-input" style="padding-left:12px;" id="reg-email" placeholder="registrar@institution.edu.in" required>
                                     </div>
                                 </div>
 
@@ -2261,7 +2351,7 @@
                 </div>
 
                 <!-- Page Footer -->
-                <footer class="auth-footer" style="text-align:center; font-size:11.5px; opacity:0.85; margin-top:auto;">
+                <footer class="auth-footer" style="text-align:center; font-size:11px; opacity:0.85; margin-top:auto;">
                     Smart India Hackathon 2026 • Problem Statement ID: 26262 • Team PROJECT CHAOS (197354)
                 </footer>
             `;
@@ -2276,6 +2366,152 @@
                     this.toggleTheme();
                     this.render();
                 };
+            }
+
+            // ================================================================
+            // MPIN MODE EVENT HANDLERS
+            // ================================================================
+            if (this.authMode === 'mpin') {
+                const updateMpinDisplay = () => {
+                    const boxes = wrap.querySelectorAll('#mpin-display-boxes .mpin-digit-box');
+                    boxes.forEach((box, idx) => {
+                        if (idx < this.enteredMpin.length) {
+                            box.classList.add('filled');
+                            box.classList.remove('active');
+                            box.textContent = '●';
+                        } else if (idx === this.enteredMpin.length) {
+                            box.classList.remove('filled');
+                            box.classList.add('active');
+                            box.textContent = '';
+                        } else {
+                            box.classList.remove('filled');
+                            box.classList.remove('active');
+                            box.textContent = '';
+                        }
+                    });
+                };
+
+                const executeMpinVerification = async () => {
+                    if (this.enteredMpin.length < 4) {
+                        API.showToast('Please enter all 4 digits of your MPIN.', 'error');
+                        return;
+                    }
+                    const targetUser = this.pendingLogin || {
+                        username: (DEMO_LOGIN_ROLES.find(d => d.key === this.activeDemoRole) || DEMO_LOGIN_ROLES[4]).username,
+                        password: (DEMO_LOGIN_ROLES.find(d => d.key === this.activeDemoRole) || DEMO_LOGIN_ROLES[4]).defaultPassword,
+                        role: DEMO_LOGIN_ROLES.find(d => d.key === this.activeDemoRole) || DEMO_LOGIN_ROLES[4]
+                    };
+                    const validMpins = ['2626', '1234', '0000', (targetUser.role?.mpin || '2626')];
+                    if (!validMpins.includes(this.enteredMpin)) {
+                        API.showToast('Invalid MPIN. Please use official demo MPIN: 2626.', 'error');
+                        this.enteredMpin = '';
+                        updateMpinDisplay();
+                        return;
+                    }
+
+                    const verifyBtn = wrap.querySelector('#btn-verify-mpin');
+                    if (verifyBtn) {
+                        verifyBtn.disabled = true;
+                        verifyBtn.innerHTML = `<span>Verifying MPIN with AICTE Security Grid...</span>`;
+                    }
+                    if (this._mpinKeyHandler) {
+                        window.removeEventListener('keydown', this._mpinKeyHandler);
+                        this._mpinKeyHandler = null;
+                    }
+                    API.showToast(`MPIN Verified: 2626 • Security Clearance Activated`, 'success');
+                    await this.executeLogin(targetUser.username, targetUser.password, wrap);
+                };
+
+                // Virtual Keypad Clicks
+                wrap.querySelectorAll('.mpin-key-btn[data-key]').forEach(btn => {
+                    btn.onclick = () => {
+                        const digit = btn.getAttribute('data-key');
+                        if (this.enteredMpin.length < 4) {
+                            this.enteredMpin += digit;
+                            updateMpinDisplay();
+                            if (this.enteredMpin.length === 4) {
+                                setTimeout(executeMpinVerification, 250);
+                            }
+                        }
+                    };
+                });
+
+                // Clear Button
+                const clearBtn = wrap.querySelector('#btn-mpin-clear');
+                if (clearBtn) {
+                    clearBtn.onclick = () => {
+                        this.enteredMpin = '';
+                        updateMpinDisplay();
+                    };
+                }
+
+                // Backspace Button
+                const bspBtn = wrap.querySelector('#btn-mpin-backspace');
+                if (bspBtn) {
+                    bspBtn.onclick = () => {
+                        if (this.enteredMpin.length > 0) {
+                            this.enteredMpin = this.enteredMpin.slice(0, -1);
+                            updateMpinDisplay();
+                        }
+                    };
+                }
+
+                // Auto-fill Demo MPIN
+                const autofillBtn = wrap.querySelector('#btn-mpin-autofill');
+                if (autofillBtn) {
+                    autofillBtn.onclick = () => {
+                        this.enteredMpin = '2626';
+                        updateMpinDisplay();
+                        API.showToast('Demo MPIN 2626 filled • Click Verify to proceed', 'info');
+                    };
+                }
+
+                // Verify Button
+                const verifyBtn = wrap.querySelector('#btn-verify-mpin');
+                if (verifyBtn) {
+                    verifyBtn.onclick = executeMpinVerification;
+                }
+
+                // Back to Sign In
+                const backBtn = wrap.querySelector('#btn-mpin-back');
+                if (backBtn) {
+                    backBtn.onclick = () => {
+                        if (this._mpinKeyHandler) {
+                            window.removeEventListener('keydown', this._mpinKeyHandler);
+                            this._mpinKeyHandler = null;
+                        }
+                        this.authMode = 'signin';
+                        this.enteredMpin = '';
+                        this.render();
+                    };
+                }
+
+                // Keyboard listener for typing 0-9
+                if (this._mpinKeyHandler) {
+                    window.removeEventListener('keydown', this._mpinKeyHandler);
+                }
+                this._mpinKeyHandler = (e) => {
+                    if (this.authMode !== 'mpin') return;
+                    if (e.key >= '0' && e.key <= '9') {
+                        if (this.enteredMpin.length < 4) {
+                            this.enteredMpin += e.key;
+                            updateMpinDisplay();
+                            if (this.enteredMpin.length === 4) {
+                                setTimeout(executeMpinVerification, 250);
+                            }
+                        }
+                    } else if (e.key === 'Backspace') {
+                        if (this.enteredMpin.length > 0) {
+                            this.enteredMpin = this.enteredMpin.slice(0, -1);
+                            updateMpinDisplay();
+                        }
+                    } else if (e.key === 'Enter') {
+                        executeMpinVerification();
+                    }
+                };
+                window.addEventListener('keydown', this._mpinKeyHandler);
+
+                return wrap;
             }
 
             // Captcha Refresh
@@ -2318,14 +2554,17 @@
                 };
             });
 
-            // Direct Access button (instant 1-click verified login)
+            // Direct Access button (transitions directly to MPIN with 2626 pre-filled for rapid demo)
             const directBtn = wrap.querySelector('#btn-direct-access');
             if (directBtn) {
                 directBtn.onclick = () => {
                     const activeK = this.activeDemoRole || 'auditor';
                     const selected = DEMO_LOGIN_ROLES.find(d => d.key === activeK) || DEMO_LOGIN_ROLES[4];
-                    API.showToast(`Security Clearance Verified: ${selected.securityClearance} • Direct 2FA Sealed`, 'info');
-                    this.executeLogin(selected.username, selected.defaultPassword, wrap);
+                    this.pendingLogin = { username: selected.username, password: selected.defaultPassword, role: selected };
+                    this.enteredMpin = '2626';
+                    this.authMode = 'mpin';
+                    this.render();
+                    API.showToast(`Official Demo Profile Loaded • Demo MPIN 2626 ready`, 'info');
                 };
             }
 
@@ -2345,7 +2584,7 @@
             if (forgotLink) {
                 forgotLink.onclick = (e) => {
                     e.preventDefault();
-                    API.showToast('Demo Security: All official personas use password: password123 with 2FA enabled', 'info');
+                    API.showToast('Demo Security: All official personas use password: password123 • Demo MPIN: 2626', 'info');
                 };
             }
 
@@ -2369,7 +2608,7 @@
                 };
             }
 
-            // Form Submit: Validates Captcha and Triggers Official 2FA Verification Modal!
+            // Form Submit: Validates Captcha and transitions to official 4-Digit MPIN step!
             const signinForm = wrap.querySelector('#auth-signin-form');
             if (signinForm) {
                 signinForm.onsubmit = (e) => {
@@ -2392,9 +2631,11 @@
                         return;
                     }
 
-                    const selected = DEMO_LOGIN_ROLES.find(d => d.username === u || d.key === this.activeDemoRole);
-                    // Launch Two-Factor Security Verification Modal
-                    this.openMfaVerificationModal({ username: u, password: p, demoRole: selected, wrap });
+                    const selected = DEMO_LOGIN_ROLES.find(d => d.username === u || d.key === this.activeDemoRole) || DEMO_LOGIN_ROLES[0];
+                    this.pendingLogin = { username: u, password: p, role: selected };
+                    this.enteredMpin = '';
+                    this.authMode = 'mpin';
+                    this.render();
                 };
             }
 

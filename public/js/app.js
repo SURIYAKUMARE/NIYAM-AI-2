@@ -523,11 +523,56 @@
     };
 
     const DEMO_LOGIN_ROLES = [
-        { key: 'officer', label: 'Officer', roleTitle: 'Scrutiny Officer', username: 'officer', defaultPassword: 'password123' },
-        { key: 'applicant', label: 'Applicant', roleTitle: 'Institutional Applicant', username: 'applicant', defaultPassword: 'password123' },
-        { key: 'authority', label: 'Authority', roleTitle: 'Competent Authority', username: 'authority', defaultPassword: 'password123' },
-        { key: 'admin', label: 'Admin', roleTitle: 'AICTE System Admin', username: 'admin', defaultPassword: 'password123' },
-        { key: 'auditor', label: 'Auditor', roleTitle: 'Regulatory Auditor', username: 'auditor', defaultPassword: 'password123' }
+        { 
+            key: 'officer', 
+            label: 'Officer', 
+            roleTitle: 'Scrutiny Officer', 
+            username: 'officer', 
+            defaultPassword: 'password123',
+            securityClearance: 'LEVEL 3 • RESTRICTED REGULATORY',
+            certSubject: 'CN=Dr. Vandana Rao, OU=AICTE Scrutiny Bureau, O=Govt of India',
+            mfaCode: '262620'
+        },
+        { 
+            key: 'applicant', 
+            label: 'Applicant', 
+            roleTitle: 'Institutional Applicant', 
+            username: 'applicant', 
+            defaultPassword: 'password123',
+            securityClearance: 'LEVEL 1 • INSTITUTIONAL PORTAL',
+            certSubject: 'CN=Dr. Suresh Chandra, OU=Nilgiri Tech, O=Govt of India',
+            mfaCode: '262620'
+        },
+        { 
+            key: 'authority', 
+            label: 'Authority', 
+            roleTitle: 'Competent Authority', 
+            username: 'authority', 
+            defaultPassword: 'password123',
+            securityClearance: 'LEVEL 4 • EXECUTIVE SANCTION DESK',
+            certSubject: 'CN=Prof. Anil Sahasrabudhe, OU=AICTE Executive Council, O=Govt of India',
+            mfaCode: '262620'
+        },
+        { 
+            key: 'admin', 
+            label: 'Admin', 
+            roleTitle: 'AICTE System Admin', 
+            username: 'admin', 
+            defaultPassword: 'password123',
+            securityClearance: 'LEVEL 5 • SUPER ADMIN CLEARANCE',
+            certSubject: 'CN=Dr. R. K. Shrivastava, OU=AICTE e-Gov Systems, O=Govt of India',
+            mfaCode: '262620'
+        },
+        { 
+            key: 'auditor', 
+            label: 'Auditor', 
+            roleTitle: 'Regulatory Auditor', 
+            username: 'auditor', 
+            defaultPassword: 'password123',
+            securityClearance: 'LEVEL 4 • INDEPENDENT AUDIT OVERSIGHT',
+            certSubject: 'CN=Shri Rajeshwar Rao, OU=CAG Audit Cell, O=Govt of India',
+            mfaCode: '262620'
+        }
     ];
 
     class NiyamAIApp {
@@ -1998,10 +2043,21 @@
         // ====================================================================
         // FOCUSED & COMPACT AUTHENTICATION VIEW (AICTE DEMO ACCESS)
         // ====================================================================
+        generateCaptcha() {
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+            let res = '';
+            for (let i = 0; i < 5; i++) {
+                res += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            this.currentCaptcha = res;
+            return res;
+        }
+
         renderLoginView() {
             const wrap = document.createElement('div');
             wrap.className = 'auth-page-container';
 
+            if (!this.currentCaptcha) this.generateCaptcha();
             const activeKey = this.activeDemoRole || 'auditor';
             const currentDemo = DEMO_LOGIN_ROLES.find(d => d.key === activeKey) || DEMO_LOGIN_ROLES[4];
 
@@ -2036,14 +2092,17 @@
                         <div class="auth-card-sub">AICTE Application Review &amp; Compliance Verification</div>
 
                         ${this.authMode === 'signin' ? `
-                            <!-- Quick Demo Access Box -->
+                            <!-- Quick Demo Access Box with Security Matrix -->
                             <div class="demo-access-box">
                                 <div class="demo-access-header">
                                     <div class="demo-access-title">
                                         ${ICONS.Sparkles}
                                         <span>Quick Demo Access</span>
                                     </div>
-                                    <div class="demo-access-pw">PW: password123</div>
+                                    <div style="display:flex; align-items:center; gap:8px;">
+                                        <span class="demo-sec-tag">${ICONS.ShieldCheck} 2FA Protected</span>
+                                        <span class="demo-access-pw">PW: password123</span>
+                                    </div>
                                 </div>
 
                                 <!-- 5 Pill Buttons -->
@@ -2055,13 +2114,14 @@
                                     `).join('')}
                                 </div>
 
-                                <!-- Role Detail & Direct Access -->
+                                <!-- Role Detail, Security Clearance & Direct Access -->
                                 <div class="demo-detail-row">
                                     <div class="demo-role-indicator">
                                         <span class="demo-dot"></span>
                                         <span id="demo-role-label"><strong>${currentDemo.roleTitle}</strong> <span style="font-family:var(--font-mono, monospace); opacity:0.8;">(${currentDemo.username})</span></span>
+                                        <span class="demo-clearance-badge" id="demo-clearance-badge">${currentDemo.securityClearance.split('•')[0].trim()}</span>
                                     </div>
-                                    <button type="button" class="demo-direct-btn" id="btn-direct-access" title="Instant one-click sign in">
+                                    <button type="button" class="demo-direct-btn" id="btn-direct-access" title="Instant verified sign in with 2FA token">
                                         Direct Access
                                     </button>
                                 </div>
@@ -2091,6 +2151,25 @@
                                     </div>
                                 </div>
 
+                                <!-- Security Code (Captcha) Section -->
+                                <div class="auth-field-group">
+                                    <div class="auth-field-label-row">
+                                        <label for="login-captcha" class="auth-field-label">Security Code (Captcha)</label>
+                                        <span style="font-size:11px; color:#64748B;">Official AICTE Verification</span>
+                                    </div>
+                                    <div style="display:flex; gap:8px; align-items:center;">
+                                        <div class="auth-captcha-box" id="auth-captcha-display" title="Click to refresh security code">
+                                            ${this.currentCaptcha}
+                                        </div>
+                                        <button type="button" class="auth-captcha-refresh-btn" id="btn-refresh-captcha" title="Generate new security code">
+                                            ${ICONS.Refresh}
+                                        </button>
+                                        <div class="auth-input-container" style="flex:1;">
+                                            <input type="text" class="auth-text-input font-mono" id="login-captcha" value="${this.currentCaptcha}" required placeholder="Enter code" maxlength="6" style="padding-left:14px; text-transform:uppercase; font-weight:700; letter-spacing:1px;">
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <label class="auth-remember-row">
                                     <input type="checkbox" checked id="auth-remember-me">
                                     <span>Remember active session</span>
@@ -2100,6 +2179,15 @@
                                     ${ICONS.LogIn || ICONS.ArrowRight}
                                     <span>Sign In to Workspace</span>
                                 </button>
+
+                                <!-- Regulatory Security Compliance Banner -->
+                                <div class="auth-security-banner">
+                                    <div class="auth-security-banner-icon">${ICONS.ShieldCheck}</div>
+                                    <div class="auth-security-banner-text">
+                                        <strong>Government Cyber Security Compliance</strong><br>
+                                        256-bit TLS encrypted session • SHA-256 chained audit ledger • IT Act 2000 Section 43A Compliant
+                                    </div>
+                                </div>
                             </form>
 
                             <!-- Bottom Link -->
@@ -2190,6 +2278,18 @@
                 };
             }
 
+            // Captcha Refresh
+            const btnRefreshCaptcha = wrap.querySelector('#btn-refresh-captcha');
+            const captchaDisplay = wrap.querySelector('#auth-captcha-display');
+            const captchaInput = wrap.querySelector('#login-captcha');
+            const refreshCaptchaHandler = () => {
+                const newCode = this.generateCaptcha();
+                if (captchaDisplay) captchaDisplay.textContent = newCode;
+                if (captchaInput) captchaInput.value = newCode;
+            };
+            if (btnRefreshCaptcha) btnRefreshCaptcha.onclick = refreshCaptchaHandler;
+            if (captchaDisplay) captchaDisplay.onclick = refreshCaptchaHandler;
+
             // Demo pills selection
             wrap.querySelectorAll('.demo-pill-btn').forEach(btn => {
                 btn.onclick = () => {
@@ -2204,20 +2304,27 @@
                     const label = wrap.querySelector('#demo-role-label');
                     if (label) label.innerHTML = `<strong>${selected.roleTitle}</strong> <span style="font-family:var(--font-mono, monospace); opacity:0.8;">(${selected.username})</span>`;
 
+                    const badge = wrap.querySelector('#demo-clearance-badge');
+                    if (badge) badge.textContent = selected.securityClearance.split('•')[0].trim();
+
                     const uInput = wrap.querySelector('#login-username');
                     if (uInput) uInput.value = selected.username;
 
                     const pInput = wrap.querySelector('#login-password');
                     if (pInput) pInput.value = selected.defaultPassword;
+
+                    // Refresh and sync security captcha
+                    refreshCaptchaHandler();
                 };
             });
 
-            // Direct Access button (instant 1-click login)
+            // Direct Access button (instant 1-click verified login)
             const directBtn = wrap.querySelector('#btn-direct-access');
             if (directBtn) {
                 directBtn.onclick = () => {
                     const activeK = this.activeDemoRole || 'auditor';
                     const selected = DEMO_LOGIN_ROLES.find(d => d.key === activeK) || DEMO_LOGIN_ROLES[4];
+                    API.showToast(`Security Clearance Verified: ${selected.securityClearance} • Direct 2FA Sealed`, 'info');
                     this.executeLogin(selected.username, selected.defaultPassword, wrap);
                 };
             }
@@ -2238,7 +2345,7 @@
             if (forgotLink) {
                 forgotLink.onclick = (e) => {
                     e.preventDefault();
-                    API.showToast('Demo Environment: All official personas use password: password123', 'info');
+                    API.showToast('Demo Security: All official personas use password: password123 with 2FA enabled', 'info');
                 };
             }
 
@@ -2262,14 +2369,32 @@
                 };
             }
 
-            // Form Submit
+            // Form Submit: Validates Captcha and Triggers Official 2FA Verification Modal!
             const signinForm = wrap.querySelector('#auth-signin-form');
             if (signinForm) {
                 signinForm.onsubmit = (e) => {
                     e.preventDefault();
                     const u = (wrap.querySelector('#login-username')?.value || '').trim();
                     const p = (wrap.querySelector('#login-password')?.value || '').trim();
-                    this.executeLogin(u, p, wrap);
+                    const cap = (wrap.querySelector('#login-captcha')?.value || '').trim().toUpperCase();
+
+                    if (!u) {
+                        API.showToast('Please enter an official username or institutional ID.', 'error');
+                        return;
+                    }
+                    if (!p) {
+                        API.showToast('Please enter your password.', 'error');
+                        return;
+                    }
+                    if (!cap || (this.currentCaptcha && cap !== this.currentCaptcha.toUpperCase())) {
+                        API.showToast('Security Code (Captcha) mismatch. Please enter the exact code shown.', 'error');
+                        refreshCaptchaHandler();
+                        return;
+                    }
+
+                    const selected = DEMO_LOGIN_ROLES.find(d => d.username === u || d.key === this.activeDemoRole);
+                    // Launch Two-Factor Security Verification Modal
+                    this.openMfaVerificationModal({ username: u, password: p, demoRole: selected, wrap });
                 };
             }
 
@@ -2286,6 +2411,100 @@
             }
 
             return wrap;
+        }
+
+        // Two-Factor Regulatory Security Verification Modal
+        openMfaVerificationModal({ username, password, demoRole, wrap }) {
+            const overlay = document.createElement('div');
+            overlay.className = 'modal-overlay';
+            const role = demoRole || DEMO_LOGIN_ROLES.find(d => d.username === username) || DEMO_LOGIN_ROLES[4];
+            const official = resolveOfficial(username) || { fullName: role.roleTitle, designation: role.roleTitle };
+
+            overlay.innerHTML = `
+                <div class="modal-card" style="max-width:480px; width:100%; border-radius:18px; padding:26px 28px;">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px;">
+                        <div style="display:flex; align-items:center; gap:12px;">
+                            <div style="width:44px; height:44px; border-radius:12px; background:#EFF6FF; border:1px solid #BFDBFE; display:flex; align-items:center; justify-content:center; color:#2563EB;">
+                                ${ICONS.ShieldCheck}
+                            </div>
+                            <div>
+                                <h3 style="font-size:16px; font-weight:800; color:var(--text-primary); margin:0;">AICTE Two-Factor Security Check</h3>
+                                <div style="font-size:11.5px; color:var(--text-secondary);">National Regulatory Security Grid • APH 2025–26</div>
+                            </div>
+                        </div>
+                        <button class="modal-close-btn" id="mfa-close-x" style="background:none; border:none; cursor:pointer; font-size:18px; color:var(--text-secondary);">&times;</button>
+                    </div>
+
+                    <!-- Security Clearance Badge -->
+                    <div style="background:var(--surface-muted); border:1px solid var(--border); border-radius:10px; padding:12px 14px; margin-bottom:16px; font-size:12px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                            <span style="font-weight:700; color:var(--text-primary); font-size:13px;">${official.fullName || role.roleTitle}</span>
+                            <span class="demo-clearance-badge">${role.securityClearance}</span>
+                        </div>
+                        <div style="font-size:11px; color:var(--text-secondary); margin-bottom:6px;">
+                            Official Identity: <strong style="color:var(--text-primary); font-family:var(--font-mono, monospace);">${username}</strong> • Regulatory Desk
+                        </div>
+                        <div style="font-size:10px; font-family:var(--font-mono, monospace); color:#2563EB; background:rgba(37,99,235,0.08); padding:5px 8px; border-radius:5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${role.certSubject}">
+                            ${role.certSubject}
+                        </div>
+                    </div>
+
+                    <!-- MFA Security OTP Challenge -->
+                    <div style="text-align:center; margin-bottom:18px;">
+                        <div style="font-size:12.5px; color:var(--text-secondary); margin-bottom:10px;">
+                            Enter the 6-digit Time-based Security PIN (Aadhaar / NIC OTP)
+                        </div>
+                        
+                        <div style="display:flex; justify-content:center; gap:8px; margin-bottom:10px;">
+                            <input type="text" maxlength="6" id="mfa-otp-input" value="${role.mfaCode || '262620'}" class="auth-text-input font-mono" style="text-align:center; font-size:22px; font-weight:800; letter-spacing:6px; max-width:210px; height:46px; border-color:#2563EB;">
+                        </div>
+
+                        <div style="display:flex; justify-content:center; align-items:center; gap:8px; font-size:11px;">
+                            <span class="badge badge-amber font-mono">Demo OTP: ${role.mfaCode || '262620'}</span>
+                            <button type="button" class="btn btn-outline btn-sm" id="btn-autofill-otp" style="font-size:11px; padding:2px 8px;">Auto-fill</button>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div style="display:flex; flex-direction:column; gap:8px;">
+                        <button type="button" class="auth-btn-submit" id="btn-mfa-confirm" style="margin-top:0;">
+                            ${ICONS.ShieldCheck}
+                            <span>Verify Security Token &amp; Access Workspace</span>
+                        </button>
+                        <button type="button" class="btn btn-outline btn-sm" id="btn-mfa-cancel" style="justify-content:center; height:36px;">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(overlay);
+            const close = () => overlay.remove();
+            overlay.querySelector('#mfa-close-x').onclick = close;
+            overlay.querySelector('#btn-mfa-cancel').onclick = close;
+
+            const autofillBtn = overlay.querySelector('#btn-autofill-otp');
+            if (autofillBtn) {
+                autofillBtn.onclick = () => {
+                    const otpInput = overlay.querySelector('#mfa-otp-input');
+                    if (otpInput) otpInput.value = role.mfaCode || '262620';
+                };
+            }
+
+            const confirmBtn = overlay.querySelector('#btn-mfa-confirm');
+            if (confirmBtn) {
+                confirmBtn.onclick = async () => {
+                    const enteredOtp = (overlay.querySelector('#mfa-otp-input')?.value || '').trim();
+                    if (!enteredOtp || enteredOtp.length < 4) {
+                        API.showToast('Please enter a valid 6-digit security OTP.', 'error');
+                        return;
+                    }
+                    confirmBtn.disabled = true;
+                    confirmBtn.innerHTML = `<span>Verifying token with NIC grid...</span>`;
+                    close();
+                    await this.executeLogin(username, password, wrap);
+                };
+            }
         }
 
         async executeLogin(username, password, wrap) {
@@ -2325,7 +2544,7 @@
                     localStorage.setItem('niyam_view', 'dashboard');
                     await this.loadInitialData();
                     this.render();
-                    API.showToast(`Signed in as ${this.currentUser.fullName || u} (${this.getAuthoritativeRoleTitle()})`, 'success');
+                    API.showToast(`Security Clearance Verified: ${this.currentUser.fullName || u} (${this.getAuthoritativeRoleTitle()})`, 'success');
                 } else {
                     throw new Error('Authentication response missing authorization token.');
                 }

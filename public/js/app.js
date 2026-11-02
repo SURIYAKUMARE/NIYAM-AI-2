@@ -1444,37 +1444,216 @@
                     </div>
                 </header>
 
-                <!-- Hero Section: Clear value proposition within 5 seconds -->
-                <section class="portal-hero">
-                    <div class="portal-pill">
-                        <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--accent);"></span>
-                        <span>AICTE Approval Process Handbook (APH 2025–26) Digital Desk</span>
-                    </div>
+                <!-- Polished Institutional Hero Section -->
+                <section class="niyam-hero-section" aria-labelledby="hero-main-heading">
+                    <div class="niyam-hero-container">
+                        <!-- Left Column: Copy & Actions -->
+                        <div class="niyam-hero-content">
+                            <div class="niyam-hero-eyebrow-wrap">
+                                <span class="niyam-hero-eyebrow-dot" aria-hidden="true"></span>
+                                <span class="niyam-hero-eyebrow">AICTE APPROVAL WORKFLOW</span>
+                            </div>
 
-                    <h1 class="portal-headline">
-                        Clearer approvals. Stronger compliance.
-                    </h1>
+                            <h1 class="niyam-hero-headline" id="hero-main-heading">
+                                <span>Clearer approval workflows.</span>
+                                <span class="niyam-headline-highlight">More accountable reviews.</span>
+                            </h1>
 
-                    <p class="portal-supporting">
-                        Manage institutional applications, document reviews, inspections, and compliance tracking in one place.
-                    </p>
+                            <p class="niyam-hero-supporting">
+                                NIYAM helps institutions and review teams organize applications, supporting evidence, compliance findings, clarifications, and audit history in one structured workspace.
+                            </p>
 
-                    <div class="portal-actions-row">
-                        <button class="btn btn-primary" id="hero-btn-access" style="padding:10px 22px; font-size:14px; font-weight:600; display:inline-flex; align-items:center; gap:8px;">
-                            <span>Access portal</span>
-                            ${ICONS.ArrowRight}
-                        </button>
-                        <button class="btn btn-outline" id="hero-btn-workflow" style="padding:10px 18px; font-size:14px; font-weight:600;">
-                            <span>View workflow</span>
-                        </button>
-                    </div>
+                            <div class="niyam-hero-actions">
+                                <button type="button" class="niyam-btn niyam-btn-primary" id="hero-btn-explore">
+                                    <span>Explore the workflow</span>
+                                    ${ICONS.ArrowRight}
+                                </button>
+                                <button type="button" class="niyam-btn niyam-btn-secondary" id="hero-btn-prototype">
+                                    <span>View prototype</span>
+                                </button>
+                            </div>
 
-                    <!-- AICTE Headquarters Visual Feature -->
-                    <div style="margin-top:28px; margin-bottom:20px; border-radius:14px; overflow:hidden; border:1px solid var(--border); box-shadow:var(--shadow-md); max-width:860px; width:100%; position:relative;">
-                        <img src="/images/aicte-building-bg.png" alt="AICTE Headquarters, Nelson Mandela Marg, New Delhi" style="width:100%; height:240px; object-fit:cover; object-position:center 30%; display:block;">
-                        <div style="position:absolute; bottom:12px; left:16px; background:rgba(15,23,42,0.82); backdrop-filter:blur(8px); padding:6px 14px; border-radius:8px; border:1px solid rgba(255,255,255,0.2); color:#fff; display:flex; align-items:center; gap:8px;">
-                            <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#10B981;"></span>
-                            <span style="font-size:12px; font-weight:700;">AICTE Headquarters • Nelson Mandela Marg, Vasant Kunj, New Delhi</span>
+                            <div class="niyam-hero-note">
+                                <span style="display:inline-flex; align-items:center; color:#0D9488;" aria-hidden="true">${ICONS.ShieldCheck}</span>
+                                <span>Fictional sample records shown for demonstration. Statutory decision authority rests solely with authorized AICTE officials.</span>
+                            </div>
+                        </div>
+
+                        <!-- Right Column: Interactive Fictional Dashboard Visual -->
+                        <div class="niyam-hero-visual" aria-label="Interactive Preview of NIYAM Review Workspace">
+                            <div class="niyam-preview-window">
+                                <!-- Chrome Header -->
+                                <div class="niyam-preview-chrome">
+                                    <div class="niyam-chrome-dots" aria-hidden="true">
+                                        <span class="dot"></span>
+                                        <span class="dot"></span>
+                                        <span class="dot"></span>
+                                    </div>
+                                    <div class="niyam-chrome-title font-mono">
+                                        <span>Dossier: APP-2026-0842</span>
+                                        <span style="opacity:0.6;">•</span>
+                                        <span>Review Workspace</span>
+                                    </div>
+                                    <div class="niyam-chrome-badge">
+                                        <span class="niyam-pulse-dot" aria-hidden="true"></span>
+                                        <span>Scrutiny Active</span>
+                                    </div>
+                                </div>
+
+                                <!-- 1. Application Summary -->
+                                <div class="niyam-summary-card">
+                                    <div class="niyam-summary-meta">
+                                        <div class="niyam-summary-title">Coromandel Institute of Technology</div>
+                                        <div class="niyam-summary-sub">Permanent ID: SYN-2026-0042 • Southern Regional Directorate</div>
+                                    </div>
+                                    <div class="niyam-summary-chips">
+                                        <span class="niyam-chip niyam-chip-navy">Extension of Approval (EoA)</span>
+                                        <span class="niyam-chip niyam-chip-teal">Stage: Technical Scrutiny</span>
+                                    </div>
+                                </div>
+
+                                <!-- 2-Column Inner Grid: Checklist + Finding Panel -->
+                                <div class="niyam-preview-grid">
+                                    <!-- 2. Checklist with Status Labels -->
+                                    <div class="niyam-card niyam-checklist-card">
+                                        <div class="niyam-card-header">
+                                            <span class="niyam-card-title">Statutory Checklist</span>
+                                            <span class="niyam-card-counter font-mono">3 / 4 Screened</span>
+                                        </div>
+                                        <ul class="niyam-checklist-list" role="list">
+                                            <li class="niyam-check-item">
+                                                <div class="niyam-check-left">
+                                                    <span class="niyam-check-icon check-ok" aria-hidden="true">✓</span>
+                                                    <div>
+                                                        <div class="niyam-check-name">Land Title &amp; DTCP Plan</div>
+                                                        <div class="niyam-check-clause font-mono">APH Ch. I Clause 4.1</div>
+                                                    </div>
+                                                </div>
+                                                <span class="niyam-status-tag status-verified">Verified</span>
+                                            </li>
+
+                                            <li class="niyam-check-item active-finding">
+                                                <div class="niyam-check-left">
+                                                    <span class="niyam-check-icon check-active" aria-hidden="true">⟳</span>
+                                                    <div>
+                                                        <div class="niyam-check-name">District Fire Safety NOC</div>
+                                                        <div class="niyam-check-clause font-mono">APH Ch. II Clause 4.3</div>
+                                                    </div>
+                                                </div>
+                                                <span class="niyam-status-tag status-clarification">
+                                                    <span class="niyam-pulse-indicator" aria-hidden="true"></span>
+                                                    Under Review
+                                                </span>
+                                            </li>
+
+                                            <li class="niyam-check-item">
+                                                <div class="niyam-check-left">
+                                                    <span class="niyam-check-icon check-ok" aria-hidden="true">✓</span>
+                                                    <div>
+                                                        <div class="niyam-check-name">Building Completion Certificate</div>
+                                                        <div class="niyam-check-clause font-mono">APH Appendix 6</div>
+                                                    </div>
+                                                </div>
+                                                <span class="niyam-status-tag status-verified">Verified</span>
+                                            </li>
+
+                                            <li class="niyam-check-item">
+                                                <div class="niyam-check-left">
+                                                    <span class="niyam-check-icon check-pending" aria-hidden="true">⏳</span>
+                                                    <div>
+                                                        <div class="niyam-check-name">Faculty Cadre &amp; Pay Scale</div>
+                                                        <div class="niyam-check-clause font-mono">APH Ch. III Clause 2.1</div>
+                                                    </div>
+                                                </div>
+                                                <span class="niyam-status-tag status-pending">Officer Queue</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+
+                                    <!-- 3. Compliance Finding or Clarification Panel -->
+                                    <div class="niyam-card niyam-finding-card">
+                                        <div class="niyam-card-header">
+                                            <span class="niyam-card-title">Clarification Docket</span>
+                                            <span class="niyam-card-badge-amber font-mono">DEF-2026-03</span>
+                                        </div>
+                                        <div class="niyam-finding-body">
+                                            <div class="niyam-finding-issue">
+                                                <div class="niyam-field-label">Scrutiny Finding</div>
+                                                <div>Municipal Fire NOC renewal acknowledgement uploaded without local gazette dispatch seal.</div>
+                                            </div>
+
+                                            <div class="niyam-finding-response">
+                                                <div class="niyam-field-label">Institutional Response (24-Oct)</div>
+                                                <div>Provisional clearance affidavit from Chief Fire Officer attached as Exhibit B (PDF, 2.4 MB).</div>
+                                            </div>
+
+                                            <div class="niyam-finding-footer">
+                                                <span class="niyam-review-needed">
+                                                    <span aria-hidden="true">⏱</span>
+                                                    <span>Awaiting Officer Verification</span>
+                                                </span>
+                                                <span class="niyam-target-date font-mono">Target: 48h SLA</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 4. Small Review History / Audit Trail -->
+                                <div class="niyam-card niyam-audit-card">
+                                    <div class="niyam-card-header">
+                                        <span class="niyam-card-title">Review History &amp; Audit Trail</span>
+                                        <span class="niyam-card-sub font-mono">WORM Cryptographic Chain</span>
+                                    </div>
+
+                                    <div class="niyam-timeline-track">
+                                        <!-- Step 1 -->
+                                        <div class="niyam-timeline-node">
+                                            <div class="niyam-node-indicator past" aria-hidden="true"></div>
+                                            <div class="niyam-node-content">
+                                                <div class="niyam-node-head">
+                                                    <span class="niyam-node-action">Application Submitted</span>
+                                                    <span class="niyam-node-time font-mono">04-Oct</span>
+                                                </div>
+                                                <div class="niyam-node-meta">Challan verified</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="niyam-timeline-connector" aria-hidden="true"></div>
+
+                                        <!-- Step 2 -->
+                                        <div class="niyam-timeline-node">
+                                            <div class="niyam-node-indicator past" aria-hidden="true"></div>
+                                            <div class="niyam-node-content">
+                                                <div class="niyam-node-head">
+                                                    <span class="niyam-node-action">Deficiency Flagged</span>
+                                                    <span class="niyam-node-time font-mono">18-Oct</span>
+                                                </div>
+                                                <div class="niyam-node-meta">Notice dispatched</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="niyam-timeline-connector active-pulse" aria-hidden="true"></div>
+
+                                        <!-- Step 3 (Active) -->
+                                        <div class="niyam-timeline-node">
+                                            <div class="niyam-node-indicator current" aria-hidden="true"></div>
+                                            <div class="niyam-node-content">
+                                                <div class="niyam-node-head">
+                                                    <span class="niyam-node-action">Clarification Uploaded</span>
+                                                    <span class="niyam-node-time font-mono">24-Oct</span>
+                                                </div>
+                                                <div class="niyam-node-meta">Re-scrutiny in progress</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Preview Window Footer -->
+                                <div class="niyam-preview-footer">
+                                    <span>Sample review dossier for workflow demonstration.</span>
+                                    <span class="niyam-footer-disclaimer">Decisions made solely by authorized officials.</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -1601,6 +1780,15 @@
                 this.toggleTheme();
                 this.render();
             };
+
+            const exploreBtn = wrap.querySelector('#hero-btn-explore');
+            if (exploreBtn) exploreBtn.onclick = () => {
+                const el = wrap.querySelector('#workflow-section');
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+            };
+
+            const protoBtn = wrap.querySelector('#hero-btn-prototype');
+            if (protoBtn) protoBtn.onclick = () => this.navigate(this.isAuthenticated ? 'dashboard' : 'login');
 
             const accessBtn = wrap.querySelector('#hero-btn-access');
             if (accessBtn) accessBtn.onclick = () => this.navigate('login');

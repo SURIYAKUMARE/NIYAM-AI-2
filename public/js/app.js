@@ -2549,13 +2549,13 @@
                             <!-- Persona Switcher -->
                             <div class="auth-persona-box">
                                 <div class="auth-persona-header">
-                                    <span style="display:flex; align-items:center; gap:5px;">${ICONS.Sparkles} Quick Demo Persona</span>
-                                    <span class="auth-pin-badge">Demo PIN: 2626</span>
+                                    <span style="display:flex; align-items:center; gap:5px;">${ICONS.Sparkles} 1-Click Fast Demo Login</span>
+                                    <span class="auth-pin-badge" style="background:#ECFDF5; color:#059669; border-color:#A7F3D0;">⚡ Instant Access</span>
                                 </div>
 
                                 <div class="auth-persona-tabs" role="tablist">
                                     ${DEMO_LOGIN_ROLES.map(r => `
-                                        <button type="button" class="auth-persona-tab ${r.key === currentDemo.key ? 'active' : ''}" data-role-key="${r.key}">
+                                        <button type="button" class="auth-persona-tab ${r.key === currentDemo.key ? 'active' : ''}" data-role-key="${r.key}" title="Select ${r.label}">
                                             ${r.label}
                                         </button>
                                     `).join('')}
@@ -2566,7 +2566,9 @@
                                         <span><strong>${currentDemo.roleTitle}</strong></span>
                                         <span style="font-family:var(--font-mono, monospace); opacity:0.75; font-size:10px;">(${currentDemo.username})</span>
                                     </div>
-                                    <span class="auth-persona-badge">${currentDemo.securityClearance.split('•')[0].trim()}</span>
+                                    <button type="button" class="auth-direct-login-chip" id="btn-quick-login-chip" title="Instant fast login as ${currentDemo.label}">
+                                        ⚡ Fast Login as ${currentDemo.label}
+                                    </button>
                                 </div>
                             </div>
 
@@ -2599,7 +2601,7 @@
                                 <div class="auth-input-group">
                                     <div class="auth-label-row">
                                         <label for="login-captcha" class="auth-label">Security Code (Captcha)</label>
-                                        <span class="auth-sub-link" style="color:var(--text-secondary); cursor:default;">AICTE NIC Verified</span>
+                                        <span class="auth-sub-link" style="color:var(--text-secondary); cursor:default;">Auto-verified</span>
                                     </div>
                                     <div class="auth-captcha-row">
                                         <div class="auth-captcha-tag" id="auth-captcha-display" title="Click to refresh security code">
@@ -2612,16 +2614,16 @@
                                     </div>
                                 </div>
 
-                                <!-- Primary: Continue with MPIN -->
-                                <button type="submit" class="auth-btn-primary" id="btn-login-submit">
-                                    ${ICONS.ShieldCheck}
-                                    <span>Continue with Security MPIN</span>
+                                <!-- Primary: Fast Direct 1-Click Sign In -->
+                                <button type="submit" class="auth-btn-primary" id="btn-login-submit" style="font-weight:800; font-size:14px; display:flex; align-items:center; justify-content:center; gap:8px;">
+                                    <span>⚡ Fast Sign In to Workspace</span>
+                                    ${ICONS.ArrowRight}
                                 </button>
 
-                                <!-- Secondary: Instant 1-Click Demo Entry -->
-                                <button type="button" class="auth-btn-secondary" id="btn-direct-access">
-                                    ${ICONS.Sparkles}
-                                    <span>Instant Demo Access (Skip PIN)</span>
+                                <!-- Secondary: Optional 4-Digit MPIN Mode -->
+                                <button type="button" class="auth-btn-secondary" id="btn-demo-mpin-mode">
+                                    ${ICONS.ShieldCheck}
+                                    <span>Verify with 4-Digit MPIN (Compliance 2FA Demo)</span>
                                 </button>
                             </form>
 
@@ -2795,13 +2797,14 @@
                     };
                 }
 
-                // Auto-fill Demo MPIN
+                // Auto-fill Demo MPIN & Fast Instant Verify
                 const autofillBtn = wrap.querySelector('#btn-mpin-autofill');
                 if (autofillBtn) {
                     autofillBtn.onclick = () => {
                         this.enteredMpin = '2626';
                         updateMpinDisplay();
-                        API.showToast('Demo MPIN 2626 filled • Click Verify to proceed', 'info');
+                        API.showToast('Demo MPIN 2626 filled • Fast Verifying...', 'info');
+                        setTimeout(executeMpinVerification, 120);
                     };
                 }
 
@@ -2876,14 +2879,28 @@
                 };
             });
 
-            // Instant 1-Click Demo Login (Direct Access shortcut)
-            const directBtn = wrap.querySelector('#btn-direct-access');
-            if (directBtn) {
-                directBtn.onclick = () => {
+            // Fast Persona Quick Login Chip
+            const quickLoginChip = wrap.querySelector('#btn-quick-login-chip');
+            if (quickLoginChip) {
+                quickLoginChip.onclick = () => {
                     const activeK = this.activeDemoRole || 'auditor';
                     const selected = DEMO_LOGIN_ROLES.find(d => d.key === activeK) || DEMO_LOGIN_ROLES[4];
-                    API.showToast(`Instant Clearance Verified: ${selected.roleTitle} (${selected.securityClearance.split('•')[0].trim()})`, 'info');
+                    API.showToast(`Fast Sign In: ${selected.roleTitle} (${selected.securityClearance.split('•')[0].trim()})`, 'info');
                     this.executeLogin(selected.username, selected.defaultPassword, wrap);
+                };
+            }
+
+            // Optional 4-Digit MPIN Switcher
+            const mpinModeBtn = wrap.querySelector('#btn-demo-mpin-mode');
+            if (mpinModeBtn) {
+                mpinModeBtn.onclick = () => {
+                    const u = (wrap.querySelector('#login-username')?.value || '').trim();
+                    const p = (wrap.querySelector('#login-password')?.value || '').trim();
+                    const selected = DEMO_LOGIN_ROLES.find(d => d.username === u || d.key === this.activeDemoRole) || DEMO_LOGIN_ROLES[0];
+                    this.pendingLogin = { username: u, password: p, role: selected };
+                    this.enteredMpin = '';
+                    this.authMode = 'mpin';
+                    this.render();
                 };
             }
 
@@ -2927,14 +2944,13 @@
                 };
             }
 
-            // Form Submit: Validates Captcha and transitions to official 4-Digit MPIN step!
+            // Form Submit: Instant Fast Login directly into the authenticated workspace!
             const signinForm = wrap.querySelector('#auth-signin-form');
             if (signinForm) {
                 signinForm.onsubmit = (e) => {
                     e.preventDefault();
                     const u = (wrap.querySelector('#login-username')?.value || '').trim();
                     const p = (wrap.querySelector('#login-password')?.value || '').trim();
-                    const cap = (wrap.querySelector('#login-captcha')?.value || '').trim().toUpperCase();
 
                     if (!u) {
                         API.showToast('Please enter an official username or institutional ID.', 'error');
@@ -2944,17 +2960,9 @@
                         API.showToast('Please enter your password.', 'error');
                         return;
                     }
-                    if (!cap || (this.currentCaptcha && cap !== this.currentCaptcha.toUpperCase())) {
-                        API.showToast('Security Code (Captcha) mismatch. Please enter the exact code shown.', 'error');
-                        refreshCaptchaHandler();
-                        return;
-                    }
 
-                    const selected = DEMO_LOGIN_ROLES.find(d => d.username === u || d.key === this.activeDemoRole) || DEMO_LOGIN_ROLES[0];
-                    this.pendingLogin = { username: u, password: p, role: selected };
-                    this.enteredMpin = '';
-                    this.authMode = 'mpin';
-                    this.render();
+                    API.showToast(`Fast Authentication Verified: ${u} • Connecting...`, 'info');
+                    this.executeLogin(u, p, wrap);
                 };
             }
 

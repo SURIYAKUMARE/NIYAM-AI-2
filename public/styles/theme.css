@@ -2984,6 +2984,36 @@ svg.ill-svg {
   align-items: center;
   justify-content: space-between;
   font-size: 11px;
+  gap: 8px;
+}
+
+.auth-direct-login-chip {
+  background: #059669;
+  color: #FFFFFF;
+  border: 1px solid #047857;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 2px 4px rgba(5, 150, 105, 0.25);
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.auth-direct-login-chip:hover {
+  background: #047857;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(5, 150, 105, 0.35);
+}
+
+.dark .auth-direct-login-chip {
+  background: #10B981;
+  color: #0F172A;
+  border-color: #34D399;
 }
 
 .auth-persona-user {

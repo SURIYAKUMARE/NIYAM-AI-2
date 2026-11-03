@@ -662,7 +662,17 @@
 
         constructor() {
             this.isAuthenticated = localStorage.getItem('niyam_auth') === 'true' && !!API.getToken();
-            this.currentView = this.isAuthenticated ? (localStorage.getItem('niyam_view') || 'dashboard') : 'landing';
+            
+            const initialPath = (typeof window !== 'undefined' && window.location && window.location.pathname) ? window.location.pathname.toLowerCase() : '';
+            const initialHash = (typeof window !== 'undefined' && window.location && window.location.hash) ? window.location.hash.replace('#', '').toLowerCase() : '';
+
+            if (initialPath === '/login' || initialHash === 'login') {
+                this.currentView = 'login';
+            } else if (this.isAuthenticated) {
+                this.currentView = localStorage.getItem('niyam_view') || 'dashboard';
+            } else {
+                this.currentView = 'landing';
+            }
             this.authMode = 'signin';
             this.passwordVisible = false;
             this.enteredMpin = '';
@@ -672,12 +682,12 @@
             this.currentUser = (this.isAuthenticated && rawUser) ? resolveOfficial(rawUser) : null;
             if (this.isAuthenticated && !this.currentUser) {
                 this.isAuthenticated = false;
-                this.currentView = 'landing';
+                this.currentView = (initialPath === '/login' || initialHash === 'login') ? 'login' : 'landing';
                 API.clearSession();
             }
 
             const roleCfg = this.getRoleConfig();
-            if (roleCfg && !roleCfg.allowedViews.includes(this.currentView)) {
+            if (roleCfg && !roleCfg.allowedViews.includes(this.currentView) && this.currentView !== 'login' && this.currentView !== 'landing') {
                 this.currentView = 'dashboard';
             }
 
@@ -802,6 +812,25 @@
 
         async init() {
             this.applyTheme(this.theme);
+
+            if (typeof window !== 'undefined') {
+                window.addEventListener('popstate', () => {
+                    const path = (window.location.pathname || '').toLowerCase();
+                    const hash = (window.location.hash || '').replace('#', '').toLowerCase();
+                    if (path === '/login' || hash === 'login') {
+                        this.currentView = 'login';
+                        this.authMode = 'signin';
+                        this.render();
+                    } else if (path === '/' || path === '' || hash === 'landing') {
+                        this.currentView = 'landing';
+                        this.render();
+                    } else if (this.isAuthenticated) {
+                        this.currentView = hash || 'dashboard';
+                        this.render();
+                    }
+                });
+            }
+
             await this.loadInitialData();
             this.render();
         }
@@ -889,11 +918,41 @@
         }
 
         navigate(view) {
-            if (view === 'landing' || view === 'login') {
-                this.currentView = view;
+            try {
+                if (typeof window !== 'undefined' && window.history && window.history.pushState) {
+                    if (view === 'login') {
+                        if (window.location.pathname !== '/login') {
+                            window.history.pushState(null, '', '/login');
+                        }
+                    } else if (view === 'landing') {
+                        if (window.location.pathname !== '/' && window.location.pathname !== '') {
+                            window.history.pushState(null, '', '/');
+                        }
+                    } else {
+                        window.history.pushState(null, '', `/#${view}`);
+                    }
+                }
+            } catch (_) {}
+
+            if (typeof window !== 'undefined') {
+                window.scrollTo({ top: 0, behavior: 'instant' });
+            }
+
+            if (view === 'login') {
+                this.currentView = 'login';
+                this.authMode = 'signin';
+                this.enteredMpin = '';
+                this.pendingLogin = null;
                 this.render();
                 return;
             }
+
+            if (view === 'landing') {
+                this.currentView = 'landing';
+                this.render();
+                return;
+            }
+
             if (!this.isAuthenticated) {
                 this.currentView = 'landing';
                 this.render();
@@ -918,7 +977,6 @@
             localStorage.setItem('niyam_view', view);
             this.mobileSidebarOpen = false;
             this.render();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         async login(user) {
@@ -1547,7 +1605,7 @@
                     </ul>
                     <div style="display:flex; align-items:center; gap:10px;">
                         <button type="button" class="aicte-nav-btn-login" id="nav-btn-portal-login">
-                            <span>${this.isAuthenticated ? 'Open Workspace' : 'Portal Login'}</span>
+                            <span>Portal Login</span>
                             ${ICONS.ArrowRight}
                         </button>
                     </div>
@@ -1586,7 +1644,7 @@
 
                             <div class="aicte-hero-ctas">
                                 <button type="button" class="btn-hero-primary" id="hero-btn-login">
-                                    <span>${this.isAuthenticated ? 'Open Institutional Workspace' : 'Sign in to Portal'}</span>
+                                    <span>Sign in to Portal</span>
                                     ${ICONS.ArrowRight}
                                 </button>
                                 <button type="button" class="btn-hero-secondary" id="hero-btn-explore">
@@ -2204,7 +2262,7 @@
             };
 
             const heroLoginBtn = wrap.querySelector('#hero-btn-login');
-            if (heroLoginBtn) heroLoginBtn.onclick = () => this.navigate(this.isAuthenticated ? 'dashboard' : 'login');
+            if (heroLoginBtn) heroLoginBtn.onclick = () => this.navigate('login');
 
             const heroSimLaunchBtn = wrap.querySelector('#hero-btn-sim-launch');
             if (heroSimLaunchBtn) heroSimLaunchBtn.onclick = () => this.navigate('simulation');
@@ -2280,7 +2338,7 @@
             }
 
             const servicesLoginBtn = wrap.querySelector('#services-btn-login');
-            if (servicesLoginBtn) servicesLoginBtn.onclick = () => this.navigate(this.isAuthenticated ? 'dashboard' : 'login');
+            if (servicesLoginBtn) servicesLoginBtn.onclick = () => this.navigate('login');
 
             wrap.querySelectorAll('.aicte-service-card').forEach(card => {
                 card.onclick = () => {
@@ -2290,7 +2348,7 @@
             });
 
             const protoBtn = wrap.querySelector('#hero-btn-prototype');
-            if (protoBtn) protoBtn.onclick = () => this.navigate(this.isAuthenticated ? 'dashboard' : 'login');
+            if (protoBtn) protoBtn.onclick = () => this.navigate('login');
 
             const portalLoginBtn = wrap.querySelector('#portal-btn-login');
             if (portalLoginBtn) portalLoginBtn.onclick = () => this.navigate('login');
@@ -2299,7 +2357,7 @@
             if (portalDashBtn) portalDashBtn.onclick = () => this.navigate('dashboard');
 
             const navBtnLogin = wrap.querySelector('#nav-btn-portal-login');
-            if (navBtnLogin) navBtnLogin.onclick = () => this.navigate(this.isAuthenticated ? 'dashboard' : 'login');
+            if (navBtnLogin) navBtnLogin.onclick = () => this.navigate('login');
 
             const navHome = wrap.querySelector('#nav-item-home');
             if (navHome) navHome.onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });

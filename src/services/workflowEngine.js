@@ -432,6 +432,107 @@ class WorkflowEngine {
             return { applicationId, isOnHold: isHold };
         });
     }
+
+    /**
+     * Revert or return an application to a previous workflow stage with mandatory justification
+     */
+    revert({
+        applicationId,
+        toStage = null,
+        mandatoryReason,
+        user
+    }) {
+        if (!mandatoryReason || typeof mandatoryReason !== 'string' || mandatoryReason.trim().length < 10) {
+            throw new Error('Mandatory regulatory reason (at least 10 characters) is required to revert or return an application.');
+        }
+
+        const allowedRoles = ['SCRUTINY_MEMBER', 'REGIONAL_OFFICER', 'REGULATION_BUREAU_ADMIN', 'SUPER_ADMIN', 'COMPETENT_AUTHORITY'];
+        if (!allowedRoles.includes(user.role_code)) {
+            throw new Error(`Actor role '${user.role_code}' is not authorized to revert applications.`);
+        }
+
+        return db.transaction((tx) => {
+            const app = tx.queryOne('SELECT * FROM applications WHERE id = ?', [applicationId]);
+            if (!app) {
+                throw new Error(`Application ${applicationId} not found.`);
+            }
+
+            const fromStage = app.current_stage;
+            const targetStage = toStage || (fromStage === STAGES.EVC ? STAGES.SCRUTINY : STAGES.SUBMITTED);
+            const now = new Date().toISOString();
+            const newStageDeadline = this.calculateStageDeadline(targetStage);
+            const newStatus = 'RETURNED_WITH_REASON';
+
+            // Mark previous active stage as REVERTED
+            tx.execute(`
+                UPDATE workflow_stages
+                SET stage_status = 'REVERTED', completed_at = ?, outcome = 'REVERTED', comments = ?
+                WHERE application_id = ? AND stage_name = ? AND stage_status IN ('PENDING', 'IN_PROGRESS', 'DEFICIENCY')
+            `, [now, mandatoryReason, applicationId, fromStage]);
+
+            // Insert new stage record
+            const newStageId = crypto.randomUUID();
+            tx.execute(`
+                INSERT INTO workflow_stages (
+                    id, application_id, stage_name, stage_status, assigned_to_role,
+                    entered_at, due_at, comments
+                ) VALUES (?, ?, ?, 'IN_PROGRESS', 'INSTITUTION_REP', ?, ?, ?)
+            `, [newStageId, applicationId, targetStage, now, newStageDeadline, `Reverted: ${mandatoryReason}`]);
+
+            // Update Application record
+            tx.execute(`
+                UPDATE applications
+                SET current_stage = ?, current_status = ?, processing_due_date = ?,
+                    stage_entry_time = ?, updated_at = ?
+                WHERE id = ?
+            `, [targetStage, newStatus, newStageDeadline, now, now, applicationId]);
+
+            // Record stage transition with REVERT type
+            const transitionId = crypto.randomUUID();
+            tx.execute(`
+                INSERT INTO stage_transitions (
+                    id, application_id, from_stage, to_stage, actor_user_id,
+                    actor_role, transition_type, rule_version, comments, timestamp
+                ) VALUES (?, ?, ?, ?, ?, ?, 'REVERT', 'v1', ?, ?)
+            `, [
+                transitionId, applicationId, fromStage, targetStage, user.id,
+                user.role_code, mandatoryReason, now
+            ]);
+
+            // Switch dual clock to COLLEGE_DELAY because college must respond/rectify
+            dualClockEngine.switchClock({
+                applicationId,
+                toClockType: 'COLLEGE_DELAY',
+                stageName: targetStage,
+                responsibleEntityType: 'INSTITUTION',
+                actorId: user.id,
+                reason: `Application returned to ${targetStage}: ${mandatoryReason}`
+            });
+
+            // Tamper-evident cryptographic audit log
+            auditService.log({
+                actorId: user.id,
+                actorUsername: user.username,
+                actorRole: user.role_code,
+                actionType: 'APPLICATION_REVERTED',
+                entityName: 'applications',
+                entityId: applicationId,
+                previousState: { stage: fromStage, status: app.current_status },
+                newState: { stage: targetStage, status: newStatus, reason: mandatoryReason },
+                justification: `Reverted application: ${mandatoryReason}`
+            });
+
+            return {
+                applicationId,
+                fromStage,
+                toStage: targetStage,
+                status: newStatus,
+                mandatoryReason,
+                transitionId,
+                timestamp: now
+            };
+        });
+    }
 }
 
 module.exports = new WorkflowEngine();

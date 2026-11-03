@@ -49,6 +49,84 @@ class RegulatoryRulesService {
                     { from: 'EVC', to: 'COMPETENT_DECISION', condition: 'INSPECTION_RECOMMENDED', actorRole: ['EVC_COORDINATOR', 'REGIONAL_OFFICER'] },
                     { from: 'COMPETENT_DECISION', to: 'APPROVED', condition: 'EOA_ISSUED', actorRole: ['COMPETENT_AUTHORITY'] }
                 ]
+            },
+            {
+                code: 'WF_ONLY_SCRUTINY',
+                name: 'Only Scrutiny (Document Clearance Route)',
+                category: 'ONLY_SCRUTINY',
+                version: 1,
+                stages: [
+                    { name: 'SUBMITTED', label: 'Application Submission', slaDays: 2, allowedRoles: ['INSTITUTION_REP'] },
+                    { name: 'SCRUTINY', label: 'Scrutiny Committee Document Verification', slaDays: 7, allowedRoles: ['SCRUTINY_MEMBER', 'REGIONAL_OFFICER'] },
+                    { name: 'RE_SCRUTINY', label: 'Re-Scrutiny of Deficiencies', slaDays: 5, allowedRoles: ['SCRUTINY_MEMBER', 'REGIONAL_OFFICER'] },
+                    { name: 'COMPETENT_DECISION', label: 'Statutory Competent Authority Sanction', slaDays: 5, allowedRoles: ['COMPETENT_AUTHORITY', 'REGIONAL_OFFICER'] }
+                ],
+                transitions: [
+                    { from: 'SUBMITTED', to: 'SCRUTINY', condition: 'DOCUMENTS_VERIFIED', actorRole: ['REGIONAL_OFFICER', 'SCRUTINY_MEMBER'] },
+                    { from: 'SCRUTINY', to: 'RE_SCRUTINY', condition: 'DEFICIENCY_RAISED', actorRole: ['SCRUTINY_MEMBER', 'REGIONAL_OFFICER'] },
+                    { from: 'SCRUTINY', to: 'COMPETENT_DECISION', condition: 'ALL_DOCUMENTS_CLEARED', actorRole: ['SCRUTINY_MEMBER', 'REGIONAL_OFFICER'] },
+                    { from: 'RE_SCRUTINY', to: 'COMPETENT_DECISION', condition: 'DEFICIENCIES_RECTIFIED', actorRole: ['SCRUTINY_MEMBER', 'REGIONAL_OFFICER'] },
+                    { from: 'COMPETENT_DECISION', to: 'APPROVED', condition: 'STATUTORY_SANCTION', actorRole: ['COMPETENT_AUTHORITY'] },
+                    { from: 'COMPETENT_DECISION', to: 'REJECTED', condition: 'STATUTORY_REJECTION', actorRole: ['COMPETENT_AUTHORITY'] }
+                ]
+            },
+            {
+                code: 'WF_SCRUTINY_EVC',
+                name: 'Scrutiny + EVC (Comprehensive Route)',
+                category: 'SCRUTINY_AND_EVC',
+                version: 1,
+                stages: [
+                    { name: 'SUBMITTED', label: 'Application Submission', slaDays: 2, allowedRoles: ['INSTITUTION_REP'] },
+                    { name: 'SCRUTINY', label: 'Scrutiny Document Verification', slaDays: 7, allowedRoles: ['SCRUTINY_MEMBER', 'REGIONAL_OFFICER'] },
+                    { name: 'RE_SCRUTINY', label: 'Re-Scrutiny of Deficiencies', slaDays: 5, allowedRoles: ['SCRUTINY_MEMBER', 'REGIONAL_OFFICER'] },
+                    { name: 'EVC', label: 'Expert Visit Committee Physical Inspection', slaDays: 14, allowedRoles: ['EVC_COORDINATOR', 'EVC_MEMBER'] },
+                    { name: 'COMPETENT_DECISION', label: 'Statutory Competent Authority Sanction', slaDays: 7, allowedRoles: ['COMPETENT_AUTHORITY'] }
+                ],
+                transitions: [
+                    { from: 'SUBMITTED', to: 'SCRUTINY', condition: 'DOCUMENTS_VERIFIED', actorRole: ['REGIONAL_OFFICER', 'SCRUTINY_MEMBER'] },
+                    { from: 'SCRUTINY', to: 'RE_SCRUTINY', condition: 'DEFICIENCY_RAISED', actorRole: ['SCRUTINY_MEMBER', 'REGIONAL_OFFICER'] },
+                    { from: 'SCRUTINY', to: 'EVC', condition: 'ALL_DOCUMENTS_CLEARED', actorRole: ['SCRUTINY_MEMBER', 'REGIONAL_OFFICER'] },
+                    { from: 'RE_SCRUTINY', to: 'EVC', condition: 'DEFICIENCIES_RECTIFIED', actorRole: ['SCRUTINY_MEMBER', 'REGIONAL_OFFICER'] },
+                    { from: 'EVC', to: 'COMPETENT_DECISION', condition: 'INSPECTION_RECOMMENDED', actorRole: ['EVC_COORDINATOR', 'REGIONAL_OFFICER'] },
+                    { from: 'COMPETENT_DECISION', to: 'APPROVED', condition: 'STATUTORY_SANCTION', actorRole: ['COMPETENT_AUTHORITY'] },
+                    { from: 'COMPETENT_DECISION', to: 'REJECTED', condition: 'STATUTORY_REJECTION', actorRole: ['COMPETENT_AUTHORITY'] }
+                ]
+            },
+            {
+                code: 'WF_EVC_SAC',
+                name: 'EVC + SAC/SHC (Inspection & Hearing Route)',
+                category: 'EVC_AND_SAC',
+                version: 1,
+                stages: [
+                    { name: 'SUBMITTED', label: 'Application Submission', slaDays: 2, allowedRoles: ['INSTITUTION_REP'] },
+                    { name: 'EVC', label: 'Expert Visit Committee Inspection', slaDays: 14, allowedRoles: ['EVC_COORDINATOR', 'EVC_MEMBER'] },
+                    { name: 'SAC_SHC', label: 'Standing Appellate / Hearing Committee Review', slaDays: 10, allowedRoles: ['SAC_SHC_MEMBER'] },
+                    { name: 'COMPETENT_DECISION', label: 'Statutory Competent Authority Sanction', slaDays: 7, allowedRoles: ['COMPETENT_AUTHORITY'] }
+                ],
+                transitions: [
+                    { from: 'SUBMITTED', to: 'EVC', condition: 'EVC_SCHEDULED', actorRole: ['REGIONAL_OFFICER', 'EVC_COORDINATOR'] },
+                    { from: 'EVC', to: 'SAC_SHC', condition: 'INSPECTION_DEFICIENT_APPEAL', actorRole: ['EVC_COORDINATOR', 'REGIONAL_OFFICER'] },
+                    { from: 'SAC_SHC', to: 'COMPETENT_DECISION', condition: 'HEARING_COMPLETED', actorRole: ['SAC_SHC_MEMBER'] },
+                    { from: 'COMPETENT_DECISION', to: 'APPROVED', condition: 'STATUTORY_SANCTION', actorRole: ['COMPETENT_AUTHORITY'] },
+                    { from: 'COMPETENT_DECISION', to: 'REJECTED', condition: 'STATUTORY_REJECTION', actorRole: ['COMPETENT_AUTHORITY'] }
+                ]
+            },
+            {
+                code: 'WF_ONLY_EVC',
+                name: 'Only EVC (Physical Inspection Route)',
+                category: 'ONLY_EVC',
+                version: 1,
+                stages: [
+                    { name: 'SUBMITTED', label: 'Application Submission', slaDays: 2, allowedRoles: ['INSTITUTION_REP'] },
+                    { name: 'EVC', label: 'Expert Visit Committee Inspection', slaDays: 14, allowedRoles: ['EVC_COORDINATOR', 'EVC_MEMBER'] },
+                    { name: 'COMPETENT_DECISION', label: 'Statutory Competent Authority Sanction', slaDays: 7, allowedRoles: ['COMPETENT_AUTHORITY'] }
+                ],
+                transitions: [
+                    { from: 'SUBMITTED', to: 'EVC', condition: 'EVC_DIRECT_TRIGGER', actorRole: ['REGIONAL_OFFICER', 'EVC_COORDINATOR'] },
+                    { from: 'EVC', to: 'COMPETENT_DECISION', condition: 'INSPECTION_RECOMMENDED', actorRole: ['EVC_COORDINATOR', 'REGIONAL_OFFICER'] },
+                    { from: 'COMPETENT_DECISION', to: 'APPROVED', condition: 'STATUTORY_SANCTION', actorRole: ['COMPETENT_AUTHORITY'] },
+                    { from: 'COMPETENT_DECISION', to: 'REJECTED', condition: 'STATUTORY_REJECTION', actorRole: ['COMPETENT_AUTHORITY'] }
+                ]
             }
         ];
     }

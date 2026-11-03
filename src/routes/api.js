@@ -123,6 +123,8 @@ router.get('/api/applications', requireAuth, applicationController.list.bind(app
 router.post('/api/applications', requireAuth, applicationController.submit.bind(applicationController));
 router.get('/api/applications/:id', requireAuth, applicationController.getCaseWorkspace.bind(applicationController));
 router.post('/api/applications/:id/transition', requireRole([ROLES.SCRUTINY_MEMBER, ROLES.REGIONAL_OFFICER, ROLES.REGULATION_BUREAU_ADMIN, ROLES.COMPETENT_AUTHORITY]), applicationController.advanceWorkflow.bind(applicationController));
+router.post('/api/applications/:id/revert', requireRole([ROLES.SCRUTINY_MEMBER, ROLES.REGIONAL_OFFICER, ROLES.REGULATION_BUREAU_ADMIN, ROLES.SUPER_ADMIN]), applicationController.revertWorkflow.bind(applicationController));
+router.post('/api/applications/:id/return', requireRole([ROLES.SCRUTINY_MEMBER, ROLES.REGIONAL_OFFICER, ROLES.REGULATION_BUREAU_ADMIN, ROLES.SUPER_ADMIN]), applicationController.revertWorkflow.bind(applicationController));
 router.post('/api/applications/:id/hold', requireRole([ROLES.REGULATION_BUREAU_ADMIN, ROLES.COMPETENT_AUTHORITY]), applicationController.setHold.bind(applicationController));
 router.post('/api/applications/:id/assign', requireRole([ROLES.REGIONAL_OFFICER, ROLES.REGULATION_BUREAU_ADMIN, ROLES.SUPER_ADMIN]), applicationController.assignOfficer.bind(applicationController));
 router.post('/api/applications/:id/decision', requireRole([ROLES.COMPETENT_AUTHORITY, ROLES.REGULATION_BUREAU_ADMIN, ROLES.SUPER_ADMIN]), applicationController.recordDecision.bind(applicationController));

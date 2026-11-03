@@ -100,4 +100,66 @@ test('Workflow Engine: State Machine & Regulatory Integrity', async (t) => {
         const resumedApp = db.queryOne('SELECT * FROM applications WHERE id = ?', [app.id]);
         assert.strictEqual(resumedApp.is_on_hold, 0);
     });
+
+    await t.test('5. Revert or return enforces mandatory justification constraint (>= 10 chars)', () => {
+        // Clear deficiencies for clean testing
+        db.execute("UPDATE deficiencies SET status = 'VERIFIED_OK' WHERE application_id = ?", [app.id]);
+
+        // Attempt revert with missing or short reason
+        assert.throws(() => {
+            workflowEngine.revert({
+                applicationId: app.id,
+                toStage: STAGES.SUBMITTED,
+                mandatoryReason: 'Short',
+                user: scrutinyMember
+            });
+        }, /Mandatory regulatory reason/);
+
+        // Unauthorized role attempt
+        const applicant = db.queryOne("SELECT * FROM users WHERE role_code = 'INSTITUTION_REP' LIMIT 1");
+        assert.throws(() => {
+            workflowEngine.revert({
+                applicationId: app.id,
+                toStage: STAGES.SUBMITTED,
+                mandatoryReason: 'Valid reason of sufficient length provided by applicant',
+                user: applicant
+            });
+        }, /not authorized to revert/);
+    });
+
+    await t.test('6. Revert succeeds with valid justification, switches to COLLEGE_DELAY and updates audit trail', () => {
+        const revertResult = workflowEngine.revert({
+            applicationId: app.id,
+            toStage: STAGES.SUBMITTED,
+            mandatoryReason: 'Registered lease deed page 4 seal illegible; re-upload required.',
+            user: scrutinyMember
+        });
+
+        assert.strictEqual(revertResult.toStage, STAGES.SUBMITTED);
+        assert.strictEqual(revertResult.status, 'RETURNED_WITH_REASON');
+
+        const revertedApp = db.queryOne('SELECT * FROM applications WHERE id = ?', [app.id]);
+        assert.strictEqual(revertedApp.current_stage, STAGES.SUBMITTED);
+        assert.strictEqual(revertedApp.current_status, 'RETURNED_WITH_REASON');
+
+        // Check dual clock active clock is COLLEGE_DELAY
+        const dualClockEngine = require('../src/services/dualClockEngine');
+        const clock = dualClockEngine.getDualClockMetrics(app.id);
+        assert.strictEqual(clock.activeClock, 'COLLEGE_DELAY');
+
+        // Check transition record
+        const transition = db.queryOne('SELECT * FROM stage_transitions WHERE id = ?', [revertResult.transitionId]);
+        assert.strictEqual(transition.transition_type, 'REVERT');
+    });
+
+    await t.test('7. Configurable routes: Only Scrutiny, Scrutiny + EVC, EVC + SAC/SHC, and Only EVC are available', () => {
+        const regulatoryRulesService = require('../src/services/regulatoryRulesService');
+        const defaultWfs = regulatoryRulesService.getDefaultWorkflowDefinitions();
+        const codes = defaultWfs.map(w => w.code);
+
+        assert.ok(codes.includes('WF_ONLY_SCRUTINY'), 'Missing WF_ONLY_SCRUTINY');
+        assert.ok(codes.includes('WF_SCRUTINY_EVC'), 'Missing WF_SCRUTINY_EVC');
+        assert.ok(codes.includes('WF_EVC_SAC'), 'Missing WF_EVC_SAC');
+        assert.ok(codes.includes('WF_ONLY_EVC'), 'Missing WF_ONLY_EVC');
+    });
 });

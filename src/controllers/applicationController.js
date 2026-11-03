@@ -342,6 +342,29 @@ class ApplicationController {
         }
     }
 
+    // Revert or return application with mandatory justification
+    revertWorkflow(req, res) {
+        try {
+            const { id } = req.params;
+            const { toStage, mandatoryReason, reason } = req.body;
+            const justifiedReason = mandatoryReason || reason;
+
+            const result = workflowEngine.revert({
+                applicationId: id,
+                toStage,
+                mandatoryReason: justifiedReason,
+                user: req.user
+            });
+
+            return res.json({
+                message: `Application successfully returned to stage '${result.toStage}' with recorded justification.`,
+                result
+            });
+        } catch (err) {
+            return res.status(400).json({ error: err.message });
+        }
+    }
+
     // Assign owner / officer to application (Section 1 & 2)
     assignOfficer(req, res) {
         try {

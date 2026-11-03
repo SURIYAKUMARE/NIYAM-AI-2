@@ -1585,10 +1585,10 @@
                                 ${ICONS.ArrowRight}
                             </button>
                         ` : `
-                            <button class="btn btn-primary btn-sm" id="portal-btn-login" style="font-weight:700; background:#D97706; border-color:#B45309; display:inline-flex; align-items:center; gap:6px;">
+                            <a href="/login" class="btn btn-primary btn-sm" id="portal-btn-login" role="button" style="font-weight:700; background:#D97706; border-color:#B45309; display:inline-flex; align-items:center; gap:6px; text-decoration:none; cursor:pointer;" onclick="if(window.app){event.preventDefault();window.app.navigate('login');}">
                                 <span>Sign In to Portal</span>
                                 ${ICONS.ArrowRight}
-                            </button>
+                            </a>
                         `}
                     </div>
                 </header>
@@ -1604,10 +1604,10 @@
                         <li><button type="button" class="aicte-nav-item" id="nav-item-regulations">Statutory Regulations</button></li>
                     </ul>
                     <div style="display:flex; align-items:center; gap:10px;">
-                        <button type="button" class="aicte-nav-btn-login" id="nav-btn-portal-login">
+                        <a href="/login" class="aicte-nav-btn-login" id="nav-btn-portal-login" role="button" style="text-decoration:none; cursor:pointer;" onclick="if(window.app){event.preventDefault();window.app.navigate('login');}">
                             <span>Portal Login</span>
                             ${ICONS.ArrowRight}
-                        </button>
+                        </a>
                     </div>
                 </nav>
 
@@ -1643,10 +1643,10 @@
                             </p>
 
                             <div class="aicte-hero-ctas">
-                                <button type="button" class="btn-hero-primary" id="hero-btn-login">
+                                <a href="/login" class="btn-hero-primary" id="hero-btn-login" role="button" onclick="if(window.app){event.preventDefault();window.app.navigate('login');}">
                                     <span>Sign in to Portal</span>
                                     ${ICONS.ArrowRight}
-                                </button>
+                                </a>
                                 <button type="button" class="btn-hero-secondary" id="hero-btn-explore">
                                     <span>View 7-Stage Workflow</span>
                                     ${ICONS.ArrowRight}
@@ -1888,10 +1888,10 @@
                                 <h2 class="aicte-services-title">Institutional Approval &amp; Regulatory Services</h2>
                                 <div class="aicte-services-sub">Core statutory workflows operationalized under AICTE Approval Process Handbook (APH 2025–26)</div>
                             </div>
-                            <button type="button" class="btn btn-secondary btn-sm hide-on-mobile" id="services-btn-login">
+                            <a href="/login" class="btn btn-secondary btn-sm hide-on-mobile" id="services-btn-login" role="button" style="text-decoration:none; cursor:pointer;" onclick="if(window.app){event.preventDefault();window.app.navigate('login');}">
                                 <span>Access Regulatory Desk</span>
                                 ${ICONS.ArrowRight}
-                            </button>
+                            </a>
                         </div>
 
                         <div class="aicte-services-grid">
@@ -2262,7 +2262,12 @@
             };
 
             const heroLoginBtn = wrap.querySelector('#hero-btn-login');
-            if (heroLoginBtn) heroLoginBtn.onclick = () => this.navigate('login');
+            if (heroLoginBtn) {
+                heroLoginBtn.onclick = (e) => {
+                    if (e) e.preventDefault();
+                    this.navigate('login');
+                };
+            }
 
             const heroSimLaunchBtn = wrap.querySelector('#hero-btn-sim-launch');
             if (heroSimLaunchBtn) heroSimLaunchBtn.onclick = () => this.navigate('simulation');
@@ -2338,7 +2343,7 @@
             }
 
             const servicesLoginBtn = wrap.querySelector('#services-btn-login');
-            if (servicesLoginBtn) servicesLoginBtn.onclick = () => this.navigate('login');
+            if (servicesLoginBtn) servicesLoginBtn.onclick = (e) => { if (e) e.preventDefault(); this.navigate('login'); };
 
             wrap.querySelectorAll('.aicte-service-card').forEach(card => {
                 card.onclick = () => {
@@ -2348,16 +2353,16 @@
             });
 
             const protoBtn = wrap.querySelector('#hero-btn-prototype');
-            if (protoBtn) protoBtn.onclick = () => this.navigate('login');
+            if (protoBtn) protoBtn.onclick = (e) => { if (e) e.preventDefault(); this.navigate('login'); };
 
             const portalLoginBtn = wrap.querySelector('#portal-btn-login');
-            if (portalLoginBtn) portalLoginBtn.onclick = () => this.navigate('login');
+            if (portalLoginBtn) portalLoginBtn.onclick = (e) => { if (e) e.preventDefault(); this.navigate('login'); };
 
             const portalDashBtn = wrap.querySelector('#portal-btn-dash');
             if (portalDashBtn) portalDashBtn.onclick = () => this.navigate('dashboard');
 
             const navBtnLogin = wrap.querySelector('#nav-btn-portal-login');
-            if (navBtnLogin) navBtnLogin.onclick = () => this.navigate('login');
+            if (navBtnLogin) navBtnLogin.onclick = (e) => { if (e) e.preventDefault(); this.navigate('login'); };
 
             const navHome = wrap.querySelector('#nav-item-home');
             if (navHome) navHome.onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -13654,5 +13659,22 @@
 
     // Attach to global scope and instantiate
     window.app = new NiyamAIApp();
+
+    // Global delegated capture listener for 100% reliable login navigation
+    if (typeof document !== 'undefined') {
+        document.addEventListener('click', (e) => {
+            const target = e.target;
+            if (!target || !target.closest) return;
+            const btn = target.closest('#hero-btn-login, #nav-btn-portal-login, #portal-btn-login, #services-btn-login, #hero-btn-prototype, a[href="/login"]');
+            if (btn) {
+                e.preventDefault();
+                if (window.app && typeof window.app.navigate === 'function') {
+                    window.app.navigate('login');
+                } else {
+                    window.location.href = '/login';
+                }
+            }
+        }, true);
+    }
 
 })();

@@ -5400,6 +5400,10 @@ svg.ill-svg {
   color: #FFFFFF;
 }
 
+.aicte-nav-btn-login * {
+  pointer-events: none;
+}
+
 /* Urgent Notification Ticker Bar */
 .aicte-ticker-bar {
   background: #FEF3C7;
@@ -6064,6 +6068,10 @@ svg.ill-svg {
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   text-decoration: none;
+}
+
+.btn-hero-primary * {
+  pointer-events: none;
 }
 
 .btn-hero-primary:hover {

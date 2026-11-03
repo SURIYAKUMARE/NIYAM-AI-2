@@ -2075,12 +2075,11 @@
     // 3. Hook into Navigation Routing to Support Upgrade Views
     const origNavigate = p.navigate;
     p.navigate = function(view) {
+        if (typeof origNavigate === 'function') {
+            return origNavigate.call(this, view);
+        }
         this.currentView = view;
-        try { localStorage.setItem('niyam_view', view); } catch (_) {}
-        this.renderSidebar();
-        this.renderHeader();
-        this.renderMainContent();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        this.render();
     };
 
     // 4. Hook into renderMainContent to intercept upgrade views

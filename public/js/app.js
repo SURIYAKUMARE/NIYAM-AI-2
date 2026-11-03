@@ -934,9 +934,11 @@
                 }
             } catch (_) {}
 
-            if (typeof window !== 'undefined') {
-                window.scrollTo({ top: 0, behavior: 'instant' });
-            }
+            try {
+                if (typeof window !== 'undefined' && typeof window.scrollTo === 'function') {
+                    window.scrollTo(0, 0);
+                }
+            } catch (_) {}
 
             if (view === 'login') {
                 this.currentView = 'login';
@@ -1037,7 +1039,7 @@
         // --------------------------------------------------------------------
         renderHeader() {
             const header = document.getElementById('app-header');
-            if (!header) return;
+            if (!header || !this.currentUser) return;
 
             const isApp = this.isApplicant();
             const roleCfg = this.getRoleConfig();
@@ -1265,8 +1267,10 @@
             const sidebar = document.getElementById('app-sidebar');
             if (!sidebar) return;
 
-            const isApp = this.isApplicant();
             const roleCfg = this.getRoleConfig();
+            if (!roleCfg) return;
+
+            const isApp = this.isApplicant();
             const authoritativeRole = this.getAuthoritativeRoleTitle();
             const navItems = roleCfg.nav || [];
 

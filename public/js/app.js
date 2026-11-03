@@ -2549,8 +2549,8 @@
                             <!-- Persona Switcher -->
                             <div class="auth-persona-box">
                                 <div class="auth-persona-header">
-                                    <span style="display:flex; align-items:center; gap:5px;">${ICONS.Sparkles} 1-Click Fast Demo Login</span>
-                                    <span class="auth-pin-badge" style="background:#ECFDF5; color:#059669; border-color:#A7F3D0;">⚡ Instant Access</span>
+                                    <span style="display:flex; align-items:center; gap:5px;">${ICONS.ShieldCheck || ICONS.Users} Authorized Role Selection</span>
+                                    <span class="auth-pin-badge" style="background:#ECFDF5; color:#047857; border-color:#A7F3D0;">Single Sign-On (SSO)</span>
                                 </div>
 
                                 <div class="auth-persona-tabs" role="tablist">
@@ -2566,8 +2566,8 @@
                                         <span><strong>${currentDemo.roleTitle}</strong></span>
                                         <span style="font-family:var(--font-mono, monospace); opacity:0.75; font-size:10px;">(${currentDemo.username})</span>
                                     </div>
-                                    <button type="button" class="auth-direct-login-chip" id="btn-quick-login-chip" title="Instant fast login as ${currentDemo.label}">
-                                        ⚡ Fast Login as ${currentDemo.label}
+                                    <button type="button" class="auth-direct-login-chip" id="btn-quick-login-chip" title="Authenticate as ${currentDemo.label}">
+                                        Sign In as ${currentDemo.label}
                                     </button>
                                 </div>
                             </div>
@@ -2614,9 +2614,9 @@
                                     </div>
                                 </div>
 
-                                <!-- Primary: Fast Direct 1-Click Sign In -->
+                                <!-- Primary: Direct Authorized Sign In -->
                                 <button type="submit" class="auth-btn-primary" id="btn-login-submit" style="font-weight:800; font-size:14px; display:flex; align-items:center; justify-content:center; gap:8px;">
-                                    <span>⚡ Fast Sign In to Workspace</span>
+                                    <span>Sign In to Official Workspace</span>
                                     ${ICONS.ArrowRight}
                                 </button>
 
@@ -2797,13 +2797,13 @@
                     };
                 }
 
-                // Auto-fill Demo MPIN & Fast Instant Verify
+                // Auto-fill Demo MPIN & Verify
                 const autofillBtn = wrap.querySelector('#btn-mpin-autofill');
                 if (autofillBtn) {
                     autofillBtn.onclick = () => {
                         this.enteredMpin = '2626';
                         updateMpinDisplay();
-                        API.showToast('Demo MPIN 2626 filled • Fast Verifying...', 'info');
+                        API.showToast('Security MPIN 2626 entered • Verifying credentials...', 'info');
                         setTimeout(executeMpinVerification, 120);
                     };
                 }
@@ -2879,13 +2879,13 @@
                 };
             });
 
-            // Fast Persona Quick Login Chip
+            // Authorized Persona Direct Login Chip
             const quickLoginChip = wrap.querySelector('#btn-quick-login-chip');
             if (quickLoginChip) {
                 quickLoginChip.onclick = () => {
                     const activeK = this.activeDemoRole || 'auditor';
                     const selected = DEMO_LOGIN_ROLES.find(d => d.key === activeK) || DEMO_LOGIN_ROLES[4];
-                    API.showToast(`Fast Sign In: ${selected.roleTitle} (${selected.securityClearance.split('•')[0].trim()})`, 'info');
+                    API.showToast(`Authenticating: ${selected.roleTitle} (${selected.securityClearance.split('•')[0].trim()})`, 'info');
                     this.executeLogin(selected.username, selected.defaultPassword, wrap);
                 };
             }
@@ -2944,7 +2944,7 @@
                 };
             }
 
-            // Form Submit: Instant Fast Login directly into the authenticated workspace!
+            // Form Submit: Direct Sign In into the authenticated workspace
             const signinForm = wrap.querySelector('#auth-signin-form');
             if (signinForm) {
                 signinForm.onsubmit = (e) => {
@@ -2961,7 +2961,7 @@
                         return;
                     }
 
-                    API.showToast(`Fast Authentication Verified: ${u} • Connecting...`, 'info');
+                    API.showToast(`Authentication Verified: ${u} • Connecting...`, 'info');
                     this.executeLogin(u, p, wrap);
                 };
             }

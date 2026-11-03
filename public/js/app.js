@@ -1630,20 +1630,19 @@
                         <div class="aicte-hero-left">
                             <div class="hero-badge-pill">
                                 <span class="hero-badge-dot" aria-hidden="true"></span>
-                                <span>AICTE REGULATORY PLATFORM • APH 2025–26</span>
+                                <span>AICTE STATUTORY REGULATORY PLATFORM • APH 2025–26</span>
                             </div>
 
                             <div class="aicte-hero-h1-hindi">
-                                अखिल भारतीय तकनीकी शिक्षा परिषद्
+                                अखिल भारतीय तकनीकी शिक्षा परिषद
                             </div>
 
                             <h1 class="aicte-hero-h1-eng" id="aicte-hero-main-title">
-                                <span>Autonomous AICTE Approvals with</span>
-                                <span class="hero-gradient-text">Dual-Clock Accountability</span>
+                                Integrated AICTE Approval Workflow &amp; Dual-Clock Governance System
                             </h1>
 
                             <p class="aicte-hero-sub">
-                                Official regulatory automation portal operationalized under the AICTE Approval Process Handbook (APH 2025–26). Eliminating regulatory ambiguity across 10,500+ technical institutions with deterministic norm evaluation, automated 13-stage workflow routing, and zero overlapping seconds.
+                                Official regulatory operations portal operationalized under the AICTE Approval Process Handbook (APH 2025–26). Eliminating regulatory ambiguity across 10,500+ technical institutions through deterministic norm evaluation, automated 13-stage statutory routing, and strict non-overlapping SLA accountability.
                             </p>
 
                             <div class="aicte-hero-ctas">
@@ -1655,7 +1654,7 @@
                                     <span>View 7-Stage Workflow</span>
                                     ${ICONS.ArrowRight}
                                 </button>
-                                <button type="button" class="btn-hero-secondary" id="hero-btn-sim-launch" style="border-color:#F59E0B; color:#FCD34D !important;">
+                                <button type="button" class="btn-hero-secondary btn-hero-sim" id="hero-btn-sim-launch">
                                     <span>⚡ Live Simulator</span>
                                 </button>
                             </div>
@@ -1672,41 +1671,37 @@
                                 </div>
                                 <div class="hero-trust-cell">
                                     <span class="hero-trust-num">0.00s</span>
-                                    <span class="hero-trust-label">Overlap Guarantee</span>
+                                    <span class="hero-trust-label">SLA Overlap Guarantee</span>
                                 </div>
                                 <div class="hero-trust-cell">
                                     <span class="hero-trust-num">100%</span>
-                                    <span class="hero-trust-label">Chained SHA-256</span>
+                                    <span class="hero-trust-label">Chained SHA-256 Audit</span>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Right Showcase: THE MAIN FEATURE (Autonomous Dual-Clock Workflow Engine) -->
+                        <!-- Right Showcase: THE MAIN FEATURE (Official AICTE Statutory Approval Telemetry Console) -->
                         <div class="hero-feature-showcase">
-                            <!-- Floating Card 1: Top Right (Android EVC Companion) -->
-                            <div class="floating-card floating-card-1 hide-on-mobile">
-                                <div style="font-size:10px; font-weight:800; color:#10B981; margin-bottom:2px; display:flex; align-items:center; gap:4px;">
-                                    <span>📱 ANDROID EVC COMPANION</span>
-                                </div>
-                                <div style="font-weight:700; color:#FFFFFF;">Geotagged 28.54°N, 77.16°E</div>
-                                <div style="font-size:10.5px; color:#94A3B8;">GPS Anti-Spoofing: PASSED • SHA-256 Signed</div>
-                            </div>
-
-                            <!-- Main Window Mockup -->
+                            <!-- Main Executive Regulatory Terminal Window -->
                             <div class="showcase-window" id="hero-dual-clock-preview">
                                 <div class="showcase-header">
                                     <div class="showcase-title-row">
-                                        <div class="window-dots" aria-hidden="true">
-                                            <span class="window-dot dot-red"></span>
-                                            <span class="window-dot dot-yellow"></span>
-                                            <span class="window-dot dot-green"></span>
+                                        <div class="showcase-emblem-badge">
+                                            <img src="/images/aicte-logo.png" alt="AICTE Emblem" style="width:24px; height:24px; object-fit:contain; vertical-align:middle;">
                                         </div>
-                                        <span class="showcase-app-badge">APP-2026-ENG-0842</span>
-                                        <span style="font-size:12px; font-weight:700; color:#FFFFFF;" class="hide-on-mobile">Apex Institute of Technology</span>
+                                        <div>
+                                            <div style="font-size:12.5px; font-weight:800; color:#FFFFFF; letter-spacing:0.02em;">AICTE STATUTORY MONITORING CONSOLE</div>
+                                            <div style="font-size:11px; color:#93C5FD; font-family:var(--font-mono, monospace);">Docket: AICTE/RO-NORTH/2025-26/APP-8842</div>
+                                        </div>
                                     </div>
                                     <div class="showcase-aph-tag">
                                         ${ICONS.ShieldCheck} <span>APH 2025–26 COMPLIANT</span>
                                     </div>
+                                </div>
+
+                                <div class="showcase-institution-bar">
+                                    <div><strong>Institution:</strong> Apex Institute of Technology, Kanpur</div>
+                                    <div class="hide-on-mobile"><strong>Category:</strong> EoA • <strong>Bench:</strong> RO-NORTH</div>
                                 </div>
 
                                 <!-- Dual-Clock Real-Time Interactive Meters -->
@@ -1715,7 +1710,7 @@
                                     <div class="clock-card" id="hero-clock-card-college">
                                         <div class="clock-card-top">
                                             <span>COLLEGE DELAY CLOCK</span>
-                                            <span style="color:#F59E0B;">⏳ Institution</span>
+                                            <span style="color:#B45309; font-weight:700;">⏳ Institution</span>
                                         </div>
                                         <div class="clock-time-display time-amber" id="hero-clock-val-college">03d 04h 18m</div>
                                         <div class="clock-meta-desc">Time waiting for institution to submit or rectify documents</div>
@@ -1726,7 +1721,7 @@
                                     <div class="clock-card active-clock" id="hero-clock-card-officer">
                                         <div class="clock-card-top">
                                             <span>OFFICER PROCESSING CLOCK</span>
-                                            <span style="color:#38BDF8;">⏱ Regulatory</span>
+                                            <span style="color:#0284C7; font-weight:700;">⏱ Regulatory</span>
                                         </div>
                                         <div class="clock-time-display time-cyan" id="hero-clock-val-officer">01d 08h 42m</div>
                                         <div class="clock-meta-desc">Regulatory Scrutiny Active (RO-NORTH Kanpur Bench)</div>
@@ -1738,16 +1733,16 @@
                                 <div class="invariant-guarantee-bar">
                                     <div style="display:flex; align-items:center; gap:6px;">
                                         ${ICONS.CheckCircle2}
-                                        <span>MATHEMATICAL INVARIANT: ZERO OVERLAPPING SECONDS</span>
+                                        <span>Statutory Invariant: Zero Overlapping Hours between Institution &amp; Council</span>
                                     </div>
-                                    <span style="color:#FFFFFF; font-size:11px; font-family:var(--font-mono, monospace);">99.4% Regional Efficiency</span>
+                                    <span style="font-size:11px; font-weight:700;">99.4% Regional Efficiency</span>
                                 </div>
 
                                 <!-- 13-Stage Progression Mini Stepper -->
                                 <div class="showcase-stage-stepper">
                                     <div class="stepper-header">
-                                        <span>13-STAGE LIFECYCLE TELEMETRY</span>
-                                        <span style="color:#38BDF8;">STAGE 5 OF 13 ACTIVE</span>
+                                        <span>13-STAGE STATUTORY LIFECYCLE PROGRESSION</span>
+                                        <span style="color:#0284C7; font-weight:700;">STAGE 5 OF 13 ACTIVE</span>
                                     </div>
                                     <div class="stepper-nodes-row">
                                         <div class="step-node completed">1. Intake ✓</div>
@@ -1766,29 +1761,31 @@
                                         <button type="button" class="clock-sim-toggle-btn" id="hero-sim-switch-college">
                                             <span>▶ Shift to College Clock</span>
                                         </button>
-                                        <button type="button" class="clock-sim-toggle-btn" id="hero-sim-switch-officer" style="border-color:#38BDF8; color:#38BDF8;">
+                                        <button type="button" class="clock-sim-toggle-btn" id="hero-sim-switch-officer" style="border-color:#0284C7; color:#0284C7;">
                                             <span>▶ Shift to Officer Clock</span>
                                         </button>
-                                        <button type="button" class="clock-sim-toggle-btn" id="hero-sim-tick-clock" style="color:#10B981; border-color:rgba(16,185,129,0.3);">
+                                        <button type="button" class="clock-sim-toggle-btn" id="hero-sim-tick-clock" style="color:#059669; border-color:rgba(5,150,105,0.4);">
                                             <span>+10m Tick</span>
                                         </button>
                                     </div>
-                                    <span style="font-size:11px; color:#94A3B8;" class="hide-on-mobile">Click buttons to test live clock handoffs</span>
+                                    <span style="font-size:11px; color:#64748B;" class="hide-on-mobile">Click buttons to test live clock handoffs</span>
                                 </div>
-                            </div>
 
-                            <!-- Floating Card 2: Bottom Left (4-Tier SLA Radar) -->
-                            <div class="floating-card floating-card-2 hide-on-mobile">
-                                <div style="font-size:10px; font-weight:800; color:#F59E0B; margin-bottom:2px;">⚡ 4-TIER SLA RADAR</div>
-                                <div style="font-weight:700; color:#FFFFFF;">Level 1 Assigned Officer</div>
-                                <div style="font-size:10.5px; color:#94A3B8;">Auto-escalates in 4d 18h • 0 Breaches</div>
-                            </div>
-
-                            <!-- Floating Card 3: Bottom Right (Cryptographic Non-Repudiation) -->
-                            <div class="floating-card floating-card-3 hide-on-mobile">
-                                <div style="font-size:10px; font-weight:800; color:#38BDF8; margin-bottom:2px;">🛡️ CRYPTOGRAPHIC AUDIT</div>
-                                <div style="font-weight:700; color:#FFFFFF;">Chained Block #48 Linked</div>
-                                <div style="font-size:10.5px; color:#94A3B8;">Genesis Root Verified • 100% Intact</div>
+                                <!-- Integrated Supporting Signals (Cleanly embedded in Console Footer) -->
+                                <div class="showcase-footer-signals">
+                                    <div class="footer-signal-chip">
+                                        <span class="signal-dot dot-green"></span>
+                                        <span><strong>Android EVC:</strong> Geotagged 28.54°N, 77.16°E • CameraX SHA-256 Passed</span>
+                                    </div>
+                                    <div class="footer-signal-chip">
+                                        <span class="signal-dot dot-amber"></span>
+                                        <span><strong>SLA Radar:</strong> Level 1 Assigned Officer • 0 Breaches</span>
+                                    </div>
+                                    <div class="footer-signal-chip">
+                                        <span class="signal-dot dot-blue"></span>
+                                        <span><strong>Cryptographic Audit:</strong> Chained Block #48 Linked • IT Act §43A Verified</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1799,43 +1796,43 @@
                     <div class="spotlight-container">
                         <div class="spotlight-header-row">
                             <div class="spotlight-pill">
-                                ${ICONS.Sparkles} <span>ARCHITECTURAL SPOTLIGHT</span>
+                                ${ICONS.ShieldCheck} <span>AICTE STATUTORY INNOVATION FRAMEWORK</span>
                             </div>
-                            <h2 class="spotlight-main-title">Engineered for Zero Regulatory Ambiguity</h2>
-                            <p class="spotlight-main-sub">The core technological breakthroughs transforming national technical education approvals under APH 2025–26.</p>
+                            <h2 class="spotlight-main-title">Core Regulatory Innovations Under APH 2025–26</h2>
+                            <p class="spotlight-main-sub">Transforming national technical education approvals through mathematical accountability, mobile forensic inspection, and continuous compliance monitoring.</p>
                         </div>
 
                         <div class="spotlight-grid">
-                            <!-- Main Feature Spotlight Card (60-70% Focus) -->
+                            <!-- Main Feature Spotlight Card -->
                             <div class="spotlight-hero-card">
                                 <div>
                                     <div class="spotlight-hero-badge">
-                                        ${ICONS.Clock} <span>PRIMARY BREAKTHROUGH • 65% WEIGHT</span>
+                                        ${ICONS.Clock} <span>PRIMARY STATUTORY BREAKTHROUGH</span>
                                     </div>
                                     <h3 class="spotlight-hero-title">Dual-Clock Accountability &amp; Autonomous 13-Stage Workflow Engine</h3>
                                     <p class="spotlight-hero-desc">
                                         For the first time in Indian regulatory governance, NIYAM introduces two strictly independent, non-overlapping clocks: the <strong>College Delay Clock</strong> (measuring institutional deficiency turnaround) and the <strong>Officer Processing Clock</strong> (measuring AICTE regulatory handling). By enforcing a mathematical invariant of zero overlapping seconds, NIYAM eliminates blame-shifting and provides indisputable SLA accountability for both colleges and council officers.
                                     </p>
-                                    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:12px; margin-bottom:20px;">
-                                        <div style="background:rgba(255,255,255,0.05); padding:12px; border-radius:8px; border:1px solid rgba(255,255,255,0.08);">
-                                            <div style="font-size:11px; font-weight:700; color:#FCD34D;">Zero Double-Counting</div>
-                                            <div style="font-size:12px; color:#94A3B8; margin-top:2px;">Slices closed before clock handoffs</div>
+                                    <div class="spotlight-feature-bullets">
+                                        <div class="spotlight-bullet-box">
+                                            <div class="bullet-box-title" style="color:#B45309;">Zero Double-Counting</div>
+                                            <div class="bullet-box-sub">Slices closed instantaneously before clock handoffs</div>
                                         </div>
-                                        <div style="background:rgba(255,255,255,0.05); padding:12px; border-radius:8px; border:1px solid rgba(255,255,255,0.08);">
-                                            <div style="font-size:11px; font-weight:700; color:#38BDF8;">13 Granular Stages</div>
-                                            <div style="font-size:12px; color:#94A3B8; margin-top:2px;">Micro-telemetry from intake to order</div>
+                                        <div class="spotlight-bullet-box">
+                                            <div class="bullet-box-title" style="color:#0284C7;">13 Granular Stages</div>
+                                            <div class="bullet-box-sub">Micro-telemetry from intake scrutiny to final order</div>
                                         </div>
-                                        <div style="background:rgba(255,255,255,0.05); padding:12px; border-radius:8px; border:1px solid rgba(255,255,255,0.08);">
-                                            <div style="font-size:11px; font-weight:700; color:#10B981;">Regional Efficiency Index</div>
-                                            <div style="font-size:12px; color:#94A3B8; margin-top:2px;">Transparent ranking across 8 ROs</div>
+                                        <div class="spotlight-bullet-box">
+                                            <div class="bullet-box-title" style="color:#059669;">Regional Efficiency Index</div>
+                                            <div class="bullet-box-sub">Transparent performance ranking across all 8 ROs</div>
                                         </div>
                                     </div>
                                 </div>
-                                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
-                                    <button type="button" class="btn btn-sm btn-outline" id="spotlight-btn-dual-clock" style="border-color:#38BDF8; color:#38BDF8;">
+                                <div class="spotlight-hero-footer">
+                                    <button type="button" class="btn btn-sm btn-primary" id="spotlight-btn-dual-clock" style="background:#002147; border-color:#002147; color:#FFFFFF; font-weight:700;">
                                         Open Dual-Clock Studio →
                                     </button>
-                                    <span style="font-size:12px; color:#94A3B8;">Verified by 108 Automated Tests</span>
+                                    <span style="font-size:12px; font-weight:600; color:#64748B;">Verified by 108 Automated Tests</span>
                                 </div>
                             </div>
 
@@ -1848,6 +1845,41 @@
                                     </div>
                                     <div>
                                         <h4 class="spotlight-subcard-title">Native Android EVC Mobile Inspection Companion</h4>
+                                        <p class="spotlight-subcard-desc">
+                                            Offline-first Kotlin inspection companion with CameraX SHA-256 EXIF geotagging and multi-signal GPS mock-location defense.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <!-- Supporting 2: Deterministic APH Regulatory Intelligence -->
+                                <div class="spotlight-subcard">
+                                    <div class="spotlight-subcard-icon icon-blue">
+                                        ${ICONS.Sliders}
+                                    </div>
+                                    <div>
+                                        <h4 class="spotlight-subcard-title">Deterministic Regulatory Intelligence (APH)</h4>
+                                        <p class="spotlight-subcard-desc">
+                                            Version-controlled Approval Process Handbook rules (APH 2024–25, 2025–26, 2026–27) producing exact 10-field finding schemas without hallucinations.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <!-- Supporting 3: 365-Day Statutory Document Watchdog -->
+                                <div class="spotlight-subcard">
+                                    <div class="spotlight-subcard-icon icon-amber">
+                                        ${ICONS.ShieldAlert}
+                                    </div>
+                                    <div>
+                                        <h4 class="spotlight-subcard-title">Continuous 365-Day Statutory Expiry Engine</h4>
+                                        <p class="spotlight-subcard-desc">
+                                            Multi-tier automated alerts at 90d, 60d, 30d, 15d, 7d, and Expired for Land Titles, Fire Safety NOCs, and Municipal Clearances.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
                                         <p class="spotlight-subcard-desc">
                                             Offline-first Kotlin inspection companion with CameraX SHA-256 EXIF geotagging and multi-signal GPS mock-location defense.
                                         </p>
